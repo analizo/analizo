@@ -6,8 +6,8 @@ egypt - create call graph from gcc RTL dump
 
 =head1 SYNOPISIS
 
- egypt [--omit function,function,...] [--include-external] <rtl-file>... | dotty -
- egypt [--omit function,function,...] [--include-external] <rtl-file>... | dot <dot-options>
+ egypt [OPTIONS] <rtl-file>... | dotty -
+ egypt [OPTIONS] <rtl-file>... | dot <dot-options>
 
 =head1 DESCRIPTION
 
