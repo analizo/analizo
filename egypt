@@ -17,12 +17,12 @@ Egypt is a simple tool for creating call graphs of C programs.
 
 =over 8
 
-=item omit
+=item --omit function,function
 
 Omit the given functions from the call graph.  Multiple function names
 may be given separated by commas.
 
-=item include-external
+=item --include-external
 
 Include calls to external functions in the call graph.  A function is
 considered external if it is not defined in any of the input files.
@@ -30,6 +30,11 @@ For example, functions in the standard C library are external.  By
 default, such calls are not shown.  Even with this option, only direct
 calls will be shown; there is no way to show indirect calls to
 external functions.
+
+=item --cluster
+
+Cluster the functions into files, so you can see in which files are the calling
+and called functions.
 
 =back
 
@@ -154,9 +159,22 @@ my $demangle = { };
 # The current function
 my $curfunc;
 
+# function/file
+my $files = {};
+
+sub add_function_to_file {
+  my ($function, $file) = @_;
+  if (exists($files->{$file})) {
+    push(@{$files->{$file}}, $function);
+  } else {
+    $files->{$file} = [$function];
+  }
+}
+
 # Functions to omit
 my @omit = ();
 my $include_external = 0;
+my $cluster = 0;
 
 # Mapping from symbol reference types to dot styles
 my $styles = {
@@ -170,7 +188,9 @@ sub demangle {
 }
 
 GetOptions('omit=s' => \@omit,
-	   'include-external' => \$include_external);
+	   'include-external' => \$include_external,
+	   'cluster' => \$cluster,
+);
 
 @omit = split(/,/, join(',', @omit));
 
@@ -180,11 +200,13 @@ while (<>) {
 	# pre-gcc4 style
 	$curfunc = $1;
 	$calls->{$curfunc} = { } if ! exists($calls->{$curfunc});
+	add_function_to_file($curfunc, $ARGV);
     } elsif (/^;; Function (.*)\s+\((\S+)\)$/) {
 	# gcc4 style
 	$curfunc = $2;
 	$demangle->{$curfunc} = $1;
 	$calls->{$curfunc} = { } if ! exists($calls->{$curfunc});
+	add_function_to_file($curfunc, $ARGV);
     }
     if (/^.*\(call.*"(.*)".*$/) {
 	$calls->{$curfunc}->{$1} = "direct";
@@ -199,6 +221,16 @@ my %omit_map;
 @omit_map{@omit} = ();
 
 print "digraph callgraph {\n";
+
+if ($cluster) {
+	foreach my $file (keys(%{$files})) {
+		print "subgraph \"cluster_$file\" {\n";
+		foreach my $function (@{$files->{$file}}) {
+			printf "  node [label=\"%s\"] %s;\n", $function, demangle($function);
+		}
+		print "}\n"
+	}
+}
 
 foreach my $caller (keys %{$calls}) {
     foreach my $callee (keys %{$calls->{$caller}}) {
