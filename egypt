@@ -36,6 +36,13 @@ external functions.
 Cluster the functions into files, so you can see in which files are the calling
 and called functions.
 
+=item --modules
+
+Group the functions by modules(files), and only represent calls between
+modules. This is useful to see the dependencies between the modules of the
+program, intead of focusing on specific functions. It doesn't make sense to use
+--modules together with --cluster.
+
 =back
 
 =head1 HOW IT WORKS
@@ -162,20 +169,40 @@ my $curfunc;
 
 # function/file
 my $files = {};
+my %functions = ();
 
 sub add_function_to_file {
   my ($function, $file) = @_;
+
+  # record which functions are contained by given file
   if (exists($files->{$file})) {
     push(@{$files->{$file}}, $function);
   } else {
     $files->{$file} = [$function];
   }
+
+  # record in which file the function is contained
+  $functions{$function} = $file;
+}
+
+sub function_to_file {
+  my $function = shift;
+  return moduleName($functions{$function});
+}
+
+sub moduleName {
+  my $filename = shift;
+  $filename = basename($filename);
+  $filename =~ s/\.\d+r\.expand$//;
+
+  return $filename;
 }
 
 # Functions to omit
 my @omit = ();
 my $include_external = 0;
 my $cluster = 0;
+my $modules = 0;
 
 # Mapping from symbol reference types to dot styles
 my $styles = {
@@ -191,6 +218,7 @@ sub demangle {
 GetOptions('omit=s' => \@omit,
 	   'include-external' => \$include_external,
 	   'cluster' => \$cluster,
+	   'modules' => \$modules,
 );
 
 @omit = split(/,/, join(',', @omit));
@@ -226,7 +254,7 @@ print "digraph callgraph {\n";
 if ($cluster) {
 	foreach my $file (keys(%{$files})) {
 		print "subgraph \"cluster_$file\" {\n";
-		printf "  label  = \"%s\";\n", basename($file);
+		printf "  label  = \"%s\";\n", moduleName($file);
 		foreach my $function (@{$files->{$file}}) {
 			printf "  node [label=\"%s\"] %s;\n", $function, demangle($function);
 		}
@@ -234,6 +262,7 @@ if ($cluster) {
 	}
 }
 
+my %dumped_module_dependencies = ();
 foreach my $caller (keys %{$calls}) {
     foreach my $callee (keys %{$calls->{$caller}}) {
 	my $reftype = $calls->{$caller}->{$callee};
@@ -243,9 +272,23 @@ foreach my $caller (keys %{$calls}) {
 	    $include_external and $reftype eq 'direct'
 	        and ! exists $omit_map{$callee};
 	my $style = $styles->{$reftype};
-	my $caller_d = demangle($caller);
-	my $callee_d = demangle($callee);	
-	print "\"$caller_d\" -> \"$callee_d\" [style=$style];\n";
+	my $caller_d = undef;
+	my $callee_d = undef;
+	if ($modules) {
+	  $caller_d = function_to_file($caller);
+	  $callee_d = function_to_file($callee);
+	  if (($caller_d ne $callee_d) && not exists($dumped_module_dependencies{"$caller_d----$callee_d"})) {
+	    # only register inter-module calls that were not registered yet
+	    $dumped_module_dependencies{"$caller_d----$callee_d"} = 1;
+	  } else {
+            $caller_d = undef;
+            $callee_d = undef;
+          }
+	} else {
+	  $caller_d = demangle($caller);
+	  $callee_d = demangle($callee);
+	}
+	print "\"$caller_d\" -> \"$callee_d\" [style=$style];\n" if ($caller_d && $callee_d);
     }
 }
 print "\n}\n";
