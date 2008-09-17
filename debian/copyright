@@ -1,0 +1,12 @@
+This package was Debianized by Antonio Terceiro <terceiro@softwarelivre.org>,
+on Wed Sep 17 08:33:54 BRT 2008.
+
+Copyright (c) 1994-2006 Andreas Gustafsson
+
+This program is free software; you can redistribute it and/or
+modify it under the same terms as Perl itself.
+
+The Debian packaging is Copyright (c) Antonio Terceiro
+<terceiro@softwarelivre.org>, and is licensed under the same terms as the egypt
+package itself.
+
