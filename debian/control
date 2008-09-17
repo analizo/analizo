@@ -1,5 +1,4 @@
 Source: egypt
-Build-Depends: cdbs
 Section: devel
 Priority: extra
 Maintainer: Antonio Terceiro <terceiro@softwarelivre.org>
