@@ -136,6 +136,7 @@ Andreas Gustafsson
 
 use strict;
 use Getopt::Long;
+use File::Basename;
 
 use vars qw($VERSION);
 
@@ -225,6 +226,7 @@ print "digraph callgraph {\n";
 if ($cluster) {
 	foreach my $file (keys(%{$files})) {
 		print "subgraph \"cluster_$file\" {\n";
+		printf "  label  = \"%s\";\n", basename($file);
 		foreach my $function (@{$files->{$file}}) {
 			printf "  node [label=\"%s\"] %s;\n", $function, demangle($function);
 		}
