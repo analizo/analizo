@@ -33,6 +33,15 @@ external functions.
 
 =back
 
+=head1 INPUT FILES
+
+egypt can process any number of RTL files passed to it on the command line. If
+you pass directories in the command line, egypt will find those directories for
+files that match *.rtl and *.expand, and process them.
+
+If no input files are given in the command line, egypt will expect the RTL data
+in the standard input.
+
 =head1 HOW IT WORKS
 
 The two major tasks in creating a call graph are analyzing the syntax
@@ -131,6 +140,8 @@ Andreas Gustafsson
 
 use strict;
 use Getopt::Long;
+use File::Basename;
+use File::Find;
 
 use vars qw($VERSION);
 
@@ -171,6 +182,29 @@ sub demangle {
 
 GetOptions('omit=s' => \@omit,
 	   'include-external' => \$include_external);
+
+my @input_files = ();
+my $files_passed = scalar(@ARGV);
+while (scalar(@ARGV)) {
+  my $input_file = shift(@ARGV);
+  if (-d $input_file) {
+    # search the directory
+    print STDERR "I: Traversing directory $input_file ...\n";
+    find(sub { push(@input_files, $File::Find::name) if basename($File::Find::name) =~ /\.(rtl|expand)$/  }, ($input_file));
+  } else {
+    # regular files
+    if (-r $input_file) {
+      push(@input_files, $input_file);
+    } else {
+      print STDERR "W: $input_file is not readable (or doesn't exist at all).\n"
+    }
+  }
+}
+if ($files_passed && (scalar(@input_files) == 0)) {
+  print STDERR "E: No readable input files!\n";
+  exit(1);
+}
+@ARGV = @input_files;
 
 @omit = split(/,/, join(',', @omit));
 
