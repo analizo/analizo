@@ -271,10 +271,11 @@ foreach my $caller (keys %{$calls}) {
 	next unless exists($calls->{$callee}) or
 	    $include_external and $reftype eq 'direct'
 	        and ! exists $omit_map{$callee};
-	my $style = $styles->{$reftype};
+	my $style = undef;
 	my $caller_d = undef;
 	my $callee_d = undef;
 	if ($modules) {
+	  $style = 'solid';
 	  $caller_d = function_to_file($caller);
 	  $callee_d = function_to_file($callee);
 	  if (($caller_d ne $callee_d) && not exists($dumped_module_dependencies{"$caller_d----$callee_d"})) {
@@ -285,6 +286,7 @@ foreach my $caller (keys %{$calls}) {
             $callee_d = undef;
           }
 	} else {
+	  $style = $styles->{$reftype};
 	  $caller_d = demangle($caller);
 	  $callee_d = demangle($callee);
 	}
