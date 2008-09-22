@@ -256,7 +256,7 @@ if ($cluster) {
 		print "subgraph \"cluster_$file\" {\n";
 		printf "  label  = \"%s\";\n", moduleName($file);
 		foreach my $function (@{$files->{$file}}) {
-			printf "  node [label=\"%s\"] %s;\n", $function, demangle($function);
+			printf "  node [label=\"%s\"] \"%s\";\n", demangle($function), demangle($function);
 		}
 		print "}\n"
 	}
