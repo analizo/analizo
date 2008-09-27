@@ -6,8 +6,8 @@ egypt - create call graph from gcc RTL dump
 
 =head1 SYNOPISIS
 
- egypt [--omit function,function,...] [--include-external] <rtl-file>... | dotty -
- egypt [--omit function,function,...] [--include-external] <rtl-file>... | dot <dot-options>
+ egypt [OPTIONS] <rtl-file>... | dotty -
+ egypt [OPTIONS] <rtl-file>... | dot <dot-options>
 
 =head1 DESCRIPTION
 
@@ -17,12 +17,12 @@ Egypt is a simple tool for creating call graphs of C programs.
 
 =over 8
 
-=item omit
+=item --omit function,function
 
 Omit the given functions from the call graph.  Multiple function names
 may be given separated by commas.
 
-=item include-external
+=item --include-external
 
 Include calls to external functions in the call graph.  A function is
 considered external if it is not defined in any of the input files.
@@ -31,7 +31,28 @@ default, such calls are not shown.  Even with this option, only direct
 calls will be shown; there is no way to show indirect calls to
 external functions.
 
+=item --cluster
+
+Cluster the functions into files, so you can see in which files are the calling
+and called functions.
+
+=item --modules
+
+Group the functions by modules(files), and only represent calls between
+modules. This is useful to see the dependencies between the modules of the
+program, intead of focusing on specific functions. It doesn't make sense to use
+--modules together with --cluster.
+
 =back
+
+=head1 INPUT FILES
+
+egypt can process any number of RTL files passed to it on the command line. If
+you pass directories in the command line, egypt will find those directories for
+files that match *.rtl and *.expand, and process them.
+
+If no input files are given in the command line, egypt will expect the RTL data
+in the standard input.
 
 =head1 HOW IT WORKS
 
@@ -131,6 +152,8 @@ Andreas Gustafsson
 
 use strict;
 use Getopt::Long;
+use File::Basename;
+use File::Find;
 
 use vars qw($VERSION);
 
@@ -154,9 +177,42 @@ my $demangle = { };
 # The current function
 my $curfunc;
 
+# function/file
+my $files = {};
+my %functions = ();
+
+sub add_function_to_file {
+  my ($function, $file) = @_;
+
+  # record which functions are contained by given file
+  if (exists($files->{$file})) {
+    push(@{$files->{$file}}, $function);
+  } else {
+    $files->{$file} = [$function];
+  }
+
+  # record in which file the function is contained
+  $functions{$function} = $file;
+}
+
+sub function_to_file {
+  my $function = shift;
+  return moduleName($functions{$function});
+}
+
+sub moduleName {
+  my $filename = shift;
+  $filename = basename($filename);
+  $filename =~ s/\.\d+r\.expand$//;
+
+  return $filename;
+}
+
 # Functions to omit
 my @omit = ();
 my $include_external = 0;
+my $cluster = 0;
+my $modules = 0;
 
 # Mapping from symbol reference types to dot styles
 my $styles = {
@@ -170,7 +226,33 @@ sub demangle {
 }
 
 GetOptions('omit=s' => \@omit,
-	   'include-external' => \$include_external);
+	   'include-external' => \$include_external,
+	   'cluster' => \$cluster,
+	   'modules' => \$modules,
+);
+
+my @input_files = ();
+my $files_passed = scalar(@ARGV);
+while (scalar(@ARGV)) {
+  my $input_file = shift(@ARGV);
+  if (-d $input_file) {
+    # search the directory
+    print STDERR "I: Traversing directory $input_file ...\n";
+    find(sub { push(@input_files, $File::Find::name) if basename($File::Find::name) =~ /\.(rtl|expand)$/  }, ($input_file));
+  } else {
+    # regular files
+    if (-r $input_file) {
+      push(@input_files, $input_file);
+    } else {
+      print STDERR "W: $input_file is not readable (or doesn't exist at all).\n"
+    }
+  }
+}
+if ($files_passed && (scalar(@input_files) == 0)) {
+  print STDERR "E: No readable input files!\n";
+  exit(1);
+}
+@ARGV = @input_files;
 
 @omit = split(/,/, join(',', @omit));
 
@@ -180,11 +262,13 @@ while (<>) {
 	# pre-gcc4 style
 	$curfunc = $1;
 	$calls->{$curfunc} = { } if ! exists($calls->{$curfunc});
+	add_function_to_file($curfunc, $ARGV);
     } elsif (/^;; Function (.*)\s+\((\S+)\)$/) {
 	# gcc4 style
 	$curfunc = $2;
 	$demangle->{$curfunc} = $1;
 	$calls->{$curfunc} = { } if ! exists($calls->{$curfunc});
+	add_function_to_file($curfunc, $ARGV);
     }
     if (/^.*\(call.*"(.*)".*$/) {
 	$calls->{$curfunc}->{$1} = "direct";
@@ -200,6 +284,18 @@ my %omit_map;
 
 print "digraph callgraph {\n";
 
+if ($cluster) {
+	foreach my $file (keys(%{$files})) {
+		print "subgraph \"cluster_$file\" {\n";
+		printf "  label  = \"%s\";\n", moduleName($file);
+		foreach my $function (@{$files->{$file}}) {
+			printf "  node [label=\"%s\"] \"%s\";\n", demangle($function), demangle($function);
+		}
+		print "}\n"
+	}
+}
+
+my %dumped_module_dependencies = ();
 foreach my $caller (keys %{$calls}) {
     foreach my $callee (keys %{$calls->{$caller}}) {
 	my $reftype = $calls->{$caller}->{$callee};
@@ -208,10 +304,26 @@ foreach my $caller (keys %{$calls}) {
 	next unless exists($calls->{$callee}) or
 	    $include_external and $reftype eq 'direct'
 	        and ! exists $omit_map{$callee};
-	my $style = $styles->{$reftype};
-	my $caller_d = demangle($caller);
-	my $callee_d = demangle($callee);	
-	print "\"$caller_d\" -> \"$callee_d\" [style=$style];\n";
+	my $style = undef;
+	my $caller_d = undef;
+	my $callee_d = undef;
+	if ($modules) {
+	  $style = 'solid';
+	  $caller_d = function_to_file($caller);
+	  $callee_d = function_to_file($callee);
+	  if (($caller_d ne $callee_d) && not exists($dumped_module_dependencies{"$caller_d----$callee_d"})) {
+	    # only register inter-module calls that were not registered yet
+	    $dumped_module_dependencies{"$caller_d----$callee_d"} = 1;
+	  } else {
+            $caller_d = undef;
+            $callee_d = undef;
+          }
+	} else {
+	  $style = $styles->{$reftype};
+	  $caller_d = demangle($caller);
+	  $callee_d = demangle($callee);
+	}
+	print "\"$caller_d\" -> \"$callee_d\" [style=$style];\n" if ($caller_d && $callee_d);
     }
 }
 print "\n}\n";
