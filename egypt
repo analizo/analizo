@@ -297,12 +297,9 @@ if ($modules) {
 			next unless exists($calls->{$callee}) or
 				$include_external and $reftype eq 'direct'
 				and ! exists $omit_map{$callee};
-			my $style = undef;
-			my $caller_d = undef;
-			my $callee_d = undef;
-			$style = $styles->{$reftype};
-			$caller_d = demangle($caller);
-			$callee_d = demangle($callee);
+			my $style = $styles->{$reftype};
+			my $caller_d = demangle($caller);
+			my $callee_d = demangle($callee);
 			print "\"$caller_d\" -> \"$callee_d\" [style=$style];\n" if ($caller_d && $callee_d);
 		}
 	}
