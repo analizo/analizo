@@ -40,8 +40,12 @@ and called functions.
 
 Group the functions by modules(files), and only represent calls between
 modules. This is useful to see the dependencies between the modules of the
-program, intead of focusing on specific functions. It doesn't make sense to use
---modules together with --cluster.
+program, intead of focusing on specific functions. The arrows between the
+modules will be labelled with a number that represents the number of different
+places in which the calling module calls functions in the called module (i.e.
+how many times module A calls module B).
+
+It doesn't make much sense to use --modules together with --cluster.
 
 =back
 
@@ -197,6 +201,7 @@ sub add_function_to_file {
 
 sub function_to_file {
   my $function = shift;
+  return undef if !exists($functions{$function});
   return moduleName($functions{$function});
 }
 
@@ -295,35 +300,45 @@ if ($cluster) {
 	}
 }
 
-my %dumped_module_dependencies = ();
-foreach my $caller (keys %{$calls}) {
-    foreach my $callee (keys %{$calls->{$caller}}) {
-	my $reftype = $calls->{$caller}->{$callee};
-	# If the referenced symbol is not a defined function
-	# or a direct call to an external function, ignore it.
-	next unless exists($calls->{$callee}) or
-	    $include_external and $reftype eq 'direct'
-	        and ! exists $omit_map{$callee};
-	my $style = undef;
-	my $caller_d = undef;
-	my $callee_d = undef;
-	if ($modules) {
-	  $style = 'solid';
-	  $caller_d = function_to_file($caller);
-	  $callee_d = function_to_file($callee);
-	  if (($caller_d ne $callee_d) && not exists($dumped_module_dependencies{"$caller_d----$callee_d"})) {
-	    # only register inter-module calls that were not registered yet
-	    $dumped_module_dependencies{"$caller_d----$callee_d"} = 1;
-	  } else {
-            $caller_d = undef;
-            $callee_d = undef;
-          }
-	} else {
-	  $style = $styles->{$reftype};
-	  $caller_d = demangle($caller);
-	  $callee_d = demangle($callee);
+if ($modules) {
+	my $modules_dependencies = { };
+	foreach my $caller (keys %{$calls}) {
+		foreach my $callee (keys %{$calls->{$caller}}) {
+			my $calling_module = function_to_file($caller);
+			my $called_module = function_to_file($callee);
+			next unless (defined($calling_module) && defined($called_module) && ($calling_module ne $called_module));
+			$modules_dependencies->{$calling_module} = { } if !exists($modules_dependencies->{$calling_module});
+			if (exists $modules_dependencies->{$calling_module}->{$called_module}) {
+				$modules_dependencies->{$calling_module}->{$called_module} += 1;
+			} else {
+				$modules_dependencies->{$calling_module}->{$called_module} = 1;
+			}
+		}
 	}
-	print "\"$caller_d\" -> \"$callee_d\" [style=$style];\n" if ($caller_d && $callee_d);
-    }
+	foreach my $calling_module (keys %{$modules_dependencies}) {
+		foreach my $called_module (keys %{$modules_dependencies->{$calling_module}}) {
+			my $strength = $modules_dependencies->{$calling_module}->{$called_module};
+			printf "\"%s\" -> \"%s\" [style=solid,label=%d]\n", $calling_module, $called_module, $strength;
+		}
+	}
+} else {
+	foreach my $caller (keys %{$calls}) {
+		foreach my $callee (keys %{$calls->{$caller}}) {
+			my $reftype = $calls->{$caller}->{$callee};
+			# If the referenced symbol is not a defined function
+			# or a direct call to an external function, ignore it.
+			next unless exists($calls->{$callee}) or
+				$include_external and $reftype eq 'direct'
+				and ! exists $omit_map{$callee};
+			my $style = undef;
+			my $caller_d = undef;
+			my $callee_d = undef;
+			$style = $styles->{$reftype};
+			$caller_d = demangle($caller);
+			$callee_d = demangle($callee);
+			print "\"$caller_d\" -> \"$callee_d\" [style=$style];\n" if ($caller_d && $callee_d);
+		}
+	}
 }
+
 print "\n}\n";
