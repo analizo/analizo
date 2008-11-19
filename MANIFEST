@@ -2,3 +2,5 @@ MANIFEST                                 This file
 Makefile.PL                              Makefile generator
 egypt                                    The program
 META.yml                                 Module meta-data (added by MakeMaker)
+Egypt/Output/DOT.pm
+t/01_dot_output.t
