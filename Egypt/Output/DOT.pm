@@ -52,7 +52,8 @@ sub string {
     # listing raw dependency info
     foreach my $caller (keys(%{$self->{calls}})) {
       foreach my $callee (keys(%{$self->{calls}->{$caller}})) {
-        $result .= "\"$caller\" -> \"$callee\" [style=solid];\n";
+        my $style = _reftype_to_style($self->{calls}->{$caller}->{$callee});
+        $result .= "\"$caller\" -> \"$callee\" [style=$style];\n";
       }
     }
   }
@@ -103,6 +104,15 @@ sub _file_to_module {
   my $filename = shift;
   $filename =~ s/\.r\d+\.expand$//;
   return $filename;
+}
+
+sub _reftype_to_style {
+  my $reftype = shift;
+  my %styles = (
+    'direct' => 'solid',
+    'indirect' => 'dotted',
+  );
+  return $styles{$reftype} || 'solid';
 }
 
 1;
