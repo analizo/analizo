@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use base qw(Class::Accessor::Fast);
 
-Egypt::Output::DOT->mk_accessors(qw(filename cluster group_by_module));
+Egypt::Output::DOT->mk_accessors(qw(filename cluster group_by_module include_externals));
 
 sub new {
   my $package = shift;
@@ -13,6 +13,8 @@ sub new {
     calls => {},
     modules => {},
     functions => {},
+    omitted => {},
+    demangled => {},
   );
   return bless { @defaults, @_ }, __PACKAGE__;
 }
@@ -50,10 +52,10 @@ sub string {
 
   } else {
     # listing raw dependency info
-    foreach my $caller (keys(%{$self->{calls}})) {
-      foreach my $callee (keys(%{$self->{calls}->{$caller}})) {
+    foreach my $caller (grep { $self->_include_caller($_) } keys(%{$self->{calls}})) {
+      foreach my $callee (grep { $self->_include_callee($_) } keys(%{$self->{calls}->{$caller}})) {
         my $style = _reftype_to_style($self->{calls}->{$caller}->{$callee});
-        $result .= "\"$caller\" -> \"$callee\" [style=$style];\n";
+        $result .= sprintf("\"%s\" -> \"%s\" [style=%s];\n", $self->_demangle($caller), $self->_demangle($callee), $style);
       }
     }
   }
@@ -69,8 +71,8 @@ sub add_call {
   $self->{calls}->{$caller}->{$callee} = $reftype;
 }
 
-sub add_in_module {
-  my ($self, $module, $function) = @_;
+sub declare_function {
+  my ($self, $module, $function, $demangled) = @_;
 
   # map module to functions
   $self->{modules}->{$module} = [] if !exists($self->{modules}->{$module});
@@ -78,6 +80,24 @@ sub add_in_module {
 
   # map function to module
   $self->{functions}->{$function} = $module;
+
+  # record mangled/demangled name mapping
+  $self->{demangled}->{$function} = $demangled;
+}
+
+sub omit {
+  my ($self, $omitted) = @_;
+  $self->{omitted}->{$omitted} = 1;
+}
+
+sub _include_caller {
+  my ($self, $function) = @_;
+  return !exists($self->{omitted}->{$function});
+}
+
+sub _include_callee {
+  my ($self, $function) = @_;
+  return $self->_include_caller($function) && (exists($self->{functions}->{$function}) || $self->include_externals)
 }
 
 sub _calculate_clusters {
@@ -87,7 +107,8 @@ sub _calculate_clusters {
     $result .= "subgraph \"cluster_$module\" {\n";
     $result .= sprintf("  label \"%s\";\n", _file_to_module($module));
     foreach my $function (@{$self->{modules}->{$module}}) {
-      $result .= "  node [label=\"$function\"] \"$function\";\n";
+      my $demangled = $self->_demangle($function);
+      $result .= sprintf("  node [label=\"%s\"] \"%s\";\n", $demangled, $demangled);
     }
     $result .= "}\n";
   }
@@ -107,12 +128,17 @@ sub _file_to_module {
 }
 
 sub _reftype_to_style {
-  my $reftype = shift;
+  my $reftype = shift || 'direct';
   my %styles = (
     'direct' => 'solid',
     'indirect' => 'dotted',
   );
   return $styles{$reftype} || 'solid';
+}
+
+sub _demangle {
+  my ($self, $mangled) = @_;
+  return $self->{demangled}->{$mangled} || $mangled;
 }
 
 1;
