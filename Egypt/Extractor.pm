@@ -7,6 +7,11 @@ use base qw(Class::Accessor::Fast);
 
 use Egypt::Output::DOT;
 
+use File::Basename;
+use File::Find;
+
+our $QUIET = undef;
+
 __PACKAGE__->mk_accessors(qw(output));
 __PACKAGE__->mk_ro_accessors(qw(current_function));
 
@@ -74,6 +79,49 @@ sub _read_variable_declarations {
     }
   }
   close TAGS;
+}
+
+sub process {
+  my $self = shift;
+  my @files = ();
+  foreach my $arg (@_) {
+    if (-d $arg) {
+      # directories
+      info("Traversing directory $arg ...");
+      find(sub { push(@files, $File::Find::name) if basename($File::Find::name) =~ /\.(rtl|expand)$/  }, ($arg));
+    } else {
+      # files
+      if (-r $arg) {
+        push(@files, $arg);
+      } else {
+        warning("$arg is not readable (or doesn't exist at all).");
+      }
+    }
+  }
+
+  foreach my $file (@files) {
+    my $modulename = $file;
+    $modulename =~ s/\.\d+r\.expand$//;
+    $self->current_module($modulename);
+
+    open FILE, '<', $file or die("Cannot read $file");
+    while (<FILE>) {
+      $self->feed($_);
+    }
+    close FILE;
+  }
+}
+
+sub info {
+  return if $QUIET;
+  my $msg = shift;
+  print STDERR "I: $msg\n";
+}
+
+sub warning {
+  return if $QUIET;
+  my $msg = shift;
+  print STDERR "W: $msg\n";
 }
 
 1;

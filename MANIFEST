@@ -1,8 +1,17 @@
-MANIFEST                                 This file
-Makefile.PL                              Makefile generator
-egypt                                    The program
-META.yml                                 Module meta-data (added by MakeMaker)
+MANIFEST
+MANIFEST.SKIP
+Makefile.PL
+egypt
+META.yml
+TODO
 Egypt/Output/DOT.pm
 Egypt/Extractor.pm
 t/01_dot_output.t
 t/02_extractor.t
+t/sample/Makefile
+t/sample/module1.c
+t/sample/module2.c
+t/sample/module2.h
+t/sample/module3.c
+t/sample/module3.h
+

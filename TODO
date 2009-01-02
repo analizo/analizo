@@ -1,4 +1,3 @@
-* Implement file/directory reading functionality to Egypt::Extractor
 * write black-box tests for the old egypt script, using $whatever.
 * rewrite the egypt script to use Egypt::Extractor and Egypt::Output::DOT. All
   black-box tests must pass.
