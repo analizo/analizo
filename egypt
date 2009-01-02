@@ -161,7 +161,7 @@ use File::Find;
 
 use vars qw($VERSION);
 
-$VERSION = "1.6";
+$VERSION = "1.7";
 
 # A data structure containing information about potential function
 # calls.  This is a reference to a hash table where the key is a
