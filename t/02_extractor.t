@@ -2,6 +2,7 @@ use Test::More 'no_plan';
 
 use strict;
 use warnings;
+use File::Basename;
 
 use_ok('Egypt::Extractor');
 
@@ -45,8 +46,21 @@ is('Class::method(int)', $extractor->output->_demangle('MangledName'));
 is('MangledName', $extractor->current_function);
 
 ##############################################################################
-# TODO test using ctags for detecting variable declarations
+# BEGIN test detecting variable declarations
 ##############################################################################
+$extractor = new Egypt::Extractor;
+my $testfile = dirname(__FILE__) . "/tmp.c";
+print "[$testfile]\n";
+open FILE, ">", $testfile;
+print FILE <<EOF
+#include <stdio.h>
+int myvariable = 0;
+EOF
+;
+close FILE;
+$extractor->current_module($testfile);
+ok(grep { $_ eq 'myvariable' } @{$extractor->output->{modules}->{$testfile}});
+unlink $testfile;
 
 ##############################################################################
 # BEGIN test detecing a direct call

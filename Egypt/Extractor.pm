@@ -7,7 +7,7 @@ use base qw(Class::Accessor::Fast);
 
 use Egypt::Output::DOT;
 
-__PACKAGE__->mk_accessors(qw(output current_module));
+__PACKAGE__->mk_accessors(qw(output));
 __PACKAGE__->mk_ro_accessors(qw(current_function));
 
 sub new {
@@ -48,5 +48,32 @@ sub feed {
 
 }
 
+sub current_module {
+  my $self = shift;
+
+  # set the new value
+  if (scalar @_) {
+    $self->{current_module} = shift;
+  }
+
+  # read variable declarations
+  $self->_read_variable_declarations();
+
+  return $self->{current_module};
+}
+
+sub _read_variable_declarations {
+  my $self = shift;
+  return unless -r $self->{current_module};
+  open TAGS, sprintf('ctags-exuberant -f - --fields=K %s |' ,$self->{current_module});
+  while (<TAGS>) {
+    chomp;
+    my @fields = split(/\t/);
+    if ($fields[3] eq 'variable') {
+      $self->output->declare_variable($self->{current_module}, $fields[0]);
+    }
+  }
+  close TAGS;
+}
 
 1;
