@@ -2,7 +2,6 @@ MANIFEST
 MANIFEST.SKIP
 Makefile.PL
 egypt
-META.yml
 TODO
 Egypt/Output/DOT.pm
 Egypt/Extractor.pm
