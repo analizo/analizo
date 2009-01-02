@@ -3,4 +3,6 @@ Makefile.PL                              Makefile generator
 egypt                                    The program
 META.yml                                 Module meta-data (added by MakeMaker)
 Egypt/Output/DOT.pm
+Egypt/Extractor.pm
 t/01_dot_output.t
+t/02_extractor.t
