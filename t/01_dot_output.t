@@ -282,3 +282,25 @@ is(
   'must list arrow sources in in lexicographic order'
 );
 
+# BEGIN test use of variables
+$output = new Egypt::Output::DOT;
+$output->declare_function('module1.c.r1234.expand', 'function1');
+$output->declare_variable('module2.c', 'myvariable');
+$output->add_variable_use('function1', 'myvariable');
+is(
+  $output->string,
+  'digraph callgraph {
+"function1" -> "myvariable" [style=dashed];
+}
+'
+);
+
+# test grouping by module
+$output->group_by_module(1);
+is(
+  $output->string,
+  'digraph callgraph {
+"module1.c" -> "module2.c" [style=solid,label=1];
+}
+'
+);

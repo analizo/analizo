@@ -71,6 +71,12 @@ sub add_call {
   $self->{calls}->{$caller}->{$callee} = $reftype;
 }
 
+sub add_variable_use {
+  my $self = shift;
+  my ($using_module, $used_var) = @_;
+  $self->add_call($using_module, $used_var, 'variable');
+}
+
 sub declare_function {
   my ($self, $module, $function, $demangled) = @_;
 
@@ -83,6 +89,11 @@ sub declare_function {
 
   # record mangled/demangled name mapping
   $self->{demangled}->{$function} = $demangled;
+}
+
+sub declare_variable {
+  my $self = shift;
+  $self->declare_function(@_);
 }
 
 sub omit {
@@ -132,6 +143,7 @@ sub _reftype_to_style {
   my %styles = (
     'direct' => 'solid',
     'indirect' => 'dotted',
+    'variable' => 'dashed',
   );
   return $styles{$reftype} || 'solid';
 }
