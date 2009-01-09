@@ -91,7 +91,6 @@ is($extractor->output->{calls}->{'callerfunction'}->{'myvariable'}, 'variable');
 my $sample_dir = dirname(__FILE__) . '/sample';
 system(sprintf('make -s -C %s', $sample_dir));
 
-use Data::Dumper;
 # one file
 $extractor = new Egypt::Extractor;
 $extractor->process($sample_dir . '/module1.c.131r.expand');
