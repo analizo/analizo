@@ -18,6 +18,9 @@ fi
 
 . $(dirname $0)/config.sh
 
+# build everything just in case
+make
+
 # run command and save result
 echo "${@}" > ${expected_cmdline}
 "${@}" > ${expected_stdout} 2> ${expected_stderr}
