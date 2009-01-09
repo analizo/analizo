@@ -1,0 +1,40 @@
+#!/bin/sh
+
+test_name="${1}"
+if [ -z "${test_name}" ]; then
+  echo "usage: $0 <test-name>"
+  exit 1
+fi
+
+. "$(dirname $0)/config.sh"
+
+if [ ! -f "${expected_cmdline}" ]; then
+  echo "no such test: ${test_name}"
+  exit 2
+fi
+
+actual_stdout=/tmp/stdout.egypttest
+actual_stderr=/tmp/stderr.egypttest
+actual_status=/tmp/status.egypttest
+
+. ${expected_cmdline} > ${actual_stdout} 2> ${actual_stderr}
+echo "$?" > ${actual_status}
+
+expected_status_value="$(cat ${expected_status})"
+if [ -f "${expected_status}" ] && ! diff -u ${expected_status} ${actual_status} ; then
+  exit 3
+fi
+
+if [ -f "${expected_stdout}" ] && ! diff -u ${expected_stdout} ${actual_stdout}; then
+  exit 4
+fi
+
+if [ -f "${expected_stderr}" ] && ! diff -u ${expected_stderr} ${actual_stderr}; then
+  exit 5
+fi
+
+rm -f ${actual_stdout}
+rm -f ${actual_stderr}
+rm -f ${actual_status}
+
+exit 0

@@ -1,0 +1,52 @@
+#!/bin/sh
+
+usage() {
+  echo "usage: $0 <test-name> COMMAND"
+  exit 1
+}
+
+test_name="$1"
+
+if [ -z $test_name ]; then
+  usage
+fi
+shift
+
+if [ -z "${1}" ]; then
+  usage
+fi
+
+. $(dirname $0)/config.sh
+
+# run command and save result
+echo "${@}" > ${expected_cmdline}
+"${@}" > ${expected_stdout} 2> ${expected_stderr}
+echo "$?" > ${expected_status}
+
+# display results
+echo "== Command line:"
+cat ${expected_cmdline}
+
+echo "== Return status:"
+cat ${expected_status}
+echo "=="
+echo -n "Keep this for checking? (Y/n)"; read response
+if [ "${response}" = 'N' ] || [ "${response}" = 'n' ]; then
+  rm -f ${expected_status}
+fi
+
+echo "== Standard output:"
+cat ${expected_stdout}
+echo "=="
+echo -n "Keep this for checking? (Y/n)"; read response
+if [ "${response}" = 'N' ] || [ "${response}" = 'n' ]; then
+  rm -f ${expected_stdout}
+fi
+
+echo "== Standard error:"
+cat ${expected_stderr}
+echo "=="
+echo -n "Keep this for checking? (Y/n)"; read response
+if [ "${response}" = 'N' ] || [ "${response}" = 'n' ]; then
+  rm -f ${expected_stderr}
+fi

@@ -1,0 +1,5 @@
+digraph callgraph {
+"module1.c" -> "module2.c" [style=solid,label=2]
+"module1.c" -> "module3.c" [style=solid,label=1]
+
+}
