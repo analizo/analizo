@@ -4,14 +4,24 @@
 
 egypt - create call graph from gcc RTL dump
 
-=head1 SYNOPISIS
+=head1 SYNOPSIS
 
+ egypt [OPTIONS] <directory>... | dotty -
  egypt [OPTIONS] <rtl-file>... | dotty -
  egypt [OPTIONS] <rtl-file>... | dot <dot-options>
 
 =head1 DESCRIPTION
 
 Egypt is a simple tool for creating call graphs of C programs.
+
+=head1 ARGUMENTS
+
+egypt can process any number of RTL files passed to it on the command line. If
+you pass directories in the command line, egypt will find those directories for
+files that match *.rtl and *.expand, and process them.
+
+If no input files are given in the command line, egypt will expect the RTL data
+in the standard input.
 
 =head1 OPTIONS
 
@@ -47,16 +57,15 @@ how many times module A calls module B).
 
 It doesn't make much sense to use --modules together with --cluster.
 
+=item --version
+
+Displays egypt version information and exits.
+
+=item --help
+
+Displays help on command line syntax and options.
+
 =back
-
-=head1 INPUT FILES
-
-egypt can process any number of RTL files passed to it on the command line. If
-you pass directories in the command line, egypt will find those directories for
-files that match *.rtl and *.expand, and process them.
-
-If no input files are given in the command line, egypt will expect the RTL data
-in the standard input.
 
 =head1 HOW IT WORKS
 
@@ -143,7 +152,8 @@ L<gcc>, L<dotty>, L<dot>, L<neato>
 
 =head1 COPYRIGHT
 
-Copyright 1994-2006 Andreas Gustafsson
+Copyright (c) 1994-2006 Andreas Gustafsson
+Copyright (c) 2008-2009 Antonio Terceiro
 
 This program is free software; you can redistribute it and/or
 modify it under the same terms as Perl itself.
@@ -156,6 +166,7 @@ Andreas Gustafsson
 
 use strict;
 use Getopt::Long;
+use Pod::Usage;
 use File::Basename;
 use File::Find;
 
@@ -218,6 +229,8 @@ my @omit = ();
 my $include_external = 0;
 my $cluster = 0;
 my $modules = 0;
+my $version = 0;
+my $help = 0;
 
 # Mapping from symbol reference types to dot styles
 my $styles = {
@@ -234,7 +247,19 @@ GetOptions('omit=s' => \@omit,
 	   'include-external' => \$include_external,
 	   'cluster' => \$cluster,
 	   'modules' => \$modules,
+	   'version' => \$version,
+	   'help' => \$help,
 );
+
+if ($help) {
+  pod2usage(0);
+  exit 0;
+}
+
+if ($version) {
+  print "egypt $VERSION\n";
+  exit 0;
+}
 
 my @input_files = ();
 my $files_passed = scalar(@ARGV);

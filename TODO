@@ -6,3 +6,4 @@
   current Egypt::Output::DOT class seems to be about holding the design, not
   about generating output.
 * do some marketing of the tool.
+* rewrite the main script to use Getopt::Euclid.
