@@ -7,4 +7,8 @@ WriteMakefile(
   AUTHOR => 'Antonio Terceiro <terceiro@softwarelivre.org>',
   LICENSE => 'perl',
   ABSTRACT => 'A dependency extractor for C/C++ projects',
+  PREREQ_PM => {
+      'Class::Accessor::Fast' => 0,
+      'Test::Class' => 0,
+  },
 );
