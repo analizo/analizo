@@ -1,0 +1,19 @@
+digraph callgraph {
+subgraph "cluster_./module1.c.131r.expand" {
+  label  = "module1.c";
+  node [label="main"] "main";
+}
+subgraph "cluster_./module3.c.131r.expand" {
+  label  = "module3.c";
+  node [label="callback"] "callback";
+}
+subgraph "cluster_./module2.c.131r.expand" {
+  label  = "module2.c";
+  node [label="say_hello"] "say_hello";
+  node [label="say_bye"] "say_bye";
+}
+"main" -> "callback" [style=dotted];
+"main" -> "say_bye" [style=solid];
+"main" -> "say_hello" [style=solid];
+
+}

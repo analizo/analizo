@@ -1,0 +1,5 @@
+digraph callgraph {
+"main" -> "callback" [style=dotted];
+"main" -> "say_hello" [style=solid];
+
+}
