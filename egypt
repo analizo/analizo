@@ -1,20 +1,28 @@
 #!/usr/bin/perl -w
 
+use Getopt::Euclid;
+
 =head1 NAME
 
 egypt - create call graph from gcc RTL dump
 
-=head1 SYNOPSIS
+=head1 VERSION
 
- egypt [OPTIONS] <directory>... | dotty -
- egypt [OPTIONS] <rtl-file>... | dotty -
- egypt [OPTIONS] <rtl-file>... | dot <dot-options>
+This documentation applies to egypt version 1.7.
+
+=head1 USAGE
+
+  egypt [options] <file>...
 
 =head1 DESCRIPTION
 
 Egypt is a simple tool for creating call graphs of C programs.
 
-=head1 ARGUMENTS
+=head1 REQUIRED ARGUMENTS
+
+=over
+
+=item <file>...
 
 egypt can process any number of RTL files passed to it on the command line. If
 you pass directories in the command line, egypt will find those directories for
@@ -23,14 +31,20 @@ files that match *.rtl and *.expand, and process them.
 If no input files are given in the command line, egypt will expect the RTL data
 in the standard input.
 
+=back
+
 =head1 OPTIONS
 
-=over 8
+=over
 
-=item --omit function,function
+=item --omit <functions>
 
 Omit the given functions from the call graph.  Multiple function names
 may be given separated by commas.
+
+=for Euclid:
+  functions.type: string
+  functions.type.error: --omit must be given a comma-separated list of function names
 
 =item --include-external
 
@@ -158,209 +172,34 @@ Copyright (c) 2008-2009 Antonio Terceiro
 This program is free software; you can redistribute it and/or
 modify it under the same terms as Perl itself.
 
-=head1 AUTHOR
+=head1 AUTHORS
 
-Andreas Gustafsson
+Andreas Gustafsson wrote the original version of egypt. Antonio Terceiro built
+on his work and did a major refactoring while adding several features.
 
 =cut
 
 use strict;
-use Getopt::Long;
-use Pod::Usage;
-use File::Basename;
-use File::Find;
 
-use vars qw($VERSION);
+use Egypt::Extractor;
 
-$VERSION = "1.7";
+my $extractor = new Egypt::Extractor;
 
-# A data structure containing information about potential function
-# calls.  This is a reference to a hash table where the key is a
-# the name of a function (the caller) and the value is a reference
-# to another hash table indexed by the name of a symbol referenced
-# by the caller (the potential callee) and a value of "direct"
-# (if the reference is a direct function call) or "indirect"
-# (if the reference is a non-function-call symbol reference;
-# if the referenced symbol itself turns out to be a function,
-# this will be considered an indirect function call).
-
-my $calls = { };
-
-# A map from mangled C++ names to the corresponding demangled ones
-my $demangle = { };
-
-# The current function
-my $curfunc;
-
-# function/file
-my $files = {};
-my %functions = ();
-
-sub add_function_to_file {
-  my ($function, $file) = @_;
-
-  # record which functions are contained by given file
-  if (exists($files->{$file})) {
-    push(@{$files->{$file}}, $function);
-  } else {
-    $files->{$file} = [$function];
-  }
-
-  # record in which file the function is contained
-  $functions{$function} = $file;
+# functions to omit
+for my $omited (split(/,/, $ARGV{'--omit'} || '')) {
+  $extractor->output->omit($omited);
 }
 
-sub function_to_file {
-  my $function = shift;
-  return undef if !exists($functions{$function});
-  return moduleName($functions{$function});
-}
+# whether to include external functions or not
+$extractor->output->include_externals($ARGV{'--include-external'});
 
-sub moduleName {
-  my $filename = shift;
-  $filename = basename($filename);
-  $filename =~ s/\.\d+r\.expand$//;
+# whether to cluster functions by file or not
+$extractor->output->cluster($ARGV{'--cluster'});
 
-  return $filename;
-}
+# wheter to group by module or not
+$extractor->output->group_by_module($ARGV{'--modules'});
 
-# Functions to omit
-my @omit = ();
-my $include_external = 0;
-my $cluster = 0;
-my $modules = 0;
-my $version = 0;
-my $help = 0;
+$extractor->process(@{$ARGV{'<file>'}});
+print $extractor->output->string;
 
-# Mapping from symbol reference types to dot styles
-my $styles = {
-    direct => 'solid',
-    indirect => 'dotted'
-};
-
-sub demangle {
-    my ($name) = @_;
-    return $demangle->{$name} || $name;
-}
-
-GetOptions('omit=s' => \@omit,
-	   'include-external' => \$include_external,
-	   'cluster' => \$cluster,
-	   'modules' => \$modules,
-	   'version' => \$version,
-	   'help' => \$help,
-);
-
-if ($help) {
-  pod2usage(0);
-  exit 0;
-}
-
-if ($version) {
-  print "egypt $VERSION\n";
-  exit 0;
-}
-
-my @input_files = ();
-my $files_passed = scalar(@ARGV);
-while (scalar(@ARGV)) {
-  my $input_file = shift(@ARGV);
-  if (-d $input_file) {
-    # search the directory
-    print STDERR "I: Traversing directory $input_file ...\n";
-    find(sub { push(@input_files, $File::Find::name) if basename($File::Find::name) =~ /\.(rtl|expand)$/  }, ($input_file));
-  } else {
-    # regular files
-    if (-r $input_file) {
-      push(@input_files, $input_file);
-    } else {
-      print STDERR "W: $input_file is not readable (or doesn't exist at all).\n"
-    }
-  }
-}
-if ($files_passed && (scalar(@input_files) == 0)) {
-  print STDERR "E: No readable input files!\n";
-  exit(1);
-}
-@ARGV = @input_files;
-
-@omit = split(/,/, join(',', @omit));
-
-while (<>) {
-    chomp;
-    if (/^;; Function (\S+)\s*$/) {
-	# pre-gcc4 style
-	$curfunc = $1;
-	$calls->{$curfunc} = { } if ! exists($calls->{$curfunc});
-	add_function_to_file($curfunc, $ARGV);
-    } elsif (/^;; Function (.*)\s+\((\S+)\)$/) {
-	# gcc4 style
-	$curfunc = $2;
-	$demangle->{$curfunc} = $1;
-	$calls->{$curfunc} = { } if ! exists($calls->{$curfunc});
-	add_function_to_file($curfunc, $ARGV);
-    }
-    if (/^.*\(call.*"(.*)".*$/) {
-	$calls->{$curfunc}->{$1} = "direct";
-    } elsif (/^.*\(symbol_ref.*"(.*)".*$/) {
-	$calls->{$curfunc}->{$1} = "indirect";
-    }
-}
-
-delete @$calls{@omit};
-
-my %omit_map;
-@omit_map{@omit} = ();
-
-print "digraph callgraph {\n";
-
-if ($cluster) {
-	foreach my $file (keys(%{$files})) {
-		print "subgraph \"cluster_$file\" {\n";
-		printf "  label  = \"%s\";\n", moduleName($file);
-		foreach my $function (@{$files->{$file}}) {
-			printf "  node [label=\"%s\"] \"%s\";\n", demangle($function), demangle($function);
-		}
-		print "}\n"
-	}
-}
-
-if ($modules) {
-	my $modules_dependencies = { };
-	foreach my $caller (keys %{$calls}) {
-		foreach my $callee (keys %{$calls->{$caller}}) {
-			my $calling_module = function_to_file($caller);
-			my $called_module = function_to_file($callee);
-			next unless (defined($calling_module) && defined($called_module) && ($calling_module ne $called_module));
-			$modules_dependencies->{$calling_module} = { } if !exists($modules_dependencies->{$calling_module});
-			if (exists $modules_dependencies->{$calling_module}->{$called_module}) {
-				$modules_dependencies->{$calling_module}->{$called_module} += 1;
-			} else {
-				$modules_dependencies->{$calling_module}->{$called_module} = 1;
-			}
-		}
-	}
-	foreach my $calling_module (keys %{$modules_dependencies}) {
-		foreach my $called_module (keys %{$modules_dependencies->{$calling_module}}) {
-			my $strength = $modules_dependencies->{$calling_module}->{$called_module};
-			printf "\"%s\" -> \"%s\" [style=solid,label=%d]\n", $calling_module, $called_module, $strength;
-		}
-	}
-} else {
-	foreach my $caller (keys %{$calls}) {
-		foreach my $callee (keys %{$calls->{$caller}}) {
-			my $reftype = $calls->{$caller}->{$callee};
-			# If the referenced symbol is not a defined function
-			# or a direct call to an external function, ignore it.
-			next unless exists($calls->{$callee}) or
-				$include_external and $reftype eq 'direct'
-				and ! exists $omit_map{$callee};
-			my $style = $styles->{$reftype};
-			my $caller_d = demangle($caller);
-			my $callee_d = demangle($callee);
-			print "\"$caller_d\" -> \"$callee_d\" [style=$style];\n" if ($caller_d && $callee_d);
-		}
-	}
-}
-
-print "\n}\n";
+exit(0);

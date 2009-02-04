@@ -2,9 +2,9 @@ digraph callgraph {
 "callback" -> "printf" [style=solid];
 "say_bye" -> "puts" [style=solid];
 "say_hello" -> "puts" [style=solid];
+"main" -> "variable" [style=dashed];
 "main" -> "callback" [style=dotted];
 "main" -> "printf" [style=solid];
 "main" -> "say_bye" [style=solid];
 "main" -> "say_hello" [style=solid];
-
 }

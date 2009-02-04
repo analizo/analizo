@@ -1,5 +1,4 @@
 digraph callgraph {
 "main" -> "say_bye" [style=solid];
 "main" -> "say_hello" [style=solid];
-
 }

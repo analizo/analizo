@@ -59,23 +59,23 @@ sub current_module {
   # set the new value
   if (scalar @_) {
     $self->{current_module} = shift;
-  }
 
-  # read variable declarations
-  $self->_read_variable_declarations();
+    # read variable declarations
+    $self->_read_variable_declarations();
+  }
 
   return $self->{current_module};
 }
 
 sub _read_variable_declarations {
   my $self = shift;
-  return unless -r $self->{current_module};
-  open TAGS, sprintf('ctags-exuberant -f - --fields=K %s |' ,$self->{current_module});
+  return unless -r $self->current_module;
+  open TAGS, sprintf('ctags-exuberant -f - --fields=K %s |', $self->current_module);
   while (<TAGS>) {
     chomp;
     my @fields = split(/\t/);
     if ($fields[3] eq 'variable') {
-      $self->output->declare_variable($self->{current_module}, $fields[0]);
+      $self->output->declare_variable($self->current_module, $fields[0]);
     }
   }
   close TAGS;
@@ -97,6 +97,11 @@ sub process {
         warning("$arg is not readable (or doesn't exist at all).");
       }
     }
+  }
+
+  if (scalar(@files) == 0) {
+    error("No readable input files!");
+    exit(1);
   }
 
   foreach my $file (@files) {
@@ -122,6 +127,12 @@ sub warning {
   return if $QUIET;
   my $msg = shift;
   print STDERR "W: $msg\n";
+}
+
+sub error {
+  return if $QUIET;
+  my $msg = shift;
+  print STDERR "E: $msg\n";
 }
 
 1;

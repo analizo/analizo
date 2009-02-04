@@ -3,6 +3,7 @@ package Egypt::Output::DOT;
 use strict;
 use warnings;
 use base qw(Class::Accessor::Fast);
+use File::Basename;
 
 Egypt::Output::DOT->mk_accessors(qw(filename cluster group_by_module include_externals));
 
@@ -116,7 +117,7 @@ sub _calculate_clusters {
   my $result = "";
   foreach my $module (sort(keys(%{$self->{modules}}))) {
     $result .= "subgraph \"cluster_$module\" {\n";
-    $result .= sprintf("  label \"%s\";\n", _file_to_module($module));
+    $result .= sprintf("  label = \"%s\";\n", _file_to_module($module));
     foreach my $function (@{$self->{modules}->{$module}}) {
       my $demangled = $self->_demangle($function);
       $result .= sprintf("  node [label=\"%s\"] \"%s\";\n", $demangled, $demangled);
@@ -135,7 +136,7 @@ sub _function_to_module {
 sub _file_to_module {
   my $filename = shift;
   $filename =~ s/\.r\d+\.expand$//;
-  return $filename;
+  return basename($filename);
 }
 
 sub _reftype_to_style {

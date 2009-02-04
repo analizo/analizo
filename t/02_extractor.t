@@ -61,7 +61,13 @@ EOF
 close FILE;
 $extractor->current_module($testfile);
 ok(grep { $_ eq 'myvariable' } @{$extractor->output->{modules}->{$testfile}});
+
+$extractor->current_module; # only read the current module
+is(scalar(grep { $_ eq 'myvariable' } @{$extractor->output->{modules}->{$testfile}}), 1, 'must not read variable declarations when reading the name of the current module');
+
+
 unlink $testfile;
+
 
 ##############################################################################
 # BEGIN test detecing a direct call

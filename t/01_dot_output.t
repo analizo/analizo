@@ -182,7 +182,7 @@ is(
   $output->string,
   'digraph callgraph {
 subgraph "cluster_module1" {
-  label "module1";
+  label = "module1";
   node [label="demangled1"] "demangled1";
   node [label="demangled2"] "demangled2";
 }
@@ -207,7 +207,7 @@ is(
   $output->string,
   'digraph callgraph {
 subgraph "cluster_cluster1.c.r1874.expand" {
-  label "cluster1.c";
+  label = "cluster1.c";
   node [label="function1"] "function1";
   node [label="function2"] "function2";
 }
@@ -228,11 +228,11 @@ is(
   $output->string,
   'digraph callgraph {
 subgraph "cluster_cluster1.c.r1874.expand" {
-  label "cluster1.c";
+  label = "cluster1.c";
   node [label="function1"] "function1";
 }
 subgraph "cluster_cluster2.c.r9873.expand" {
-  label "cluster2.c";
+  label = "cluster2.c";
   node [label="function2"] "function2";
   node [label="function3"] "function3";
 }

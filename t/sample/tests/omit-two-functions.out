@@ -1,4 +1,4 @@
 digraph callgraph {
+"main" -> "variable" [style=dashed];
 "main" -> "callback" [style=dotted];
-
 }
