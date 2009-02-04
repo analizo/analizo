@@ -1,9 +1,5 @@
-* write black-box tests for the old egypt script, using $whatever.
-* rewrite the egypt script to use Egypt::Extractor and Egypt::Output::DOT. All
-  black-box tests must pass.
 * split Egypt::Output::DOT in two classes, one for actually generating the
   output and other for holding the design information. Actually most of the
   current Egypt::Output::DOT class seems to be about holding the design, not
   about generating output.
 * do some marketing of the tool.
-* rewrite the main script to use Getopt::Euclid.
