@@ -47,3 +47,5 @@ t/sample/tests/unreadable-file.err
 t/sample/tests/unreadable-file.status
 t/sample/tests/version.cmdline
 t/sample/tests/version.status
+t/03_model.t
+Egypt/Model.pm

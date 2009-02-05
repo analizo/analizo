@@ -184,22 +184,24 @@ use strict;
 use Egypt::Extractor;
 
 my $extractor = new Egypt::Extractor;
+my $model = $extractor->model;
+my $output = new Egypt::Output::DOT(model => $model);
 
 # functions to omit
 for my $omited (split(/,/, $ARGV{'--omit'} || '')) {
-  $extractor->output->omit($omited);
+  $output->omit($omited);
 }
 
 # whether to include external functions or not
-$extractor->output->include_externals($ARGV{'--include-external'});
+$output->include_externals($ARGV{'--include-external'});
 
 # whether to cluster functions by file or not
-$extractor->output->cluster($ARGV{'--cluster'});
+$output->cluster($ARGV{'--cluster'});
 
 # wheter to group by module or not
-$extractor->output->group_by_module($ARGV{'--modules'});
+$output->group_by_module($ARGV{'--modules'});
 
 $extractor->process(@{$ARGV{'<file>'}});
-print $extractor->output->string;
+print $output->string;
 
 exit(0);

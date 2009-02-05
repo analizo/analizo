@@ -1,5 +1,1 @@
-* split Egypt::Output::DOT in two classes, one for actually generating the
-  output and other for holding the design information. Actually most of the
-  current Egypt::Output::DOT class seems to be about holding the design, not
-  about generating output.
 * do some marketing of the tool.

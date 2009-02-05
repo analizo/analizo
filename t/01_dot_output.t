@@ -1,186 +1,217 @@
+package DOTOutputTests;
+use base qw(Test::Class);
+
 use strict;
 use warnings;
 
-use Test::More 'no_plan';
+use Test::More;
 
-my $output;
-
-
-# BEGIN test module declaration
-use_ok('Egypt::Output::DOT');
+use Egypt::Output::DOT;
 
 # BEGIN test constructor
-$output = new Egypt::Output::DOT;
-isa_ok($output, 'Egypt::Output::DOT');
+sub constructor : Tests {
+  my $output = new Egypt::Output::DOT;
+  isa_ok($output, 'Egypt::Output::DOT');
+}
 
 # BEGIN test output filename
+sub filename : Tests  {
+  my $output = new Egypt::Output::DOT;
+  can_ok($output, 'filename');
+}
 
-can_ok($output, 'filename');
+sub filename_passed_to_constructor : Tests {
+  is(
+    (new Egypt::Output::DOT(filename => 'test.dot'))->filename,
+    'test.dot',
+    'must store filename passed to constructor'
+  );
+}
 
-is(
-  (new Egypt::Output::DOT(filename => 'test.dot'))->filename,
-  'test.dot',
-  'must store filename passed to constructor'
-);
+sub default_filename : Tests {
+  is(
+    (new Egypt::Output::DOT)->filename,
+    'output.dot',
+    'must use "output.dot" as output filename by default'
+  );
+}
 
-is(
-  (new Egypt::Output::DOT)->filename,
-  'output.dot',
-  'must use "output.dot" as output filename by default'
-);
-
-$output = new Egypt::Output::DOT();
-$output->filename('myfile.dot');
-is(
-  $output->filename(),
-  'myfile.dot',
-  'must be able to set output filename'
-);
+sub setting_filename : Tests {
+  my $output = new Egypt::Output::DOT();
+  $output->filename('myfile.dot');
+  is(
+    $output->filename(),
+    'myfile.dot',
+    'must be able to set output filename'
+  );
+}
 
 # BEGIN test empty call graph
-$output = new Egypt::Output::DOT;
-is(
-  $output->string(),
-  "digraph callgraph {\n}\n",
-  'empty output must give empty digraph'
-);
+sub empty_call_graph : Tests {
+  my $output = new Egypt::Output::DOT;
+  is(
+    $output->string(),
+    "digraph callgraph {\n}\n",
+    'empty output must give empty digraph'
+  );
+}
+
+sub must_have_a_model : Tests {
+  my $output = new Egypt::Output::DOT;
+  isa_ok($output->model, 'Egypt::Model', 'must have an associated instance of Egypt::Model');
+}
+
+sub must_be_able_to_set_a_model : Tests {
+  my $model = new Egypt::Model;
+  my $output = new Egypt::Output::DOT(model => $model);
+  is($output->model, $model);
+}
 
 # BEGIN test listing calls
-$output = new Egypt::Output::DOT;
-$output->declare_function('module1', 'function1');
-$output->declare_function('module1', 'function2');
-$output->add_call('function1', 'function2', 'direct');
-is(
-  $output->string,
-  'digraph callgraph {
+sub listing_calls : Tests {
+  my $output = new Egypt::Output::DOT;
+  $output->model->declare_function('module1', 'function1');
+  $output->model->declare_function('module1', 'function2');
+  $output->model->add_call('function1', 'function2', 'direct');
+  is(
+    $output->string,
+    'digraph callgraph {
 "function1" -> "function2" [style=solid];
 }
 ',
-  'must generate correctly a graph with on call'
-);
+    'must generate correctly a graph with one call'
+  );
+}
 
-$output = new Egypt::Output::DOT;
-$output->declare_function('module1', 'function1');
-$output->declare_function('module1', 'function2');
-$output->declare_function('module1', 'function3');
-$output->add_call('function1', 'function2', 'direct');
-$output->add_call('function1', 'function3', 'direct');
-is(
-  $output->string,
-  'digraph callgraph {
+sub listing_two_calls : Tests {
+  my $output = new Egypt::Output::DOT;
+  $output->model->declare_function('module1', 'function1');
+  $output->model->declare_function('module1', 'function2');
+  $output->model->declare_function('module1', 'function3');
+  $output->model->add_call('function1', 'function2', 'direct');
+  $output->model->add_call('function1', 'function3', 'direct');
+  is(
+    $output->string,
+    'digraph callgraph {
 "function1" -> "function2" [style=solid];
 "function1" -> "function3" [style=solid];
 }
 ',
-  'must generate correctly a graph with f1 -> f2, f1 -> f3'
-);
+    'must generate correctly a graph with f1 -> f2, f1 -> f3'
+  );
+}
 
 # BEGIN test indirect calls
-$output = new Egypt::Output::DOT;
-$output->declare_function('module1', 'function1');
-$output->declare_function('module1', 'function2');
-$output->declare_function('module1', 'function3');
-$output->add_call('function1', 'function2', 'direct');
-$output->add_call('function1', 'function3', 'indirect');
-is(
-  $output->string,
-  'digraph callgraph {
+sub indirect_calls : Tests {
+  my $output = new Egypt::Output::DOT;
+  $output->model->declare_function('module1', 'function1');
+  $output->model->declare_function('module1', 'function2');
+  $output->model->declare_function('module1', 'function3');
+  $output->model->add_call('function1', 'function2', 'direct');
+  $output->model->add_call('function1', 'function3', 'indirect');
+  is(
+    $output->string,
+    'digraph callgraph {
 "function1" -> "function2" [style=solid];
 "function1" -> "function3" [style=dotted];
 }
 ',
-  'should distinguish direct from indirect calls'
-);
+    'should distinguish direct from indirect calls');
+}
 
 # BEGIN test calls are direct by default
 
-$output = new Egypt::Output::DOT;
-$output->declare_function("module1", "function1");
-$output->declare_function("module1", "function2");
-$output->add_call('function1', 'function2');
-is(
-  $output->string,
-  'digraph callgraph {
+sub direct_by_default : Tests {
+  my $output = new Egypt::Output::DOT;
+  $output->model->declare_function("module1", "function1");
+  $output->model->declare_function("module1", "function2");
+  $output->model->add_call('function1', 'function2');
+  is(
+    $output->string,
+    'digraph callgraph {
 "function1" -> "function2" [style=solid];
 }
 ',
-  'must consider calls as direct by default'
-);
+    'must consider calls as direct by default');
+}
 
 # BEGIN test listing only defined functions
-$output = new Egypt::Output::DOT;
-$output->declare_function('module1', 'function1');
-$output->declare_function('module2', 'function2');
-$output->add_call('function1', 'function2');
-$output->add_call('function2', 'function3');
-is(
-  $output->string,
-  'digraph callgraph {
+sub listing_only_defined_functions : Tests {
+  my $output = new Egypt::Output::DOT;
+  $output->model->declare_function('module1', 'function1');
+  $output->model->declare_function('module2', 'function2');
+  $output->model->add_call('function1', 'function2');
+  $output->model->add_call('function2', 'function3');
+  is(
+    $output->string,
+    'digraph callgraph {
 "function1" -> "function2" [style=solid];
 }
 ',
-  'must include by default only functions inside the project'
-);
+    'must include by default only functions inside the project');
+}
 
 # BEGIN test omitting functions
-$output = new Egypt::Output::DOT;
-$output->declare_function('module1', 'function1');
-$output->declare_function('module1', 'function2');
-$output->declare_function('module1', 'function3');
-$output->add_call('function1', 'function2');
-$output->add_call('function1', 'function3');
-$output->omit('function3');
-is(
-  $output->string,
-  'digraph callgraph {
+sub ommiting_functions : Tests {
+  my $output = new Egypt::Output::DOT;
+  $output->model->declare_function('module1', 'function1');
+  $output->model->declare_function('module1', 'function2');
+  $output->model->declare_function('module1', 'function3');
+  $output->model->add_call('function1', 'function2');
+  $output->model->add_call('function1', 'function3');
+  $output->omit('function3');
+  is(
+    $output->string,
+    'digraph callgraph {
 "function1" -> "function2" [style=solid];
 }
 ',
-  'must be able to omit a called function'
-);
+    'must be able to omit a called function');
 
-$output->omit('function1');
-is(
-  $output->string,
-  'digraph callgraph {
+  $output->omit('function1');
+  is(
+    $output->string,
+    'digraph callgraph {
 }
 ',
-  'must be able to omit a caller function'
-);
+  'must be able to omit a caller function');
+}
 
 # BEGIN test including external functions
-$output = new Egypt::Output::DOT;
-can_ok($output, 'include_externals');
-$output->declare_function('module1', 'function1');
-$output->add_call('function1', 'function2');
-$output->include_externals(1);
-is(
-  $output->string,
-  'digraph callgraph {
+sub including_external_functions : Tests {
+  my $output = new Egypt::Output::DOT;
+  can_ok($output, 'include_externals');
+  $output->model->declare_function('module1', 'function1');
+  $output->model->add_call('function1', 'function2');
+  $output->include_externals(1);
+  is(
+    $output->string,
+    'digraph callgraph {
 "function1" -> "function2" [style=solid];
 }
 ',
   'must be able to omit a called function'
 );
+}
 
 # BEGIN test demangle C++ methods
-$output = new Egypt::Output::DOT;
-$output->declare_function('module1', 'mangled1', 'demangled1');
-$output->declare_function('module1', 'mangled2', 'demangled2');
-$output->add_call('mangled1', 'mangled2');
-is(
-  $output->string,
-  'digraph callgraph {
+sub demangle_cpp_methods : Tests {
+  my $output = new Egypt::Output::DOT;
+  $output->model->declare_function('module1', 'mangled1', 'demangled1');
+  $output->model->declare_function('module1', 'mangled2', 'demangled2');
+  $output->model->add_call('mangled1', 'mangled2');
+  is(
+    $output->string,
+    'digraph callgraph {
 "demangled1" -> "demangled2" [style=solid];
 }
 ',
-  'must demangle function names in call output'
-);
+  'must demangle function names in call output');
 
-$output->cluster(1);
-is(
-  $output->string,
-  'digraph callgraph {
+  $output->cluster(1);
+  is(
+    $output->string,
+    'digraph callgraph {
 subgraph "cluster_module1" {
   label = "module1";
   node [label="demangled1"] "demangled1";
@@ -189,23 +220,24 @@ subgraph "cluster_module1" {
 "demangled1" -> "demangled2" [style=solid];
 }
 ',
-  'must demangle function names in cluster declaration'
-);
+    'must demangle function names in cluster declaration');
+}
 
 
 # TODO test removing implicit C++ function generated by the compiler.
 
 # BEGIN test clustering
-$output = new Egypt::Output::DOT;
-can_ok($output, 'cluster');
+sub clustering : Tests {
+  my $output = new Egypt::Output::DOT;
+  can_ok($output, 'cluster');
 
-$output->declare_function('cluster1.c.r1874.expand', 'function1');
-$output->declare_function('cluster1.c.r1874.expand', 'function2');
-$output->add_call('function1', 'function2', 'direct');
-$output->cluster(1);
-is(
-  $output->string,
-  'digraph callgraph {
+  $output->model->declare_function('cluster1.c.r1874.expand', 'function1');
+  $output->model->declare_function('cluster1.c.r1874.expand', 'function2');
+  $output->model->add_call('function1', 'function2', 'direct');
+  $output->cluster(1);
+  is(
+    $output->string,
+    'digraph callgraph {
 subgraph "cluster_cluster1.c.r1874.expand" {
   label = "cluster1.c";
   node [label="function1"] "function1";
@@ -214,19 +246,20 @@ subgraph "cluster_cluster1.c.r1874.expand" {
 "function1" -> "function2" [style=solid];
 }
 ',
-  "must output a single cluster"
-);
+    "must output a single cluster");
+}
 
-$output = new Egypt::Output::DOT;
-$output->cluster(1);
-$output->declare_function('cluster1.c.r1874.expand', 'function1');
-$output->declare_function('cluster2.c.r9873.expand', 'function2');
-$output->declare_function('cluster2.c.r9873.expand', 'function3');
-$output->add_call('function1', 'function2');
-$output->add_call('function1', 'function3');
-is(
-  $output->string,
-  'digraph callgraph {
+sub two_clusters_in_order : Tests {
+  my $output = new Egypt::Output::DOT;
+  $output->cluster(1);
+  $output->model->declare_function('cluster1.c.r1874.expand', 'function1');
+  $output->model->declare_function('cluster2.c.r9873.expand', 'function2');
+  $output->model->declare_function('cluster2.c.r9873.expand', 'function3');
+  $output->model->add_call('function1', 'function2');
+  $output->model->add_call('function1', 'function3');
+  is(
+    $output->string,
+    'digraph callgraph {
 subgraph "cluster_cluster1.c.r1874.expand" {
   label = "cluster1.c";
   node [label="function1"] "function1";
@@ -240,67 +273,74 @@ subgraph "cluster_cluster2.c.r9873.expand" {
 "function1" -> "function3" [style=solid];
 }
 ',
-  "must add two clusters in lexicographic order"
-);
+    "must add two clusters in lexicographic order");
+}
 
 # BEGIN test grouping calls by module
-
-can_ok($output, 'group_by_module');
-$output->cluster(0);
-$output->group_by_module(1);
-is(
-  $output->string,
-  'digraph callgraph {
+sub groupping_by_module : Tests {
+  my $output = new Egypt::Output::DOT;
+  can_ok($output, 'group_by_module');
+  $output->model->declare_function('cluster1.c.r1874.expand', 'function1');
+  $output->model->declare_function('cluster2.c.r9873.expand', 'function2');
+  $output->model->declare_function('cluster2.c.r9873.expand', 'function3');
+  $output->model->add_call('function1', 'function2');
+  $output->model->add_call('function1', 'function3');
+  $output->group_by_module(1);
+  is(
+    $output->string,
+    'digraph callgraph {
 "cluster1.c" -> "cluster2.c" [style=solid,label=2];
 }
 ',
-  'must list correctly a single dependency arrow between two modules'
-);
+    'must list correctly a single dependency arrow between two modules');
 
-$output->add_call('function1', 'function4');
-$output->declare_function('cluster3.c.r8773.expand', 'function4');
-is(
-  $output->string,
-  'digraph callgraph {
+  $output->model->add_call('function1', 'function4');
+  $output->model->declare_function('cluster3.c.r8773.expand', 'function4');
+  is(
+    $output->string,
+    'digraph callgraph {
 "cluster1.c" -> "cluster2.c" [style=solid,label=2];
 "cluster1.c" -> "cluster3.c" [style=solid,label=1];
 }
 ',
-  'must list arrow targets in lexicographic order'
-);
+    'must list arrow targets in lexicographic order');
 
-$output->add_call('function5', 'function1');
-$output->declare_function('cluster0.c.r7412.expand', 'function5');
-is(
-  $output->string,
-  'digraph callgraph {
+  $output->model->add_call('function5', 'function1');
+  $output->model->declare_function('cluster0.c.r7412.expand', 'function5');
+  is(
+    $output->string,
+    'digraph callgraph {
 "cluster0.c" -> "cluster1.c" [style=solid,label=1];
 "cluster1.c" -> "cluster2.c" [style=solid,label=2];
 "cluster1.c" -> "cluster3.c" [style=solid,label=1];
 }
 ',
-  'must list arrow sources in in lexicographic order'
-);
+    'must list arrow sources in in lexicographic order');
+}
 
 # BEGIN test use of variables
-$output = new Egypt::Output::DOT;
-$output->declare_function('module1.c.r1234.expand', 'function1');
-$output->declare_variable('module2.c', 'myvariable');
-$output->add_variable_use('function1', 'myvariable');
-is(
-  $output->string,
-  'digraph callgraph {
+sub use_of_variables : Tests {
+  my $output = new Egypt::Output::DOT;
+  $output->model->declare_function('module1.c.r1234.expand', 'function1');
+  $output->model->declare_variable('module2.c', 'myvariable');
+  $output->model->add_variable_use('function1', 'myvariable');
+  is(
+    $output->string,
+    'digraph callgraph {
 "function1" -> "myvariable" [style=dashed];
 }
-'
-);
+',
+    'must output declared variables');
 
-# test grouping by module
-$output->group_by_module(1);
-is(
-  $output->string,
-  'digraph callgraph {
+  # test grouping by module
+  $output->group_by_module(1);
+  is(
+    $output->string,
+    'digraph callgraph {
 "module1.c" -> "module2.c" [style=solid,label=1];
 }
-'
-);
+',
+    'must use variable information for inter-module dependencies');
+}
+
+DOTOutputTests->runtests;
