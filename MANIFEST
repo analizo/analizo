@@ -1,11 +1,15 @@
 egypt
 Egypt/Extractor.pm
+Egypt/Metrics.pm
+Egypt/Model.pm
 Egypt/Output/DOT.pm
 Makefile.PL
 MANIFEST
 MANIFEST.SKIP
 t/01_dot_output.t
 t/02_extractor.t
+t/03_model.t
+t/04_metrics.t
 t/99_integration_tests.t
 TODO
 t/sample/config.sh
@@ -47,5 +51,3 @@ t/sample/tests/unreadable-file.err
 t/sample/tests/unreadable-file.status
 t/sample/tests/version.cmdline
 t/sample/tests/version.status
-t/03_model.t
-Egypt/Model.pm
