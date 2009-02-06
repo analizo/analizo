@@ -117,15 +117,15 @@ sub reading_from_files_and_directories : Tests {
   # one file
   $extractor = new Egypt::Extractor;
   $extractor->process($sample_dir . '/module1.c.131r.expand');
-  is(scalar(keys(%{$extractor->model->{functions}})), 1);
-  ok(grep { $_ eq 'main' } keys(%{$extractor->model->{functions}}));
+  is(scalar(keys(%{$extractor->model->members})), 1);
+  ok(grep { $_ eq 'main' } keys(%{$extractor->model->members}));
   is(scalar(keys(%{$extractor->model->{modules}})), 1);
   ok(grep { $_ eq 't/sample/module1.c' } keys(%{$extractor->model->{modules}}));
 
   # some files
   $extractor = new Egypt::Extractor;
   $extractor->process($sample_dir . '/module1.c.131r.expand', $sample_dir . '/module2.c.131r.expand');
-  is(scalar(keys(%{$extractor->model->{functions}})), 3);
+  is(scalar(keys(%{$extractor->model->members})), 3);
   is(scalar(keys(%{$extractor->model->{modules}})), 2);
   is($extractor->model->{calls}->{'main'}->{'say_hello'}, 'direct');
   is($extractor->model->{calls}->{'main'}->{'say_bye'}, 'direct');
@@ -133,7 +133,7 @@ sub reading_from_files_and_directories : Tests {
   # directory
   $extractor = new Egypt::Extractor;
   $extractor->process($sample_dir);
-  is(scalar(keys(%{$extractor->model->{functions}})), 5);
+  is(scalar(keys(%{$extractor->model->members})), 5);
   is(scalar(keys(%{$extractor->model->{modules}})), 3);
   is($extractor->model->{calls}->{'main'}->{'say_hello'}, 'direct');
   is($extractor->model->{calls}->{'main'}->{'say_bye'}, 'direct');

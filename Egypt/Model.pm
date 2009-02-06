@@ -3,7 +3,8 @@ use strict;
 
 sub new {
   my @defaults = (
-    functions => {},
+    members => {},
+    types => {},
     modules => {},
     demangle => {},
     calls => {},
@@ -16,33 +17,47 @@ sub modules {
   return $self->{modules};
 }
 
-sub functions {
+sub members {
   my $self = shift;
-  return $self->{functions};
+  return $self->{members};
+}
+
+sub declare_member {
+  my ($self, $module, $member, $demangled_name, $type) = @_;
+
+  # mapping member to module
+  $self->{members}->{$member} = $module;
+
+  # mapping module to member
+  $self->modules->{$module} = [] if !exists($self->modules->{$module});
+  push @{$self->modules->{$module}}, $member;
+
+  # demangling name
+  $self->{demangle}->{$member} = $demangled_name;
+
+  # registering type of member
+  $self->{types}->{$member} = $type;
+}
+
+sub type {
+  my ($self, $member) = @_;
+  return $self->{types}->{$member};
 }
 
 sub declare_function {
   my ($self, $module, $function, $demangled_name) = @_;
+  $self->declare_member($module, $function, $demangled_name, 'function');
+}
 
-  # mapping function to module
-  $self->{functions}->{$function} = $module;
-
-  # mapping module to functions
-  $self->modules->{$module} = [] if !exists($self->modules->{$module});
-  push @{$self->modules->{$module}}, $function;
-
-  # demangling name
-  $self->{demangle}->{$function} = $demangled_name;
+sub declare_variable {
+  my ($self, $module, $variable, $demangled_name) = @_;
+  $self->declare_member($module, $variable, $demangled_name, 'variable');
 }
 
 sub demangle {
   my $self = shift;
   my $function = shift;
   return $self->{demangle}->{$function} || $function;
-}
-
-sub declare_variable {
-  declare_function(@_);
 }
 
 sub add_call {
@@ -60,5 +75,19 @@ sub calls {
 sub add_variable_use {
   add_call(@_, 'variable');
 }
+
+sub _find_by_type {
+  my ($self, $module, $type) = @_;
+  return grep { $self->members->{$_} eq $module && $self->type($_) eq $type } keys(%{$self->members});
+}
+
+sub functions {
+  _find_by_type(@_, 'function');
+}
+
+sub variables {
+  _find_by_type(@_, 'variable');
+}
+
 
 1;

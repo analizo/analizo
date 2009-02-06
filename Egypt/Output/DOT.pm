@@ -79,7 +79,7 @@ sub _include_caller {
 
 sub _include_callee {
   my ($self, $function) = @_;
-  return $self->_include_caller($function) && (exists($self->model->functions->{$function}) || $self->include_externals)
+  return $self->_include_caller($function) && (exists($self->model->members->{$function}) || $self->include_externals)
 }
 
 sub _calculate_clusters {
@@ -99,8 +99,8 @@ sub _calculate_clusters {
 
 sub _function_to_module {
   my ($self, $function) = @_;
-  return undef if !exists($self->model->functions->{$function});
-  return _file_to_module($self->model->functions->{$function});
+  return undef if !exists($self->model->members->{$function});
+  return _file_to_module($self->model->members->{$function});
 }
 
 sub _file_to_module {

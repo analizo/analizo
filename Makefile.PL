@@ -18,5 +18,6 @@ WriteMakefile(
       'Class::Accessor::Fast' => 0,
       'Test::Class' => 0,
       'Getopt::Euclid' => 0,
+      'List::Compare' => 0,
   },
 );
