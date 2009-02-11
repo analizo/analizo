@@ -53,8 +53,9 @@ sub run_tests : Tests {
   unless ($perl5lib[0] eq $working_dir) { $self->BAILOUT('working_dir be added to Perl library search path'); }
 
   # run all tests recorded in in the samples directory
+  my $test_regex = $ENV{'EGYPT_INTEGRATION_TEST'} || $ARGV[0];
   for my $test_file (glob("$sample_dir/tests/*.cmdline")) {
-    next if $ENV{'EGYPT_INTEGRATION_TEST'} && !($test_file =~ /$ENV{'EGYPT_INTEGRATION_TEST'}/);
+    next if $test_regex && !($test_file =~ /$test_regex/);
     my $test_name = basename($test_file);
     $test_name =~ s/\.cmdline$//;
     my $status = system("cd $sample_dir && ./run_test $test_name");
