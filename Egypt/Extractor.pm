@@ -5,7 +5,7 @@ use warnings;
 
 use base qw(Class::Accessor::Fast);
 
-use Egypt::Output::DOT;
+use Egypt::Model;
 
 use File::Basename;
 use File::Find;

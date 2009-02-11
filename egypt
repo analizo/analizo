@@ -182,6 +182,7 @@ on his work and did a major refactoring while adding several features.
 use strict;
 
 use Egypt::Extractor;
+use Egypt::Output::DOT;
 
 my $extractor = new Egypt::Extractor;
 my $model = $extractor->model;
