@@ -72,6 +72,11 @@ sub lcom4 {
   return scalar @components;
 }
 
+sub interface_size {
+  my ($self, $module) = @_;
+  return (scalar $self->model->functions($module));
+}
+
 sub report {
   my $self = shift;
   my $result = '';
@@ -79,6 +84,7 @@ sub report {
     my %data = (
       _module => $module,
       coupling => $self->coupling($module),
+      interface_size => $self->interface_size($module),
       lcom1 => $self->lcom1($module),
       lcom4 => $self->lcom4($module),
     );

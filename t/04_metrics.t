@@ -83,6 +83,16 @@ sub lcom4 : Tests {
   is($metrics->lcom4('mod1'), 3, 'three different usage components');
 }
 
+sub interface_size : Tests {
+  is($metrics->interface_size('mod1'), 0, 'empty modules have interface size 0');
+
+  $model->declare_function("mod1", 'f1');
+  is($metrics->interface_size('mod1'), 1, 'module with just one function has interface size = 1');
+
+  $model->declare_function('mod1', 'f2');
+  is($metrics->interface_size('mod1'), 2, 'module with just one function has interfaces size = 2');
+}
+
 sub report : Tests {
   # first module
   $model->declare_function('mod1' , 'f1a');
@@ -99,11 +109,13 @@ sub report : Tests {
 '---
 _module: mod1
 coupling: 0
+interface_size: 2
 lcom1: 0
 lcom4: 1
 ---
 _module: mod2
 coupling: 1
+interface_size: 1
 lcom1: 0
 lcom4: 1
 ',
