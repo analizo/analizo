@@ -33,28 +33,29 @@ sub lcom1 {
   # test each pair of functions in module for relation
   for (my $i = 0; $i < $n; $i++) {
     for (my $j = $i + 1; $j < $n; $j++) {
-      if (!$self->_related($module, $functions[$i], $functions[$j])) {
+      if ($self->_related($module, $functions[$i], $functions[$j])) {
+        $result -= 1;
+      } else {
         $result += 1
       }
     }
   }
-  return $result;
+  return $result > 0 ? $result : 0;
 }
 
 sub _related {
   my ($self, $module, $f1, $f2) = @_;
+
+  # the variables and functions in the module
+  my @variables = $self->model->variables($module);
+
   my @calls_f1 = keys(%{$self->model->calls->{$f1}});
   my @calls_f2 = keys(%{$self->model->calls->{$f2}});
 
   # f1 and f2 use variables in common
-  my @variables = $self->model->variables($module);
-  my $lc = new List::Compare(\@calls_f1, \@calls_f2);
+  my $lc = new List::Compare(\@calls_f1, \@calls_f2, \@variables);
   my @intersection = $lc->get_intersection;
-  return 0 if (scalar @intersection == 0);
-
-  $lc = new List::Compare(\@intersection, \@variables);
-  my @local_intersection = $lc->get_intersection;
-  return 1 if (scalar @local_intersection > 0);
+  return (scalar @intersection == 0) ? 0 : 1;
 
   return 0;
 }

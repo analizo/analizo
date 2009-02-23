@@ -55,12 +55,12 @@ sub lcom1 : Tests {
   $model->declare_function('mod1', 'f3');
   $model->declare_variable('mod1', 'v2');
   $model->add_call('f3', 'v2');
-  is($metrics->lcom1('mod1'), 2, 'a third function unrelated to the others');
+  is($metrics->lcom1('mod1'), 1, 'a third function unrelated to the others');
 
   $model->declare_function('mod1', 'f4');
   $model->declare_variable('mod1', 'v3');
   $model->add_call('f4', 'v3');
-  is($metrics->lcom1('mod1'), 5, 'yet another function unrelated to the previous ones');
+  is($metrics->lcom1('mod1'), 4, 'yet another function unrelated to the previous ones');
 
 }
 
