@@ -63,10 +63,15 @@ sub _related {
 sub lcom4 {
   my ($self, $module) = @_;
   my $graph = new Graph;
-  for my $function ($self->model->functions($module)) {
+  my @functions = $self->model->functions($module);
+  my @variables = $self->model->variables($module);
+  for my $function (@functions) {
     $graph->add_vertex($function);
     for my $used (keys(%{$self->model->calls->{$function}})) {
-      $graph->add_edge($function, $used);
+      # only include in the graph functions and variables that are inside the module.
+      if ((grep { $_ eq $used } @functions) || (grep { $_ eq $used } @variables)) {
+        $graph->add_edge($function, $used);
+      }
     }
   }
   my @components = $graph->weakly_connected_components;

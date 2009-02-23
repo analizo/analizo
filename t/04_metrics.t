@@ -83,6 +83,30 @@ sub lcom4 : Tests {
   is($metrics->lcom4('mod1'), 3, 'three different usage components');
 }
 
+sub lcom4_2 : Tests {
+  $model->declare_function('mod1', 'f1');
+  $model->declare_function('mod1', 'f2');
+  $model->declare_function('mod1', 'f3');
+  $model->declare_variable('mod1', 'v1');
+  $model->add_call('f1', 'f2');
+  $model->add_call('f1', 'f3', 'indirect');
+  $model->add_variable_use('f2', 'v1');
+  is($metrics->lcom4('mod1'), '1', 'different types of connections');
+}
+
+sub lcom4_3 : Tests {
+  $model->declare_function('mod1', 'f1');
+  $model->declare_function('mod1', 'f2');
+  $model->declare_function('mod1', 'f3');
+  $model->add_call('f1', 'f2');
+
+  # f1 and f3 calls the same function in another module
+  $model->add_call('f1', 'ff');
+  $model->add_call('f3', 'ff');
+
+  is($metrics->lcom4('mod1'), 2, 'functions outside the module don\'t count for LCOM4');
+}
+
 sub interface_size : Tests {
   is($metrics->interface_size('mod1'), 0, 'empty modules have interface size 0');
 
