@@ -131,6 +131,12 @@ sub report : Tests {
 
   is($metrics->report,
 '---
+average_coupling: 0.5
+average_lcom1: 0
+average_lcom4: 1
+number_of_functions: 3
+number_of_modules: 2
+---
 _module: mod1
 coupling: 0
 interface_size: 2

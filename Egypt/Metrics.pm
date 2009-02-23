@@ -86,17 +86,41 @@ sub interface_size {
 sub report {
   my $self = shift;
   my $result = '';
+  my %totals = (
+    coupling => 0,
+    lcom1 => 0,
+    lcom4 => 0,
+    number_of_functions => 0,
+    number_of_modules => 0,
+  );
   for my $module (keys(%{$self->model->modules})) {
+    my $coupling = $self->coupling($module);
+    my $number_of_functions = $self->interface_size($module);
+    my $lcom1 = $self->lcom1($module);
+    my $lcom4 = $self->lcom4($module);
     my %data = (
       _module => $module,
-      coupling => $self->coupling($module),
-      interface_size => $self->interface_size($module),
-      lcom1 => $self->lcom1($module),
-      lcom4 => $self->lcom4($module),
+      coupling => $coupling,
+      interface_size => $number_of_functions,
+      lcom1 => $lcom1,
+      lcom4 => $lcom4,
     );
     $result .= Dump(\%data);
+
+    $totals{'coupling'} += $coupling;
+    $totals{'lcom1'} += $lcom1;
+    $totals{'lcom4'} += $lcom4;
+    $totals{'number_of_modules'} += 1;
+    $totals{'number_of_functions'} += $number_of_functions;
   }
-  return $result;
+  my %summary = (
+    average_coupling => ($totals{'coupling'}) / $totals{'number_of_modules'},
+    average_lcom1 => ($totals{'lcom1'}) / $totals{'number_of_modules'},
+    average_lcom4 => ($totals{'lcom4'}) / $totals{'number_of_modules'},
+    number_of_functions => $totals{'number_of_functions'},
+    number_of_modules => $totals{'number_of_modules'},
+  );
+  return Dump(\%summary) . $result;
 }
 
 1;
