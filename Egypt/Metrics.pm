@@ -101,6 +101,7 @@ sub report {
     my %data = (
       _module => $module,
       coupling => $coupling,
+      coupling_times_lcom1 => $coupling * $lcom1,
       coupling_times_lcom4 => $coupling * $lcom4,
       interface_size => $number_of_functions,
       lcom1 => $lcom1,
@@ -109,6 +110,7 @@ sub report {
     $result .= Dump(\%data);
 
     $totals{'coupling'} += $coupling;
+    $totals{'coupling_times_lcom1'} += ($coupling * $lcom1);
     $totals{'coupling_times_lcom4'} += ($coupling * $lcom4);
     $totals{'lcom1'} += $lcom1;
     $totals{'lcom4'} += $lcom4;
@@ -117,6 +119,7 @@ sub report {
   }
   my %summary = (
     average_coupling => ($totals{'coupling'}) / $totals{'number_of_modules'},
+    average_coupling_times_lcom1 => ($totals{'coupling_times_lcom1'}) / $totals{'number_of_modules'},
     average_coupling_times_lcom4 => ($totals{'coupling_times_lcom4'}) / $totals{'number_of_modules'},
     average_lcom1 => ($totals{'lcom1'}) / $totals{'number_of_modules'},
     average_lcom4 => ($totals{'lcom4'}) / $totals{'number_of_modules'},

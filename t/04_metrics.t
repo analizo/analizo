@@ -132,6 +132,7 @@ sub report : Tests {
   is($metrics->report,
 '---
 average_coupling: 0.5
+average_coupling_times_lcom1: 0
 average_coupling_times_lcom4: 0.5
 average_lcom1: 0
 average_lcom4: 1
@@ -140,6 +141,7 @@ number_of_modules: 2
 ---
 _module: mod1
 coupling: 0
+coupling_times_lcom1: 0
 coupling_times_lcom4: 0
 interface_size: 2
 lcom1: 0
@@ -147,6 +149,7 @@ lcom4: 1
 ---
 _module: mod2
 coupling: 1
+coupling_times_lcom1: 0
 coupling_times_lcom4: 1
 interface_size: 1
 lcom1: 0
