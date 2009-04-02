@@ -32,7 +32,7 @@ sub get_message {
   return $messages{$code} || "unknown error ocurred (exit status = $code)";
 }
 
-sub run_tests : Tests {
+sub run_integration_tests : Tests {
   my $saved_path = $ENV{'PATH'};
 
   # modify the path so the tests use the local egypt program instead of the
