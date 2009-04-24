@@ -7,50 +7,24 @@ use base qw(Class::Accessor::Fast);
 
 use Egypt::Model;
 
-use File::Basename;
-use File::Find;
-
 our $QUIET = undef;
 
 __PACKAGE__->mk_accessors(qw(model));
 __PACKAGE__->mk_ro_accessors(qw(current_function));
 
-sub new {
-  my $package = shift;
-  my @defaults = (
-    model => new Egypt::Model, # temporary (?)
-  );
-  return bless { @defaults, @_ }, __PACKAGE__;
+sub load {
+  shift; # discard self ref
+  my $extractor = "Egypt::Extractor::$_[0]";
+  eval "use $extractor";
+  die "error loading $_[0] extractor: $@" if $@;
+
+  eval { $extractor = $extractor->new };
+  die "error instancing extractor: $@" if $@;
+  return $extractor;
 }
 
 sub feed {
-  my ($self, $line) = @_;
-
-  # function declarations
-  if ($line =~ m/^;; Function (\S+)\s*$/) {
-    # pre-gcc4 style
-    $self->model->declare_function($self->current_module, $1);
-    $self->{current_function} = $1;
-  } elsif ($line =~ m/^;; Function (.*)\s+\((\S+)\)$/) {
-    # gcc4 style
-    $self->model->declare_function($self->current_module, $2, $1);
-    $self->{current_function} = $2;
-  }
-
-  # function calls/uses
-  if ($line =~ m/^.*\(call.*"(.*)".*$/) {
-    # direct calls
-    $self->model->add_call($self->current_function, $1, 'direct');
-  } elsif ($line =~ m/^.*\(symbol_ref.*"(.*)".*<function_decl\s.*$/) {
-    # indirect calls (e.g. use of function pointers)
-    $self->model->add_call($self->current_function, $1, 'indirect');
-  }
-
-  # variable references
-  if ($line =~ m/^.*\(symbol_ref.*"(.*)".*<var_decl\s.*$/) {
-    $self->model->add_variable_use($self->current_function, $1);
-  }
-
+   die "you must override 'feed' method in a subclass";
 }
 
 sub current_module {
@@ -82,54 +56,25 @@ sub _read_variable_declarations {
 }
 
 sub process {
-  my $self = shift;
-  my @files = ();
-  foreach my $arg (@_) {
-    if (-d $arg) {
-      # directories
-      info("Traversing directory $arg ...");
-      find(sub { push(@files, $File::Find::name) if basename($File::Find::name) =~ /\.(rtl|expand)$/  }, ($arg));
-    } else {
-      # files
-      if (-r $arg) {
-        push(@files, $arg);
-      } else {
-        warning("$arg is not readable (or doesn't exist at all).");
-      }
-    }
-  }
-
-  if (scalar(@files) == 0) {
-    error("No readable input files!");
-    exit(1);
-  }
-
-  foreach my $file (@files) {
-    my $modulename = $file;
-    $modulename =~ s/\.\d+r\.expand$//;
-    $self->current_module($modulename);
-
-    open FILE, '<', $file or die("Cannot read $file");
-    while (<FILE>) {
-      $self->feed($_);
-    }
-    close FILE;
-  }
+   die "you must override 'process' method in a subclass";
 }
 
 sub info {
+  shift; #discard self ref
   return if $QUIET;
   my $msg = shift;
   print STDERR "I: $msg\n";
 }
 
 sub warning {
+  shift; #discard self ref
   return if $QUIET;
   my $msg = shift;
   print STDERR "W: $msg\n";
 }
 
 sub error {
+  shift; #discard self ref
   return if $QUIET;
   my $msg = shift;
   print STDERR "E: $msg\n";

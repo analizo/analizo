@@ -71,6 +71,14 @@ how many times module A calls module B).
 
 It doesn't make much sense to use --modules together with --cluster.
 
+=item --extractor <extractor>
+
+Define wich extractor to use to analise source code. Default is CGG.
+
+=for Euclid:
+  extractor.type: string
+  extractor.default: 'GCC'
+
 =item --version
 
 Displays egypt version information and exits.
@@ -184,7 +192,7 @@ use strict;
 use Egypt::Extractor;
 use Egypt::Output::DOT;
 
-my $extractor = new Egypt::Extractor;
+my $extractor = Egypt::Extractor->load($ARGV{'--extractor'});
 my $model = $extractor->model;
 my $output = new Egypt::Output::DOT(model => $model);
 
