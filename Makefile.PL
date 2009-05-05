@@ -21,5 +21,6 @@ WriteMakefile(
       'List::Compare' => 0,
       'Graph' => 0,
       'YAML' => 0,
+      'Test::Exception' => 0,
   },
 );

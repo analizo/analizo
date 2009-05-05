@@ -14,17 +14,16 @@ __PACKAGE__->mk_ro_accessors(qw(current_function));
 
 sub load {
   shift; # discard self ref
-  my $extractor = "Egypt::Extractor::$_[0]";
+  my $extractor_method = shift;
+  my $extractor = "Egypt::Extractor::$extractor_method";
+
   eval "use $extractor";
-  die "error loading $_[0] extractor: $@" if $@;
+  die "error loading $extractor_method extractor: $@" if $@;
 
-  eval { $extractor = $extractor->new };
+  eval { $extractor = $extractor->new(@_) };
   die "error instancing extractor: $@" if $@;
-  return $extractor;
-}
 
-sub feed {
-   die "you must override 'feed' method in a subclass";
+  return $extractor;
 }
 
 sub current_module {

@@ -73,7 +73,7 @@ It doesn't make much sense to use --modules together with --cluster.
 
 =item --extractor <extractor>
 
-Define wich extractor to use to analise source code. Default is CGG.
+Define wich extractor method use to analise source code. Default is GCC.
 
 =for Euclid:
   extractor.type: string
