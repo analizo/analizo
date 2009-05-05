@@ -1,4 +1,4 @@
-package ExtractorTests;
+package ExtractorDoxyparseTests;
 use base qw(Test::Class);
 use Test::More 'no_plan'; # REMOVE THE 'no_plan'
 
@@ -24,7 +24,7 @@ my $extractor; # REMOVE
 # BEGIN test of indicating current module
 ##############################################################################
 sub current_module : Tests {
-  my $extractor = Egypt::Extractor->load('GCC');
+  my $extractor = Egypt::Extractor->load('Doxyparse');
   $extractor->current_module('module1.c');
   is($extractor->current_module, 'module1.c', 'must be able to set the current module');
   $extractor->current_module('module2.c');
@@ -143,4 +143,4 @@ sub reading_from_files_and_directories : Tests {
   system(sprintf('make -s -C %s clean', $sample_dir));
 }
 
-ExtractorTests->runtests;
+ExtractorDoxyparseTests->runtests;

@@ -39,4 +39,16 @@ sub process_must_be_overwriten_in_a_subclass : Tests {
   dies_ok { Egypt::Extractor->new->process };
 }
 
+sub load_gcc_extractor : Tests {
+  lives_ok { Egypt::Extractor->load('GCC') };
+}
+
+sub load_doxyparse_extractor : Tests {
+  lives_ok { Egypt::Extractor->load('Doxyparse') };
+}
+
+sub fail_when_load_invalid_extractor : Tests {
+  dies_ok { Egypt::Extractor->load('ThisNotExists') };
+}
+
 ExtractorTests->runtests;
