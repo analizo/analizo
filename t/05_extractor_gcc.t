@@ -24,6 +24,17 @@ sub has_a_model : Tests {
 my $extractor; # REMOVE
 
 ##############################################################################
+# BEGIN test of indicating current module
+##############################################################################
+sub current_module : Tests {
+  my $extractor = Egypt::Extractor->load('GCC');
+  $extractor->current_module('module1.c');
+  is($extractor->current_module, 'module1.c', 'must be able to set the current module');
+  $extractor->current_module('module2.c');
+  is($extractor->current_module, 'module2.c', 'must be able to change the current module');
+}
+
+##############################################################################
 # BEGIN test detecting the start of pre-GCC4 style functions
 ##############################################################################
 sub pre_gcc4_style : Tests {
