@@ -1,5 +1,7 @@
 egypt
 Egypt/Extractor.pm
+Egypt/Extractor/Doxyparse.pm
+Egypt/Extractor/GCC.pm
 Egypt/Metrics.pm
 Egypt/Model.pm
 Egypt/Output/DOT.pm
@@ -10,8 +12,9 @@ t/01_dot_output.t
 t/02_extractor.t
 t/03_model.t
 t/04_metrics.t
+t/05_extractor_gcc.t
+t/06_extractor_doxyparse.t
 t/99_integration_tests.t
-TODO
 t/sample/config.sh
 t/sample/create_test
 t/sample/Makefile
@@ -33,12 +36,12 @@ t/sample/tests/modules.cmdline
 t/sample/tests/modules.err
 t/sample/tests/modules.out
 t/sample/tests/modules.status
-t/sample/tests/omit.cmdline
-t/sample/tests/omit.out
-t/sample/tests/omit.status
 t/sample/tests/omit-two-functions.cmdline
 t/sample/tests/omit-two-functions.out
 t/sample/tests/omit-two-functions.status
+t/sample/tests/omit.cmdline
+t/sample/tests/omit.out
+t/sample/tests/omit.status
 t/sample/tests/only-module1-module2.cmdline
 t/sample/tests/only-module1-module2.out
 t/sample/tests/only-module1-module2.status
@@ -51,3 +54,4 @@ t/sample/tests/unreadable-file.err
 t/sample/tests/unreadable-file.status
 t/sample/tests/version.cmdline
 t/sample/tests/version.status
+TODO
