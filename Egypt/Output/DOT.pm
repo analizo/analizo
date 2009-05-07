@@ -6,7 +6,7 @@ use base qw(Class::Accessor::Fast);
 use File::Basename;
 use Egypt::Model;
 
-Egypt::Output::DOT->mk_accessors(qw(filename cluster group_by_module include_externals));
+__PACKAGE__->mk_accessors(qw(filename cluster group_by_module include_externals));
 __PACKAGE__->mk_ro_accessors(qw(model));
 
 sub new {
