@@ -51,4 +51,16 @@ sub fail_when_load_invalid_extractor : Tests {
   dies_ok { Egypt::Extractor->load('ThisNotExists') };
 }
 
+sub load_gcc_extractor_by_alias : Tests {
+  lives_ok {
+    isa_ok(Egypt::Extractor->load('gcc'), 'Egypt::Extractor::GCC');
+  }
+}
+
+sub load_doxyparse_extractor_by_alias : Tests {
+  lives_ok {
+    isa_ok(Egypt::Extractor->load('doxy'), 'Egypt::Extractor::Doxyparse');
+  }
+}
+
 ExtractorTests->runtests;
