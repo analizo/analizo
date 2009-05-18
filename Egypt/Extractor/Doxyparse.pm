@@ -20,28 +20,38 @@ sub feed {
 
   # function declarations
   if ($line =~ m/^\s{3}function (\S+) in line \d+$/) {
-    $self->model->declare_function($self->current_module, $1);
-    $self->{current_function} = $1;
+    my $function = _qualified_name($self->current_module, $1);
+    $self->model->declare_function($self->current_module, $function);
+    $self->{current_function} = $function;
   }
   # variable declarations
   elsif ($line =~ m/^\s{3}variable (\S+) in line \d+$/) {
-    $self->model->declare_variable($self->current_module, $1);
+    my $variable = _qualified_name($self->current_module, $1);
+    $self->info($variable);
+    $self->model->declare_variable($self->current_module, $variable);
   }
 
   # function calls/uses
   if ($line =~ m/^\s{6}uses function (\S+) defined in (\S+)$/) {
-    # direct calls
-    $self->model->add_call($self->current_function, $1, 'direct');
-  #} elsif ($line =~ m/^.*\(symbol_ref.*"(.*)".*<function_decl\s.*$/) {
-    # indirect calls (e.g. use of function pointers)
-    # indirect calls currently unimplemented by doxyparse
-    #$self->model->add_call($self->current_function, $1, 'indirect');
+    my $function = _qualified_name($2, $1);
+    $self->model->add_call($self->current_function, $function, 'direct');
   }
-
   # variable references
-  if ($line =~ m/^\s{6}uses variable (\S+) defined in (\S+)$/) {
-    $self->model->add_variable_use($self->current_function, $1);
+  elsif ($line =~ m/^\s{6}uses variable (\S+) defined in (\S+)$/) {
+    my $variable = _qualified_name($2, $1);
+    $self->model->add_variable_use($self->current_function, $variable);
   }
+}
+
+# concat module with symbol (e.g. main::to_string)
+sub _qualified_name {
+  my ($file, $symbol) = @_;
+  _file_to_module($file) . '::' . $symbol;
+}
+
+# discard file suffix (e.g. .c or .h)
+sub _file_to_module {
+  fileparse($_[0], qr/\.[^.]*/); 
 }
 
 sub process {
@@ -52,7 +62,7 @@ sub process {
     open DOXYPARSE, sprintf("doxyparse %s |", join(' ', @_) ) or die $!;
     while (<DOXYPARSE>) {
        if (/^module (\S+)$/) {
-         my $modulename = fileparse($1, qr/\.[^.]*/); # discard file suffix (e.g. .c or .h)
+         my $modulename = _file_to_module($1);
          $self->current_module($modulename);
        }
        else {
