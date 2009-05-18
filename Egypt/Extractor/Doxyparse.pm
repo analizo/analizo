@@ -27,7 +27,6 @@ sub feed {
   # variable declarations
   elsif ($line =~ m/^\s{3}variable (\S+) in line \d+$/) {
     my $variable = _qualified_name($self->current_module, $1);
-    $self->info($variable);
     $self->model->declare_variable($self->current_module, $variable);
   }
 
