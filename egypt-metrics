@@ -1,0 +1,15 @@
+#!/usr/bin/perl
+
+use strict;
+
+use Egypt::Extractor;
+use Egypt::Metrics;
+
+my $extractor = new Egypt::Extractor;
+my $model = $extractor->model;
+my $metrics = new Egypt::Metrics(model => $model);
+
+$extractor->process(@ARGV);
+print $metrics->report;
+
+exit(0);
