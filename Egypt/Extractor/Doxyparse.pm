@@ -50,7 +50,7 @@ sub _qualified_name {
 
 # discard file suffix (e.g. .c or .h)
 sub _file_to_module {
-  fileparse($_[0], qr/\.[^.]*/); 
+  fileparse($_[0], qr/\.[^.]*/);
 }
 
 sub process {
