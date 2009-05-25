@@ -1,15 +1,61 @@
 #!/usr/bin/perl
 
+use Getopt::Euclid;
+
+=head1 NAME
+
+egypt-metrics - simple metrics reporting script
+
+=head1 USAGE
+
+  egypt-metrics [options] <file>...
+
+=head1 REQUIRED ARGUMENTS
+
+=over
+
+=item <file>...
+
+egypt can process, using GCC extractor, any number of RTL files passed to it on
+the command line. If you pass directories in the command line, egypt will find
+those directories for files that match *.rtl and *.expand, and process them.
+
+For Doxyparse extractor egypt process source code directly.
+
+=back
+
+=head1 OPTIONS
+
+=over
+
+=item --extractor <extractor>
+
+Define wich extractor method use to analise source code. Default is GCC.
+
+=for Euclid:
+  extractor.type: string, extractor =~ /\A\w+\Z/
+  extractor.default: 'GCC'
+
+=back
+
+=head1 COPYRIGHT
+
+Copyright (c) 2009 Antonio Terceiro
+
+This program is free software; you can redistribute it and/or
+modify it under the same terms as Perl itself.
+
+=cut
+
 use strict;
 
 use Egypt::Extractor;
 use Egypt::Metrics;
 
-my $extractor = new Egypt::Extractor;
-my $model = $extractor->model;
-my $metrics = new Egypt::Metrics(model => $model);
+my $extractor = Egypt::Extractor->load($ARGV{'--extractor'});
+my $metrics = Egypt::Metrics->new(model => $extractor->model);
 
-$extractor->process(@ARGV);
+$extractor->process(@{$ARGV{'<file>'}});
 print $metrics->report;
 
 exit(0);
