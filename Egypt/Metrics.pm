@@ -19,7 +19,7 @@ sub coupling {
     for my $called_function (keys(%{$self->model->calls->{$caller_function}})) {
       my $called_module = $self->model->members->{$called_function};
       next if $called_module eq $module;
-      $seen{$called_module}++;
+      $seen{$called_module}++ if $called_module;
     }
   }
   return (scalar keys(%seen));

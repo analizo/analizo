@@ -158,4 +158,13 @@ lcom4: 1
     'must report metrics as a YAML stream');
 }
 
+sub discard_external_symbols_for_coupling : Tests {
+  $model->declare_function('mod1', 'f1');
+  $model->declare_function('mod2', 'f2');
+
+  $model->add_call('f1', 'f2');
+  $model->add_call('f1', 'external_function');
+  is($metrics->coupling('mod1'), 1, 'calling a external function');
+}
+
 MetricsTests->runtests;
