@@ -1,4 +1,5 @@
 egypt
+egypt-metrics
 Egypt/Extractor.pm
 Egypt/Extractor/Doxyparse.pm
 Egypt/Extractor/GCC.pm

@@ -9,7 +9,7 @@ unless ($version =~ /^\d+.\d+$/) {
 WriteMakefile(
   NAME => 'egypt',
   VERSION => $version,
-  EXE_FILES => [ 'egypt' ],
+  EXE_FILES => [ 'egypt', 'egypt-metrics' ],
   PMLIBDIRS => [ 'Egypt' ],
   AUTHOR => 'Antonio Terceiro <terceiro@softwarelivre.org>',
   LICENSE => 'perl',
