@@ -8,7 +8,7 @@ egypt - create call graph from gcc RTL dump
 
 =head1 VERSION
 
-This documentation applies to egypt version 1.7.
+This documentation applies to egypt version 1.8.
 
 =head1 USAGE
 
@@ -77,7 +77,7 @@ Define wich extractor method use to analise source code. Default is GCC.
 
 =for Euclid:
   extractor.type: string, extractor =~ /\A\w+\Z/
-  extractor.default: 'GCC'
+  extractor.default: 'Doxyparse'
 
 =item --version
 
