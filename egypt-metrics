@@ -30,7 +30,7 @@ For Doxyparse extractor egypt process source code directly.
 
 =item --extractor <extractor>
 
-Define wich extractor method use to analise source code. Default is GCC.
+Define wich extractor method use to analise source code. Default is Doxyparse.
 
 =for Euclid:
   extractor.type: string, extractor =~ /\A\w+\Z/
