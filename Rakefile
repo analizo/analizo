@@ -6,4 +6,5 @@ end
 
 task 'features' do
   sh('cucumber t/features/')
+  sh('make clean -C t/sample/')
 end
