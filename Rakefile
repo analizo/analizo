@@ -1,9 +1,9 @@
-task :default => ['test:unit', 'test:cucumber']
+task :default => ['test', 'features']
 
-task 'test:unit' do
+task 'test' do
   sh('prove t/')
 end
 
-task 'test:cucumber' do
+task 'features' do
   sh('cucumber t/features/')
 end
