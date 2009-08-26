@@ -6,10 +6,12 @@ unless ($version =~ /^\d+.\d+$/) {
   die "Invalid version read from documentation: [$version]. There is something wrong with this package.\n";
 }
 
+my @exe_files = glob('egypt*');
+
 WriteMakefile(
   NAME => 'egypt',
   VERSION => $version,
-  EXE_FILES => [ 'egypt', 'egypt-metrics' ],
+  EXE_FILES => \@exe_files,
   PMLIBDIRS => [ 'Egypt' ],
   AUTHOR => 'Antonio Terceiro <terceiro@softwarelivre.org>',
   LICENSE => 'perl',

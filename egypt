@@ -1,7 +1,6 @@
 #!/usr/bin/perl -w
 
 use Pod::Usage;
-use Getopt::Euclid;
 
 #use Getopt::Euclid;
 
@@ -9,11 +8,9 @@ use Getopt::Euclid;
 
 egypt - a source code analysis suite.
 
-=head1 USAGE
+=head1 SYNOPSIS
 
-  egypt [options]
-
-When run without any options, this manual page is displayed.
+  egypt <tool> [options] <args>
 
 =head1 DESCRIPTION
 
@@ -29,7 +26,7 @@ egypt has several individual tools that share a core infrastructure, but do
 different analysis and produce different output. They are normally invoked like
 this:
 
-  egypt-<tool> [OPTIONS] <directory> [<directory> ...]
+  egypt <tool> [OPTIONS] <directory> [<directory> ...]
 
 Although you can invoke egypt tools against one or few files inside a project,
 normally it only makes sense to run it against the entire source tree (e.g.
@@ -62,5 +59,40 @@ This documentation applies to egypt version 1.8.
 
 =cut
 
-pod2usage(-verbose => 2);
-exit(0)
+use strict;
+use File::Basename;
+
+sub usage {
+  pod2usage(-verbose => 1);
+  exit(1);
+}
+
+if (scalar(@ARGV) == 0) {
+  usage();
+}
+
+my $base = dirname(__FILE__);
+my $command = shift(@ARGV);
+
+if ($command !~ /^[a-z]+$/) {
+  usage();
+}
+
+my $program = "$base/egypt-$command";
+if (! -x $program) {
+  printf("\"%s\" is not an egypt command.\n", $command);
+  print("\n");
+  print("Available commands:\n");
+  print("\n");
+  for my $cmd_program (sort(glob("$base/egypt-*"))) {
+    $cmd_program =~ /^.*egypt-(.*)$/;
+    my $cmd = $1;
+    printf("  %s\n", $cmd);
+  }
+  print("\n");
+
+  exit(1);
+}
+
+system($program, @ARGV);
+exit($? >> 8);
