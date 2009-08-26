@@ -5,6 +5,6 @@ task 'test' do
 end
 
 task 'features' do
-  sh('cucumber t/features/')
+  sh('cucumber features/')
   sh('make clean -C t/sample/')
 end
