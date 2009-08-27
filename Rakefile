@@ -19,12 +19,17 @@ end
 version = File.readlines('egypt').find { |item| item =~ /VERSION =/ }.strip.gsub(/.*VERSION = '(.*)'.*/, '\1')
 
 desc 'prepares a release tarball'
-task :release => [:manifest, :check_repo, :check_tag, :default] do
+task :release => [:authors, :manifest, :check_repo, :check_tag, :default] do
   sh "perl Makefile.PL"
   sh "make"
   sh "make test"
   sh "make dist"
   sh "git tag #{version}"
+end
+
+desc 'updates the AUTHORS file'
+task :authors do
+  sh "(echo 'Andreas Gustafsson <gson@gson.org>'; git log --pretty=format:'%aN <%aE>') | sort | uniq > AUTHORS"
 end
 
 desc 'checks if there are uncommitted changes in the repo'
