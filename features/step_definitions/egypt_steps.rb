@@ -23,7 +23,11 @@ end
 
 When /^I run "([^\"]*)"$/ do |command|
   system("#{command} >tmp.out 2>tmp.err")
-  @exit_status = $?
+  if $?.is_a?(Fixnum)
+    @exit_status = $?
+  else
+    @exit_status = $?.exitstatus
+  end
   @stdout = File.readlines('tmp.out')
   @stderr = File.readlines('tmp.err')
 end
@@ -51,8 +55,26 @@ Then /^egypt must report that "([^\"]*)" is part of "([^\"]*)"$/ do |func,mod|
   found.should == true
 end
 
+class OutputDoesNotMatch < Exception
+end
 Then /^the output must match "([^\"]*)"$/ do |pattern|
-  @stdout.select {|item| item.match(pattern)}.should have_at_least(1).items
+  if @stdout.select {|item| item.match(pattern)}.size == 0
+    delimiter_line = "-------------------------------------------------\n"
+    report = []
+    report.push "Standard output:\n"
+    report.push delimiter_line
+    report.push @stdout
+    report.push delimiter_line
+    if !@stderr.empty?
+      report.push "\n"
+      report.push "Standard error:\n"
+      report.push delimiter_line
+      report.push @stderr
+      report.push delimiter_line
+    end
+    report.push "\n"
+    raise OutputDoesNotMatch.new(report)
+  end
 end
 
 Then /^the output must not match "([^\"]*)"$/ do |pattern|

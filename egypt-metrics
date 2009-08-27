@@ -4,17 +4,25 @@ use Getopt::Euclid;
 
 =head1 NAME
 
-egypt-metrics - egypt's metric reporting tool
+egypt metrics - egypt's metric reporting tool
 
-=head1 USAGE
+=head1 SYNOPSIS
 
-  egypt-metrics [options] <directory> [<directory> ...]
+  egypt metrics [options] <input> [<input> ...]
+
+=head1 DESCRIPTION
+
+egypt metrics analyzes source code in the directories passed as arguments and
+procudes a matrics report. Such report is written to the standard output in the
+YAML format (see I<http://www.yaml.org/>)
+
+egypt metrics is part of the egypt suite.
 
 =head1 REQUIRED ARGUMENTS
 
 =over
 
-=item <directory>...
+=item <input>...
 
 Tells egypt which source code directory(ies) you want to parse.
 
@@ -39,14 +47,21 @@ see Egypt::Extractor::GCC(3).
 When using the Doxyparse extractor (default), all files matching the languages
 supported by doxyparse are processed.
 
+=item --help
+
+Displays a help message on how to use this tool.
+
 =back
 
-=head1 COPYRIGHT
+=head1 OUTPUT FORMAT
 
-Copyright (c) 2009 Antonio Terceiro
+The output is a stream of YAML documents. The first one presents metrics for
+the project as a whole. The subsequent ones present per-module metrics, and thus
+there will be as many of them as there are modules in your project.
 
-This program is free software; you can redistribute it and/or
-modify it under the same terms as Perl itself.
+=head1 COPYRIGHT AND AUTHORS
+
+See egypt(1)
 
 =cut
 
@@ -58,7 +73,7 @@ use Egypt::Metrics;
 my $extractor = Egypt::Extractor->load($ARGV{'--extractor'});
 my $metrics = Egypt::Metrics->new(model => $extractor->model);
 
-$extractor->process(@{$ARGV{'<directory>'}});
+$extractor->process(@{$ARGV{'<input>'}});
 print $metrics->report;
 
 exit(0);

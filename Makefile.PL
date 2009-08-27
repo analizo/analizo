@@ -1,16 +1,10 @@
 use ExtUtils::MakeMaker;
 
-my $version = `perl -ne 'if (/applies to egypt version/) { s/.*version //; s/[^0-9]*\$//; print  }' egypt`;
-chomp $version;
-unless ($version =~ /^\d+.\d+$/) {
-  die "Invalid version read from documentation: [$version]. There is something wrong with this package.\n";
-}
-
 my @exe_files = glob('egypt*');
 
 WriteMakefile(
   NAME => 'egypt',
-  VERSION => $version,
+  VERSION_FROM => 'egypt',
   EXE_FILES => \@exe_files,
   PMLIBDIRS => [ 'Egypt' ],
   AUTHOR => 'Antonio Terceiro <terceiro@softwarelivre.org>',
