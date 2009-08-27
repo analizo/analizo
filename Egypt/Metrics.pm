@@ -18,7 +18,7 @@ sub coupling {
   for my $caller_function (@{$self->model->modules->{$module}}) {
     for my $called_function (keys(%{$self->model->calls->{$caller_function}})) {
       my $called_module = $self->model->members->{$called_function};
-      next if $called_module eq $module;
+      next if $called_module && ($called_module eq $module);
       $seen{$called_module}++ if $called_module;
     }
   }
