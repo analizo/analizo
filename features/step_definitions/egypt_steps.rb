@@ -32,8 +32,11 @@ When /^I run "([^\"]*)"$/ do |command|
   @stderr = File.readlines('tmp.err')
 end
 
+class DependencyNotReported < EgyptException; end
 Then /^egypt must report that "([^\"]*)" depends on "([^\"]*)"$/ do |module1, module2|
-  (@stdout.select { |line| line =~ /"#{module1}" -> "#{module2}"/ }).should have(1).items
+  if (@stdout.select { |line| line =~ /"#{module1}" -> "#{module2}"/ }).size < 1
+    raise DependencyNotReported.new(@stdout, @stderr)
+  end
 end
 
 Then /^the exit status must be (.+)$/ do |n|
@@ -55,25 +58,10 @@ Then /^egypt must report that "([^\"]*)" is part of "([^\"]*)"$/ do |func,mod|
   found.should == true
 end
 
-class OutputDoesNotMatch < Exception
-end
+class OutputDoesNotMatch < EgyptException; end
 Then /^the output must match "([^\"]*)"$/ do |pattern|
   if @stdout.select {|item| item.match(pattern)}.size == 0
-    delimiter_line = "-------------------------------------------------\n"
-    report = []
-    report.push "Standard output:\n"
-    report.push delimiter_line
-    report.push @stdout
-    report.push delimiter_line
-    if !@stderr.empty?
-      report.push "\n"
-      report.push "Standard error:\n"
-      report.push delimiter_line
-      report.push @stderr
-      report.push delimiter_line
-    end
-    report.push "\n"
-    raise OutputDoesNotMatch.new(report)
+    raise OutputDoesNotMatch.new(@stdout, @stderr)
   end
 end
 
