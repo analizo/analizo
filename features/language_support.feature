@@ -10,7 +10,7 @@ Feature: multi-language support
   Examples:
     | language | main_module | hello_world_module |
     | c        | main        | hello_world        |
-    | c++      | main        | hello_world        |
+    | c++      | main        | HelloWorld         |
     | java     | Main        | HelloWorld         |
 
 
