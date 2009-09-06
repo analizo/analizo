@@ -7,7 +7,7 @@ HelloWorld::HelloWorld() {
   this->_id = (HelloWorld::_id_seq++);
 }
 
-HelloWorld::~HelloWorld() {
+void HelloWorld::destroy() {
   std::cout << "Goobdye, world! My id is " << this->_id << std::endl;
 }
 

@@ -7,8 +7,8 @@ class HelloWorld {
     static int _id_seq;
   public:
     HelloWorld();
-    ~HelloWorld();
     void say();
+    void destroy();
 };
 
 #endif // _HELLO_WORLD_H_
