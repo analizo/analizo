@@ -25,8 +25,8 @@ into a a file.
 
 For example, the following works for many programs:
 
-   make clean
-   make CFLAGS=-dr
+  make clean
+  make CFLAGS=-dr
 
 Depending on the GCC version, the RTL file for a source file F<foo.c>
 may be called something like F<foo.c.rtl>, F<foo.c.00.rtl>, or

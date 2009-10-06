@@ -13,12 +13,12 @@ __PACKAGE__->mk_accessors(qw(model));
 __PACKAGE__->mk_ro_accessors(qw(current_function));
 
 sub alias {
-   my $alias = shift;
-   my %aliases = (
-      doxy => 'Doxyparse',
-      gcc  => 'GCC',
-   );
-   exists $aliases{$alias} ? $aliases{$alias} : $alias;
+  my $alias = shift;
+  my %aliases = (
+    doxy => 'Doxyparse',
+    gcc  => 'GCC',
+  );
+  exists $aliases{$alias} ? $aliases{$alias} : $alias;
 }
 
 sub load {
