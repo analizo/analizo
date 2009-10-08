@@ -1,0 +1,148 @@
+===========================
+= Style and Good practices
+===========================
+
+Always write automated tests for your code:
+
+  * if you are adding a new feature, write a new cucumber feature
+    file that shows how the feature is expected to work
+  * if you are fixing a bug, make sure that you add a test that fails because
+    of the bug, and then work on a fix to it.
+  * If removing any code does not make any test to fail, then that code can be
+    removed at any time.
+  * Make sure the existing tests still pass after you change, add or remove
+    any code.
+
+Refactoring code to make it simpler, easier to change or extend is always a
+good thing. Just make sure that the entire test suite still passes after you do
+any refactoring.
+
+
+Use 2 indentation of 2 spaces.
+
+Please always put the opening curly brace of a block in the same line of the
+corresponding instruction (e.g.  if, for etc).
+
+  Good:
+
+  if (...) {
+    ...
+  }
+
+  Bad:
+
+  if (...)
+  {
+    ...
+  }
+
+Always "use strict" in the top of new modules.
+
+Don't bother changing the AUTHORS file. It's automatically generated as part of
+the release process. See the Rakefile for more information.
+
+=================
+= Sending patches
+=================
+
+Send the patches to the egypt mailing list: egypt@listas.softwarelivre.org
+
+You don't need to be subscribed to the mailing list to send, but make sure you
+mention that if you want to receive an off-list reply. But it's recommended
+that you do subscribe to the mailing list. To do so, go to the list
+subscription page: http://listas.softwarelivre.org/cgi-bin/mailman/listinfo/egypt
+
+To create a patch:
+
+  git clone git://github.com/terceiro/egypt.git
+  cd egypt
+  edit file
+  git commit file
+  git format-patch origin
+
+This will generate patch files named like:
+
+  0001-message-you-typed-for-the-commit.patch
+
+If you want to make several changes, please consider making one commit (and
+therefore one patch) for each different logical change you want to make.  In
+this case, after running git format-patch you'll have a series of patch files
+named like 0001-..., 0002-..., just send them all.
+
+You are encouraged to learn how to use git since it's a powerfull version
+control system and it can make it easy for you to keep in sync with egypt's
+development.
+
+========================
+= Running the test suite
+========================
+
+Just run `rake` in the root of the sources.
+
+See below for instructions on installing the software needed to run the test
+suite.
+
+==============
+= Dependencies
+==============
+
+This section will help you to install two different sets of packages:
+
+  1) egypt dependencies
+  2) extra programs needed to run egypt's test suite
+
+Since we assume that being able to run the tests is a prerequisite for
+development, you are encouraged to install everything that's documented here.
+
+Short version (for Debian users):
+---------------------------------
+
+Add the following line to your /etc/apt/sources.list:
+
+  deb http://app.dcc.ufba.br/~terceiro/egypt/ ./
+
+Install Debian packages:
+
+  $ sudo apt-get install libgetopt-euclid-perl libgraph-perl liblist-compare-perl libtest-class-perl libtest-exception-perl libyaml-perl libclass-accessor-perl rake rubygems
+
+Install extra non-packaged software for acceptance tests:
+
+  $ gem install cucumber rspec
+
+Long version (general instructions):
+------------------------------------
+
+Install Rake - http://rake.rubyforge.org/
+
+  * your operating system probably already has a pre-built package for it
+  * otherwise follow the installation instructions on the website
+
+Install the following Perl modules, using CPAN or your native package manager:
+
+  * Getopt::Euclid
+  * Graph
+  * Test::Class
+  * List::Compare
+  * Test::Exception
+  * YAML
+  * Class::Accessor
+
+Install doxyparse's build dependencies: flex, bison, libqt4-dev (your operating
+system probably already has packages for these)
+
+Install doxyparse
+
+    git clone git://gitorious.org/doxygen/mainline.git doxyparse
+    cd doxyparse
+    ./configure --with-doxyparse
+    make
+    sudo install bin/doxyparse /usr/local/bin/
+
+Install rubygems - http://docs.rubygems.org/. Your operating system will
+probably already have a pre-build package for it.
+
+Install cucumber and rspec using rubygems
+
+  $ gem install cucumber rspec
+
+-- Antonio Terceiro <terceiro@softwarelivre.org>, Tue, 06 Oct 2009 18:37:43 -0300
