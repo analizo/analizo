@@ -1,3 +1,82 @@
+=========================
+= Installing Dependencies
+=========================
+
+This section will help you to install two different sets of packages:
+
+  1) egypt dependencies
+  2) extra programs needed to run egypt's test suite (if needed)
+
+Short version (for Debian users):
+---------------------------------
+
+Add the following line to your /etc/apt/sources.list:
+
+  deb http://app.dcc.ufba.br/~terceiro/egypt/ ./
+
+Install the needed Debian packages:
+
+  $ wget -q -O - http://app.dcc.ufba.br/~terceiro/egypt/signing-key.asc | sudo apt-key add -
+  $ sudo apt-get update
+  $ sudo apt-get install doxyparse libgetopt-euclid-perl libgraph-perl liblist-compare-perl libtest-class-perl libtest-exception-perl libyaml-perl libclass-accessor-perl
+
+If you don't plan to develop egypt (i.e. you only want to use it), you can stop
+here.
+
+Install extra software to run the acceptance tests:
+
+  $ sudo apt-get install rake rubygems
+  $ gem install cucumber rspec
+
+Long version (general instructions):
+------------------------------------
+
+Install the following Perl modules, using CPAN or your native package manager:
+
+  * Getopt::Euclid
+  * Graph
+  * Test::Class
+  * List::Compare
+  * Test::Exception
+  * YAML
+  * Class::Accessor
+
+Install doxyparse's build dependencies: flex, bison, libqt4-dev (your operating
+system probably already has packages for these)
+
+Install doxyparse
+
+    git clone git://gitorious.org/doxygen/mainline.git doxyparse
+    cd doxyparse
+    ./configure --with-doxyparse
+    make
+    sudo install bin/doxyparse /usr/local/bin/
+
+If you don't plan to develop egypt (i.e. you only want to use it), you can stop
+here.
+
+Install Rake - http://rake.rubyforge.org/
+
+  * your operating system probably already has a pre-built package for it
+  * otherwise follow the installation instructions on the website
+
+Install rubygems - http://docs.rubygems.org/. Your operating system will
+probably already have a pre-build package for it. If you have Ruby installed,
+you may already have rubygems installed as well.
+
+Install cucumber and rspec using rubygems
+
+  $ gem install cucumber rspec
+
+========================
+= Running the test suite
+========================
+
+Just run `rake` in the root of the sources.
+
+See "Installing Dependencies" above for a guide to install all the software
+that's needed to run egypt tests.
+
 ===========================
 = Style and Good practices
 ===========================
@@ -73,76 +152,4 @@ You are encouraged to learn how to use git since it's a powerfull version
 control system and it can make it easy for you to keep in sync with egypt's
 development.
 
-========================
-= Running the test suite
-========================
-
-Just run `rake` in the root of the sources.
-
-See below for instructions on installing the software needed to run the test
-suite.
-
-==============
-= Dependencies
-==============
-
-This section will help you to install two different sets of packages:
-
-  1) egypt dependencies
-  2) extra programs needed to run egypt's test suite
-
-Since we assume that being able to run the tests is a prerequisite for
-development, you are encouraged to install everything that's documented here.
-
-Short version (for Debian users):
----------------------------------
-
-Add the following line to your /etc/apt/sources.list:
-
-  deb http://app.dcc.ufba.br/~terceiro/egypt/ ./
-
-Install Debian packages:
-
-  $ sudo apt-get install libgetopt-euclid-perl libgraph-perl liblist-compare-perl libtest-class-perl libtest-exception-perl libyaml-perl libclass-accessor-perl rake rubygems
-
-Install extra non-packaged software for acceptance tests:
-
-  $ gem install cucumber rspec
-
-Long version (general instructions):
-------------------------------------
-
-Install Rake - http://rake.rubyforge.org/
-
-  * your operating system probably already has a pre-built package for it
-  * otherwise follow the installation instructions on the website
-
-Install the following Perl modules, using CPAN or your native package manager:
-
-  * Getopt::Euclid
-  * Graph
-  * Test::Class
-  * List::Compare
-  * Test::Exception
-  * YAML
-  * Class::Accessor
-
-Install doxyparse's build dependencies: flex, bison, libqt4-dev (your operating
-system probably already has packages for these)
-
-Install doxyparse
-
-    git clone git://gitorious.org/doxygen/mainline.git doxyparse
-    cd doxyparse
-    ./configure --with-doxyparse
-    make
-    sudo install bin/doxyparse /usr/local/bin/
-
-Install rubygems - http://docs.rubygems.org/. Your operating system will
-probably already have a pre-build package for it.
-
-Install cucumber and rspec using rubygems
-
-  $ gem install cucumber rspec
-
--- Antonio Terceiro <terceiro@softwarelivre.org>, Tue, 06 Oct 2009 18:37:43 -0300
+-- Antonio Terceiro <terceiro@softwarelivre.org>, Thu, 08 Oct 2009 19:28:52 -0300
