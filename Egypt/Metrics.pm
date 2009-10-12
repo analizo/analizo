@@ -32,12 +32,18 @@ sub loc {
   my $lines = 0;
   my $max = 0;
   for my $function (@functions) {
-    my $loc = $self->model->{lines}->{$function};
+    my $loc = $self->model->{lines}->{$function} || 0;
     $lines += $loc;
     $max = $loc if $loc > $max;
   }
   return ($lines, $max);
 }
+
+sub _is_public {
+  my ($self, $member) = @_;
+  return $self->model->{protection}->{$member} && $self->model->{protection}->{$member} eq "public";
+}
+
 
 sub public_functions {
   my ($self, $module) = @_;
@@ -45,7 +51,7 @@ sub public_functions {
   my @functions = $self->model->functions($module);
   my $public_functions = 0;
   for my $function (@functions) {
-    $public_functions += 1 if $self->model->{protection}->{$function} eq "public";
+    $public_functions += 1 if $self->_is_public($function);
   }
   return $public_functions;
 }
@@ -56,7 +62,7 @@ sub public_variables {
     my @variables = $self->model->variables($module);
     my $public_variables = 0;
     for my $variable (@variables) {
-        $public_variables += 1 if $self->model->{protection}->{$variable} eq "public";
+       $public_variables += 1 if $self->_is_public($variable);
     }
     return $public_variables;
 }
@@ -133,7 +139,9 @@ sub report {
     lcom4 => 0,
     number_of_functions => 0,
     number_of_modules => 0,
-    public_functions => 0
+    public_functions => 0,
+    number_of_public_functions => 0,
+    loc => 0
   );
 
   for my $module (keys(%{$self->model->modules})) {

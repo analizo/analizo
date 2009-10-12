@@ -146,11 +146,11 @@ sub loc : Tests {
 
   $model->declare_function('mod1', 'mod1::f1');
   $model->add_loc('mod1::f1', 10);
-  is($metrics->loc('mod1'), (10, 10), 'one module, with 10 LOC');
+  eq_array($metrics->loc('mod1'), [10, 10], 'one module, with 10 LOC');
 
   $model->declare_function('mod1', 'mod1::f1');
   $model->add_loc('mod1::f1', 20);
-  is($metrics->loc('mod1'), (30, 20), 'other module, with 20 LOC');
+  eq_array($metrics->loc('mod1'), [30, 20], 'other module, with 20 LOC');
 }
 
 sub amz_size_with_no_functions_at_all : Tests {
