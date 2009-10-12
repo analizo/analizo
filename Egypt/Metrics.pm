@@ -57,14 +57,14 @@ sub public_functions {
 }
 
 sub public_variables {
-    my ($self, $module) = @_;
+  my ($self, $module) = @_;
 
-    my @variables = $self->model->variables($module);
-    my $public_variables = 0;
-    for my $variable (@variables) {
-       $public_variables += 1 if $self->_is_public($variable);
-    }
-    return $public_variables;
+  my @variables = $self->model->variables($module);
+  my $public_variables = 0;
+  for my $variable (@variables) {
+    $public_variables += 1 if $self->_is_public($variable);
+  }
+  return $public_variables;
 }
 
 sub lcom1 {
