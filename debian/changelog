@@ -1,8 +1,9 @@
 egypt (1.9.0-1) unstable; urgency=low
 
   * New upstream release.
+  * Standards version updated to 3.8.3, no changes needed.
 
- -- Antonio Terceiro <terceiro@softwarelivre.org>  Mon, 12 Oct 2009 15:56:19 -0300
+ -- Antonio Terceiro <terceiro@softwarelivre.org>  Mon, 12 Oct 2009 16:08:48 -0300
 
 egypt (1.8.0-1~0) UNRELEASED; urgency=low
 

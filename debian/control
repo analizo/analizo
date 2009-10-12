@@ -4,7 +4,7 @@ Priority: extra
 Maintainer: Antonio Terceiro <terceiro@softwarelivre.org>
 Build-Depends: cdbs, debhelper (>= 7)
 Build-Depends-Indep: doxyparse, libgetopt-euclid-perl, libgraph-perl, liblist-compare-perl, libtest-class-perl, libtest-exception-perl, libyaml-perl, libclass-accessor-perl
-Standards-Version: 3.8.0
+Standards-Version: 3.8.3
 Homepage: http://softwarelivre.org/egypt
 DM-Upload-Allowed: yes
 
