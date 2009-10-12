@@ -8,6 +8,8 @@ sub new {
     modules => {},
     demangle => {},
     calls => {},
+    lines => {},
+    protection => {}
   );
   return bless { @defaults }, __PACKAGE__;
 }
@@ -29,7 +31,7 @@ sub declare_member {
   $self->{members}->{$member} = $module;
 
   # mapping module to member
-  $self->modules->{$module} = [] if !exists($self->modules->{$module});
+  $self->{modules}->{$module} = [] if !exists($self->modules->{$module});
   push @{$self->modules->{$module}}, $member;
 
   # demangling name
@@ -81,6 +83,16 @@ sub _find_by_type {
   return grep { $self->members->{$_} eq $module && $self->type($_) eq $type } keys(%{$self->members});
 }
 
+sub add_loc {
+    my ($self, $function, $lines) = @_;
+    $self->{lines}->{$function} = $lines;
+}
+
+sub add_protection {
+    my ($self, $member, $protection) = @_;
+     $self->{protection}->{$member} = $protection;
+}
+
 sub functions {
   _find_by_type(@_, 'function');
 }
@@ -91,3 +103,4 @@ sub variables {
 
 
 1;
+

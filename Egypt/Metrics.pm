@@ -25,6 +25,42 @@ sub coupling {
   return (scalar keys(%seen));
 }
 
+sub loc {
+  my ($self, $module) = @_;
+
+  my @functions = $self->model->functions($module);
+  my $lines = 0;
+  my $max = 0;
+  for my $function (@functions) {
+    my $loc = $self->model->{lines}->{$function};
+    $lines += $loc;
+    $max = $loc if $loc > $max;
+  }
+  return ($lines, $max);
+}
+
+sub public_functions {
+  my ($self, $module) = @_;
+
+  my @functions = $self->model->functions($module);
+  my $public_functions = 0;
+  for my $function (@functions) {
+    $public_functions += 1 if $self->model->{protection}->{$function} eq "public";
+  }
+  return $public_functions;
+}
+
+sub public_variables {
+    my ($self, $module) = @_;
+
+    my @variables = $self->model->variables($module);
+    my $public_variables = 0;
+    for my $variable (@variables) {
+        $public_variables += 1 if $self->model->{protection}->{$variable} eq "public";
+    }
+    return $public_variables;
+}
+
 sub lcom1 {
   my ($self, $module) = @_;
   my @functions = $self->model->functions($module);
@@ -78,9 +114,14 @@ sub lcom4 {
   return scalar @components;
 }
 
-sub interface_size {
+sub number_of_functions {
   my ($self, $module) = @_;
   return (scalar $self->model->functions($module));
+}
+
+sub amz_size {
+  my ($lines, $count)= @_;
+  return ($count > 0) ? ($lines / $count) : 0;
 }
 
 sub report {
@@ -92,20 +133,32 @@ sub report {
     lcom4 => 0,
     number_of_functions => 0,
     number_of_modules => 0,
+    public_functions => 0
   );
+
   for my $module (keys(%{$self->model->modules})) {
     my $coupling = $self->coupling($module);
-    my $number_of_functions = $self->interface_size($module);
+    my $number_of_functions = $self->number_of_functions($module);
     my $lcom1 = $self->lcom1($module);
     my $lcom4 = $self->lcom4($module);
+    my ($lines, $max_mloc) = $self->loc($module);
+    my $public_functions = $self->public_functions($module);
+    my $amz_size = amz_size($lines, $number_of_functions);
+    my $public_variables = $self->public_variables($module);
+
     my %data = (
       _module => $module,
+      amz_size => $amz_size,
       coupling => $coupling,
       coupling_times_lcom1 => $coupling * $lcom1,
       coupling_times_lcom4 => $coupling * $lcom4,
-      interface_size => $number_of_functions,
+      number_of_functions => $number_of_functions,
       lcom1 => $lcom1,
       lcom4 => $lcom4,
+      loc => $lines,
+      max_mloc => $max_mloc,
+      public_functions => $public_functions,
+      public_variables => $public_variables
     );
     $result .= Dump(\%data);
 
@@ -116,6 +169,9 @@ sub report {
     $totals{'lcom4'} += $lcom4;
     $totals{'number_of_modules'} += 1;
     $totals{'number_of_functions'} += $number_of_functions;
+    $totals{'number_of_public_functions'} += $public_functions;
+    $totals{'loc'} += $lines;
+
   }
   my %summary = (
     average_coupling => ($totals{'coupling'}) / $totals{'number_of_modules'},
@@ -125,8 +181,11 @@ sub report {
     average_lcom4 => ($totals{'lcom4'}) / $totals{'number_of_modules'},
     number_of_functions => $totals{'number_of_functions'},
     number_of_modules => $totals{'number_of_modules'},
+    number_of_public_functions => $totals{'number_of_public_functions'}
   );
+
   return Dump(\%summary) . $result;
 }
 
 1;
+

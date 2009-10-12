@@ -3,6 +3,8 @@ public class HelloWorld {
 
   private int _id;
 
+  public static int hello = 1;
+
   public HelloWorld() {
     this._id = (_id_seq++);
   }
@@ -15,4 +17,8 @@ public class HelloWorld {
     System.out.println("Goodbye, world! My id is " + _id);
   }
 
+  private void private_method() {
+      hello = 2;
+      System.out.println(hello);
+  }
 }

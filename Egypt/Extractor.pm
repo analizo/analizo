@@ -10,7 +10,7 @@ use Egypt::Model;
 our $QUIET = undef;
 
 __PACKAGE__->mk_accessors(qw(model));
-__PACKAGE__->mk_ro_accessors(qw(current_function));
+__PACKAGE__->mk_ro_accessors(qw(current_member));
 
 sub alias {
   my $alias = shift;

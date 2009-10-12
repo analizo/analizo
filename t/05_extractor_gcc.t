@@ -41,11 +41,11 @@ sub pre_gcc4_style : Tests {
   $extractor = Egypt::Extractor->load('GCC', current_module => 'module1.c');
   $extractor->feed(';; Function myfunction    ');
   ok((grep { $_ eq 'myfunction' } @{$extractor->model->{modules}->{'module1.c'}}), 'must be able to read a function with trailing whitespace in the line');
-  is($extractor->current_function, 'myfunction', 'must set the current function');
+  is($extractor->current_member, 'myfunction', 'must set the current function');
 
   $extractor->feed(';; Function anotherfunction');
   ok((grep { $_ eq 'anotherfunction' } @{$extractor->model->{modules}->{'module1.c'}}), 'must be able to read function without trailing whitespace in the line');
-  is($extractor->current_function, 'anotherfunction');
+  is($extractor->current_member, 'anotherfunction');
 }
 
 ##############################################################################
@@ -55,13 +55,13 @@ sub gcc4_style : Tests {
   $extractor = Egypt::Extractor->load('GCC', current_module => 'hello.c');
   $extractor->feed(';; Function say_hello (say_hello)');
   ok(grep { $_ eq 'say_hello' } @{$extractor->model->{modules}->{'hello.c'}});
-  is($extractor->current_function, 'say_hello');
+  is($extractor->current_member, 'say_hello');
 
   # mangled/demangled name
   $extractor->feed(';; Function Class::method(int) (MangledName)');
   ok(grep { $_ eq 'MangledName' } @{$extractor->model->{modules}->{'hello.c'}});
   is($extractor->model->demangle('MangledName'), 'Class::method(int)');
-  is($extractor->current_function, 'MangledName');
+  is($extractor->current_member, 'MangledName');
 }
 
 ##############################################################################

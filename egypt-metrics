@@ -2,13 +2,34 @@
 
 use Getopt::Euclid;
 
+sub list_metrics()
+{
+    %metrics = (
+      coupling => "CBO coupling",
+      coupling_times_lcom1 => "Coupling times Lack Of Cohesion 1",
+      coupling_times_lcom4 => "Coupling times Lack Of Cohesion 4",
+      interface_size => "Number of functions/methods",
+      lcom1 => "Lack of Cohesion 1",
+      lcom4 => "Lack of Cohesion 4",
+      loc => "Lines of Code",
+      public_methods => "Number of public methods",
+      amz_size => "Average number of lines per method",
+      max_mloc => "Max number of method lines",
+      public_variables => "Number of public variaveis"
+    );
+
+    foreach my $key (sort keys %metrics){
+        print "$key - $metrics{$key}\n";
+    }
+}
+
 =head1 NAME
 
 egypt metrics - egypt's metric reporting tool
 
 =head1 SYNOPSIS
 
-  egypt metrics [options] <input> [<input> ...]
+  egypt metrics [options] [<input> ...]
 
 =head1 DESCRIPTION
 
@@ -17,16 +38,6 @@ procudes a matrics report. Such report is written to the standard output in the
 YAML format (see I<http://www.yaml.org/>)
 
 egypt metrics is part of the egypt suite.
-
-=head1 REQUIRED ARGUMENTS
-
-=over
-
-=item <input>...
-
-Tells egypt which source code directory(ies) you want to parse.
-
-=back
 
 =head1 OPTIONS
 
@@ -51,6 +62,18 @@ supported by doxyparse are processed.
 
 Displays a help message on how to use this tool.
 
+=item --list
+
+Displays metric list
+
+=item <input>...
+
+Tells egypt which source code directory(ies) you want to parse.
+
+=item --file <file>
+
+Use a file as output
+
 =back
 
 =head1 OUTPUT FORMAT
@@ -70,10 +93,31 @@ use strict;
 use Egypt::Extractor;
 use Egypt::Metrics;
 
-my $extractor = Egypt::Extractor->load($ARGV{'--extractor'});
-my $metrics = Egypt::Metrics->new(model => $extractor->model);
+
+if($ARGV{'--list'}){
+    list_metrics();
+    exit(0);
+}
+
+if($ARGV{'<input>'} =~ /^\s*$/){
+    printf("%s: No input files!\n", 'egypt metrics');
+    exit(0);
+}
+
+if($ARGV{'--file'}){
+    open (OUTPUT, ">>$ARGV{'--file'}") or die "Can't open file\n";
+}
+else{
+    open (OUTPUT, ">&STDOUT");
+}
+
+my $extractor = Egypt::Extractor->load($ARGV{'--extractor'});   #loading an extractor
+my $metrics = Egypt::Metrics->new(model => $extractor->model); #create Metric using the program abstraction
 
 $extractor->process(@{$ARGV{'<input>'}});
-print $metrics->report;
+
+print OUTPUT $metrics->report;
+close(OUTPUT);
 
 exit(0);
+

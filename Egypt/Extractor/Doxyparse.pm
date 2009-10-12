@@ -22,23 +22,32 @@ sub feed {
   if ($line =~ m/^\s{3}function (\S+) in line \d+$/) {
     my $function = _qualified_name($self->current_module, $1);
     $self->model->declare_function($self->current_module, $function);
-    $self->{current_function} = $function;
+    $self->{current_member} = $function;
   }
   # variable declarations
   elsif ($line =~ m/^\s{3}variable (\S+) in line \d+$/) {
     my $variable = _qualified_name($self->current_module, $1);
     $self->model->declare_variable($self->current_module, $variable);
+    $self->{current_member} = $variable;
   }
 
   # function calls/uses
   if ($line =~ m/^\s{6}uses function (\S+) defined in (\S+)$/) {
     my $function = _qualified_name($2, $1);
-    $self->model->add_call($self->current_function, $function, 'direct');
+    $self->model->add_call($self->current_member, $function, 'direct');
   }
   # variable references
   elsif ($line =~ m/^\s{6}uses variable (\S+) defined in (\S+)$/) {
     my $variable = _qualified_name($2, $1);
-    $self->model->add_variable_use($self->current_function, $variable);
+    $self->model->add_variable_use($self->current_member, $variable);
+  }
+
+  if ($line =~ m/^\s{6}protection public$/) {
+    $self->model->add_protection($self->current_member, 'public');
+  }
+
+  if($line =~ m/^\s{6}(\d+) lines of code$/){
+      $self->model->add_loc($self->current_member, $1);
   }
 }
 
