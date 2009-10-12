@@ -32,7 +32,9 @@ sub declare_member {
 
   # mapping module to member
   $self->{modules}->{$module} = [] if !exists($self->modules->{$module});
-  push @{$self->modules->{$module}}, $member;
+  if (! grep { $_ eq $member } @{$self->modules->{$module}}) {
+    push @{$self->modules->{$module}}, $member;
+  }
 
   # demangling name
   $self->{demangle}->{$member} = $demangled_name;
@@ -80,7 +82,8 @@ sub add_variable_use {
 
 sub _find_by_type {
   my ($self, $module, $type) = @_;
-  return grep { $self->members->{$_} eq $module && $self->type($_) eq $type } keys(%{$self->members});
+  my @list = grep { $self->type($_) eq $type } @{$self->modules->{$module}};
+  return @list;
 }
 
 sub add_loc {
