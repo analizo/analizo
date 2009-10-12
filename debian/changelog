@@ -1,3 +1,9 @@
+egypt (1.9.0-1) unstable; urgency=low
+
+  * New upstream release.
+
+ -- Antonio Terceiro <terceiro@softwarelivre.org>  Mon, 12 Oct 2009 15:56:19 -0300
+
 egypt (1.8.0-1~0) UNRELEASED; urgency=low
 
   * Initial release. (Closes: #XXXXXX)

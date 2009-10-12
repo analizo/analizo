@@ -2,19 +2,18 @@ Source: egypt
 Section: devel
 Priority: extra
 Maintainer: Antonio Terceiro <terceiro@softwarelivre.org>
-Build-Depends: cdbs, debhelper (>= 7)
+Build-Depends: cdbs, debhelper (>= 7), doxyparse, libgetopt-euclid-perl, libgraph-perl, liblist-compare-perl, libtest-class-perl, libtest-exception-perl, libyaml-perl, libclass-accessor-perl
 Standards-Version: 3.8.0
-Homepage: http://www.gson.org/egypt/
+Homepage: http://softwarelivre.org/egypt
 DM-Upload-Allowed: yes
 
 Package: egypt
 Architecture: all
-Depends: ${misc:Depends}
+Depends: ${misc:Depends}, doxyparse, libgetopt-euclid-perl, libgraph-perl, liblist-compare-perl, libtest-class-perl, libtest-exception-perl, libyaml-perl, libclass-accessor-perl
 Recommends: gcc, graphviz
-Description: extracts call graph information from GCC RTL output
- Egypt is a devilishly simple tool for creating call graphs of C programs.
- Egypt neither analyzes source code nor lays out graphs. Instead, it leaves
- the source code analysis to GCC and the graph layout to Graphviz, both of
- which are better at their respective jobs than egypt itself could ever hope
- to be. Egypt is simply a very small Perl script that glues these existing
- tools together.
+Description: multi-language source code analysis toolkit
+ Egypt parses source code in multiple languages and report useful information
+ about it, such as module dependency, source code metrics and more.
+ .
+ Egypt uses doxyparse to parse the source code, and is currently tested and
+ expected to work well with C, C++ and Java source code.
