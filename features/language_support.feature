@@ -34,3 +34,18 @@ Feature: multi-language support
     | c        | hello_world::hello_world_say | hello_world::hello_world_destroy | _hello_world::id |
     | c++      | HelloWorld::say | HelloWorld::destroy | HelloWorld::_id |
     | java     | HelloWorld::say | HelloWorld::destroy | HelloWorld::_id |
+
+  Scenario Outline: some metrics
+    Given I am in samples/hello_world/<language>
+    When I run "egypt metrics ."
+    Then egypt must report that the project has <number_of_modules> modules
+    And egypt must report that module <main_module> has public_functions = 1
+    And egypt must report that module <hello_world_module> has public_functions = 3
+    And egypt must report that module <hello_world_module> has number_of_functions = <total_functions>
+    And egypt must report that module <hello_world_module> has public_variables = 1
+  Examples:
+    | language | number_of_modules | main_module | hello_world_module | total_functions |
+    | c        | 3                 | main        | hello_world        | 3               |
+    | c++      | 2                 | main        | HelloWorld         | 4               |
+    | java     | 2                 | Main        | HelloWorld         | 4               |
+

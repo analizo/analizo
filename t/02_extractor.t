@@ -20,8 +20,8 @@ sub has_a_model : Tests {
   can_ok('Egypt::Extractor', 'model');
 }
 
-sub has_a_current_function : Tests {
-  can_ok('Egypt::Extractor', 'current_function');
+sub has_a_current_member : Tests {
+  can_ok('Egypt::Extractor', 'current_member');
 }
 
 ##############################################################################

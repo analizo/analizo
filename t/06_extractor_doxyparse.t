@@ -33,7 +33,7 @@ sub detect_function_declaration : Tests {
   my $extractor = Egypt::Extractor->load('Doxyparse', current_module => 'module1.c');
   $extractor->feed('   function myfunction in line 5');
   ok(grep { $_ eq 'module1::myfunction' } @{$extractor->model->{modules}->{'module1.c'}});
-  is($extractor->current_function, 'module1::myfunction', 'must set the current function');
+  is($extractor->current_member, 'module1::myfunction', 'must set the current function');
 }
 
 sub detect_variable_declaration : Tests {
@@ -63,6 +63,33 @@ sub detect_variable_uses : Tests {
   $extractor->feed('   function callerfunction in line 5');
   $extractor->feed('      uses variable myvariable defined in module2.c');
   is($extractor->model->{calls}->{'module1::callerfunction'}->{'module2::myvariable'}, 'variable');
+}
+
+sub detect_function_protection : Tests {
+  my $extractor = Egypt::Extractor->load('Doxyparse', current_module => 'module1.c');
+  $extractor->feed('   function public_function in line 5');
+  $extractor->feed('      protection public');
+  $extractor->feed('   function non_public_function in line 15');
+  is($extractor->model->{protection}->{'module1::public_function'}, 'public');
+  is($extractor->model->{protection}->{'module1::non_public_function'}, undef);
+}
+
+sub detect_variable_protection : Tests {
+  my $extractor = Egypt::Extractor->load('Doxyparse', current_module => 'module1.c');
+  $extractor->feed('   variable private_variable in line 1');
+  $extractor->feed('   variable public_variable in line 2');
+  $extractor->feed('      protection public');
+  is($extractor->model->{protection}->{'module1::private_variable'}, undef);
+  is($extractor->model->{protection}->{'module1::public_variable'}, 'public');
+}
+
+sub detect_lines_of_code : Tests {
+  my $extractor = Egypt::Extractor->load('Doxyparse', current_module => 'module1.c');
+  $extractor->feed('   function one_function in line 5');
+  $extractor->feed('      12 lines of code');
+  $extractor->feed('   function another_function line 50');
+  is($extractor->model->{lines}->{'module1::one_function'}, 12);
+  is($extractor->model->{lines}->{'module1::another_function'}, undef);
 }
 
 sub reading_from_one_input_file : Tests {

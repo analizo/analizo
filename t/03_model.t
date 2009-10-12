@@ -80,4 +80,16 @@ sub querying_type_of_member_and_members_by_type : Tests {
 
 }
 
+sub declaring_protection : Tests {
+  my $model = new Egypt::Model;
+  $model->add_protection('main::f1', 'public');
+  is($model->{protection}->{'main::f1'}, 'public');
+}
+
+sub declating_lines_of_code : Tests {
+  my $model = new Egypt::Model;
+  $model->add_loc('main::f1', 50);
+  is($model->{lines}->{'main::f1'}, 50);
+}
+
 ModelTests->runtests;
