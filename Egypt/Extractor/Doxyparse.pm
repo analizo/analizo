@@ -70,7 +70,6 @@ sub _file_to_module {
 sub process {
   my $self = shift;
   my @files = ();
-  $self->info("Parsing input '" . join(', ', @_) . "' with Doxyparse ...");
   eval {
     open DOXYPARSE, sprintf("doxyparse %s |", join(' ', @_) ) or die $!;
     while (<DOXYPARSE>) {
