@@ -1,5 +1,7 @@
 task :default => ['test', 'features']
 
+ENV['PERL5LIB'] = '.'
+
 desc 'Run unit tests'
 task 'test' do
   sh('prove t/')
