@@ -1,3 +1,9 @@
+egypt (1.10.0-1) unstable; urgency=low
+
+  * New upstream release: several optimizations and new features.
+
+ -- Antonio Terceiro <terceiro@softwarelivre.org>  Mon, 12 Oct 2009 22:18:40 -0300
+
 egypt (1.9.0-1) unstable; urgency=low
 
   * New upstream release.
