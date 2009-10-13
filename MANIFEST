@@ -24,6 +24,7 @@ features/graph/modules.feature
 features/graph/omit.feature
 features/graph/plain.feature
 features/language_support.feature
+features/metrics.feature
 features/step_definitions/egypt_steps.rb
 features/support/egypt_exception.rb
 features/wrapper.feature
