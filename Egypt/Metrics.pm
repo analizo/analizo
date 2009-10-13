@@ -67,24 +67,6 @@ sub public_variables {
   return $public_variables;
 }
 
-sub lcom1 {
-  my ($self, $module) = @_;
-  my @functions = $self->model->functions($module);
-  my $n = scalar @functions;
-  my $result = 0;
-  # test each pair of functions in module for relation
-  for (my $i = 0; $i < $n; $i++) {
-    for (my $j = $i + 1; $j < $n; $j++) {
-      if ($self->_related($module, $functions[$i], $functions[$j])) {
-        $result -= 1;
-      } else {
-        $result += 1
-      }
-    }
-  }
-  return $result > 0 ? $result : 0;
-}
-
 sub _related {
   my ($self, $module, $f1, $f2) = @_;
 
@@ -147,7 +129,6 @@ sub report {
   my $result = '';
   my %totals = (
     coupling => 0,
-    lcom1 => 0,
     lcom4 => 0,
     number_of_functions => 0,
     number_of_modules => 0,
@@ -159,7 +140,6 @@ sub report {
   for my $module ($self->model->module_names) {
     my $coupling = $self->coupling($module);
     my $number_of_functions = $self->number_of_functions($module);
-    my $lcom1 = $self->lcom1($module);
     my $lcom4 = $self->lcom4($module);
     my ($lines, $max_mloc) = $self->loc($module);
     my $public_functions = $self->public_functions($module);
@@ -171,10 +151,8 @@ sub report {
       _module => $module,
       amz_size => $amz_size,
       coupling => $coupling,
-      coupling_times_lcom1 => $coupling * $lcom1,
       coupling_times_lcom4 => $coupling * $lcom4,
       number_of_functions => $number_of_functions,
-      lcom1 => $lcom1,
       lcom4 => $lcom4,
       loc => $lines,
       max_mloc => $max_mloc,
@@ -185,9 +163,7 @@ sub report {
     $result .= Dump(\%data);
 
     $totals{'coupling'} += $coupling;
-    $totals{'coupling_times_lcom1'} += ($coupling * $lcom1);
     $totals{'coupling_times_lcom4'} += ($coupling * $lcom4);
-    $totals{'lcom1'} += $lcom1;
     $totals{'lcom4'} += $lcom4;
     $totals{'number_of_modules'} += 1;
     $totals{'number_of_functions'} += $number_of_functions;
@@ -197,9 +173,7 @@ sub report {
   }
   my %summary = (
     average_coupling => ($totals{'coupling'}) / $totals{'number_of_modules'},
-    average_coupling_times_lcom1 => ($totals{'coupling_times_lcom1'}) / $totals{'number_of_modules'},
     average_coupling_times_lcom4 => ($totals{'coupling_times_lcom4'}) / $totals{'number_of_modules'},
-    average_lcom1 => ($totals{'lcom1'}) / $totals{'number_of_modules'},
     average_lcom4 => ($totals{'lcom4'}) / $totals{'number_of_modules'},
     number_of_functions => $totals{'number_of_functions'},
     number_of_modules => $totals{'number_of_modules'},

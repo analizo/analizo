@@ -41,29 +41,6 @@ sub coupling : Tests {
   is($metrics->coupling('mod1'), 2, 'calling two different functions in the same module');
 }
 
-sub lcom1 : Tests {
-  $model->declare_function('mod1', 'f1');
-  $model->declare_function('mod1', 'f2');
-
-  is($metrics->lcom1('mod1'), 1, 'a pair of unrelated functions');
-
-  $model->declare_variable('mod1', 'var1');
-  $model->add_variable_use('f1', 'var1');
-  $model->add_variable_use('f2', 'var1');
-  is($metrics->lcom1('mod1'), 0, 'two cohesive functions');
-
-  $model->declare_function('mod1', 'f3');
-  $model->declare_variable('mod1', 'v2');
-  $model->add_call('f3', 'v2');
-  is($metrics->lcom1('mod1'), 1, 'a third function unrelated to the others');
-
-  $model->declare_function('mod1', 'f4');
-  $model->declare_variable('mod1', 'v3');
-  $model->add_call('f4', 'v3');
-  is($metrics->lcom1('mod1'), 4, 'yet another function unrelated to the previous ones');
-
-}
-
 sub lcom4 : Tests {
   $model->declare_function('mod1', $_) for qw(f1 f2);
   is($metrics->lcom4('mod1'), 2, 'two unrelated functions');
