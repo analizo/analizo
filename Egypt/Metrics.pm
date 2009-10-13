@@ -137,7 +137,12 @@ sub report {
     loc => 0
   );
 
-  for my $module ($self->model->module_names) {
+  my @module_names = $self->model->module_names;
+  if (scalar(@module_names) == 0) {
+    return '';
+  }
+
+  for my $module (@module_names) {
     my $coupling = $self->coupling($module);
     my $number_of_functions = $self->number_of_functions($module);
     my $lcom4 = $self->lcom4($module);
