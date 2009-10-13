@@ -84,3 +84,9 @@ Then /^egypt must report that module (.+) has (.+) = (\d+)$/ do |mod, metric, n|
   module_metrics[metric].should == n.to_i
 end
 
+Then /^egypt must present a list of metrics$/ do
+  @stdout.size.should > 0
+  @stdout.each do |item|
+    item.should match(/^\w+ - .+$/)
+  end
+end

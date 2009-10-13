@@ -124,6 +124,46 @@ sub dit {
   }
 }
 
+sub _report_module {
+  my ($self, $module) = @_;
+
+  my $coupling            = $self->coupling($module);
+  my $number_of_functions = $self->number_of_functions($module);
+  my $lcom4               = $self->lcom4($module);
+  my ($lines, $max_mloc)  = $self->loc($module);
+  my $public_functions    = $self->public_functions($module);
+  my $amz_size            = amz_size($lines, $number_of_functions);
+  my $public_variables    = $self->public_variables($module);
+  my $dit                 = $self->dit($module);
+
+  my %data = (
+    _module => $module,
+    amz_size => $amz_size,
+    coupling => $coupling,
+    number_of_functions => $number_of_functions,
+    lcom4 => $lcom4,
+    loc => $lines,
+    max_mloc => $max_mloc,
+    public_functions => $public_functions,
+    public_variables => $public_variables,
+    dit => $dit,
+  );
+
+  return %data;
+}
+
+my %DESCRIPTIONS = (
+  coupling => "CBO coupling",
+  lcom4 => "Lack of Cohesion (LCOM4)",
+  loc => "Lines of Code",
+  number_of_functions => "Number of functions/methods",
+  public_functions => "Number of public functions",
+  amz_size => "Average number of lines per method",
+  max_mloc => "Max number of method lines",
+  public_variables => "Number of public variaveis",
+  dit => "Depth of Inheritance Tree",
+);
+
 sub report {
   my $self = shift;
   my $result = '';
@@ -143,35 +183,16 @@ sub report {
   }
 
   for my $module (@module_names) {
-    my $coupling = $self->coupling($module);
-    my $number_of_functions = $self->number_of_functions($module);
-    my $lcom4 = $self->lcom4($module);
-    my ($lines, $max_mloc) = $self->loc($module);
-    my $public_functions = $self->public_functions($module);
-    my $amz_size = amz_size($lines, $number_of_functions);
-    my $public_variables = $self->public_variables($module);
-    my $dit = $self->dit($module);
+    my %data = $self->_report_module($module);
 
-    my %data = (
-      _module => $module,
-      amz_size => $amz_size,
-      coupling => $coupling,
-      number_of_functions => $number_of_functions,
-      lcom4 => $lcom4,
-      loc => $lines,
-      max_mloc => $max_mloc,
-      public_functions => $public_functions,
-      public_variables => $public_variables,
-      dit => $dit,
-    );
     $result .= Dump(\%data);
 
-    $totals{'coupling'} += $coupling;
-    $totals{'lcom4'} += $lcom4;
+    $totals{'coupling'} += $data{coupling};
+    $totals{'lcom4'} += $data{lcom4};
     $totals{'number_of_modules'} += 1;
-    $totals{'number_of_functions'} += $number_of_functions;
-    $totals{'number_of_public_functions'} += $public_functions;
-    $totals{'loc'} += $lines;
+    $totals{'number_of_functions'} += $data{number_of_functions};
+    $totals{'number_of_public_functions'} += $data{public_functions};
+    $totals{'loc'} += $data{loc};
 
   }
   my %summary = (
@@ -183,6 +204,17 @@ sub report {
   );
 
   return Dump(\%summary) . $result;
+}
+
+sub list_of_metrics {
+  my $self = shift;
+  my %report = $self->_report_module('dummy-module');
+  my @names = grep { $_ !~ /^_/ } keys(%report);
+  my %list = ();
+  for my $name (@names) {
+    $list{$name} = $DESCRIPTIONS{$name};
+  }
+  return %list;
 }
 
 1;
