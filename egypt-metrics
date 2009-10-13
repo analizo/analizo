@@ -2,28 +2,6 @@
 
 use Getopt::Euclid;
 
-sub list_metrics()
-{
-    %metrics = (
-      coupling => "CBO coupling",
-      coupling_times_lcom1 => "Coupling times Lack Of Cohesion 1",
-      coupling_times_lcom4 => "Coupling times Lack Of Cohesion 4",
-      lcom1 => "Lack of Cohesion 1",
-      lcom4 => "Lack of Cohesion 4",
-      loc => "Lines of Code",
-      number_of_functions => "Number of functions/methods",
-      public_methods => "Number of public methods",
-      amz_size => "Average number of lines per method",
-      max_mloc => "Max number of method lines",
-      public_variables => "Number of public variaveis",
-      dit => "Depth of Inheritance Tree",
-    );
-
-    foreach my $key (sort keys %metrics){
-        print "$key - $metrics{$key}\n";
-    }
-}
-
 =head1 NAME
 
 egypt metrics - egypt's metric reporting tool
@@ -96,7 +74,11 @@ use Egypt::Metrics;
 
 
 if($ARGV{'--list'}){
-    list_metrics();
+    my $metrics_handler = new Egypt::Metrics(model => new Egypt::Model);
+    my %metrics = $metrics_handler->list_of_metrics();
+    foreach my $key (sort keys %metrics){
+        print "$key - $metrics{$key}\n";
+    }
     exit(0);
 }
 
@@ -112,8 +94,8 @@ else{
     open (OUTPUT, ">&STDOUT");
 }
 
-my $extractor = Egypt::Extractor->load($ARGV{'--extractor'});   #loading an extractor
-my $metrics = Egypt::Metrics->new(model => $extractor->model); #create Metric using the program abstraction
+my $extractor = Egypt::Extractor->load($ARGV{'--extractor'});
+my $metrics = Egypt::Metrics->new(model => $extractor->model);
 
 $extractor->process(@{$ARGV{'<input>'}});
 

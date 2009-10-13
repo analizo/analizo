@@ -190,4 +190,9 @@ sub discard_external_symbols_for_coupling : Tests {
   is($metrics->coupling('mod1'), 1, 'calling a external function');
 }
 
+sub list_of_metrics : Tests {
+  my %metrics = $metrics->list_of_metrics();
+  cmp_ok(scalar(keys(%metrics)), '>', 0, 'must list metrics');
+}
+
 MetricsTests->runtests;
