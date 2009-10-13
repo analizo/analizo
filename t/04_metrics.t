@@ -176,6 +176,11 @@ sub report : Tests {
   ok($output =~ /_module: mod2/, 'reporting module 2');
 }
 
+sub report_without_modules_at_all : Tests {
+  # if this call does not crash we are fine
+  $metrics->report;
+}
+
 sub discard_external_symbols_for_coupling : Tests {
   $model->declare_function('mod1', 'f1');
   $model->declare_function('mod2', 'f2');
