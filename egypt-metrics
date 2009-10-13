@@ -15,7 +15,8 @@ sub list_metrics()
       public_methods => "Number of public methods",
       amz_size => "Average number of lines per method",
       max_mloc => "Max number of method lines",
-      public_variables => "Number of public variaveis"
+      public_variables => "Number of public variaveis",
+      dit => "Depth of Inheritance Tree",
     );
 
     foreach my $key (sort keys %metrics){

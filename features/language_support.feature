@@ -49,3 +49,18 @@ Feature: multi-language support
     | c++      | 2                 | main        | HelloWorld         | 4               |
     | java     | 2                 | Main        | HelloWorld         | 4               |
 
+  Scenario Outline: inheritance data
+    Given I am in samples/animals/<language>
+    When I run "egypt graph --modules ."
+    Then egypt must report that "Cat" depends on "Mammal"
+    Then egypt must report that "Dog" depends on "Mammal"
+    Then egypt must report that "Mammal" depends on "Animal"
+    When I run "egypt metrics ."
+    And egypt must report that module Cat has dit = 2
+    And egypt must report that module Dog has dit = 2
+    And egypt must report that module Mammal has dit = 1
+    And egypt must report that module Animal has dit = 0
+  Examples:
+    | language |
+    | c++      |
+    | java     |

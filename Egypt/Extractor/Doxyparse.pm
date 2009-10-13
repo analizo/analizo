@@ -9,10 +9,7 @@ use File::Basename;
 
 sub new {
   my $package = shift;
-  my @defaults = (
-    model => Egypt::Model->new, # temporary (?)
-  );
-  return bless { @defaults, @_ }, $package;
+  return bless { @_ }, $package;
 }
 
 sub feed {
@@ -31,21 +28,29 @@ sub feed {
     $self->{current_member} = $variable;
   }
 
+  # inheritance
+  if ($line =~ m/^\s{3}inherits from (.+)$/) {
+    $self->model->add_inheritance($self->current_module, $1);
+  }
+
   # function calls/uses
   if ($line =~ m/^\s{6}uses function (\S+) defined in (\S+)$/) {
     my $function = _qualified_name($2, $1);
     $self->model->add_call($self->current_member, $function, 'direct');
   }
+
   # variable references
   elsif ($line =~ m/^\s{6}uses variable (\S+) defined in (\S+)$/) {
     my $variable = _qualified_name($2, $1);
     $self->model->add_variable_use($self->current_member, $variable);
   }
 
+  # public members
   if ($line =~ m/^\s{6}protection public$/) {
     $self->model->add_protection($self->current_member, 'public');
   }
 
+  # method LOC
   if($line =~ m/^\s{6}(\d+) lines of code$/){
       $self->model->add_loc($self->current_member, $1);
   }

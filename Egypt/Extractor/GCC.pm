@@ -66,10 +66,7 @@ use File::Find;
 
 sub new {
   my $package = shift;
-  my @defaults = (
-    model => Egypt::Model->new, # temporary (?)
-  );
-  return bless { @defaults, @_ }, $package;
+  return bless { @_ }, $package;
 }
 
 sub feed {

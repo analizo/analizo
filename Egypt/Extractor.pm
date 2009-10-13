@@ -9,7 +9,6 @@ use Egypt::Model;
 
 our $QUIET = undef;
 
-__PACKAGE__->mk_accessors(qw(model));
 __PACKAGE__->mk_ro_accessors(qw(current_member));
 
 sub alias {
@@ -35,6 +34,14 @@ sub load {
   return $extractor;
 }
 
+sub model {
+  my $self = shift;
+  if (!exists($self->{model})) {
+    $self->{model} = new Egypt::Model;
+  }
+  return $self->{model};
+}
+
 sub current_module {
   my $self = shift;
 
@@ -44,6 +51,9 @@ sub current_module {
 
     # read variable declarations
     $self->_read_variable_declarations();
+
+    #declare
+    $self->model->declare_module($self->{current_module});
   }
 
   return $self->{current_module};

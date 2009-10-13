@@ -22,6 +22,16 @@ sub new {
   return bless $self, $package;
 }
 
+sub _add_dependency {
+  my ($dependencies, $from, $to) = @_;
+  $dependencies->{$from} = { } if !exists($dependencies->{$from});
+  if (exists $dependencies->{$from}->{$to}) {
+    $dependencies->{$from}->{$to} += 1;
+  } else {
+    $dependencies->{$from}->{$to} = 1;
+  }
+}
+
 sub string {
   my $self = shift;
   my $result = "digraph callgraph {\n";
@@ -38,14 +48,15 @@ sub string {
         my $calling_module = $self->_function_to_module($caller);
         my $called_module = $self->_function_to_module($callee);
         next unless (defined($calling_module) && defined($called_module) && ($calling_module ne $called_module));
-        $modules_dependencies->{$calling_module} = { } if !exists($modules_dependencies->{$calling_module});
-        if (exists $modules_dependencies->{$calling_module}->{$called_module}) {
-          $modules_dependencies->{$calling_module}->{$called_module} += 1;
-        } else {
-          $modules_dependencies->{$calling_module}->{$called_module} = 1;
-        }
+        _add_dependency($modules_dependencies, $calling_module, $called_module);
       }
     }
+    foreach my $subclass (keys(%{$self->model->{inheritance}})) {
+      foreach my $superclass ($self->model->inheritance($subclass)) {
+        _add_dependency($modules_dependencies, $subclass, $superclass);
+      }
+    }
+
     foreach my $calling_module (sort(keys %{$modules_dependencies})) {
       foreach my $called_module (sort(keys %{$modules_dependencies->{$calling_module}})) {
         my $strength = $modules_dependencies->{$calling_module}->{$called_module};

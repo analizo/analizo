@@ -15,6 +15,26 @@ sub empty_object : Tests {
   isa_ok($model->members, 'HASH', 'must have members');
 }
 
+sub declaring_modules : Tests {
+  my $model = new Egypt::Model;
+  $model->declare_module('Module1');
+  $model->declare_module('Module2');
+  my @modules = $model->module_names;
+  is($modules[0], 'Module1');
+  is($modules[1], 'Module2');
+}
+
+sub declaring_inheritance : Tests {
+  my $model = new Egypt::Model;
+  $model->add_inheritance('Child', 'Parent');
+  my @parents = $model->inheritance('Child');
+  is($parents[0], 'Parent', 'class with one superclass');
+
+  $model->add_inheritance('Child', 'AnotherParent');
+  @parents = $model->inheritance("Child");
+  is($parents[1], 'AnotherParent', 'class with two superclasses');
+}
+
 sub declaring_function : Tests {
   my $model = new Egypt::Model;
   $model->declare_function('mymodule', 'myfunction');

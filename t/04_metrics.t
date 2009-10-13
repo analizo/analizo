@@ -142,29 +142,52 @@ sub public_variables : Tests {
 }
 
 sub loc : Tests {
-  is($metrics->loc('mod1'), (0, 0), 'empty module has 0 LOC');
+  my @result = $metrics->loc('mod1');
+  is($result[0], 0, 'empty module has 0 LOC');
+  is($result[1], 0, 'empty module has max LOC 0');
 
   $model->declare_function('mod1', 'mod1::f1');
   $model->add_loc('mod1::f1', 10);
-  eq_array($metrics->loc('mod1'), [10, 10], 'one module, with 10 LOC');
+  @result = $metrics->loc('mod1');
+  is($result[0], 10, 'one module, with 10 LOC');
+  is($result[1], 10, 'one module, with 10 LOC, makes max LOC = 10');
 
-  $model->declare_function('mod1', 'mod1::f1');
-  $model->add_loc('mod1::f1', 20);
-  eq_array($metrics->loc('mod1'), [30, 20], 'other module, with 20 LOC');
+  $model->declare_function('mod1', 'mod1::f2');
+  $model->add_loc('mod1::f2', 20);
+  @result = $metrics->loc('mod1');
+  is($result[0], 30, 'adding another module with 20 LOC makes the total equal 30');
+  is($result[1], 20, 'adding another module with 20 LOC makes the max LOC equal 20');
 }
 
 sub amz_size_with_no_functions_at_all : Tests {
   is($metrics->amz_size(0, 0), 0);
 }
 
+sub dit : Tests {
+  $model->add_inheritance('Level1', 'Level2');
+  $model->add_inheritance('Level2', 'Level3');
+  is($metrics->dit('Level1'), 2, 'DIT = 2');
+  is($metrics->dit('Level2'), 1, 'DIT = 1');
+  is($metrics->dit('Level3'), 0, 'DIT = 0');
+}
+
+sub dit_with_multiple_inheritance : Tests {
+  $model->add_inheritance('Level1', 'Level2A');
+  $model->add_inheritance('Level1', 'Level2B');
+  $model->add_inheritance('Level2B', 'Level3B');
+  is($metrics->dit('Level1'), 2, 'with multiple inheritance take the larger DIT between the parents');
+}
+
 sub report : Tests {
   # first module
+  $model->declare_module('mod1');
   $model->declare_function('mod1' , 'f1a');
   $model->declare_function('mod1' , 'f1b');
   $model->declare_variable('mod1' , 'v1');
   $model->add_variable_use($_, 'v1') for qw(f1a f1b);
 
   # second module
+  $model->declare_module('mod2');
   $model->declare_function('mod2', 'f2');
   $model->add_call('f2', 'f1a');
   $model->add_call('f2', 'f1b');
@@ -174,34 +197,6 @@ sub report : Tests {
   ok($output =~ /number_of_modules: 2/, 'reporting number of modules in YAML stream');
   ok($output =~ /_module: mod1/, 'reporting module 1');
   ok($output =~ /_module: mod2/, 'reporting module 2');
-
-  #s(
-#'---
-#average_coupling: 0.5
-#average_coupling_times_lcom1: 0
-#average_coupling_times_lcom4: 0.5
-#average_lcom1: 0
-#average_lcom4: 1
-#number_of_functions: 3
-#number_of_modules: 2
-#---
-#_module: mod1
-#coupling: 0
-#coupling_times_lcom1: 0
-#coupling_times_lcom4: 0
-#interface_size: 2
-#lcom1: 0
-#lcom4: 1
-#---
-#_module: mod2
-#coupling: 1
-#coupling_times_lcom1: 0
-#coupling_times_lcom4: 1
-#interface_size: 1
-#lcom1: 0
-#lcom4: 1
-#',
-    #'must report metrics as a YAML stream');
 }
 
 sub discard_external_symbols_for_coupling : Tests {

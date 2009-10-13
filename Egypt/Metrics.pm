@@ -130,6 +130,18 @@ sub amz_size {
   return ($count > 0) ? ($lines / $count) : 0;
 }
 
+sub dit {
+  my ($self, $module) = @_;
+  my @parents = $self->model->inheritance($module);
+  if (@parents) {
+    my @parent_dits = map { $self->dit($_) } @parents;
+    my @sorted = reverse(sort(@parent_dits));
+    return 1 + $sorted[0];
+  } else {
+    return 0;
+  }
+}
+
 sub report {
   my $self = shift;
   my $result = '';
@@ -144,7 +156,7 @@ sub report {
     loc => 0
   );
 
-  for my $module (keys(%{$self->model->modules})) {
+  for my $module ($self->model->module_names) {
     my $coupling = $self->coupling($module);
     my $number_of_functions = $self->number_of_functions($module);
     my $lcom1 = $self->lcom1($module);
@@ -153,6 +165,7 @@ sub report {
     my $public_functions = $self->public_functions($module);
     my $amz_size = amz_size($lines, $number_of_functions);
     my $public_variables = $self->public_variables($module);
+    my $dit = $self->dit($module);
 
     my %data = (
       _module => $module,
@@ -166,7 +179,8 @@ sub report {
       loc => $lines,
       max_mloc => $max_mloc,
       public_functions => $public_functions,
-      public_variables => $public_variables
+      public_variables => $public_variables,
+      dit => $dit,
     );
     $result .= Dump(\%data);
 
