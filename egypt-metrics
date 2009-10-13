@@ -8,14 +8,15 @@ sub list_metrics()
       coupling => "CBO coupling",
       coupling_times_lcom1 => "Coupling times Lack Of Cohesion 1",
       coupling_times_lcom4 => "Coupling times Lack Of Cohesion 4",
-      interface_size => "Number of functions/methods",
       lcom1 => "Lack of Cohesion 1",
       lcom4 => "Lack of Cohesion 4",
       loc => "Lines of Code",
+      number_of_functions => "Number of functions/methods",
       public_methods => "Number of public methods",
       amz_size => "Average number of lines per method",
       max_mloc => "Max number of method lines",
-      public_variables => "Number of public variaveis"
+      public_variables => "Number of public variaveis",
+      dit => "Depth of Inheritance Tree",
     );
 
     foreach my $key (sort keys %metrics){

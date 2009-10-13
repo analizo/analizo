@@ -29,6 +29,14 @@ sub current_module : Tests {
   is($extractor->current_module, 'module2.c', 'must be able to change the current module');
 }
 
+sub inheritance : Tests {
+  my $extractor = Egypt::Extractor->load('Doxyparse');
+  $extractor->current_module('Child');
+  $extractor->feed('   inherits from Parent');
+  my @result = $extractor->model->inheritance('Child');
+  is($result[0], 'Parent', 'extractor detects inheritance');
+}
+
 sub detect_function_declaration : Tests {
   my $extractor = Egypt::Extractor->load('Doxyparse', current_module => 'module1.c');
   $extractor->feed('   function myfunction in line 5');

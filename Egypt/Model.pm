@@ -9,7 +9,9 @@ sub new {
     demangle => {},
     calls => {},
     lines => {},
-    protection => {}
+    protection => {},
+    inheritance => {},
+    module_names => [],
   );
   return bless { @defaults }, __PACKAGE__;
 }
@@ -17,6 +19,30 @@ sub new {
 sub modules {
   my $self = shift;
   return $self->{modules};
+}
+
+sub module_names {
+  my $self = shift;
+  return @{$self->{module_names}};
+}
+
+sub declare_module {
+  my ($self, $module) = @_;
+  if (! grep { $_ eq $module} @{$self->{module_names}}) {
+    push @{$self->{module_names}}, $module;
+  }
+}
+
+sub inheritance {
+  my ($self, $module) = @_;
+  my $list = $self->{inheritance}->{$module};
+  return $list ? @$list : ();
+}
+
+sub add_inheritance {
+  my ($self, $child, $parent) = @_;
+  $self->{inheritance}->{$child} = [] if !exists($self->{inheritance}->{$child});
+  push @{$self->{inheritance}->{$child}}, $parent;
 }
 
 sub members {
@@ -32,7 +58,9 @@ sub declare_member {
 
   # mapping module to member
   $self->{modules}->{$module} = [] if !exists($self->modules->{$module});
-  push @{$self->modules->{$module}}, $member;
+  if (! grep { $_ eq $member } @{$self->modules->{$module}}) {
+    push @{$self->modules->{$module}}, $member;
+  }
 
   # demangling name
   $self->{demangle}->{$member} = $demangled_name;
@@ -80,7 +108,8 @@ sub add_variable_use {
 
 sub _find_by_type {
   my ($self, $module, $type) = @_;
-  return grep { $self->members->{$_} eq $module && $self->type($_) eq $type } keys(%{$self->members});
+  my @list = grep { $self->type($_) eq $type } @{$self->modules->{$module}};
+  return @list;
 }
 
 sub add_loc {

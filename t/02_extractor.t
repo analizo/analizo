@@ -16,10 +16,6 @@ sub constructor : Tests {
   isa_ok(new Egypt::Extractor, 'Egypt::Extractor');
 }
 
-sub has_a_model : Tests {
-  can_ok('Egypt::Extractor', 'model');
-}
-
 sub has_a_current_member : Tests {
   can_ok('Egypt::Extractor', 'current_member');
 }
@@ -28,7 +24,7 @@ sub has_a_current_member : Tests {
 # BEGIN test of indicating current module
 ##############################################################################
 sub current_module : Tests {
-  my $extractor = Egypt::Extractor->new;
+  my $extractor = new Egypt::Extractor;
   $extractor->current_module('module1.c');
   is($extractor->current_module, 'module1.c', 'must be able to set the current module');
   $extractor->current_module('module2.c');

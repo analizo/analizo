@@ -74,10 +74,13 @@ Then /^egypt must emit a warning matching "([^\"]*)"$/ do |pattern|
 end
 
 Then /^egypt must report that the project has (\d+) modules$/ do |n|
-  @stdout.select { |line| line =~ /number_of_modules: #{n}/ }.should have(1).item
+  stream = YAML.load_stream(@stdout.join)
+  stream.documents.first['number_of_modules'].should == n.to_i
 end
 
 Then /^egypt must report that module (.+) has (.+) = (\d+)$/ do |mod, metric, n|
   stream = YAML.load_stream(@stdout.join)
-  stream.documents.select { |doc| doc['_module'] == mod && doc[metric] == n.to_i }.should have(1).item
+  module_metrics = stream.documents.find { |doc| doc['_module'] == mod }
+  module_metrics[metric].should == n.to_i
 end
+

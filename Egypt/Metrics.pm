@@ -32,12 +32,18 @@ sub loc {
   my $lines = 0;
   my $max = 0;
   for my $function (@functions) {
-    my $loc = $self->model->{lines}->{$function};
+    my $loc = $self->model->{lines}->{$function} || 0;
     $lines += $loc;
     $max = $loc if $loc > $max;
   }
   return ($lines, $max);
 }
+
+sub _is_public {
+  my ($self, $member) = @_;
+  return $self->model->{protection}->{$member} && $self->model->{protection}->{$member} eq "public";
+}
+
 
 sub public_functions {
   my ($self, $module) = @_;
@@ -45,38 +51,20 @@ sub public_functions {
   my @functions = $self->model->functions($module);
   my $public_functions = 0;
   for my $function (@functions) {
-    $public_functions += 1 if $self->model->{protection}->{$function} eq "public";
+    $public_functions += 1 if $self->_is_public($function);
   }
   return $public_functions;
 }
 
 sub public_variables {
-    my ($self, $module) = @_;
-
-    my @variables = $self->model->variables($module);
-    my $public_variables = 0;
-    for my $variable (@variables) {
-        $public_variables += 1 if $self->model->{protection}->{$variable} eq "public";
-    }
-    return $public_variables;
-}
-
-sub lcom1 {
   my ($self, $module) = @_;
-  my @functions = $self->model->functions($module);
-  my $n = scalar @functions;
-  my $result = 0;
-  # test each pair of functions in module for relation
-  for (my $i = 0; $i < $n; $i++) {
-    for (my $j = $i + 1; $j < $n; $j++) {
-      if ($self->_related($module, $functions[$i], $functions[$j])) {
-        $result -= 1;
-      } else {
-        $result += 1
-      }
-    }
+
+  my @variables = $self->model->variables($module);
+  my $public_variables = 0;
+  for my $variable (@variables) {
+    $public_variables += 1 if $self->_is_public($variable);
   }
-  return $result > 0 ? $result : 0;
+  return $public_variables;
 }
 
 sub _related {
@@ -124,48 +112,58 @@ sub amz_size {
   return ($count > 0) ? ($lines / $count) : 0;
 }
 
+sub dit {
+  my ($self, $module) = @_;
+  my @parents = $self->model->inheritance($module);
+  if (@parents) {
+    my @parent_dits = map { $self->dit($_) } @parents;
+    my @sorted = reverse(sort(@parent_dits));
+    return 1 + $sorted[0];
+  } else {
+    return 0;
+  }
+}
+
 sub report {
   my $self = shift;
   my $result = '';
   my %totals = (
     coupling => 0,
-    lcom1 => 0,
     lcom4 => 0,
     number_of_functions => 0,
     number_of_modules => 0,
-    public_functions => 0
+    public_functions => 0,
+    number_of_public_functions => 0,
+    loc => 0
   );
 
-  for my $module (keys(%{$self->model->modules})) {
+  for my $module ($self->model->module_names) {
     my $coupling = $self->coupling($module);
     my $number_of_functions = $self->number_of_functions($module);
-    my $lcom1 = $self->lcom1($module);
     my $lcom4 = $self->lcom4($module);
     my ($lines, $max_mloc) = $self->loc($module);
     my $public_functions = $self->public_functions($module);
     my $amz_size = amz_size($lines, $number_of_functions);
     my $public_variables = $self->public_variables($module);
+    my $dit = $self->dit($module);
 
     my %data = (
       _module => $module,
       amz_size => $amz_size,
       coupling => $coupling,
-      coupling_times_lcom1 => $coupling * $lcom1,
       coupling_times_lcom4 => $coupling * $lcom4,
       number_of_functions => $number_of_functions,
-      lcom1 => $lcom1,
       lcom4 => $lcom4,
       loc => $lines,
       max_mloc => $max_mloc,
       public_functions => $public_functions,
-      public_variables => $public_variables
+      public_variables => $public_variables,
+      dit => $dit,
     );
     $result .= Dump(\%data);
 
     $totals{'coupling'} += $coupling;
-    $totals{'coupling_times_lcom1'} += ($coupling * $lcom1);
     $totals{'coupling_times_lcom4'} += ($coupling * $lcom4);
-    $totals{'lcom1'} += $lcom1;
     $totals{'lcom4'} += $lcom4;
     $totals{'number_of_modules'} += 1;
     $totals{'number_of_functions'} += $number_of_functions;
@@ -175,9 +173,7 @@ sub report {
   }
   my %summary = (
     average_coupling => ($totals{'coupling'}) / $totals{'number_of_modules'},
-    average_coupling_times_lcom1 => ($totals{'coupling_times_lcom1'}) / $totals{'number_of_modules'},
     average_coupling_times_lcom4 => ($totals{'coupling_times_lcom4'}) / $totals{'number_of_modules'},
-    average_lcom1 => ($totals{'lcom1'}) / $totals{'number_of_modules'},
     average_lcom4 => ($totals{'lcom4'}) / $totals{'number_of_modules'},
     number_of_functions => $totals{'number_of_functions'},
     number_of_modules => $totals{'number_of_modules'},
