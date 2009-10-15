@@ -31,23 +31,23 @@ Feature: multi-language support
     And  egypt must report that "<hello_destroy>" depends on "<hello_id>"
   Examples:
     | language | hello_say       | hello_destroy       | hello_id        |
-    | c        | hello_world::hello_world_say | hello_world::hello_world_destroy | _hello_world::id |
+    | c        | hello_world::hello_world_say | hello_world::hello_world_destroy | hello_world::_hello_world::id |
     | c++      | HelloWorld::say | HelloWorld::destroy | HelloWorld::_id |
     | java     | HelloWorld::say | HelloWorld::destroy | HelloWorld::_id |
 
   Scenario Outline: some metrics
     Given I am in samples/hello_world/<language>
     When I run "egypt metrics ."
-    Then egypt must report that the project has number_of_modules = <number_of_modules>
+    Then egypt must report that the project has number_of_modules = 2
     And egypt must report that module <main_module> has public_functions = 1
     And egypt must report that module <hello_world_module> has public_functions = 3
     And egypt must report that module <hello_world_module> has number_of_functions = <total_functions>
     And egypt must report that module <hello_world_module> has public_variables = 1
   Examples:
-    | language | number_of_modules | main_module | hello_world_module | total_functions |
-    | c        | 3                 | main        | hello_world        | 3               |
-    | c++      | 2                 | main        | HelloWorld         | 4               |
-    | java     | 2                 | Main        | HelloWorld         | 4               |
+    | language | main_module | hello_world_module | total_functions |
+    | c        | main        | hello_world        | 3               |
+    | c++      | main        | HelloWorld         | 4               |
+    | java     | Main        | HelloWorld         | 4               |
 
   Scenario Outline: inheritance data
     Given I am in samples/animals/<language>
