@@ -12,6 +12,7 @@ end
 After do
   FileUtils.rm_f('tmp.out')
   FileUtils.rm_f('tmp.err')
+  FileUtils.rm_f(Dir.glob('*.tmp'))
   FileUtils.cd(saved_dir)
   ENV['PATH'] = saved_path
   ENV['PERL5LIB'] = saved_perl5lib
@@ -43,6 +44,10 @@ Then /^the exit status must be (.+)$/ do |n|
   @exit_status.should == n.to_i
 end
 
+Then /^the exit status must not be (.+)$/ do |n|
+  @exit_status.should_not == n.to_i
+end
+
 Then /^egypt must report that "([^\"]*)" is part of "([^\"]*)"$/ do |func,mod|
   line = (0...(@stdout.size)).find { |i| @stdout[i] =~ /subgraph "cluster_#{mod}"/ }
   found = false
@@ -67,6 +72,13 @@ end
 
 Then /^the output must not match "([^\"]*)"$/ do |pattern|
   @stdout.select { |item| item.match(pattern) }.should have(0).items
+end
+
+Then /^the output from "(.+)" must match "([^\"]*)"$/ do |file, pattern|
+  @out = File.readlines(file)
+  if @out.select {|item| item.match(pattern)}.size == 0
+    raise OutputDoesNotMatch.new(@out, @stderr)
+  end
 end
 
 Then /^egypt must emit a warning matching "([^\"]*)"$/ do |pattern|

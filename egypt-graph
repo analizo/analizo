@@ -86,6 +86,13 @@ setup your source tree in order to use the GCC extractor.
   extractor.type: string, extractor =~ /\A\w+\Z/
   extractor.default: 'Doxyparse'
 
+=item --output <file>
+
+Use a file as output
+
+=for Euclid:
+  file.type: writeable
+
 =item --help
 
 Displays help on command line syntax and options.
@@ -190,6 +197,9 @@ $output->cluster($ARGV{'--cluster'});
 $output->group_by_module($ARGV{'--modules'});
 
 $extractor->process(@{$ARGV{'<input>'}});
+
+open STDOUT, '>', $ARGV{'--output'} if $ARGV{'--output'};
 print $output->string;
+close STDOUT;
 
 exit(0);

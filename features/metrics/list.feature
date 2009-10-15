@@ -1,4 +1,4 @@
-Feature: metrics
+Feature: list metrics
   As a Research or Practioner
   I want to extract metrics from source code
   So that I can learn, understand and evaluate it

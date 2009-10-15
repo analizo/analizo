@@ -52,9 +52,12 @@ Tells egypt which source code directory(ies) you want to parse.
 =for Euclid:
   input.type: readable
 
-=item --file <file>
+=item --output <file>
 
 Use a file as output
+
+=for Euclid:
+  file.type: writeable
 
 =back
 
@@ -90,20 +93,13 @@ if($ARGV{'<input>'} =~ /^\s*$/){
     exit(0);
 }
 
-if($ARGV{'--file'}){
-    open (OUTPUT, ">>$ARGV{'--file'}") or die "Can't open file\n";
-}
-else{
-    open (OUTPUT, ">&STDOUT");
-}
-
 my $extractor = Egypt::Extractor->load($ARGV{'--extractor'});
 my $metrics = Egypt::Metrics->new(model => $extractor->model);
 
 $extractor->process(@{$ARGV{'<input>'}});
 
-print OUTPUT $metrics->report;
-close(OUTPUT);
+open STDOUT, '>', $ARGV{'--output'} if $ARGV{'--output'};
+print $metrics->report;
+close STDOUT;
 
 exit(0);
-
