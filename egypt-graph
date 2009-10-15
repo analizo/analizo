@@ -31,6 +31,9 @@ you pass entire source directories. If you pass just a couple of files, their
 dependencies on modules that are not declared and/or implemented in those
 files will not be calculated.
 
+=for Euclid:
+  input.type: readable
+
 =back
 
 =head1 OPTIONS

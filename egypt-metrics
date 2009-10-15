@@ -49,6 +49,9 @@ Displays metric list
 
 Tells egypt which source code directory(ies) you want to parse.
 
+=for Euclid:
+  input.type: readable
+
 =item --file <file>
 
 Use a file as output
