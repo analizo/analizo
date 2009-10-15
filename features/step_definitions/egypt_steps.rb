@@ -73,9 +73,9 @@ Then /^egypt must emit a warning matching "([^\"]*)"$/ do |pattern|
   @stderr.select {|item| item.match(pattern)}.should have_at_least(1).items
 end
 
-Then /^egypt must report that the project has (\d+) modules$/ do |n|
+Then /^egypt must report that the project has (.+) = (\d+)$/ do |metric,n|
   stream = YAML.load_stream(@stdout.join)
-  stream.documents.first['number_of_modules'].should == n.to_i
+  stream.documents.first[metric].should == n.to_i
 end
 
 Then /^egypt must report that module (.+) has (.+) = (\d+)$/ do |mod, metric, n|

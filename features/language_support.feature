@@ -38,7 +38,7 @@ Feature: multi-language support
   Scenario Outline: some metrics
     Given I am in samples/hello_world/<language>
     When I run "egypt metrics ."
-    Then egypt must report that the project has <number_of_modules> modules
+    Then egypt must report that the project has number_of_modules = <number_of_modules>
     And egypt must report that module <main_module> has public_functions = 1
     And egypt must report that module <hello_world_module> has public_functions = 3
     And egypt must report that module <hello_world_module> has number_of_functions = <total_functions>
