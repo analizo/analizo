@@ -67,23 +67,6 @@ sub public_variables {
   return $public_variables;
 }
 
-sub _related {
-  my ($self, $module, $f1, $f2) = @_;
-
-  # the variables and functions in the module
-  my @variables = $self->model->variables($module);
-
-  my @calls_f1 = keys(%{$self->model->calls->{$f1}});
-  my @calls_f2 = keys(%{$self->model->calls->{$f2}});
-
-  # f1 and f2 use variables in common
-  my $lc = new List::Compare(\@calls_f1, \@calls_f2, \@variables);
-  my @intersection = $lc->get_intersection;
-  return (scalar @intersection == 0) ? 0 : 1;
-
-  return 0;
-}
-
 sub lcom4 {
   my ($self, $module) = @_;
   my $graph = new Graph;
@@ -200,7 +183,8 @@ sub report {
     average_lcom4 => ($totals{'lcom4'}) / $totals{'number_of_modules'},
     number_of_functions => $totals{'number_of_functions'},
     number_of_modules => $totals{'number_of_modules'},
-    number_of_public_functions => $totals{'number_of_public_functions'}
+    number_of_public_functions => $totals{'number_of_public_functions'},
+    total_loc => $totals{'loc'}
   );
 
   return Dump(\%summary) . $result;
