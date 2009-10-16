@@ -75,14 +75,12 @@ Then /^the output must not match "([^\"]*)"$/ do |pattern|
 end
 
 Then /^the output from "(.+)" must match "([^\"]*)"$/ do |file, pattern|
-  @out = File.readlines(file)
-  if @out.select {|item| item.match(pattern)}.size == 0
-    raise OutputDoesNotMatch.new(@out, @stderr)
-  end
+  @out = File.readlines(file).join
+  @out.should match(pattern)
 end
 
 Then /^egypt must emit a warning matching "([^\"]*)"$/ do |pattern|
-  @stderr.select {|item| item.match(pattern)}.should have_at_least(1).items
+  @stderr.join.should match(pattern)
 end
 
 Then /^egypt must report that the project has (.+) = (\d+)$/ do |metric,n|
