@@ -49,28 +49,11 @@ sub current_module {
   if (scalar @_) {
     $self->{current_module} = shift;
 
-    # read variable declarations
-    $self->_read_variable_declarations();
-
     #declare
     $self->model->declare_module($self->{current_module});
   }
 
   return $self->{current_module};
-}
-
-sub _read_variable_declarations {
-  my $self = shift;
-  return unless -r $self->current_module;
-  open TAGS, sprintf('ctags-exuberant -f - --fields=K %s |', $self->current_module);
-  while (<TAGS>) {
-    chomp;
-    my @fields = split(/\t/);
-    if ($fields[3] eq 'variable') {
-      $self->model->declare_variable($self->current_module, $fields[0]);
-    }
-  }
-  close TAGS;
 }
 
 sub process {
