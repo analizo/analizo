@@ -40,16 +40,16 @@ sub inheritance : Tests {
 sub detect_function_declaration : Tests {
   my $extractor = Egypt::Extractor->load('Doxyparse', current_module => 'module1.c');
   $extractor->feed('   function myfunction in line 5');
-  ok(grep { $_ eq 'module1::myfunction' } @{$extractor->model->{modules}->{'module1.c'}});
+  ok(grep { $_ eq 'module1::myfunction' } @{$extractor->model->{modules}->{'module1.c'}->{functions}});
   is($extractor->current_member, 'module1::myfunction', 'must set the current function');
 }
 
 sub detect_variable_declaration : Tests {
   my $extractor = Egypt::Extractor->load('Doxyparse', current_module => 'module1.c');
   $extractor->feed('   variable myvariable in line 10');
-  ok(grep { $_ eq 'module1::myvariable' } @{$extractor->model->{modules}->{'module1.c'}});
+  ok(grep { $_ eq 'module1::myvariable' } @{$extractor->model->{modules}->{'module1.c'}->{variables}});
   $extractor->current_module; # only read the current module
-  is(scalar(grep { $_ eq 'module1::myvariable' } @{$extractor->model->{modules}->{'module1.c'}}), 1, 'must not read variable declarations when reading the name of the current module');
+  is(scalar(grep { $_ eq 'module1::myvariable' } @{$extractor->model->{modules}->{'module1.c'}->{variables}}), 1, 'must not read variable declarations when reading the name of the current module');
 }
 
 sub detect_direct_function_calls : Tests {
@@ -143,3 +143,4 @@ sub reading_from_directories : Tests {
 }
 
 ExtractorDoxyparseTests->runtests;
+

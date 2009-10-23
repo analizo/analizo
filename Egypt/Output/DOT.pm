@@ -99,8 +99,8 @@ sub _calculate_clusters {
   foreach my $module (sort(keys(%{$self->model->modules}))) {
     $result .= "subgraph \"cluster_$module\" {\n";
     $result .= sprintf("  label = \"%s\";\n", _file_to_module($module));
-    foreach my $function (@{$self->model->modules->{$module}}) {
-      my $demangled = $self->_demangle($function);
+    foreach my $member ($self->model->all_members($module)) {
+      my $demangled = $self->_demangle($member);
       $result .= sprintf("  node [label=\"%s\"] \"%s\";\n", $demangled, $demangled);
     }
     $result .= "}\n";

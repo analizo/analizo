@@ -15,7 +15,7 @@ sub new {
 sub coupling {
   my ($self, $module) = @_;
   my %seen = ();
-  for my $caller_function (@{$self->model->modules->{$module}}) {
+  for my $caller_function ($self->model->functions($module)) {
     for my $called_function (keys(%{$self->model->calls->{$caller_function}})) {
       my $called_module = $self->model->members->{$called_function};
       next if $called_module && ($called_module eq $module);
@@ -87,7 +87,8 @@ sub lcom4 {
 
 sub number_of_functions {
   my ($self, $module) = @_;
-  return (scalar $self->model->functions($module));
+  my $list = $self->model->functions($module);
+  return $list? scalar $list : 0;
 }
 
 sub amz_size {

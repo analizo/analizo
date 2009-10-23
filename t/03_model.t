@@ -38,10 +38,17 @@ sub declaring_inheritance : Tests {
 sub declaring_function : Tests {
   my $model = new Egypt::Model;
   $model->declare_function('mymodule', 'myfunction');
+  $model->declare_function('mymodule', 'anotherfunction');
+
   ok((grep { $_ eq 'myfunction' } keys(%{$model->members})), "declared function must be stored");
   is('mymodule', $model->members->{'myfunction'}, 'must map function to module');
   ok((grep { $_ eq 'mymodule'} keys(%{$model->modules})), 'declaring a function must declare its module');
-  ok((grep { $_ eq 'myfunction' } @{$model->modules->{'mymodule'}}), 'must store members in a module');
+  ok((grep { $_ eq 'myfunction' } @{$model->{modules}->{'mymodule'}->{functions}}), 'must store members in a module');
+
+  ok((grep { $_ eq 'anotherfunction' } keys(%{$model->members})), "another declared function must be stored");
+  is('mymodule', $model->members->{'anotherfunction'}, 'must map another function to module');
+  ok((grep { $_ eq 'mymodule'} keys(%{$model->modules})), 'declaring a another function must declare its module');
+  ok((grep { $_ eq 'anotherfunction' } @{$model->{modules}->{'mymodule'}->{functions}}), 'must store members in a module');
 }
 
 sub declaring_function_with_demangled_name : Tests {
@@ -62,7 +69,7 @@ sub declaring_variables : Tests {
   ok((grep { $_ eq 'myvariable' } keys(%{$model->members})), "declared variable must be stored");
   is('mymodule', $model->members->{'myvariable'}, 'must map variable to module');
   ok((grep { $_ eq 'mymodule'} keys(%{$model->modules})), 'declaring a variable must declare its module');
-  ok((grep { $_ eq 'myvariable' } @{$model->modules->{'mymodule'}}), 'must store variable in a module');
+  ok((grep { $_ eq 'myvariable' } @{$model->modules->{'mymodule'}->{variables}}), 'must store variable in a module');
 }
 
 sub adding_calls : Tests {
@@ -83,21 +90,36 @@ sub addding_variable_uses : Tests {
   is($model->calls->{'function1'}->{'variable9'}, 'variable', 'must register variable use');
 }
 
-sub querying_type_of_member_and_members_by_type : Tests {
+sub querying_variables : Tests {
+  my $model = new Egypt::Model;
+  $model->declare_variable('mod1', 'v1');
+  $model->declare_variable('mod1', 'v2');
+
+  ok((grep { $_ eq 'v1' } $model->variables('mod1')), 'must list v1 in variables');
+  ok((grep { $_ eq 'v2' } $model->variables('mod1')), 'must list v2 in variables');
+}
+
+sub querying_functions : Tests {
+  my $model = new Egypt::Model;
+  $model->declare_function('mod1', 'f1');
+  $model->declare_function('mod1', 'f2');
+
+  ok((grep { $_ eq 'f1' } $model->functions('mod1')), 'must list f1 in functions');
+  ok((grep { $_ eq 'f2' } $model->functions('mod1')), 'must list f2 in functions');
+}
+
+sub querying_members : Tests {
   my $model = new Egypt::Model;
   $model->declare_function('mod1', 'f1');
   $model->declare_variable('mod1', 'v1');
-  is($model->type('f1'), 'function');
-  is($model->type('v1'), 'variable');
 
   $model->declare_function('mod1', 'f2');
   $model->declare_variable('mod1', 'v2');
 
-  ok((grep { $_ eq 'f1' } $model->functions('mod1')), 'must list f1 in functions');
-  ok((grep { $_ eq 'f2' } $model->functions('mod1')), 'must list f2 in functions');
-  ok((grep { $_ eq 'v1' } $model->variables('mod1')), 'must list v1 in variables');
-  ok((grep { $_ eq 'v2' } $model->variables('mod1')), 'must list v2 in variables');
-
+  ok((grep { $_ eq 'f1' } $model->all_members('mod1')), 'must list f1 in functions');
+  ok((grep { $_ eq 'f2' } $model->all_members('mod1')), 'must list f2 in functions');
+  ok((grep { $_ eq 'v1' } $model->all_members('mod1')), 'must list v1 in variables');
+  ok((grep { $_ eq 'v2' } $model->all_members('mod1')), 'must list v2 in variables');
 }
 
 sub declaring_protection : Tests {
@@ -113,3 +135,4 @@ sub declating_lines_of_code : Tests {
 }
 
 ModelTests->runtests;
+
