@@ -87,8 +87,8 @@ sub lcom4 {
 
 sub number_of_functions {
   my ($self, $module) = @_;
-  my $list = $self->model->functions($module);
-  return $list? scalar $list : 0;
+  my @list = $self->model->functions($module);
+  return scalar(@list);
 }
 
 sub amz_size {
