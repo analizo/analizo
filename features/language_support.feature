@@ -42,12 +42,12 @@ Feature: multi-language support
     And egypt must report that module <main_module> has public_functions = 1
     And egypt must report that module <hello_world_module> has public_functions = 3
     And egypt must report that module <hello_world_module> has number_of_functions = <total_functions>
-    And egypt must report that module <hello_world_module> has public_variables = 1
+    And egypt must report that module <hello_world_module> has public_variables = <public_variables>
   Examples:
-    | language | main_module | hello_world_module | total_functions |
-    | c        | main        | hello_world        | 3               |
-    | c++      | main        | HelloWorld         | 4               |
-    | java     | Main        | HelloWorld         | 4               |
+    | language | main_module | hello_world_module | total_functions | public_variables |
+    | c        | main        | hello_world        | 3               | 2                |
+    | c++      | main        | HelloWorld         | 4               | 1                |
+    | java     | Main        | HelloWorld         | 4               | 1                |
 
   Scenario Outline: inheritance data
     Given I am in samples/animals/<language>
