@@ -2,9 +2,9 @@
 = About
 =======
 
-egypt is a suite of source code analysis tools, aimed at being
+analizo is a suite of source code analysis tools, aimed at being
 language-independent and extensible. The project home page is
-http://softwarelivre.org/egypt
+http://softwarelivre.org/analizo
 
 ==============
 = Installation
@@ -15,22 +15,22 @@ Debian package
 
 Add the following line to your /etc/apt/sources.list:
 
-  deb http://app.dcc.ufba.br/~terceiro/egypt/ ./
+  deb http://app.dcc.ufba.br/~terceiro/analizo/ ./
 
 Then do:
 
-  $ wget -q -O - http://app.dcc.ufba.br/~terceiro/egypt/signing-key.asc | sudo apt-key add -
+  $ wget -q -O - http://app.dcc.ufba.br/~terceiro/analizo/signing-key.asc | sudo apt-key add -
   $ sudo apt-get update
-  $ sudo apt-get install egypt
+  $ sudo apt-get install analizo
 
 From sources
 ------------
 
-See the HACKING file for instructions on how to install egypt's dependencies.
-You neeed to install the dependencies before installing egypt.
+See the HACKING file for instructions on how to install analizo's dependencies.
+You neeed to install the dependencies before installing analizo.
 
-Download egypt tarball, extract it and run the following commands inside the
-egypt-x.y.z directory:
+Download analizo tarball, extract it and run the following commands inside the
+analizo-x.y.z directory:
 
   $ perl Makefile.PL
   $ make

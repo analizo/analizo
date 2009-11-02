@@ -4,23 +4,23 @@
 
 This section will help you to install two different sets of packages:
 
-  1) egypt dependencies
-  2) extra programs needed to run egypt's test suite (if needed)
+  1) analizo dependencies
+  2) extra programs needed to run analizo's test suite (if needed)
 
 Short version (for Debian users):
 ---------------------------------
 
 Add the following line to your /etc/apt/sources.list:
 
-  deb http://app.dcc.ufba.br/~terceiro/egypt/ ./
+  deb http://app.dcc.ufba.br/~terceiro/analizo/ ./
 
 Install the needed Debian packages:
 
-  $ wget -q -O - http://app.dcc.ufba.br/~terceiro/egypt/signing-key.asc | sudo apt-key add -
+  $ wget -q -O - http://app.dcc.ufba.br/~terceiro/analizo/signing-key.asc | sudo apt-key add -
   $ sudo apt-get update
   $ sudo apt-get install doxyparse libgetopt-euclid-perl libgraph-perl liblist-compare-perl libtest-class-perl libtest-exception-perl libyaml-perl libclass-accessor-perl
 
-If you don't plan to develop egypt (i.e. you only want to use it), you can stop
+If you don't plan to develop analizo (i.e. you only want to use it), you can stop
 here.
 
 Install extra software to run the acceptance tests:
@@ -52,7 +52,7 @@ Install doxyparse
     make
     sudo install bin/doxyparse /usr/local/bin/
 
-If you don't plan to develop egypt (i.e. you only want to use it), you can stop
+If you don't plan to develop analizo (i.e. you only want to use it), you can stop
 here.
 
 Install Rake - http://rake.rubyforge.org/
@@ -75,7 +75,7 @@ Install cucumber and rspec using rubygems
 Just run `rake` in the root of the sources.
 
 See "Installing Dependencies" above for a guide to install all the software
-that's needed to run egypt tests.
+that's needed to run analizo tests.
 
 ===========================
 = Style and Good practices
@@ -124,17 +124,17 @@ the release process. See the Rakefile for more information.
 = Sending patches
 =================
 
-Send the patches to the egypt mailing list: egypt@listas.softwarelivre.org
+Send the patches to the analizo mailing list: analizo@listas.softwarelivre.org
 
 You don't need to be subscribed to the mailing list to send, but make sure you
 mention that if you want to receive an off-list reply. But it's recommended
 that you do subscribe to the mailing list. To do so, go to the list
-subscription page: http://listas.softwarelivre.org/cgi-bin/mailman/listinfo/egypt
+subscription page: http://listas.softwarelivre.org/cgi-bin/mailman/listinfo/analizo
 
 To create a patch:
 
-  git clone git://github.com/terceiro/egypt.git
-  cd egypt
+  git clone git://github.com/terceiro/analizo.git
+  cd analizo
   edit file
   git commit file
   git format-patch origin
@@ -149,7 +149,7 @@ this case, after running git format-patch you'll have a series of patch files
 named like 0001-..., 0002-..., just send them all.
 
 You are encouraged to learn how to use git since it's a powerfull version
-control system and it can make it easy for you to keep in sync with egypt's
+control system and it can make it easy for you to keep in sync with analizo's
 development.
 
 -- Antonio Terceiro <terceiro@softwarelivre.org>, Thu, 08 Oct 2009 19:28:52 -0300

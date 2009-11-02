@@ -4,19 +4,19 @@ use Getopt::Euclid;
 
 =head1 NAME
 
-egypt graph - dependency graph generator
+analizo graph - dependency graph generator
 
 =head1 USAGE
 
-  egypt graph [options] <input>...
+  analizo graph [options] <input>...
 
 =head1 DESCRIPTION
 
-egypt graph reads the dependency information from one or more source code
+analizo graph reads the dependency information from one or more source code
 directories passed as arguments, and produces as output the graph of
 dependencies between the modules of the software in the graphviz(1) format.
 
-egypt graph is part of the egypt suite.
+analizo graph is part of the analizo suite.
 
 =head1 REQUIRED ARGUMENTS
 
@@ -105,7 +105,7 @@ The two major tasks in creating a call graph are analyzing the syntax
 of the source code to find the function calls and laying out the
 graph, but Analizo actually does neither.  Instead, it delegates the
 source code analysis to GCC and the graph layout to Graphviz, both of
-which are better at their respective jobs than egypt could ever hope
+which are better at their respective jobs than analizo could ever hope
 to be itself.  Analizo itself is just a small Perl script that acts as
 glue between these existing tools.
 
@@ -117,35 +117,35 @@ RTL file and massages it into the format used by Graphviz.
 
 =head1 VIEWING THE GRAPH
 
-To view the generated graph, pipe egypt's output to one of the 
+To view the generated graph, pipe analizo's output to one of the
 Graphiz tools. You can use B<dotty(1)> to display the graph in a
 X11 window:
 
-    $ egypt graph src/ | dotty -
+    $ analizo graph src/ | dotty -
 
 You can also generate a file to print or include in a document
 by using the B<dot(1)>.
 
 To generate a PNG image called F<graph.png>:
 
-  $ egypt graph src/ | dot -Tpng -ograph.png -
+  $ analizo graph src/ | dot -Tpng -ograph.png -
 
 To generate a PostScript version of the dependency graph for printing, you can
 also use the B<dot>. For example, to generate a dependency graph in the file
 F<graph.ps> fitting everything on a US letter size page in landscape mode, try
 
-  $ egypt graph src/ | dot -Grotate=90 -Gsize=11,8.5 -Tps -o graph.ps
+  $ analizo graph src/ | dot -Grotate=90 -Gsize=11,8.5 -Tps -o graph.ps
 
 Sometimes, the graph will fit better if the dependencies arrows go from left to
 right instead of top to bottom.  The B<dot> option B<-Grankdir=LR> will do
 that:
 
-  $ egypt graph src/ | dot -Gsize=8.5,11 -Grankdir=LR -Tps -o graph.ps
+  $ analizo graph src/ | dot -Gsize=8.5,11 -Grankdir=LR -Tps -o graph.ps
 
 For large software, the graph may end up too small
 to comfortably read.  If that happens, try N-up printing:
 
-  $ egypt graph src/ | dot -Gpage=8.5,11 -Tps -o graph.ps
+  $ analizo graph src/ | dot -Gpage=8.5,11 -Tps -o graph.ps
 
 You can also try playing with other B<dot> options such as B<-Gratio>,
 or for a different style of graph, try using B<neato> instead of
@@ -165,11 +165,11 @@ from I<A> to I<B> means that I<A> depends on I<B>.
 
 =head1 SEE ALSO
 
-B<dotty(1)>, B<dot(1)>, B<neato(1)>, B<egypt(1)>
+B<dotty(1)>, B<dot(1)>, B<neato(1)>, B<analizo(1)>
 
 =head1 COPYRIGHT AND AUTHORS
 
-See B<egypt(1)>
+See B<analizo(1)>
 
 =cut
 

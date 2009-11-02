@@ -4,19 +4,19 @@ use Getopt::Euclid;
 
 =head1 NAME
 
-egypt metrics - egypt's metric reporting tool
+analizo metrics - analizo's metric reporting tool
 
 =head1 SYNOPSIS
 
-  egypt metrics [options] [<input> ...]
+  analizo metrics [options] [<input> ...]
 
 =head1 DESCRIPTION
 
-egypt metrics analyzes source code in the directories passed as arguments and
+analizo metrics analyzes source code in the directories passed as arguments and
 procudes a matrics report. Such report is written to the standard output in the
 YAML format (see I<http://www.yaml.org/>)
 
-egypt metrics is part of the egypt suite.
+analizo metrics is part of the analizo suite.
 
 =head1 OPTIONS
 
@@ -47,7 +47,7 @@ Displays metric list
 
 =item <input>...
 
-Tells egypt which source code directory(ies) you want to parse.
+Tells analizo which source code directory(ies) you want to parse.
 
 =for Euclid:
   input.type: readable
@@ -69,7 +69,7 @@ there will be as many of them as there are modules in your project.
 
 =head1 COPYRIGHT AND AUTHORS
 
-See egypt(1)
+See analizo(1)
 
 =cut
 
@@ -89,7 +89,7 @@ if($ARGV{'--list'}){
 }
 
 if($ARGV{'<input>'} =~ /^\s*$/){
-    printf("%s: No input files!\n", 'egypt metrics');
+    printf("%s: No input files!\n", 'analizo metrics');
     exit(0);
 }
 

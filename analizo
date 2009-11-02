@@ -5,30 +5,30 @@ our $VERSION = '1.10.2';
 
 =head1 NAME
 
-egypt - a source code analysis suite
+analizo - a source code analysis suite
 
 =head1 SYNOPSIS
 
-  egypt <tool> [tool-options] <toolargs> [<tool-args> ...]
-  egypt <option>
+  analizo <tool> [tool-options] <toolargs> [<tool-args> ...]
+  analizo <option>
 
 =head1 DESCRIPTION
 
-egypt is a suite of source code analysis tools, aimed at being
-language-independent and extensible. The 'egypt' program is only a starting
-point for new users, after you understand how egypt works you will use the
-egypt tools through their own programs directly. See TOOLS below for more
+analizo is a suite of source code analysis tools, aimed at being
+language-independent and extensible. The 'analizo' program is only a starting
+point for new users, after you understand how analizo works you will use the
+analizo tools through their own programs directly. See TOOLS below for more
 information.
 
 =head1 TOOLS
 
-egypt has several individual tools that share a core infrastructure, but do
+analizo has several individual tools that share a core infrastructure, but do
 different analysis and produce different output. They are normally invoked like
 this:
 
-  egypt <tool> [tool-options] <tool-args> [<tool-args> ...]
+  analizo <tool> [tool-options] <tool-args> [<tool-args> ...]
 
-Although you can invoke egypt tools against one or few files inside a project,
+Although you can invoke analizo tools against one or few files inside a project,
 normally it only makes sense to run it against the entire source tree (e.g.
 passing "." or "./src" as input directories).
 
@@ -37,7 +37,7 @@ corresponding manual for the tool(s) you want.
 
 =head1 OPTIONS
 
-The following are the options for the wrapper egypt script. The options for
+The following are the options for the wrapper analizo script. The options for
 each tools are documented in the respective tool's manual page.
 
 =over
@@ -48,7 +48,7 @@ Displays version information and exits.
 
 =item --help
 
-Displays help for the 'egypt' command.
+Displays help for the 'analizo' command.
 
 =back
 
@@ -67,8 +67,8 @@ modify it under the same terms as Perl itself.
 
 =head1 AUTHORS
 
-Andreas Gustafsson wrote the original version of egypt. Since them several
-people contributed to egypt's development. See the AUTHORS file for a complete
+Andreas Gustafsson wrote the original version of analizo. Since them several
+people contributed to analizo's development. See the AUTHORS file for a complete
 list.
 
 =cut
