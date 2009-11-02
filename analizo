@@ -15,10 +15,9 @@ analizo - a source code analysis suite
 =head1 DESCRIPTION
 
 analizo is a suite of source code analysis tools, aimed at being
-language-independent and extensible. The 'analizo' program is only a starting
-point for new users, after you understand how analizo works you will use the
-analizo tools through their own programs directly. See TOOLS below for more
-information.
+language-independent and extensible. The 'analizo' program is a wrapper for the
+analizo tools, which do the real work, so most of the time you'll be using one
+specific tool among the available ones. See TOOLS below for more information.
 
 =head1 TOOLS
 
@@ -52,6 +51,19 @@ Displays help for the 'analizo' command.
 
 =back
 
+=head1 HISTORY
+
+Analizo started as a modified version of egypt, by Andreas Gustafsson
+(available at http://www.gson.org/egypt/ as of the time this is being written).
+But since then so many features were added (and removed) that at some point
+during October 2009 it felt like it wasn't egypt anymore, and a new name was
+needed. The project was then renamed to Analizo, which means "analysis" in
+Esperanto.
+
+It was also relicensed under the GPL version 3. This relicensing was possible
+because the license of the original egypt allows that: "the same terms as Perl
+itself" mean either Artistic License or GPL version 1 or later.
+
 =head1 COPYRIGHT
 
 =over
@@ -62,8 +74,10 @@ Displays help for the 'analizo' command.
 
 =back
 
-This program is free software; you can redistribute it and/or
-modify it under the same terms as Perl itself.
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
 =head1 AUTHORS
 
