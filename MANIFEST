@@ -2,7 +2,6 @@
 AUTHORS
 Analizo/Extractor.pm
 Analizo/Extractor/Doxyparse.pm
-Analizo/Extractor/GCC.pm
 Analizo/Metrics.pm
 Analizo/Model.pm
 Analizo/Output/DOT.pm
@@ -18,13 +17,15 @@ analizo-graph
 analizo-metrics
 features/graph/cluster.feature
 features/graph/help.feature
-features/graph/include-external.feature
 features/graph/input-files.feature
 features/graph/modules.feature
 features/graph/omit.feature
+features/graph/output-file.feature
 features/graph/plain.feature
 features/language_support.feature
-features/metrics.feature
+features/metrics/input-files.feature
+features/metrics/list.feature
+features/metrics/output-file.feature
 features/step_definitions/analizo_steps.rb
 features/support/analizo_exception.rb
 features/wrapper.feature
@@ -57,7 +58,6 @@ t/01_dot_output.t
 t/02_extractor.t
 t/03_model.t
 t/04_metrics.t
-t/05_extractor_gcc.t
 t/06_extractor_doxyparse.t
 t/sample/Makefile
 t/sample/config.sh
