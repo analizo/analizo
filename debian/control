@@ -1,20 +1,20 @@
-Source: egypt
+Source: analizo
 Section: devel
 Priority: extra
 Maintainer: Antonio Terceiro <terceiro@softwarelivre.org>
 Build-Depends: cdbs, debhelper (>= 7)
 Build-Depends-Indep: doxyparse, libgetopt-euclid-perl, libgraph-perl, liblist-compare-perl, libtest-class-perl, libtest-exception-perl, libyaml-perl, libclass-accessor-perl
 Standards-Version: 3.8.3
-Homepage: http://softwarelivre.org/egypt
+Homepage: http://softwarelivre.org/analizo
 DM-Upload-Allowed: yes
 
-Package: egypt
+Package: analizo
 Architecture: all
 Depends: ${misc:Depends}, doxyparse, libgetopt-euclid-perl, libgraph-perl, liblist-compare-perl, libtest-class-perl, libtest-exception-perl, libyaml-perl, libclass-accessor-perl
 Recommends: gcc, graphviz
 Description: multi-language source code analysis toolkit
- Egypt parses source code in multiple languages and report useful information
+ Analizo parses source code in multiple languages and report useful information
  about it, such as module dependency, source code metrics and more.
  .
- Egypt uses doxyparse to parse the source code, and is currently tested and
+ Analizoi uses doxyparse to parse the source code, and is currently tested and
  expected to work well with C, C++ and Java source code.
