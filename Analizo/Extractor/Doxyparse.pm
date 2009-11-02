@@ -1,9 +1,9 @@
-package Egypt::Extractor::Doxyparse;
+package Analizo::Extractor::Doxyparse;
 
 use strict;
 use warnings;
 
-use base qw(Egypt::Extractor);
+use base qw(Analizo::Extractor);
 
 use File::Basename;
 

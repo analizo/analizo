@@ -1,4 +1,4 @@
-package Egypt::Metrics;
+package Analizo::Metrics;
 use strict;
 use base qw(Class::Accessor::Fast);
 use List::Compare;
@@ -15,7 +15,7 @@ sub new {
 sub coupling {
   my ($self, $module) = @_;
   my %seen = ();
-  for my $caller_function (@{$self->model->modules->{$module}}) {
+  for my $caller_function ($self->model->functions($module)) {
     for my $called_function (keys(%{$self->model->calls->{$caller_function}})) {
       my $called_module = $self->model->members->{$called_function};
       next if $called_module && ($called_module eq $module);
@@ -67,23 +67,6 @@ sub public_variables {
   return $public_variables;
 }
 
-sub _related {
-  my ($self, $module, $f1, $f2) = @_;
-
-  # the variables and functions in the module
-  my @variables = $self->model->variables($module);
-
-  my @calls_f1 = keys(%{$self->model->calls->{$f1}});
-  my @calls_f2 = keys(%{$self->model->calls->{$f2}});
-
-  # f1 and f2 use variables in common
-  my $lc = new List::Compare(\@calls_f1, \@calls_f2, \@variables);
-  my @intersection = $lc->get_intersection;
-  return (scalar @intersection == 0) ? 0 : 1;
-
-  return 0;
-}
-
 sub lcom4 {
   my ($self, $module) = @_;
   my $graph = new Graph;
@@ -104,7 +87,8 @@ sub lcom4 {
 
 sub number_of_functions {
   my ($self, $module) = @_;
-  return (scalar $self->model->functions($module));
+  my @list = $self->model->functions($module);
+  return scalar(@list);
 }
 
 sub amz_size {
@@ -200,7 +184,8 @@ sub report {
     average_lcom4 => ($totals{'lcom4'}) / $totals{'number_of_modules'},
     number_of_functions => $totals{'number_of_functions'},
     number_of_modules => $totals{'number_of_modules'},
-    number_of_public_functions => $totals{'number_of_public_functions'}
+    number_of_public_functions => $totals{'number_of_public_functions'},
+    total_loc => $totals{'loc'}
   );
 
   return Dump(\%summary) . $result;

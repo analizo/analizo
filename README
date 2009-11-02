@@ -2,9 +2,9 @@
 = About
 =======
 
-egypt is a suite of source code analysis tools, aimed at being
+analizo is a suite of source code analysis tools, aimed at being
 language-independent and extensible. The project home page is
-http://softwarelivre.org/egypt
+http://softwarelivre.org/analizo
 
 ==============
 = Installation
@@ -15,22 +15,22 @@ Debian package
 
 Add the following line to your /etc/apt/sources.list:
 
-  deb http://app.dcc.ufba.br/~terceiro/egypt/ ./
+  deb http://app.dcc.ufba.br/~terceiro/analizo/ ./
 
 Then do:
 
-  $ wget -q -O - http://app.dcc.ufba.br/~terceiro/egypt/signing-key.asc | sudo apt-key add -
+  $ wget -q -O - http://app.dcc.ufba.br/~terceiro/analizo/signing-key.asc | sudo apt-key add -
   $ sudo apt-get update
-  $ sudo apt-get install egypt
+  $ sudo apt-get install analizo
 
 From sources
 ------------
 
-See the HACKING file for instructions on how to install egypt's dependencies.
-You neeed to install the dependencies before installing egypt.
+See the HACKING file for instructions on how to install analizo's dependencies.
+You neeed to install the dependencies before installing analizo.
 
-Download egypt tarball, extract it and run the following commands inside the
-egypt-x.y.z directory:
+Download analizo tarball, extract it and run the following commands inside the
+analizo-x.y.z directory:
 
   $ perl Makefile.PL
   $ make
@@ -42,3 +42,16 @@ egypt-x.y.z directory:
 
 Copyright (c) 1994-2006 Andreas Gustafsson
 Copyright (c) 2008-2009 Antonio Terceiro
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.

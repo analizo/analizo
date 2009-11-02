@@ -1,11 +1,11 @@
-package Egypt::Extractor;
+package Analizo::Extractor;
 
 use strict;
 use warnings;
 
 use base qw(Class::Accessor::Fast);
 
-use Egypt::Model;
+use Analizo::Model;
 
 our $QUIET = undef;
 
@@ -23,7 +23,7 @@ sub alias {
 sub load {
   shift; # discard self ref
   my $extractor_method = alias shift;
-  my $extractor = "Egypt::Extractor::$extractor_method";
+  my $extractor = "Analizo::Extractor::$extractor_method";
 
   eval "use $extractor";
   die "error loading $extractor_method extractor: $@" if $@;
@@ -37,7 +37,7 @@ sub load {
 sub model {
   my $self = shift;
   if (!exists($self->{model})) {
-    $self->{model} = new Egypt::Model;
+    $self->{model} = new Analizo::Model;
   }
   return $self->{model};
 }
@@ -49,28 +49,11 @@ sub current_module {
   if (scalar @_) {
     $self->{current_module} = shift;
 
-    # read variable declarations
-    $self->_read_variable_declarations();
-
     #declare
     $self->model->declare_module($self->{current_module});
   }
 
   return $self->{current_module};
-}
-
-sub _read_variable_declarations {
-  my $self = shift;
-  return unless -r $self->current_module;
-  open TAGS, sprintf('ctags-exuberant -f - --fields=K %s |', $self->current_module);
-  while (<TAGS>) {
-    chomp;
-    my @fields = split(/\t/);
-    if ($fields[3] eq 'variable') {
-      $self->model->declare_variable($self->current_module, $fields[0]);
-    }
-  }
-  close TAGS;
 }
 
 sub process {

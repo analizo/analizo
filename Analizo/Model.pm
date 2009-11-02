@@ -1,10 +1,9 @@
-package Egypt::Model;
+package Analizo::Model;
 use strict;
 
 sub new {
   my @defaults = (
     members => {},
-    types => {},
     modules => {},
     demangle => {},
     calls => {},
@@ -56,17 +55,8 @@ sub declare_member {
   # mapping member to module
   $self->{members}->{$member} = $module;
 
-  # mapping module to member
-  $self->{modules}->{$module} = [] if !exists($self->modules->{$module});
-  if (! grep { $_ eq $member } @{$self->modules->{$module}}) {
-    push @{$self->modules->{$module}}, $member;
-  }
-
   # demangling name
   $self->{demangle}->{$member} = $demangled_name;
-
-  # registering type of member
-  $self->{types}->{$member} = $type;
 }
 
 sub type {
@@ -77,11 +67,27 @@ sub type {
 sub declare_function {
   my ($self, $module, $function, $demangled_name) = @_;
   $self->declare_member($module, $function, $demangled_name, 'function');
+
+  if (!exists($self->{modules}->{$module})){
+    $self->{modules}->{$module} = {};
+    $self->{modules}->{$module}->{functions} = [];
+  }
+  if(! grep { $_ eq $function } @{$self->{modules}->{$module}->{functions}}){
+    push @{$self->{modules}->{$module}->{functions}}, $function;
+  }
 }
 
 sub declare_variable {
   my ($self, $module, $variable, $demangled_name) = @_;
   $self->declare_member($module, $variable, $demangled_name, 'variable');
+
+  if (!exists($self->{modules}->{$module})){
+    $self->{modules}->{$module} = {};
+    $self->{modules}->{$module}->{variables} = [];
+  }
+  if(! grep { $_ eq $variable } @{$self->{modules}->{$module}->{variables}}){
+    push @{$self->{modules}->{$module}->{variables}}, $variable;
+  }
 }
 
 sub demangle {
@@ -106,12 +112,6 @@ sub add_variable_use {
   add_call(@_, 'variable');
 }
 
-sub _find_by_type {
-  my ($self, $module, $type) = @_;
-  my @list = grep { $self->type($_) eq $type } @{$self->modules->{$module}};
-  return @list;
-}
-
 sub add_loc {
     my ($self, $function, $lines) = @_;
     $self->{lines}->{$function} = $lines;
@@ -123,13 +123,23 @@ sub add_protection {
 }
 
 sub functions {
-  _find_by_type(@_, 'function');
+  my ($self, $module) = @_;
+  my $list = $self->{modules}->{$module}->{functions};
+  return $list ? @$list : ();
 }
 
 sub variables {
-  _find_by_type(@_, 'variable');
+  my ($self, $module) = @_;
+  my $list = $self->{modules}->{$module}->{variables};
+  return $list ? @$list : ();
 }
 
+sub all_members {
+ my ($self, $module) = @_;
+ my @functions = $self->functions($module);
+ my @variables = $self->variables($module);
+ return @functions, @variables;
+}
 
 1;
 

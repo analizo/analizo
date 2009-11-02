@@ -1,10 +1,10 @@
-package Egypt::Output::DOT;
+package Analizo::Output::DOT;
 
 use strict;
 use warnings;
 use base qw(Class::Accessor::Fast);
 use File::Basename;
-use Egypt::Model;
+use Analizo::Model;
 
 __PACKAGE__->mk_accessors(qw(filename cluster group_by_module include_externals));
 __PACKAGE__->mk_ro_accessors(qw(model));
@@ -17,7 +17,7 @@ sub new {
   );
   my $self = { @defaults, @_ };
   if (!$self->{model}) {
-    $self->{model} = new Egypt::Model;
+    $self->{model} = new Analizo::Model;
   }
   return bless $self, $package;
 }
@@ -99,8 +99,8 @@ sub _calculate_clusters {
   foreach my $module (sort(keys(%{$self->model->modules}))) {
     $result .= "subgraph \"cluster_$module\" {\n";
     $result .= sprintf("  label = \"%s\";\n", _file_to_module($module));
-    foreach my $function (@{$self->model->modules->{$module}}) {
-      my $demangled = $self->_demangle($function);
+    foreach my $member ($self->model->all_members($module)) {
+      my $demangled = $self->_demangle($member);
       $result .= sprintf("  node [label=\"%s\"] \"%s\";\n", $demangled, $demangled);
     }
     $result .= "}\n";

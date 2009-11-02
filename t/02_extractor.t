@@ -7,24 +7,24 @@ use strict;
 use warnings;
 
 BEGIN {
-   use_ok 'Egypt::Extractor';
+   use_ok 'Analizo::Extractor';
 }
 
-eval('$Egypt::Extractor::QUIET = 1;'); # the eval is to avoid Test::* complaining about possible typo
+eval('$Analizo::Extractor::QUIET = 1;'); # the eval is to avoid Test::* complaining about possible typo
 
 sub constructor : Tests {
-  isa_ok(new Egypt::Extractor, 'Egypt::Extractor');
+  isa_ok(new Analizo::Extractor, 'Analizo::Extractor');
 }
 
 sub has_a_current_member : Tests {
-  can_ok('Egypt::Extractor', 'current_member');
+  can_ok('Analizo::Extractor', 'current_member');
 }
 
 ##############################################################################
 # BEGIN test of indicating current module
 ##############################################################################
 sub current_module : Tests {
-  my $extractor = new Egypt::Extractor;
+  my $extractor = new Analizo::Extractor;
   $extractor->current_module('module1.c');
   is($extractor->current_module, 'module1.c', 'must be able to set the current module');
   $extractor->current_module('module2.c');
@@ -32,30 +32,20 @@ sub current_module : Tests {
 }
 
 sub process_must_be_overwriten_in_a_subclass : Tests {
-  dies_ok { Egypt::Extractor->new->process };
-}
-
-sub load_gcc_extractor : Tests {
-  lives_ok { Egypt::Extractor->load('GCC') };
+  dies_ok { Analizo::Extractor->new->process };
 }
 
 sub load_doxyparse_extractor : Tests {
-  lives_ok { Egypt::Extractor->load('Doxyparse') };
+  lives_ok { Analizo::Extractor->load('Doxyparse') };
 }
 
 sub fail_when_load_invalid_extractor : Tests {
-  dies_ok { Egypt::Extractor->load('ThisNotExists') };
-}
-
-sub load_gcc_extractor_by_alias : Tests {
-  lives_ok {
-    isa_ok(Egypt::Extractor->load('gcc'), 'Egypt::Extractor::GCC');
-  }
+  dies_ok { Analizo::Extractor->load('ThisNotExists') };
 }
 
 sub load_doxyparse_extractor_by_alias : Tests {
   lives_ok {
-    isa_ok(Egypt::Extractor->load('doxy'), 'Egypt::Extractor::Doxyparse');
+    isa_ok(Analizo::Extractor->load('doxy'), 'Analizo::Extractor::Doxyparse');
   }
 }
 

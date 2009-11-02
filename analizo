@@ -1,0 +1,153 @@
+#!/usr/bin/perl -w
+
+use Pod::Usage;
+our $VERSION = '1.10.2';
+
+=head1 NAME
+
+analizo - a source code analysis suite
+
+=head1 SYNOPSIS
+
+  analizo <tool> [tool-options] <toolargs> [<tool-args> ...]
+  analizo <option>
+
+=head1 DESCRIPTION
+
+analizo is a suite of source code analysis tools, aimed at being
+language-independent and extensible. The 'analizo' program is a wrapper for the
+analizo tools, which do the real work, so most of the time you'll be using one
+specific tool among the available ones. See TOOLS below for more information.
+
+=head1 TOOLS
+
+analizo has several individual tools that share a core infrastructure, but do
+different analysis and produce different output. They are normally invoked like
+this:
+
+  analizo <tool> [tool-options] <tool-args> [<tool-args> ...]
+
+Although you can invoke analizo tools against one or few files inside a project,
+normally it only makes sense to run it against the entire source tree (e.g.
+passing "." or "./src" as input directories).
+
+The options and output are specific to each tool, so make sure to read the
+corresponding manual for the tool(s) you want.
+
+=head1 OPTIONS
+
+The following are the options for the wrapper analizo script. The options for
+each tools are documented in the respective tool's manual page.
+
+=over
+
+=item --version
+
+Displays version information and exits.
+
+=item --help
+
+Displays help for the 'analizo' command.
+
+=back
+
+=head1 HISTORY
+
+Analizo started as a modified version of egypt, by Andreas Gustafsson
+(available at http://www.gson.org/egypt/ as of the time this is being written).
+But since then so many features were added (and removed) that at some point
+during October 2009 it felt like it wasn't egypt anymore, and a new name was
+needed. The project was then renamed to Analizo, which means "analysis" in
+Esperanto.
+
+It was also relicensed under the GPL version 3. This relicensing was possible
+because the license of the original egypt allows that: "the same terms as Perl
+itself" mean either Artistic License or GPL version 1 or later.
+
+=head1 COPYRIGHT
+
+=over
+
+=item Copyright (c) 1994-2006 Andreas Gustafsson
+
+=item Copyright (c) 2008-2009 Antonio Terceiro
+
+=back
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+=head1 AUTHORS
+
+Andreas Gustafsson wrote the original version of analizo. Since them several
+people contributed to analizo's development. See the AUTHORS file for a complete
+list.
+
+=cut
+
+use strict;
+use File::Basename;
+
+my $base = dirname(__FILE__);
+my $suite = basename(__FILE__);
+
+sub usage {
+  my $status = shift;
+  pod2usage(-verbose => 1, -exitval => "NOEXIT");
+  list_tools();
+  exit($status);
+}
+
+sub list_tools {
+  print("Available commands:\n");
+  print("\n");
+  for my $cmd_program (sort(glob("$base/$suite-*"))) {
+    $cmd_program =~ /^.*$suite-(.*)$/;
+    my $cmd = $1;
+    printf("    %s\n", $cmd);
+  }
+  print("\n");
+}
+
+sub show_version {
+  printf("$suite version %s\n", $VERSION);
+  exit(0);
+}
+
+if (scalar(@ARGV) == 0) {
+  usage(1);
+}
+
+my $tool = shift(@ARGV);
+if ($tool !~ /^[a-z]+$/) {
+  if ($tool eq '--version') {
+    show_version();
+  } elsif($tool eq '--help') {
+    usage(0);
+  } else {
+    printf("Invalid option: %s\n", $tool);
+    usage(1);
+  }
+}
+
+my $program = "$base/$suite-$tool";
+if (! -x $program) {
+  printf("\"%s\" is not an %s command.\n\n", $tool, $suite);
+  list_tools();
+  exit(1);
+}
+
+# do not pass --version option ahead, since the tools don't have a version on
+# their own.
+my @args;
+if (grep { $_ eq '--version' } @ARGV) {
+  print("Invalid option: --version\n");
+  system($program, '--help');
+  exit(1);
+} else {
+  system($program, @ARGV);
+  exit($? >> 8);
+}
+

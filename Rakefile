@@ -18,7 +18,7 @@ task 'manifest' do
   sh('git ls-tree -r --name-only HEAD > MANIFEST')
 end
 
-version = File.readlines('egypt').find { |item| item =~ /VERSION =/ }.strip.gsub(/.*VERSION = '(.*)'.*/, '\1')
+version = File.readlines('analizo').find { |item| item =~ /VERSION =/ }.strip.gsub(/.*VERSION = '(.*)'.*/, '\1')
 
 desc 'prepares a release tarball'
 task :release => [:authors, :manifest, :check_repo, :check_tag, :default] do

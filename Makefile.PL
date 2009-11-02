@@ -1,12 +1,12 @@
 use ExtUtils::MakeMaker;
 
-my @exe_files = glob('egypt*');
+my @exe_files = glob('analizo*');
 
 WriteMakefile(
-  NAME => 'egypt',
-  VERSION_FROM => 'egypt',
+  NAME => 'analizo',
+  VERSION_FROM => 'analizo',
   EXE_FILES => \@exe_files,
-  PMLIBDIRS => [ 'Egypt' ],
+  PMLIBDIRS => [ 'Analizo' ],
   AUTHOR => 'Antonio Terceiro <terceiro@softwarelivre.org>',
   LICENSE => 'perl',
   ABSTRACT => 'A dependency extractor for C/C++ projects',
