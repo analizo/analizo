@@ -1,4 +1,4 @@
-class EgyptException < Exception
+class AnalizoException < Exception
   def initialize(stdout, stderr)
     delimiter_line = "-------------------------------------------------\n"
     report = []

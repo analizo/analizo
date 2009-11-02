@@ -32,7 +32,7 @@ Define wich extractor method use to analise source code. Default is Doxyparse.
 
 When using using GCC extractor, the directories will be parsed to find files
 matching *.rtl and *.expand. For info about how to generate those files, please
-see Egypt::Extractor::GCC(3).
+see Analizo::Extractor::GCC(3).
 
 When using the Doxyparse extractor (default), all files matching the languages
 supported by doxyparse are processed.
@@ -75,12 +75,12 @@ See egypt(1)
 
 use strict;
 
-use Egypt::Extractor;
-use Egypt::Metrics;
+use Analizo::Extractor;
+use Analizo::Metrics;
 
 
 if($ARGV{'--list'}){
-    my $metrics_handler = new Egypt::Metrics(model => new Egypt::Model);
+    my $metrics_handler = new Analizo::Metrics(model => new Analizo::Model);
     my %metrics = $metrics_handler->list_of_metrics();
     foreach my $key (sort keys %metrics){
         print "$key - $metrics{$key}\n";
@@ -93,8 +93,8 @@ if($ARGV{'<input>'} =~ /^\s*$/){
     exit(0);
 }
 
-my $extractor = Egypt::Extractor->load($ARGV{'--extractor'});
-my $metrics = Egypt::Metrics->new(model => $extractor->model);
+my $extractor = Analizo::Extractor->load($ARGV{'--extractor'});
+my $metrics = Analizo::Metrics->new(model => $extractor->model);
 
 $extractor->process(@{$ARGV{'<input>'}});
 

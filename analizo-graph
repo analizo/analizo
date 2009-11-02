@@ -79,7 +79,7 @@ It doesn't make much sense to use --modules together with --cluster.
 =item --extractor <extractor>
 
 Define wich extractor method use to analise source code. Options are "Doxyparse" and
-"GCC". Default is Doxyparse. See Egypt::Extractor::GCC(3) for information on how to
+"GCC". Default is Doxyparse. See Analizo::Extractor::GCC(3) for information on how to
 setup your source tree in order to use the GCC extractor.
 
 =for Euclid:
@@ -103,16 +103,16 @@ Displays help on command line syntax and options.
 
 The two major tasks in creating a call graph are analyzing the syntax
 of the source code to find the function calls and laying out the
-graph, but Egypt actually does neither.  Instead, it delegates the
+graph, but Analizo actually does neither.  Instead, it delegates the
 source code analysis to GCC and the graph layout to Graphviz, both of
 which are better at their respective jobs than egypt could ever hope
-to be itself.  Egypt itself is just a small Perl script that acts as
+to be itself.  Analizo itself is just a small Perl script that acts as
 glue between these existing tools.
 
-Egypt takes advantage of GCC's capability to dump an intermediate
+Analizo takes advantage of GCC's capability to dump an intermediate
 representation of the program being compiled into a file (a I<RTL
 file>); this file is much easier to extract information from than a C
-source file.  Egypt extracts information about function calls from the
+source file.  Analizo extracts information about function calls from the
 RTL file and massages it into the format used by Graphviz.
 
 =head1 VIEWING THE GRAPH
@@ -175,12 +175,12 @@ See B<egypt(1)>
 
 use strict;
 
-use Egypt::Extractor;
-use Egypt::Output::DOT;
+use Analizo::Extractor;
+use Analizo::Output::DOT;
 
-my $extractor = Egypt::Extractor->load($ARGV{'--extractor'});
+my $extractor = Analizo::Extractor->load($ARGV{'--extractor'});
 my $model = $extractor->model;
-my $output = new Egypt::Output::DOT(model => $model);
+my $output = new Analizo::Output::DOT(model => $model);
 
 # functions to omit
 for my $omited (split(/,/, $ARGV{'--omit'} || '')) {

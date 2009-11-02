@@ -77,19 +77,20 @@ use strict;
 use File::Basename;
 
 my $base = dirname(__FILE__);
+my $suite = basename(__FILE__);
 
 sub usage {
   my $status = shift;
   pod2usage(-verbose => 1, -exitval => "NOEXIT");
-  list_egypt_tools();
+  list_tools();
   exit($status);
 }
 
-sub list_egypt_tools {
+sub list_tools {
   print("Available commands:\n");
   print("\n");
-  for my $cmd_program (sort(glob("$base/egypt-*"))) {
-    $cmd_program =~ /^.*egypt-(.*)$/;
+  for my $cmd_program (sort(glob("$base/$suite-*"))) {
+    $cmd_program =~ /^.*$suite-(.*)$/;
     my $cmd = $1;
     printf("    %s\n", $cmd);
   }
@@ -97,7 +98,7 @@ sub list_egypt_tools {
 }
 
 sub show_version {
-  printf("egypt version %s\n", $VERSION);
+  printf("$suite version %s\n", $VERSION);
   exit(0);
 }
 
@@ -117,10 +118,10 @@ if ($tool !~ /^[a-z]+$/) {
   }
 }
 
-my $program = "$base/egypt-$tool";
+my $program = "$base/$suite-$tool";
 if (! -x $program) {
-  printf("\"%s\" is not an egypt command.\n\n", $tool);
-  list_egypt_tools();
+  printf("\"%s\" is not an %s command.\n\n", $tool, $suite);
+  list_tools();
   exit(1);
 }
 
