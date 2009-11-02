@@ -1,4 +1,4 @@
-package Egypt::Metrics;
+package Analizo::Metrics;
 use strict;
 use base qw(Class::Accessor::Fast);
 use List::Compare;

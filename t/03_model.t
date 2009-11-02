@@ -3,20 +3,20 @@ use base qw(Test::Class);
 use Test::More;
 use strict;
 
-use Egypt::Model;
+use Analizo::Model;
 
 sub constructor : Tests {
-  isa_ok(new Egypt::Model, 'Egypt::Model');
+  isa_ok(new Analizo::Model, 'Analizo::Model');
 }
 
 sub empty_object : Tests {
-  my $model = new Egypt::Model;
+  my $model = new Analizo::Model;
   isa_ok($model->modules, 'HASH', 'must have modules');
   isa_ok($model->members, 'HASH', 'must have members');
 }
 
 sub declaring_modules : Tests {
-  my $model = new Egypt::Model;
+  my $model = new Analizo::Model;
   $model->declare_module('Module1');
   $model->declare_module('Module2');
   my @modules = $model->module_names;
@@ -25,7 +25,7 @@ sub declaring_modules : Tests {
 }
 
 sub declaring_inheritance : Tests {
-  my $model = new Egypt::Model;
+  my $model = new Analizo::Model;
   $model->add_inheritance('Child', 'Parent');
   my @parents = $model->inheritance('Child');
   is($parents[0], 'Parent', 'class with one superclass');
@@ -36,7 +36,7 @@ sub declaring_inheritance : Tests {
 }
 
 sub declaring_function : Tests {
-  my $model = new Egypt::Model;
+  my $model = new Analizo::Model;
   $model->declare_function('mymodule', 'myfunction');
   $model->declare_function('mymodule', 'anotherfunction');
 
@@ -52,19 +52,19 @@ sub declaring_function : Tests {
 }
 
 sub declaring_function_with_demangled_name : Tests {
-  my $model = new Egypt::Model;
+  my $model = new Analizo::Model;
   $model->declare_function('mymodule', 'myfunction', 'demangled_name');
   ok((grep { $_ eq 'demangled_name'} $model->demangle('myfunction')), 'must store mapping from mangled name to demangled name')
 }
 
 sub use_mangled_name_by_default_when_demanglig : Tests {
-  my $model = new Egypt::Model;
+  my $model = new Analizo::Model;
   $model->declare_function("mod1", 'f1');
   is($model->demangle('f1'), 'f1', 'must demangle to the function name itself by default');
 }
 
 sub declaring_variables : Tests {
-  my $model = new Egypt::Model;
+  my $model = new Analizo::Model;
   $model->declare_variable('mymodule', 'myvariable');
   ok((grep { $_ eq 'myvariable' } keys(%{$model->members})), "declared variable must be stored");
   is('mymodule', $model->members->{'myvariable'}, 'must map variable to module');
@@ -73,25 +73,25 @@ sub declaring_variables : Tests {
 }
 
 sub adding_calls : Tests {
-  my $model = new Egypt::Model;
+  my $model = new Analizo::Model;
   $model->add_call('function1', 'function2');
   is($model->calls->{'function1'}->{'function2'}, 'direct', 'must register function call');
 }
 
 sub indirect_calls : Tests {
-  my $model = new Egypt::Model;
+  my $model = new Analizo::Model;
   $model->add_call('f1', 'f2', 'indirect');
   is($model->calls->{'f1'}->{'f2'}, 'indirect', 'must register indirect call');
 }
 
 sub addding_variable_uses : Tests {
-  my $model = new Egypt::Model;
+  my $model = new Analizo::Model;
   $model->add_variable_use('function1', 'variable9');
   is($model->calls->{'function1'}->{'variable9'}, 'variable', 'must register variable use');
 }
 
 sub querying_variables : Tests {
-  my $model = new Egypt::Model;
+  my $model = new Analizo::Model;
   $model->declare_variable('mod1', 'v1');
   $model->declare_variable('mod1', 'v2');
 
@@ -100,7 +100,7 @@ sub querying_variables : Tests {
 }
 
 sub querying_functions : Tests {
-  my $model = new Egypt::Model;
+  my $model = new Analizo::Model;
   $model->declare_function('mod1', 'f1');
   $model->declare_function('mod1', 'f2');
 
@@ -109,7 +109,7 @@ sub querying_functions : Tests {
 }
 
 sub querying_members : Tests {
-  my $model = new Egypt::Model;
+  my $model = new Analizo::Model;
   $model->declare_function('mod1', 'f1');
   $model->declare_variable('mod1', 'v1');
 
@@ -123,13 +123,13 @@ sub querying_members : Tests {
 }
 
 sub declaring_protection : Tests {
-  my $model = new Egypt::Model;
+  my $model = new Analizo::Model;
   $model->add_protection('main::f1', 'public');
   is($model->{protection}->{'main::f1'}, 'public');
 }
 
 sub declating_lines_of_code : Tests {
-  my $model = new Egypt::Model;
+  my $model = new Analizo::Model;
   $model->add_loc('main::f1', 50);
   is($model->{lines}->{'main::f1'}, 50);
 }

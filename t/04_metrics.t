@@ -2,18 +2,18 @@ package MetricsTests;
 use strict;
 use base qw(Test::Class);
 use Test::More;
-use Egypt::Metrics;
-use Egypt::Model;
+use Analizo::Metrics;
+use Analizo::Model;
 
 use vars qw($model $metrics);
 
 sub setup : Test(setup) {
-  $model = new Egypt::Model;
-  $metrics = new Egypt::Metrics(model => $model);
+  $model = new Analizo::Model;
+  $metrics = new Analizo::Metrics(model => $model);
 }
 
 sub constructor : Tests {
-  isa_ok($metrics, 'Egypt::Metrics');
+  isa_ok($metrics, 'Analizo::Metrics');
 }
 
 sub model : Tests {

@@ -1,4 +1,4 @@
-package Egypt::Model;
+package Analizo::Model;
 use strict;
 
 sub new {

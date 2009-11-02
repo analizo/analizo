@@ -1,11 +1,11 @@
-package Egypt::Extractor;
+package Analizo::Extractor;
 
 use strict;
 use warnings;
 
 use base qw(Class::Accessor::Fast);
 
-use Egypt::Model;
+use Analizo::Model;
 
 our $QUIET = undef;
 
@@ -23,7 +23,7 @@ sub alias {
 sub load {
   shift; # discard self ref
   my $extractor_method = alias shift;
-  my $extractor = "Egypt::Extractor::$extractor_method";
+  my $extractor = "Analizo::Extractor::$extractor_method";
 
   eval "use $extractor";
   die "error loading $extractor_method extractor: $@" if $@;
@@ -37,7 +37,7 @@ sub load {
 sub model {
   my $self = shift;
   if (!exists($self->{model})) {
-    $self->{model} = new Egypt::Model;
+    $self->{model} = new Analizo::Model;
   }
   return $self->{model};
 }
