@@ -6,7 +6,7 @@ WriteMakefile(
   NAME => 'analizo',
   VERSION_FROM => 'analizo',
   EXE_FILES => \@exe_files,
-  PMLIBDIRS => [ 'Egypt' ],
+  PMLIBDIRS => [ 'Analizo' ],
   AUTHOR => 'Antonio Terceiro <terceiro@softwarelivre.org>',
   LICENSE => 'perl',
   ABSTRACT => 'A dependency extractor for C/C++ projects',
