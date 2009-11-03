@@ -4,8 +4,9 @@ analizo (1.11.0-1) unstable; urgency=low
   * Renamed Debian package to analizo as well
   * Package is now licensed under GPL-3+
   * Updating watch file
+  * Changing build system to dh7; dropped dependency on cdbs.
 
- -- Antonio Terceiro <terceiro@softwarelivre.org>  Mon, 02 Nov 2009 20:59:13 -0300
+ -- Antonio Terceiro <terceiro@softwarelivre.org>  Tue, 03 Nov 2009 00:12:49 -0300
 
 egypt (1.10.2-1) unstable; urgency=low
 
