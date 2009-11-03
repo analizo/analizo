@@ -1,9 +1,11 @@
 analizo (1.11.0-1) unstable; urgency=low
 
-  * New upstream release.
-  * Renaming package to analizo.
+  * New upstream version, renamed to analizo
+  * Renamed Debian package to analizo as well
+  * Package is now licensed under GPL-3+
+  * Updating watch file
 
- -- Antonio Terceiro <terceiro@softwarelivre.org>  Mon, 02 Nov 2009 20:41:26 -0300
+ -- Antonio Terceiro <terceiro@softwarelivre.org>  Mon, 02 Nov 2009 20:59:13 -0300
 
 egypt (1.10.2-1) unstable; urgency=low
 
