@@ -59,13 +59,6 @@ sub detect_direct_function_calls : Tests {
   is($extractor->model->{calls}->{'module1::callerfunction'}->{'module2::say_hello'}, 'direct');
 }
 
-sub detect_indirect_function_calls : Tests {
-  local $TODO = 'indirect calls currently unimplemented'; # TODO
-  my $extractor = Analizo::Extractor->load('Doxyparse', current_module => 'module1.c');
-  $extractor->feed('(symbol_ref:SI ("callback") [flags 0x41] <function_decl 0x40404580 callback>)) -1 (nil))');
-  is($extractor->model->{calls}->{'callerfunction'}->{'callback'}, 'indirect');
-}
-
 sub detect_variable_uses : Tests {
   my $extractor = Analizo::Extractor->load('Doxyparse', current_module => 'module1.c');
   $extractor->feed('   function callerfunction in line 5');
@@ -137,9 +130,21 @@ sub reading_from_directories : Tests {
   is(scalar(keys(%{$extractor->model->{modules}})), 3);
   is($extractor->model->{calls}->{'module1::main'}->{'module2::say_hello'}, 'direct');
   is($extractor->model->{calls}->{'module1::main'}->{'module2::say_bye'}, 'direct');
+}
 
-  local $TODO = "indirect calls currently unimplemented"; # TODO
-  is($extractor->model->{calls}->{'main'}->{'callback'}, 'indirect');
+sub invalid_doxyparse_input : Tests {
+  # this test is to make sure that the extractor can handle malformed input,
+  # e.g. receiving function/variable declarations before a current module is
+  # declared. (it happends sometime)
+
+  my $extractor = new Analizo::Extractor::Doxyparse;
+
+  $extractor->feed("   function wrong in line 10"); # malformed input
+
+  $extractor->current_module('module1.c');
+  $extractor->feed("   function right in line 10"); # well-formed input
+
+  is(scalar($extractor->model->functions('module1.c')), 1); # with 1 function
 }
 
 ExtractorDoxyparseTests->runtests;

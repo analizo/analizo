@@ -64,7 +64,8 @@ sub _qualified_name {
 
 # discard file suffix (e.g. .c or .h)
 sub _file_to_module {
-  fileparse($_[0], qr/\.[^.]*/);
+  my $filename = shift;
+  $filename ? fileparse($filename, qr/\.[^.]*/) : 'unknown';
 }
 
 sub process {
@@ -84,6 +85,7 @@ sub process {
     close DOXYPARSE;
   };
   if($@) {
+    warn($@);
     exit -1;
   }
 }
