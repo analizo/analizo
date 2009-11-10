@@ -1,3 +1,9 @@
+analizo (1.11.1-1) unstable; urgency=low
+
+  * New upstream release.
+
+ -- Antonio Terceiro <terceiro@softwarelivre.org>  Tue, 10 Nov 2009 17:25:33 -0300
+
 analizo (1.11.0-1) unstable; urgency=low
 
   * New upstream version, renamed to analizo
