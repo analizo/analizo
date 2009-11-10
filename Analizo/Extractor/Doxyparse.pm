@@ -84,6 +84,7 @@ sub process {
     close DOXYPARSE;
   };
   if($@) {
+    warn($@);
     exit -1;
   }
 }
