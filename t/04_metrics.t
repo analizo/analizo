@@ -180,6 +180,26 @@ sub noc : Tests {
   is($metrics->noc('D'), 0, 'no children module D');
 }
 
+sub rfc : Tests {
+  $model->declare_module('module');
+  is($metrics->rfc('module'), 0, "no functions declared on the module");
+
+  $model->declare_function('module', 'function');
+  is($metrics->rfc('module'), 1, "one function declared on the module");
+
+  $model->declare_function('module', 'another_function');
+  is($metrics->rfc('module'), 2, "two functions declared on the module");
+
+  $model->declare_function('module2', 'function2');
+  $model->add_call('function', 'function2');
+  is($metrics->rfc('module'), 3, "two functions and one call declared on the module");
+
+  $model->declare_function('module2', 'function3');
+  $model->add_call('another_function', 'function3');
+  is($metrics->rfc('module'), 4, "two functions and two calls declared on the module");
+
+}
+
 sub report : Tests {
   # first module
   $model->declare_module('mod1');

@@ -121,6 +121,19 @@ sub noc {
   return $number_of_children;
 }
 
+sub rfc {
+  my ($self, $module) = @_;
+
+  my @functions = $self->model->functions($module);
+
+  my $rfc = scalar @functions;
+  for my $function (@functions){
+    $rfc += scalar keys(%{$self->model->calls->{$function}});
+  }
+
+  return $rfc;
+}
+
 sub _report_module {
   my ($self, $module) = @_;
 
@@ -133,35 +146,38 @@ sub _report_module {
   my $public_variables		= $self->public_variables($module);
   my $dit			= $self->dit($module);
   my $noc			= $self->noc($module);
+  my $rfc			= $self->rfc($module);
 
   my %data = (
-    _module 		=> $module,
-    amz_size 		=> $amz_size,
-    coupling 		=> $coupling,
-    number_of_functions => $number_of_functions,
-    lcom4 		=> $lcom4,
-    loc 		=> $lines,
-    max_mloc 		=> $max_mloc,
-    public_functions 	=> $public_functions,
-    public_variables 	=> $public_variables,
-    dit 		=> $dit,
-    noc			=> $noc
+    _module 			=> $module,
+    amz_size 			=> $amz_size,
+    coupling 			=> $coupling,
+    number_of_functions 	=> $number_of_functions,
+    lcom4 			=> $lcom4,
+    loc 			=> $lines,
+    max_mloc 			=> $max_mloc,
+    public_functions 		=> $public_functions,
+    public_variables 		=> $public_variables,
+    dit 			=> $dit,
+    noc				=> $noc,
+    rfc				=> $rfc
   );
 
   return %data;
 }
 
 my %DESCRIPTIONS = (
-  coupling 		=> "CBO coupling",
-  lcom4 		=> "Lack of Cohesion (LCOM4)",
-  loc 			=> "Lines of Code",
-  number_of_functions 	=> "Number of functions/methods",
-  public_functions 	=> "Number of public functions",
-  amz_size 		=> "Average number of lines per method",
-  max_mloc 		=> "Max number of method lines",
-  public_variables 	=> "Number of public variables",
-  dit 			=> "Depth of Inheritance Tree",
-  noc			=> "Number of Children"
+  coupling 			=> "CBO coupling",
+  lcom4 			=> "Lack of Cohesion (LCOM4)",
+  loc 				=> "Lines of Code",
+  number_of_functions 		=> "Number of functions/methods",
+  public_functions 		=> "Number of public functions",
+  amz_size 			=> "Average number of lines per method",
+  max_mloc 			=> "Max number of method lines",
+  public_variables 		=> "Number of public variables",
+  dit 				=> "Depth of Inheritance Tree",
+  noc				=> "Number of Children",
+  rfc				=> "Response for a Class"
 );
 
 sub report {
