@@ -108,44 +108,60 @@ sub dit {
   }
 }
 
+sub noc {
+  my ($self, $module) = @_;
+
+  my $number_of_children = 0;
+
+  for my $module_name ($self->model->module_names) {
+    if (grep {$_ eq $module} $self->model->inheritance($module_name)) {
+      $number_of_children++;
+    }
+  }
+  return $number_of_children;
+}
+
 sub _report_module {
   my ($self, $module) = @_;
 
-  my $coupling            = $self->coupling($module);
-  my $number_of_functions = $self->number_of_functions($module);
-  my $lcom4               = $self->lcom4($module);
-  my ($lines, $max_mloc)  = $self->loc($module);
-  my $public_functions    = $self->public_functions($module);
-  my $amz_size            = amz_size($lines, $number_of_functions);
-  my $public_variables    = $self->public_variables($module);
-  my $dit                 = $self->dit($module);
+  my $coupling			= $self->coupling($module);
+  my $number_of_functions	= $self->number_of_functions($module);
+  my $lcom4			= $self->lcom4($module);
+  my ($lines, $max_mloc)	= $self->loc($module);
+  my $public_functions		= $self->public_functions($module);
+  my $amz_size			= amz_size($lines, $number_of_functions);
+  my $public_variables		= $self->public_variables($module);
+  my $dit			= $self->dit($module);
+  my $noc			= $self->noc($module);
 
   my %data = (
-    _module => $module,
-    amz_size => $amz_size,
-    coupling => $coupling,
+    _module 		=> $module,
+    amz_size 		=> $amz_size,
+    coupling 		=> $coupling,
     number_of_functions => $number_of_functions,
-    lcom4 => $lcom4,
-    loc => $lines,
-    max_mloc => $max_mloc,
-    public_functions => $public_functions,
-    public_variables => $public_variables,
-    dit => $dit,
+    lcom4 		=> $lcom4,
+    loc 		=> $lines,
+    max_mloc 		=> $max_mloc,
+    public_functions 	=> $public_functions,
+    public_variables 	=> $public_variables,
+    dit 		=> $dit,
+    noc			=> $noc
   );
 
   return %data;
 }
 
 my %DESCRIPTIONS = (
-  coupling => "CBO coupling",
-  lcom4 => "Lack of Cohesion (LCOM4)",
-  loc => "Lines of Code",
-  number_of_functions => "Number of functions/methods",
-  public_functions => "Number of public functions",
-  amz_size => "Average number of lines per method",
-  max_mloc => "Max number of method lines",
-  public_variables => "Number of public variaveis",
-  dit => "Depth of Inheritance Tree",
+  coupling 		=> "CBO coupling",
+  lcom4 		=> "Lack of Cohesion (LCOM4)",
+  loc 			=> "Lines of Code",
+  number_of_functions 	=> "Number of functions/methods",
+  public_functions 	=> "Number of public functions",
+  amz_size 		=> "Average number of lines per method",
+  max_mloc 		=> "Max number of method lines",
+  public_variables 	=> "Number of public variables",
+  dit 			=> "Depth of Inheritance Tree",
+  noc			=> "Number of Children"
 );
 
 sub report {
@@ -203,4 +219,3 @@ sub list_of_metrics {
 }
 
 1;
-

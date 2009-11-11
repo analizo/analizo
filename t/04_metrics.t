@@ -155,6 +155,31 @@ sub dit_with_multiple_inheritance : Tests {
   is($metrics->dit('Level1'), 2, 'with multiple inheritance take the larger DIT between the parents');
 }
 
+sub noc : Tests {
+  $model->declare_module('A');
+  $model->declare_module('B');
+  $model->declare_module('C');
+  $model->declare_module('D');
+
+  is($metrics->noc('A'), 0, 'no children module A');
+  is($metrics->noc('B'), 0, 'no children module B');
+  is($metrics->noc('C'), 0, 'no children module C');
+
+  $model->add_inheritance('B', 'A');
+  is($metrics->noc('A'), 1, 'one child module A');
+  is($metrics->noc('B'), 0, 'no children module B');
+
+  $model->add_inheritance('C', 'A');
+
+  is($metrics->noc('A'), 2, 'two children module A');
+  is($metrics->noc('C'), 0, 'no children module C');
+
+  $model->add_inheritance('D', 'C');
+  is($metrics->noc('A'), 2, 'two children module A');
+  is($metrics->noc('C'), 1, 'one child module C');
+  is($metrics->noc('D'), 0, 'no children module D');
+}
+
 sub report : Tests {
   # first module
   $model->declare_module('mod1');
