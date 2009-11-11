@@ -200,6 +200,68 @@ sub rfc : Tests {
 
 }
 
+sub afferent_connections : Tests {
+  $model->declare_module('A');
+  $model->declare_function('A', 'fA');
+  $model->declare_function('A', 'fA2');
+
+  $model->declare_module('B');
+  $model->declare_function('B', 'fB');
+  $model->declare_variable('B', 'vB');
+
+  $model->declare_module('C');
+  $model->declare_function('C', 'fC');
+  $model->declare_variable('C', 'vC');
+
+  is($metrics->afferent_connections('A'), 0, 'no afferent_connections module A');
+  is($metrics->afferent_connections('B'), 0, 'no afferent_connections module B');
+  is($metrics->afferent_connections('C'), 0, 'no afferent_connections module C');
+
+  $model->add_call('fA', 'fB');
+  is($metrics->afferent_connections('A'), 0, 'no calls to a module');
+  is($metrics->afferent_connections('B'), 1, 'calling function of another module');
+
+  $model->add_variable_use('fA', 'vB');
+  is($metrics->afferent_connections('A'), 0, 'no calls to a module');
+  is($metrics->afferent_connections('B'), 1, 'calling variable of another module');
+
+  $model->add_call('fA', 'fC');
+  is($metrics->afferent_connections('A'), 0, 'no calls to a module');
+  is($metrics->afferent_connections('C'), 1, 'calling variable of another module');
+
+  $model->add_call('fA', 'fA2');
+  is($metrics->afferent_connections('A'), 0, 'calling itself does not count as afferent_connections');
+
+  $model->add_variable_use('fB', 'vC');
+  is($metrics->afferent_connections('C'), 2, 'calling module twice');
+}
+
+sub afferent_connections_with_inheritance : Tests {
+  $model->declare_module('Mother');
+  $model->declare_module('Child1');
+  $model->declare_module('Child2');
+  $model->declare_module('Grandchild1');
+  $model->declare_module('Grandchild2');
+
+  $model->add_inheritance('Child1', 'Mother');
+  is($metrics->afferent_connections('Mother'), 1, 'inheritance counts as afferent_connections to superclass');
+  is($metrics->afferent_connections('Child1'), 0, 'inheritance does not count as afferent_connections to child');
+
+  $model->add_inheritance('Child2', 'Mother');
+  is($metrics->afferent_connections('Mother'), 2, 'multiple inheritance counts as afferent_connections');
+  is($metrics->afferent_connections('Child2'), 0, 'inheritance does not count as afferent_connections to another child');
+
+  $model->add_inheritance('Grandchild1', 'Child1');
+  is($metrics->afferent_connections('Grandchild1'), 0, 'grandchilds afferent_connections is not affected');
+  is($metrics->afferent_connections('Child1'), 1, 'grandchild extending a child counts');
+  is($metrics->afferent_connections('Mother'), 3, 'the deeper the tree, the biggest afferent_connections');
+
+  $model->add_inheritance('Grandchild2', 'Child2');
+  is($metrics->afferent_connections('Grandchild2'), 0, 'grandchilds afferent_connections is not affected');
+  is($metrics->afferent_connections('Child2'), 1, 'grandchild extending a child counts');
+  is($metrics->afferent_connections('Mother'), 4, 'the deeper the tree, the biggest afferent_connections');
+}
+
 sub report : Tests {
   # first module
   $model->declare_module('mod1');

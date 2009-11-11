@@ -134,6 +134,38 @@ sub rfc {
   return $rfc;
 }
 
+sub afferent_connections {
+  my ($self, $module) = @_;
+
+  my @seen_modules = ();
+  for my $caller_member (keys(%{$self->model->calls})){
+    my $caller_module = $self->model->members->{$caller_member};
+    for my $called_member (keys(%{$self->model->calls->{$caller_member}})) {
+      my $called_module = $self->model->members->{$called_member};
+      if($caller_module ne $called_module && $called_module eq $module){
+        if(! grep { $_ eq $caller_module } @seen_modules){
+          push @seen_modules, $caller_module;
+        }
+      }
+    }
+  }
+  return scalar @seen_modules + $self->_recursive_noc($module);
+}
+
+sub _recursive_noc {
+  my ($self, $module) = @_;
+
+  my $number_of_children = 0;
+
+  for my $module_name ($self->model->module_names){
+    if (grep {$_ eq $module} $self->model->inheritance($module_name)) {
+      $number_of_children += $self->_recursive_noc($module_name) + 1;
+    }
+  }
+
+  return $number_of_children;
+}
+
 sub _report_module {
   my ($self, $module) = @_;
 
@@ -147,6 +179,7 @@ sub _report_module {
   my $dit			= $self->dit($module);
   my $noc			= $self->noc($module);
   my $rfc			= $self->rfc($module);
+  my $afferent_connections	= $self->afferent_connections($module);
 
   my %data = (
     _module 			=> $module,
@@ -160,7 +193,8 @@ sub _report_module {
     public_variables 		=> $public_variables,
     dit 			=> $dit,
     noc				=> $noc,
-    rfc				=> $rfc
+    rfc				=> $rfc,
+    afferent_connections	=> $afferent_connections
   );
 
   return %data;
@@ -177,7 +211,8 @@ my %DESCRIPTIONS = (
   public_variables 		=> "Number of public variables",
   dit 				=> "Depth of Inheritance Tree",
   noc				=> "Number of Children",
-  rfc				=> "Response for a Class"
+  rfc				=> "Response for a Class",
+  afferent_connections		=> "Number of Afferent Conections per Class"
 );
 
 sub report {
@@ -190,7 +225,8 @@ sub report {
     number_of_modules => 0,
     public_functions => 0,
     number_of_public_functions => 0,
-    loc => 0
+    loc => 0,
+    cof => 0
   );
 
   my @module_names = $self->model->module_names;
@@ -209,6 +245,7 @@ sub report {
     $totals{'number_of_functions'} += $data{number_of_functions};
     $totals{'number_of_public_functions'} += $data{public_functions};
     $totals{'loc'} += $data{loc};
+    $totals{'cof'} += $data{afferent_connections};
 
   }
   my %summary = (
@@ -217,7 +254,8 @@ sub report {
     number_of_functions => $totals{'number_of_functions'},
     number_of_modules => $totals{'number_of_modules'},
     number_of_public_functions => $totals{'number_of_public_functions'},
-    total_loc => $totals{'loc'}
+    total_loc => $totals{'loc'},
+    cof => ($totals{'cof'}) / ($totals{'number_of_modules'} * ($totals{'number_of_modules'} - 1))
   );
 
   return Dump(\%summary) . $result;
