@@ -169,50 +169,50 @@ sub _recursive_noc {
 sub _report_module {
   my ($self, $module) = @_;
 
-  my $coupling			= $self->coupling($module);
-  my $number_of_functions	= $self->number_of_functions($module);
-  my $lcom4			= $self->lcom4($module);
-  my ($lines, $max_mloc)	= $self->loc($module);
-  my $public_functions		= $self->public_functions($module);
-  my $amz_size			= amz_size($lines, $number_of_functions);
-  my $public_variables		= $self->public_variables($module);
-  my $dit			= $self->dit($module);
-  my $noc			= $self->noc($module);
-  my $rfc			= $self->rfc($module);
-  my $afferent_connections	= $self->afferent_connections($module);
+  my $coupling             = $self->coupling($module);
+  my $number_of_functions  = $self->number_of_functions($module);
+  my $lcom4                = $self->lcom4($module);
+  my ($lines, $max_mloc)   = $self->loc($module);
+  my $public_functions     = $self->public_functions($module);
+  my $amz_size             = amz_size($lines, $number_of_functions);
+  my $public_variables     = $self->public_variables($module);
+  my $dit                  = $self->dit($module);
+  my $noc                  = $self->noc($module);
+  my $rfc                  = $self->rfc($module);
+  my $afferent_connections = $self->afferent_connections($module);
 
   my %data = (
-    _module 			=> $module,
-    amz_size 			=> $amz_size,
-    coupling 			=> $coupling,
-    number_of_functions 	=> $number_of_functions,
-    lcom4 			=> $lcom4,
-    loc 			=> $lines,
-    max_mloc 			=> $max_mloc,
-    public_functions 		=> $public_functions,
-    public_variables 		=> $public_variables,
-    dit 			=> $dit,
-    noc				=> $noc,
-    rfc				=> $rfc,
-    afferent_connections	=> $afferent_connections
+    _module              => $module,
+    amz_size             => $amz_size,
+    coupling             => $coupling,
+    number_of_functions  => $number_of_functions,
+    lcom4                => $lcom4,
+    loc                  => $lines,
+    max_mloc             => $max_mloc,
+    public_functions     => $public_functions,
+    public_variables     => $public_variables,
+    dit                  => $dit,
+    noc                  => $noc,
+    rfc                  => $rfc,
+    afferent_connections => $afferent_connections
   );
 
   return %data;
 }
 
 my %DESCRIPTIONS = (
-  coupling 			=> "CBO coupling",
-  lcom4 			=> "Lack of Cohesion (LCOM4)",
-  loc 				=> "Lines of Code",
-  number_of_functions 		=> "Number of functions/methods",
-  public_functions 		=> "Number of public functions",
-  amz_size 			=> "Average number of lines per method",
-  max_mloc 			=> "Max number of method lines",
-  public_variables 		=> "Number of public variables",
-  dit 				=> "Depth of Inheritance Tree",
-  noc				=> "Number of Children",
-  rfc				=> "Response for a Class",
-  afferent_connections		=> "Number of Afferent Conections per Class"
+  coupling             => "CBO coupling",
+  lcom4                => "Lack of Cohesion (LCOM4)",
+  loc                  => "Lines of Code",
+  number_of_functions  => "Number of functions/methods",
+  public_functions     => "Number of public functions",
+  amz_size             => "Average number of lines per method",
+  max_mloc             => "Max number of method lines",
+  public_variables     => "Number of public variables",
+  dit                  => "Depth of Inheritance Tree",
+  noc                  => "Number of Children",
+  rfc                  => "Response for a Class",
+  afferent_connections => "Number of Afferent Conections per Class"
 );
 
 sub report {
