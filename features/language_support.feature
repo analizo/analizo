@@ -38,11 +38,11 @@ Feature: multi-language support
   Scenario Outline: some metrics
     Given I am in samples/hello_world/<language>
     When I run "analizo metrics ."
-    Then analizo must report that the project has number_of_modules = 2
-    And analizo must report that module <main_module> has public_functions = 1
-    And analizo must report that module <hello_world_module> has public_functions = 3
-    And analizo must report that module <hello_world_module> has number_of_functions = <total_functions>
-    And analizo must report that module <hello_world_module> has public_variables = <public_variables>
+    Then analizo must report that the project has sum_classes = 2
+    And analizo must report that module <main_module> has nom = 1
+    And analizo must report that module <hello_world_module> has npm = 3
+    And analizo must report that module <hello_world_module> has nom = <total_functions>
+    And analizo must report that module <hello_world_module> has npv = <public_variables>
   Examples:
     | language | main_module | hello_world_module | total_functions | public_variables |
     | c        | main        | hello_world        | 3               | 2                |
@@ -64,3 +64,4 @@ Feature: multi-language support
     | language |
     | c++      |
     | java     |
+
