@@ -10,7 +10,7 @@ Feature: multi-language support
   Examples:
     | language | main_module | hello_world_module |
     | c        | main        | hello_world        |
-    | c++      | main        | HelloWorld         |
+    | cpp      | main        | HelloWorld         |
     | java     | Main        | HelloWorld         |
 
   Scenario Outline: dependency between specific functions
@@ -21,7 +21,7 @@ Feature: multi-language support
   Examples:
     | language | main_function | hello_say                    | hello_destroy                    |
     | c        | main::main    | hello_world::hello_world_say | hello_world::hello_world_destroy |
-    | c++      | main::main    | HelloWorld::say              | HelloWorld::destroy              |
+    | cpp      | main::main    | HelloWorld::say              | HelloWorld::destroy              |
     | java     | Main::main    | HelloWorld::say              | HelloWorld::destroy              |
 
   Scenario Outline: intra-module dependencies
@@ -32,7 +32,7 @@ Feature: multi-language support
   Examples:
     | language | hello_say       | hello_destroy       | hello_id        |
     | c        | hello_world::hello_world_say | hello_world::hello_world_destroy | hello_world::_hello_world::id |
-    | c++      | HelloWorld::say | HelloWorld::destroy | HelloWorld::_id |
+    | cpp      | HelloWorld::say | HelloWorld::destroy | HelloWorld::_id |
     | java     | HelloWorld::say | HelloWorld::destroy | HelloWorld::_id |
 
   Scenario Outline: some metrics
@@ -46,7 +46,7 @@ Feature: multi-language support
   Examples:
     | language | main_module | hello_world_module | total_functions | public_variables |
     | c        | main        | hello_world        | 3               | 2                |
-    | c++      | main        | HelloWorld         | 4               | 1                |
+    | cpp      | main        | HelloWorld         | 4               | 1                |
     | java     | Main        | HelloWorld         | 4               | 1                |
 
   Scenario Outline: inheritance data
@@ -62,6 +62,6 @@ Feature: multi-language support
     And analizo must report that module Animal has dit = 0
   Examples:
     | language |
-    | c++      |
+    | cpp      |
     | java     |
 
