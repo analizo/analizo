@@ -65,3 +65,13 @@ Feature: multi-language support
     | cpp      |
     | java     |
 
+  @wip
+  Scenario Outline: argument versus instance variable
+    Given I am in samples/printer/<language>
+    When I run "analizo graph ."
+    Then analizo must report that "Printer1::Printer1" depends on "Printer1::message"
+    Then analizo must report that "Printer2::Printer2" depends on "Printer2::message"
+  Examples:
+    | language |
+    | cpp |
+    | java |
