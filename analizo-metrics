@@ -30,10 +30,6 @@ Define wich extractor method use to analise source code. Default is Doxyparse.
   extractor.type: string, extractor =~ /\A\w+\Z/
   extractor.default: 'Doxyparse'
 
-When using using GCC extractor, the directories will be parsed to find files
-matching *.rtl and *.expand. For info about how to generate those files, please
-see Analizo::Extractor::GCC(3).
-
 When using the Doxyparse extractor (default), all files matching the languages
 supported by doxyparse are processed.
 

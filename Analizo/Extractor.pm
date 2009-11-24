@@ -15,7 +15,6 @@ sub alias {
   my $alias = shift;
   my %aliases = (
     doxy => 'Doxyparse',
-    gcc  => 'GCC',
   );
   exists $aliases{$alias} ? $aliases{$alias} : $alias;
 }
