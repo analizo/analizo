@@ -261,7 +261,7 @@ sub tloc : Tests {
   is($result[1], 20, 'adding another module with 20 tloc makes the max LOC equal 20');
 }
 
-sub report : Tests {
+sub sample_modules_for_report {
   # first module
   $model->declare_module('mod1');
   $model->declare_function('mod1' , 'f1a');
@@ -274,12 +274,27 @@ sub report : Tests {
   $model->declare_function('mod2', 'f2');
   $model->add_call('f2', 'f1a');
   $model->add_call('f2', 'f1b');
+}
+
+sub report : Tests {
+  sample_modules_for_report();
 
   my $output = $metrics->report;
 
   ok($output =~ /sum_classes: 2/, 'reporting number of classes in YAML stream');
   ok($output =~ /_module: mod1/, 'reporting module 1');
   ok($output =~ /_module: mod2/, 'reporting module 2');
+}
+
+sub report_global_only : Tests {
+  sample_modules_for_report();
+
+  $metrics->report_global_metrics_only(1);
+  my $output = $metrics->report;
+
+  ok($output =~ /sum_classes: 2/, 'reporting number of classes (it is global)');
+  ok($output !~ /_module: mod1/, 'not reporting module 1 details');
+  ok($output !~ /_module: mod2/, 'not reporting module 2 details');
 }
 
 sub report_without_modules_at_all : Tests {

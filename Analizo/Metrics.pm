@@ -5,7 +5,7 @@ use List::Compare;
 use Graph;
 use YAML;
 
-__PACKAGE__->mk_accessors(qw(model));
+__PACKAGE__->mk_accessors(qw(model report_global_metrics_only));
 
 my %DESCRIPTIONS = (
   acc       => "Afferent Connections per Class (to calculate Coupling Factor - COF)",
@@ -218,7 +218,7 @@ sub _report_module {
 
 sub report {
   my $self = shift;
-  my $result = '';
+  my $details = '';
   my %totals = (
     cbo       => 0,
     classes   => 0,
@@ -238,7 +238,9 @@ sub report {
   for my $module (@module_names) {
     my %data = $self->_report_module($module);
 
-    $result .= Dump(\%data);
+    unless ($self->report_global_metrics_only()) {
+      $details .= Dump(\%data);
+    }
 
     $totals{'cbo'}     += $data{cbo};
     $totals{'lcom4'}   += $data{lcom4};
@@ -261,7 +263,7 @@ sub report {
     cof                 => ($totals{'cof'}) / ($totals{'classes'} * ($totals{'classes'} - 1))
   );
 
-  return Dump(\%summary) . $result;
+  return Dump(\%summary) . $details;
 }
 
 sub list_of_metrics {

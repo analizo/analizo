@@ -55,6 +55,10 @@ Use a file as output
 =for Euclid:
   file.type: writeable
 
+=item --global-only | -g
+
+Don't output the details about modules: only output global (project-wide) metrics.
+
 =back
 
 =head1 OUTPUT FORMAT
@@ -91,6 +95,11 @@ if($ARGV{'<input>'} =~ /^\s*$/){
 
 my $extractor = Analizo::Extractor->load($ARGV{'--extractor'});
 my $metrics = Analizo::Metrics->new(model => $extractor->model);
+
+if ($ARGV{'--global-only'}) {
+  $metrics->report_global_metrics_only(1);
+}
+
 
 $extractor->process(@{$ARGV{'<input>'}});
 
