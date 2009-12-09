@@ -10,7 +10,7 @@ DM-Upload-Allowed: yes
 
 Package: analizo
 Architecture: all
-Depends: ${misc:Depends}, doxyparse, libgetopt-euclid-perl, libgraph-perl, liblist-compare-perl, libtest-class-perl, libtest-exception-perl, libyaml-perl, libclass-accessor-perl
+Depends: ${misc:Depends}, ${perl:Depends}, doxyparse, libgetopt-euclid-perl, libgraph-perl, liblist-compare-perl, libtest-class-perl, libtest-exception-perl, libyaml-perl, libclass-accessor-perl
 Recommends: gcc, graphviz
 Description: multi-language source code analysis toolkit
  Analizo parses source code in multiple languages and report useful information
