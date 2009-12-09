@@ -5,14 +5,52 @@ use List::Compare;
 use Graph;
 use YAML;
 
-__PACKAGE__->mk_accessors(qw(model));
+__PACKAGE__->mk_accessors(qw(model report_global_metrics_only));
+
+my %DESCRIPTIONS = (
+  acc       => "Afferent Connections per Class (to calculate Coupling Factor - COF)",
+  amloc     => "Average Method LOC ",
+  cbo       => "Coupling Between Objects",
+  dit       => "Depth of Inheritance Tree",
+  lcom4     => "Lack of Cohesion of Methods ",
+  mmloc     => "Max Method LOC",
+  noc       => "Number of Children",
+  nom       => "Number of Methods",
+  npm       => "Number of Public Methods",
+  npv       => "Number of Public Variables",
+  rfc       => "Response For a Class",
+  tloc      => "Total Lines of Code"
+);
 
 sub new {
   my ($package, %args) = @_;
   return bless { model => $args{model} }, $package;
 }
 
-sub coupling {
+sub acc {
+  my ($self, $module) = @_;
+
+  my @seen_modules = ();
+  for my $caller_member (keys(%{$self->model->calls})){
+    my $caller_module = $self->model->members->{$caller_member};
+    for my $called_member (keys(%{$self->model->calls->{$caller_member}})) {
+      my $called_module = $self->model->members->{$called_member};
+      if($caller_module ne $called_module && $called_module eq $module){
+        if(! grep { $_ eq $caller_module } @seen_modules){
+          push @seen_modules, $caller_module;
+        }
+      }
+    }
+  }
+  return scalar @seen_modules + $self->_recursive_noc($module);
+}
+
+sub amloc {
+  my ($self, $loc, $count) = @_;
+  return ($count > 0) ? ($loc / $count) : 0;
+}
+
+sub cbo {
   my ($self, $module) = @_;
   my %seen = ();
   for my $caller_function ($self->model->functions($module)) {
@@ -25,46 +63,16 @@ sub coupling {
   return (scalar keys(%seen));
 }
 
-sub loc {
+sub dit {
   my ($self, $module) = @_;
-
-  my @functions = $self->model->functions($module);
-  my $lines = 0;
-  my $max = 0;
-  for my $function (@functions) {
-    my $loc = $self->model->{lines}->{$function} || 0;
-    $lines += $loc;
-    $max = $loc if $loc > $max;
+  my @parents = $self->model->inheritance($module);
+  if (@parents) {
+    my @parent_dits = map { $self->dit($_) } @parents;
+    my @sorted = reverse(sort(@parent_dits));
+    return 1 + $sorted[0];
+  } else {
+    return 0;
   }
-  return ($lines, $max);
-}
-
-sub _is_public {
-  my ($self, $member) = @_;
-  return $self->model->{protection}->{$member} && $self->model->{protection}->{$member} eq "public";
-}
-
-
-sub public_functions {
-  my ($self, $module) = @_;
-
-  my @functions = $self->model->functions($module);
-  my $public_functions = 0;
-  for my $function (@functions) {
-    $public_functions += 1 if $self->_is_public($function);
-  }
-  return $public_functions;
-}
-
-sub public_variables {
-  my ($self, $module) = @_;
-
-  my @variables = $self->model->variables($module);
-  my $public_variables = 0;
-  for my $variable (@variables) {
-    $public_variables += 1 if $self->_is_public($variable);
-  }
-  return $public_variables;
 }
 
 sub lcom4 {
@@ -85,80 +93,141 @@ sub lcom4 {
   return scalar @components;
 }
 
-sub number_of_functions {
+sub noc {
+  my ($self, $module) = @_;
+
+  my $number_of_children = 0;
+
+  for my $module_name ($self->model->module_names) {
+    if (grep {$_ eq $module} $self->model->inheritance($module_name)) {
+      $number_of_children++;
+    }
+  }
+  return $number_of_children;
+}
+
+sub nom {
   my ($self, $module) = @_;
   my @list = $self->model->functions($module);
   return scalar(@list);
 }
 
-sub amz_size {
-  my ($lines, $count)= @_;
-  return ($count > 0) ? ($lines / $count) : 0;
+sub npm {
+  my ($self, $module) = @_;
+
+  my @functions = $self->model->functions($module);
+  my $npm = 0;
+  for my $function (@functions) {
+    $npm += 1 if $self->_is_public($function);
+  }
+  return $npm;
 }
 
-sub dit {
+sub npv {
   my ($self, $module) = @_;
-  my @parents = $self->model->inheritance($module);
-  if (@parents) {
-    my @parent_dits = map { $self->dit($_) } @parents;
-    my @sorted = reverse(sort(@parent_dits));
-    return 1 + $sorted[0];
-  } else {
-    return 0;
+
+  my @variables = $self->model->variables($module);
+  my $npv = 0;
+  for my $variable (@variables) {
+    $npv += 1 if $self->_is_public($variable);
   }
+  return $npv;
+}
+
+sub rfc {
+  my ($self, $module) = @_;
+
+  my @functions = $self->model->functions($module);
+
+  my $rfc = scalar @functions;
+  for my $function (@functions){
+    $rfc += scalar keys(%{$self->model->calls->{$function}});
+  }
+
+  return $rfc;
+}
+
+sub tloc {
+  my ($self, $module) = @_;
+
+  my @functions = $self->model->functions($module);
+  my $tloc = 0;
+  my $max = 0;
+
+  for my $function (@functions) {
+    my $lines = $self->model->{lines}->{$function} || 0;
+    $tloc += $lines;
+    $max = $lines if $lines > $max;
+  }
+
+  return ($tloc, $max);
+}
+
+sub _recursive_noc {
+  my ($self, $module) = @_;
+
+  my $number_of_children = 0;
+
+  for my $module_name ($self->model->module_names){
+    if (grep {$_ eq $module} $self->model->inheritance($module_name)) {
+      $number_of_children += $self->_recursive_noc($module_name) + 1;
+    }
+  }
+
+  return $number_of_children;
+}
+
+sub _is_public {
+  my ($self, $member) = @_;
+  return $self->model->{protection}->{$member} && $self->model->{protection}->{$member} eq "public";
 }
 
 sub _report_module {
   my ($self, $module) = @_;
 
-  my $coupling            = $self->coupling($module);
-  my $number_of_functions = $self->number_of_functions($module);
-  my $lcom4               = $self->lcom4($module);
-  my ($lines, $max_mloc)  = $self->loc($module);
-  my $public_functions    = $self->public_functions($module);
-  my $amz_size            = amz_size($lines, $number_of_functions);
-  my $public_variables    = $self->public_variables($module);
-  my $dit                 = $self->dit($module);
+  my $acc                  = $self->acc($module);
+  my $cbo                  = $self->cbo($module);
+  my $dit                  = $self->dit($module);
+  my $lcom4                = $self->lcom4($module);
+  my $noc                  = $self->noc($module);
+  my $nom                  = $self->nom($module);
+  my $npm                  = $self->npm($module);
+  my $npv                  = $self->npv($module);
+  my $rfc                  = $self->rfc($module);
+  my ($tloc, $mmloc)      = $self->tloc($module);
+  my $amloc                = $self->amloc($tloc, $nom);
 
   my %data = (
-    _module => $module,
-    amz_size => $amz_size,
-    coupling => $coupling,
-    number_of_functions => $number_of_functions,
-    lcom4 => $lcom4,
-    loc => $lines,
-    max_mloc => $max_mloc,
-    public_functions => $public_functions,
-    public_variables => $public_variables,
-    dit => $dit,
+    _module              => $module,
+    acc                  => $acc,
+    amloc                => $amloc,
+    cbo                  => $cbo,
+    dit                  => $dit,
+    lcom4                => $lcom4,
+    mmloc                => $mmloc,
+    noc                  => $noc,
+    nom                  => $nom,
+    npm                  => $npm,
+    npv                  => $npv,
+    rfc                  => $rfc,
+    tloc                 => $tloc
   );
 
   return %data;
 }
 
-my %DESCRIPTIONS = (
-  coupling => "CBO coupling",
-  lcom4 => "Lack of Cohesion (LCOM4)",
-  loc => "Lines of Code",
-  number_of_functions => "Number of functions/methods",
-  public_functions => "Number of public functions",
-  amz_size => "Average number of lines per method",
-  max_mloc => "Max number of method lines",
-  public_variables => "Number of public variaveis",
-  dit => "Depth of Inheritance Tree",
-);
-
 sub report {
   my $self = shift;
-  my $result = '';
+  my $details = '';
   my %totals = (
-    coupling => 0,
-    lcom4 => 0,
-    number_of_functions => 0,
-    number_of_modules => 0,
-    public_functions => 0,
-    number_of_public_functions => 0,
-    loc => 0
+    cbo       => 0,
+    classes   => 0,
+    cof       => 0,
+    lcom4     => 0,
+    nom       => 0,
+    npm       => 0,
+    npv       => 0,
+    tloc      => 0
   );
 
   my @module_names = $self->model->module_names;
@@ -169,26 +238,32 @@ sub report {
   for my $module (@module_names) {
     my %data = $self->_report_module($module);
 
-    $result .= Dump(\%data);
+    unless ($self->report_global_metrics_only()) {
+      $details .= Dump(\%data);
+    }
 
-    $totals{'coupling'} += $data{coupling};
-    $totals{'lcom4'} += $data{lcom4};
-    $totals{'number_of_modules'} += 1;
-    $totals{'number_of_functions'} += $data{number_of_functions};
-    $totals{'number_of_public_functions'} += $data{public_functions};
-    $totals{'loc'} += $data{loc};
-
+    $totals{'cbo'}     += $data{cbo};
+    $totals{'lcom4'}   += $data{lcom4};
+    $totals{'classes'} += 1;
+    $totals{'nom'}     += $data{nom};
+    $totals{'npm'}     += $data{npm};
+    $totals{'tloc'}    += $data{tloc};
+    $totals{'cof'}     += $data{acc};
+    $totals{'npv'}     += $data{npv};
   }
+
   my %summary = (
-    average_coupling => ($totals{'coupling'}) / $totals{'number_of_modules'},
-    average_lcom4 => ($totals{'lcom4'}) / $totals{'number_of_modules'},
-    number_of_functions => $totals{'number_of_functions'},
-    number_of_modules => $totals{'number_of_modules'},
-    number_of_public_functions => $totals{'number_of_public_functions'},
-    total_loc => $totals{'loc'}
+    sum_classes         => $totals{'classes'},
+    sum_nom             => $totals{'nom'},
+    sum_npm             => $totals{'npm'},
+    sum_npv             => $totals{'npv'},
+    sum_tloc            => $totals{'tloc'},
+    average_cbo         => ($totals{'cbo'}) / $totals{'classes'},
+    average_lcom4       => ($totals{'lcom4'}) / $totals{'classes'},
+    cof                 => ($totals{'cof'}) / ($totals{'classes'} * ($totals{'classes'} - 1))
   );
 
-  return Dump(\%summary) . $result;
+  return Dump(\%summary) . $details;
 }
 
 sub list_of_metrics {

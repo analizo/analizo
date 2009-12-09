@@ -33,10 +33,9 @@ When /^I run "([^\"]*)"$/ do |command|
   @stderr = File.readlines('tmp.err')
 end
 
-class DependencyNotReported < AnalizoException; end
 Then /^analizo must report that "([^\"]*)" depends on "([^\"]*)"$/ do |module1, module2|
   if (@stdout.select { |line| line =~ /"#{module1}" -> "#{module2}"/ }).size < 1
-    raise DependencyNotReported.new(@stdout, @stderr)
+    raise AnalizoException.new("Output should say that %s depends on %s!" % [module1.inspect, module2.inspect], @stdout, @stderr)
   end
 end
 
@@ -63,15 +62,16 @@ Then /^analizo must report that "([^\"]*)" is part of "([^\"]*)"$/ do |func,mod|
   found.should == true
 end
 
-class OutputDoesNotMatch < AnalizoException; end
 Then /^the output must match "([^\"]*)"$/ do |pattern|
-  if @stdout.select {|item| item.match(pattern)}.size == 0
-    raise OutputDoesNotMatch.new(@stdout, @stderr)
+  unless @stdout.any? {|item| item.match(pattern) }
+    raise AnalizoException.new("Output does not match %s! (expected to match)!" % pattern.inspect, @stdout, @stderr)
   end
 end
 
 Then /^the output must not match "([^\"]*)"$/ do |pattern|
-  @stdout.select { |item| item.match(pattern) }.should have(0).items
+  if @stdout.any? { |item| item.match(pattern) }
+    raise AnalizoException.new("Output matches %s! (expected to NOT match)" % pattern.inspect, @stdout, @stderr)
+  end
 end
 
 Then /^the output from "(.+)" must match "([^\"]*)"$/ do |file, pattern|

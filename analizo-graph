@@ -49,17 +49,6 @@ may be given separated by commas.
   functions.type: string
   functions.type.error: --omit must be given a comma-separated list of function names
 
-=item --include-external
-
-Include calls to external functions in the call graph.  A function is
-considered external if it is not defined in any of the input files.
-For example, functions in the standard C library are external.  By
-default, such calls are not shown.  Even with this option, only direct
-calls will be shown; there is no way to show indirect calls to
-external functions.
-
-This options only works with the GCC extractor.
-
 =item --cluster
 
 Cluster the functions into files, so you can see in which files are the calling
@@ -78,9 +67,8 @@ It doesn't make much sense to use --modules together with --cluster.
 
 =item --extractor <extractor>
 
-Define wich extractor method use to analise source code. Options are "Doxyparse" and
-"GCC". Default is Doxyparse. See Analizo::Extractor::GCC(3) for information on how to
-setup your source tree in order to use the GCC extractor.
+Define wich extractor method use to analise source code. Currenly "Doxyparse"
+is the only extractor available.  Default is Doxyparse.
 
 =for Euclid:
   extractor.type: string, extractor =~ /\A\w+\Z/
@@ -98,22 +86,6 @@ Use a file as output
 Displays help on command line syntax and options.
 
 =back
-
-=head1 HOW IT WORKS
-
-The two major tasks in creating a call graph are analyzing the syntax
-of the source code to find the function calls and laying out the
-graph, but Analizo actually does neither.  Instead, it delegates the
-source code analysis to GCC and the graph layout to Graphviz, both of
-which are better at their respective jobs than analizo could ever hope
-to be itself.  Analizo itself is just a small Perl script that acts as
-glue between these existing tools.
-
-Analizo takes advantage of GCC's capability to dump an intermediate
-representation of the program being compiled into a file (a I<RTL
-file>); this file is much easier to extract information from than a C
-source file.  Analizo extracts information about function calls from the
-RTL file and massages it into the format used by Graphviz.
 
 =head1 VIEWING THE GRAPH
 
@@ -186,9 +158,6 @@ my $output = new Analizo::Output::DOT(model => $model);
 for my $omited (split(/,/, $ARGV{'--omit'} || '')) {
   $output->omit($omited);
 }
-
-# whether to include external functions or not
-$output->include_externals($ARGV{'--include-external'});
 
 # whether to cluster functions by file or not
 $output->cluster($ARGV{'--cluster'});

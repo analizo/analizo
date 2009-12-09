@@ -11,8 +11,3 @@ Feature: input files for metrics tool
     Given I am in t/sample/
     When I run "analizo metrics unexisting-file.c"
     Then analizo must emit a warning matching "<input> must be readable but the supplied value .* isn't"
-
-  Scenario: passing unexisting file with GCC
-    Given I am in t/sample/
-    When I run "analizo metrics --extractor gcc unexisting-file.c"
-    Then analizo must emit a warning matching "<input> must be readable but the supplied value .* isn't"

@@ -10,7 +10,7 @@ Feature: multi-language support
   Examples:
     | language | main_module | hello_world_module |
     | c        | main        | hello_world        |
-    | c++      | main        | HelloWorld         |
+    | cpp      | main        | HelloWorld         |
     | java     | Main        | HelloWorld         |
 
   Scenario Outline: dependency between specific functions
@@ -21,7 +21,7 @@ Feature: multi-language support
   Examples:
     | language | main_function | hello_say                    | hello_destroy                    |
     | c        | main::main    | hello_world::hello_world_say | hello_world::hello_world_destroy |
-    | c++      | main::main    | HelloWorld::say              | HelloWorld::destroy              |
+    | cpp      | main::main    | HelloWorld::say              | HelloWorld::destroy              |
     | java     | Main::main    | HelloWorld::say              | HelloWorld::destroy              |
 
   Scenario Outline: intra-module dependencies
@@ -32,21 +32,21 @@ Feature: multi-language support
   Examples:
     | language | hello_say       | hello_destroy       | hello_id        |
     | c        | hello_world::hello_world_say | hello_world::hello_world_destroy | hello_world::_hello_world::id |
-    | c++      | HelloWorld::say | HelloWorld::destroy | HelloWorld::_id |
+    | cpp      | HelloWorld::say | HelloWorld::destroy | HelloWorld::_id |
     | java     | HelloWorld::say | HelloWorld::destroy | HelloWorld::_id |
 
   Scenario Outline: some metrics
     Given I am in samples/hello_world/<language>
     When I run "analizo metrics ."
-    Then analizo must report that the project has number_of_modules = 2
-    And analizo must report that module <main_module> has public_functions = 1
-    And analizo must report that module <hello_world_module> has public_functions = 3
-    And analizo must report that module <hello_world_module> has number_of_functions = <total_functions>
-    And analizo must report that module <hello_world_module> has public_variables = <public_variables>
+    Then analizo must report that the project has sum_classes = 2
+    And analizo must report that module <main_module> has nom = 1
+    And analizo must report that module <hello_world_module> has npm = 3
+    And analizo must report that module <hello_world_module> has nom = <total_functions>
+    And analizo must report that module <hello_world_module> has npv = <public_variables>
   Examples:
     | language | main_module | hello_world_module | total_functions | public_variables |
     | c        | main        | hello_world        | 3               | 2                |
-    | c++      | main        | HelloWorld         | 4               | 1                |
+    | cpp      | main        | HelloWorld         | 4               | 1                |
     | java     | Main        | HelloWorld         | 4               | 1                |
 
   Scenario Outline: inheritance data
@@ -62,5 +62,16 @@ Feature: multi-language support
     And analizo must report that module Animal has dit = 0
   Examples:
     | language |
-    | c++      |
+    | cpp      |
     | java     |
+
+  @wip
+  Scenario Outline: argument versus instance variable
+    Given I am in samples/printer/<language>
+    When I run "analizo graph ."
+    Then analizo must report that "Printer1::Printer1" depends on "Printer1::message"
+    Then analizo must report that "Printer2::Printer2" depends on "Printer2::message"
+  Examples:
+    | language |
+    | cpp |
+    | java |

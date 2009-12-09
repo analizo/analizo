@@ -6,3 +6,7 @@ Feature: list metrics
   Scenario: listing metrics
     When I run "analizo metrics --list"
     Then analizo must present a list of metrics
+
+  Scenario: listing metrics
+    When I run "analizo metrics -l"
+    Then analizo must present a list of metrics

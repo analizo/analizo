@@ -1,7 +1,9 @@
 class AnalizoException < Exception
-  def initialize(stdout, stderr)
+  def initialize(msg, stdout, stderr)
     delimiter_line = "-------------------------------------------------\n"
     report = []
+    report.push msg
+    report.push "\n"
     report.push "Standard output:\n"
     report.push delimiter_line
     report.push stdout

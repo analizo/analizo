@@ -30,10 +30,6 @@ Define wich extractor method use to analise source code. Default is Doxyparse.
   extractor.type: string, extractor =~ /\A\w+\Z/
   extractor.default: 'Doxyparse'
 
-When using using GCC extractor, the directories will be parsed to find files
-matching *.rtl and *.expand. For info about how to generate those files, please
-see Analizo::Extractor::GCC(3).
-
 When using the Doxyparse extractor (default), all files matching the languages
 supported by doxyparse are processed.
 
@@ -41,7 +37,7 @@ supported by doxyparse are processed.
 
 Displays a help message on how to use this tool.
 
-=item --list
+=item --list | -l
 
 Displays metric list
 
@@ -58,6 +54,10 @@ Use a file as output
 
 =for Euclid:
   file.type: writeable
+
+=item --global-only | -g
+
+Don't output the details about modules: only output global (project-wide) metrics.
 
 =back
 
@@ -95,6 +95,11 @@ if($ARGV{'<input>'} =~ /^\s*$/){
 
 my $extractor = Analizo::Extractor->load($ARGV{'--extractor'});
 my $metrics = Analizo::Metrics->new(model => $extractor->model);
+
+if ($ARGV{'--global-only'}) {
+  $metrics->report_global_metrics_only(1);
+}
+
 
 $extractor->process(@{$ARGV{'<input>'}});
 
