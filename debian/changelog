@@ -1,6 +1,8 @@
 analizo (1.12.0-1) unstable; urgency=low
 
   * New upstream release
+  * Adding ${perl:Depends} to Depends:
+  * Not recommending gcc anymore
 
  -- Antonio Terceiro <terceiro@softwarelivre.org>  Wed, 09 Dec 2009 11:57:00 -0300
 
