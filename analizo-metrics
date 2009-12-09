@@ -37,7 +37,7 @@ supported by doxyparse are processed.
 
 Displays a help message on how to use this tool.
 
-=item --list
+=item --list | -l
 
 Displays metric list
 
