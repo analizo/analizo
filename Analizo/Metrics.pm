@@ -257,11 +257,15 @@ sub report {
     sum_nom             => $totals{'nom'},
     sum_npm             => $totals{'npm'},
     sum_npv             => $totals{'npv'},
-    sum_tloc            => $totals{'tloc'},
-    average_cbo         => ($totals{'cbo'}) / $totals{'classes'},
-    average_lcom4       => ($totals{'lcom4'}) / $totals{'classes'},
-    cof                 => ($totals{'cof'}) / ($totals{'classes'} * ($totals{'classes'} - 1))
+    sum_tloc            => $totals{'tloc'}
   );
+  if ($totals{classes} > 0) {
+    $summary{average_cbo}    = ($totals{'cbo'}) / $totals{'classes'};
+    $summary{average_lcom4}  = ($totals{'lcom4'}) / $totals{'classes'};
+  }
+  if ($totals{classes} > 1) {
+    $summary{cof} = ($totals{'cof'}) / ($totals{'classes'} * ($totals{'classes'} - 1))
+  }
 
   return Dump(\%summary) . $details;
 }

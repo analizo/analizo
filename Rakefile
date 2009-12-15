@@ -1,4 +1,4 @@
-task :default => ['test', 'features']
+task :default => ['test', 'cucumber']
 
 ENV['PERL5LIB'] = '.'
 
@@ -8,18 +8,18 @@ task 'test' do
 end
 
 desc 'Run acceptance tests'
-task 'features' do
-  sh('cucumber --tags ~@wip features/')
+task 'cucumber' do
+  sh 'cucumber --tags ~@wip features/'
 end
 
 desc "Run all acceptance tests (even those marked as WIP)"
-task 'features:all' do
-  sh('cucumber features/')
+task 'cucumber:all' do
+  sh 'cucumber features/'
 end
 
 desc "Run acceptance tests marked as WIP"
-task 'features:wip' do
-  sh('cucumber --tags @wip features/')
+task 'cucumber:wip' do
+  sh 'cucumber --tags @wip features/'
 end
 
 desc 'updates MANIFEST from contents of git repository'
