@@ -2,14 +2,22 @@ task :default => ['test', 'cucumber']
 
 ENV['PERL5LIB'] = '.'
 
+def banner(msg)
+  puts "\033[33;01m%s\033[m" % ('=' * 72)
+  puts "\033[33;01m%s\033[m" % msg
+  puts "\033[33;01m%s\033[m" % ('=' * 72)
+end
+
 desc 'Run unit tests'
 task 'test' do
+  banner 'Unit tests'
   sh('prove t/')
 end
 
 desc 'Run acceptance tests'
 task 'cucumber' do
-  sh 'cucumber --tags ~@wip features/'
+  banner 'Acceptance tests'
+  sh 'cucumber --format progress --tags ~@wip features/'
 end
 
 desc "Run all acceptance tests (even those marked as WIP)"
