@@ -75,3 +75,11 @@ Feature: multi-language support
     | language |
     | cpp |
     | java |
+
+  # not sure what to expect in this case
+  Scenario: mixed Java and C
+    Given I am in samples/mixed
+    When I run "analizo metrics ."
+    And the output must match "_module: native_backend"
+    Then the output must match "_module: UI"
+    And the output must match "_module: Backend"
