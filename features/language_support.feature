@@ -65,7 +65,6 @@ Feature: multi-language support
     | cpp      |
     | java     |
 
-  @wip
   Scenario Outline: argument versus instance variable
     Given I am in samples/printer/<language>
     When I run "analizo graph ."
