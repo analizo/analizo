@@ -261,11 +261,11 @@ sub _report_module {
 sub report {
   my $self = shift;
   my $details = '';
+  my $total_modules = 0;
   my %totals = (
     anpm      => 0,
     accm      => 0,
     cbo       => 0,
-    classes   => 0,
     cof       => 0,
     lcom4     => 0,
     nom       => 0,
@@ -290,27 +290,27 @@ sub report {
     $totals{'accm'}    += $data{accm};
     $totals{'cbo'}     += $data{cbo};
     $totals{'lcom4'}   += $data{lcom4};
-    $totals{'classes'} += 1;
     $totals{'nom'}     += $data{nom};
     $totals{'npm'}     += $data{npm};
     $totals{'tloc'}    += $data{tloc};
     $totals{'cof'}     += $data{acc};
     $totals{'npv'}     += $data{npv};
+    $total_modules += 1;
   }
 
   my %summary = (
-    sum_classes          => $totals{'classes'},
+    total_modules        => $total_modules,
     sum_nom              => $totals{'nom'},
     sum_npm              => $totals{'npm'},
     sum_npv              => $totals{'npv'},
     sum_tloc             => $totals{'tloc'},
     sum_abstract_classes => $self->total_abstract_classes
   );
-  if ($totals{classes} > 0) {
-    $summary{average_anpm}   = ($totals{'anpm'}) / $totals{'classes'};
-    $summary{average_accm}    = ($totals{'accm'}) / $totals{'classes'};
-    $summary{average_cbo}    = ($totals{'cbo'}) / $totals{'classes'};
-    $summary{average_lcom4}  = ($totals{'lcom4'}) / $totals{'classes'};
+  if ($total_modules > 0) {
+    $summary{average_anpm}   = ($totals{'anpm'})  / $total_modules;
+    $summary{average_accm}   = ($totals{'accm'})  / $total_modules;
+    $summary{average_cbo}    = ($totals{'cbo'})   / $total_modules;
+    $summary{average_lcom4}  = ($totals{'lcom4'}) / $total_modules;
   }
   else {
     $summary{average_anpm}   = 0;
@@ -319,8 +319,8 @@ sub report {
     $summary{average_accm}   = 0;
   }
 
-  if ($totals{classes} > 1) {
-    $summary{cof} = ($totals{'cof'}) / ($totals{'classes'} * ($totals{'classes'} - 1))
+  if ($total_modules > 1) {
+    $summary{cof} = ($totals{'cof'}) / ($total_modules * ($total_modules - 1))
   }
   else {
     $summary{cof} = $totals{'cof'};
