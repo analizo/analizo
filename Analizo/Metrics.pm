@@ -9,6 +9,7 @@ __PACKAGE__->mk_accessors(qw(model report_global_metrics_only));
 
 my %DESCRIPTIONS = (
   acc       => "Afferent Connections per Class (to calculate Coupling Factor - COF)",
+  accm      => "Average Cyclomatic Complexity per Method",
   amloc     => "Average Method LOC ",
   anpm      => "Average Number of Parameters per Method",
   cbo       => "Coupling Between Objects",
@@ -44,6 +45,21 @@ sub acc {
     }
   }
   return scalar @seen_modules + $self->_recursive_noc($module);
+}
+
+sub accm {
+  my ($self, $module) = @_;
+
+  my @functions = $self->model->functions($module);
+  my $total_of_conditional_paths = 0;
+  my $number_of_functions = 0;
+
+  for my $function(@functions) {
+    $total_of_conditional_paths += $self->model->{conditional_paths}->{$function};
+    $number_of_functions++;
+  }
+
+  return ($number_of_functions > 0) ? ($total_of_conditional_paths / $number_of_functions) : 0;
 }
 
 sub amloc {
@@ -202,6 +218,7 @@ sub _report_module {
   my ($self, $module) = @_;
 
   my $acc                  = $self->acc($module);
+  my $accm                 = $self->accm($module);
   my $anpm                 = $self->anpm($module);
   my $cbo                  = $self->cbo($module);
   my $dit                  = $self->dit($module);
@@ -217,6 +234,7 @@ sub _report_module {
   my %data = (
     _module              => $module,
     acc                  => $acc,
+    accm                 => $accm,
     amloc                => $amloc,
     anpm                 => $anpm,
     cbo                  => $cbo,
@@ -239,6 +257,7 @@ sub report {
   my $details = '';
   my %totals = (
     anpm      => 0,
+    accm      => 0,
     cbo       => 0,
     classes   => 0,
     cof       => 0,
@@ -262,6 +281,7 @@ sub report {
     }
 
     $totals{'anpm'}    += $data{anpm};
+    $totals{'accm'}    += $data{accm};
     $totals{'cbo'}     += $data{cbo};
     $totals{'lcom4'}   += $data{lcom4};
     $totals{'classes'} += 1;
@@ -281,6 +301,7 @@ sub report {
   );
   if ($totals{classes} > 0) {
     $summary{average_anpm}   = ($totals{'anpm'}) / $totals{'classes'};
+    $summary{average_accm}    = ($totals{'accm'}) / $totals{'classes'};
     $summary{average_cbo}    = ($totals{'cbo'}) / $totals{'classes'};
     $summary{average_lcom4}  = ($totals{'lcom4'}) / $totals{'classes'};
   }
@@ -288,6 +309,7 @@ sub report {
     $summary{average_anpm}   = 0;
     $summary{average_cbo}    = 0;
     $summary{average_lcom4}  = 0;
+    $summary{average_accm}   = 0;
   }
 
   if ($totals{classes} > 1) {

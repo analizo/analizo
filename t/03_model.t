@@ -140,5 +140,11 @@ sub declaring_number_of_parameters {
   is($model->{parameters}->{'main::function'}, 2);
 }
 
+sub declaring_number_of_conditional_paths : Tests {
+  my $model = new Analizo::Model;
+  $model->add_conditional_paths('main::function', 2);
+  is($model->{conditional_paths}->{'main::function'}, 2);
+}
+
 ModelTests->runtests;
 

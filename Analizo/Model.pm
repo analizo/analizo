@@ -11,6 +11,7 @@ sub new {
     protection => {},
     inheritance => {},
     parameters  => {},
+    conditional_paths => {},
     module_names => [],
   );
   return bless { @defaults }, __PACKAGE__;
@@ -116,6 +117,11 @@ sub add_variable_use {
 sub add_loc {
     my ($self, $function, $lines) = @_;
     $self->{lines}->{$function} = $lines;
+}
+
+sub add_conditional_paths {
+  my ($self, $function, $conditional_paths) = @_;
+  $self->{conditional_paths}->{$function} = $conditional_paths;
 }
 
 sub add_protection {

@@ -83,6 +83,22 @@ sub acc_with_inheritance : Tests {
   is($metrics->acc('Mother'), 4, 'the deeper the tree, the biggest acc');
 }
 
+# Average Cyclomatic Complexity per Method
+sub accm : Tests {
+  $model->declare_module('module');
+  is($metrics->accm('module'), 0, 'no function');
+
+  $model->declare_function('module', 'module::function');
+  $model->add_conditional_paths('module::function', 3);
+  is($metrics->accm('module'), 3, 'one function with three conditional paths');
+
+  $model->declare_function('module', 'module::function1');
+  $model->add_conditional_paths('module::function1', 2);
+  $model->declare_function('module', 'module::function2');
+  $model->add_conditional_paths('module::function2', 4);
+  is($metrics->accm('module'), 3, 'two function with three average cyclomatic complexity per method');
+}
+
 sub amloc_with_no_functions_at_all : Tests {
   is($metrics->amloc(0, 0), 0);
 }

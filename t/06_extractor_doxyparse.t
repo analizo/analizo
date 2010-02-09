@@ -100,6 +100,13 @@ sub detect_number_of_parameters : Tests {
   is($extractor->model->{parameters}->{'module1::one_function'}, 1);
 }
 
+sub detect_conditional_paths : Tests {
+  my $extractor = Analizo::Extractor->load('Doxyparse', current_module => 'module1.c');
+  $extractor->feed('   function one_function in line 5');
+  $extractor->feed('      3 conditional paths');
+  is($extractor->model->{conditional_paths}->{'module1::one_function'}, 3);
+}
+
 sub reading_from_one_input_file : Tests {
   # set up
   my $sample_dir = dirname(__FILE__) . '/sample';

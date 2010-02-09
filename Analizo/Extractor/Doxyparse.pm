@@ -59,6 +59,11 @@ sub feed {
   if($line =~ m/^\s{6}(\d+) parameters$/) {
     $self->model->add_parameters($self->current_member, $1);
   }
+
+  #method conditional paths
+  if($line =~ m/^\s{6}(\d+) conditional paths$/){
+    $self->model->add_conditional_paths($self->current_member, $1);
+  }
 }
 
 # concat module with symbol (e.g. main::to_string)
