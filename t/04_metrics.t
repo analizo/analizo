@@ -319,7 +319,7 @@ sub report : Tests {
 
   my $output = $metrics->report;
 
-  ok($output =~ /sum_classes: 2/, 'reporting number of classes in YAML stream');
+  ok($output =~ /total_modules: 2/, 'reporting number of classes in YAML stream');
   ok($output =~ /_module: mod1/, 'reporting module 1');
   ok($output =~ /_module: mod2/, 'reporting module 2');
 }
@@ -330,7 +330,7 @@ sub report_global_only : Tests {
   $metrics->report_global_metrics_only(1);
   my $output = $metrics->report;
 
-  ok($output =~ /sum_classes: 2/, 'reporting number of classes (it is global)');
+  ok($output =~ /total_modules: 2/, 'reporting number of classes (it is global)');
   ok($output !~ /_module: mod1/, 'not reporting module 1 details');
   ok($output !~ /_module: mod2/, 'not reporting module 2 details');
 }
