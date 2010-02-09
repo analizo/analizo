@@ -88,10 +88,10 @@ Then /^analizo must report that the project has (.+) = (\d+)$/ do |metric,n|
   stream.documents.first[metric].should == n.to_i
 end
 
-Then /^analizo must report that module (.+) has (.+) = (\d+)$/ do |mod, metric, n|
+Then /^analizo must report that module (.+) has (.+) = (\d+|\d+\.\d+)$/ do |mod, metric, n|
   stream = YAML.load_stream(@stdout.join)
   module_metrics = stream.documents.find { |doc| doc['_module'] == mod }
-  module_metrics[metric].should == n.to_i
+  module_metrics[metric].should == n.to_f
 end
 
 Then /^analizo must present a list of metrics$/ do
