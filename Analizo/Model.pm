@@ -12,6 +12,7 @@ sub new {
     inheritance => {},
     parameters  => {},
     conditional_paths => {},
+    abstract_classes => [],
     module_names => [],
   );
   return bless { @defaults }, __PACKAGE__;
@@ -108,6 +109,17 @@ sub add_call {
 sub calls {
   my $self = shift;
   return $self->{calls};
+}
+
+sub abstract_classes {
+  my $self = shift;
+  my $list = $self->{abstract_classes};
+  return $list ? @$list : ();
+}
+
+sub add_abstract_class {
+  my ($self, $module) = @_;
+  push @{$self->{abstract_classes}},$module;
 }
 
 sub add_variable_use {

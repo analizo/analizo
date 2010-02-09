@@ -146,5 +146,11 @@ sub declaring_number_of_conditional_paths : Tests {
   is($model->{conditional_paths}->{'main::function'}, 2);
 }
 
+sub adding_abstract_class : Tests {
+  my $model = new Analizo::Model;
+  $model->add_abstract_class('An_Abstract_Class');
+  is($model->abstract_classes, 1, 'model detects an abstract class');
+}
+
 ModelTests->runtests;
 

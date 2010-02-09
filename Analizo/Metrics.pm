@@ -29,6 +29,12 @@ sub new {
   return bless { model => $args{model} }, $package;
 }
 
+sub total_abstract_classes {
+  my $self = shift;
+  my @total_of_abstract_classes = $self->model->abstract_classes;
+  return @total_of_abstract_classes ? scalar(@total_of_abstract_classes) : 0;
+}
+
 sub acc {
   my ($self, $module) = @_;
 
@@ -293,11 +299,12 @@ sub report {
   }
 
   my %summary = (
-    sum_classes         => $totals{'classes'},
-    sum_nom             => $totals{'nom'},
-    sum_npm             => $totals{'npm'},
-    sum_npv             => $totals{'npv'},
-    sum_tloc            => $totals{'tloc'}
+    sum_classes          => $totals{'classes'},
+    sum_nom              => $totals{'nom'},
+    sum_npm              => $totals{'npm'},
+    sum_npv              => $totals{'npv'},
+    sum_tloc             => $totals{'tloc'},
+    sum_abstract_classes => $self->total_abstract_classes
   );
   if ($totals{classes} > 0) {
     $summary{average_anpm}   = ($totals{'anpm'}) / $totals{'classes'};

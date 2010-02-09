@@ -21,6 +21,19 @@ sub model : Tests {
   is($metrics->model, $model);
 }
 
+sub abstract_classes : Tests {
+  $model->declare_module('A');
+  is($metrics->total_abstract_classes, 0, 'no abstract class');
+
+  $model->declare_module('A');
+  $model->add_abstract_class('A');
+  is($metrics->total_abstract_classes, 1, 'one abstract class');
+
+  $model->declare_module('B');
+  $model->add_abstract_class('B');
+  is($metrics->total_abstract_classes, 2, 'two abstract class');
+}
+
 sub acc : Tests {
   $model->declare_module('A');
   $model->declare_function('A', 'fA');

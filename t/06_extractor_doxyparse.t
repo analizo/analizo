@@ -107,6 +107,14 @@ sub detect_conditional_paths : Tests {
   is($extractor->model->{conditional_paths}->{'module1::one_function'}, 3);
 }
 
+sub detect_abstract_class : Tests {
+  my $extractor = Analizo::Extractor->load('Doxyparse');
+  $extractor->current_module('An_Abstract_Class');
+  $extractor->feed('   abstract class');
+  my @result = $extractor->model->abstract_classes;
+  is($result[0], 'An_Abstract_Class', 'extractor detects an abstract class');
+}
+
 sub reading_from_one_input_file : Tests {
   # set up
   my $sample_dir = dirname(__FILE__) . '/sample';

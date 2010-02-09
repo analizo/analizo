@@ -64,6 +64,11 @@ sub feed {
   if($line =~ m/^\s{6}(\d+) conditional paths$/){
     $self->model->add_conditional_paths($self->current_member, $1);
   }
+
+  # abstract class
+  if ($line =~ m/^\s{3}abstract class$/) {
+    $self->model->add_abstract_class($self->current_module);
+  }
 }
 
 # concat module with symbol (e.g. main::to_string)
