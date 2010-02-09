@@ -52,7 +52,12 @@ sub feed {
 
   # method LOC
   if($line =~ m/^\s{6}(\d+) lines of code$/){
-      $self->model->add_loc($self->current_member, $1);
+    $self->model->add_loc($self->current_member, $1);
+  }
+
+  #method parameters
+  if($line =~ m/^\s{6}(\d+) parameters$/) {
+    $self->model->add_parameters($self->current_member, $1);
   }
 }
 
@@ -91,3 +96,4 @@ sub process {
 }
 
 1;
+

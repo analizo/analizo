@@ -10,6 +10,7 @@ __PACKAGE__->mk_accessors(qw(model report_global_metrics_only));
 my %DESCRIPTIONS = (
   acc       => "Afferent Connections per Class (to calculate Coupling Factor - COF)",
   amloc     => "Average Method LOC ",
+  anpm      => "Average Number of Parameters per Method",
   cbo       => "Coupling Between Objects",
   dit       => "Depth of Inheritance Tree",
   lcom4     => "Lack of Cohesion of Methods ",
@@ -48,6 +49,21 @@ sub acc {
 sub amloc {
   my ($self, $loc, $count) = @_;
   return ($count > 0) ? ($loc / $count) : 0;
+}
+
+sub anpm {
+  my ($self, $module) = @_;
+
+  my @functions = $self->model->functions($module);
+  my $total_of_parameters = 0;
+  my $number_of_functions = 0;
+
+  for my $function (@functions) {
+    $total_of_parameters += $self->model->{parameters}->{$function};
+    $number_of_functions++;
+  }
+
+  return ($number_of_functions > 0) ? ($total_of_parameters / $number_of_functions) : 0;
 }
 
 sub cbo {
@@ -186,6 +202,7 @@ sub _report_module {
   my ($self, $module) = @_;
 
   my $acc                  = $self->acc($module);
+  my $anpm                 = $self->anpm($module);
   my $cbo                  = $self->cbo($module);
   my $dit                  = $self->dit($module);
   my $lcom4                = $self->lcom4($module);
@@ -201,6 +218,7 @@ sub _report_module {
     _module              => $module,
     acc                  => $acc,
     amloc                => $amloc,
+    anpm                 => $anpm,
     cbo                  => $cbo,
     dit                  => $dit,
     lcom4                => $lcom4,
@@ -220,6 +238,7 @@ sub report {
   my $self = shift;
   my $details = '';
   my %totals = (
+    anpm      => 0,
     cbo       => 0,
     classes   => 0,
     cof       => 0,
@@ -242,6 +261,7 @@ sub report {
       $details .= Dump(\%data);
     }
 
+    $totals{'anpm'}    += $data{anpm};
     $totals{'cbo'}     += $data{cbo};
     $totals{'lcom4'}   += $data{lcom4};
     $totals{'classes'} += 1;
@@ -260,11 +280,21 @@ sub report {
     sum_tloc            => $totals{'tloc'}
   );
   if ($totals{classes} > 0) {
+    $summary{average_anpm}   = ($totals{'anpm'}) / $totals{'classes'};
     $summary{average_cbo}    = ($totals{'cbo'}) / $totals{'classes'};
     $summary{average_lcom4}  = ($totals{'lcom4'}) / $totals{'classes'};
   }
+  else {
+    $summary{average_anpm}   = 0;
+    $summary{average_cbo}    = 0;
+    $summary{average_lcom4}  = 0;
+  }
+
   if ($totals{classes} > 1) {
     $summary{cof} = ($totals{'cof'}) / ($totals{'classes'} * ($totals{'classes'} - 1))
+  }
+  else {
+    $summary{cof} = $totals{'cof'};
   }
 
   return Dump(\%summary) . $details;

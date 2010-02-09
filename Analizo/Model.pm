@@ -10,6 +10,7 @@ sub new {
     lines => {},
     protection => {},
     inheritance => {},
+    parameters  => {},
     module_names => [],
   );
   return bless { @defaults }, __PACKAGE__;
@@ -120,6 +121,11 @@ sub add_loc {
 sub add_protection {
     my ($self, $member, $protection) = @_;
      $self->{protection}->{$member} = $protection;
+}
+
+sub add_parameters {
+  my ($self, $function, $parameters) = @_;
+  $self->{parameters}->{$function} = $parameters;
 }
 
 sub functions {

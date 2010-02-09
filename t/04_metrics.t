@@ -87,6 +87,15 @@ sub amloc_with_no_functions_at_all : Tests {
   is($metrics->amloc(0, 0), 0);
 }
 
+sub anpm : Tests {
+  $model->declare_module('module');
+  is($metrics->anpm('module'), 0, 'no parameters declared');
+
+  $model->declare_function('module', 'module::function');
+  $model->add_parameters('module::function', 1);
+  is($metrics->anpm('module'), 1, 'one function with one parameter');
+}
+
 sub cbo : Tests {
   $model->declare_function('mod1', 'f1');
   $model->declare_function('mod2', 'f2');

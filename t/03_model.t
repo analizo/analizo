@@ -134,5 +134,11 @@ sub declating_lines_of_code : Tests {
   is($model->{lines}->{'main::f1'}, 50);
 }
 
+sub declaring_number_of_parameters {
+  my $model = new Analizo::Model;
+  $model->add_parameters('main::function', 2);
+  is($model->{parameters}->{'main::function'}, 2);
+}
+
 ModelTests->runtests;
 
