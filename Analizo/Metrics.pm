@@ -266,7 +266,6 @@ sub report {
     anpm      => 0,
     accm      => 0,
     cbo       => 0,
-    cof       => 0,
     lcom4     => 0,
     nom       => 0,
     npm       => 0,
@@ -300,11 +299,11 @@ sub report {
 
   my %summary = (
     total_modules        => $total_modules,
-    sum_nom              => $totals{'nom'},
-    sum_npm              => $totals{'npm'},
-    sum_npv              => $totals{'npv'},
-    sum_tloc             => $totals{'tloc'},
-    sum_abstract_classes => $self->total_abstract_classes
+    total_nom              => $totals{'nom'},
+    total_npm              => $totals{'npm'},
+    total_npv              => $totals{'npv'},
+    total_tloc             => $totals{'tloc'},
+    total_abstract_classes => $self->total_abstract_classes
   );
   if ($total_modules > 0) {
     $summary{average_anpm}   = ($totals{'anpm'})  / $total_modules;
@@ -320,10 +319,10 @@ sub report {
   }
 
   if ($total_modules > 1) {
-    $summary{cof} = ($totals{'cof'}) / ($total_modules * ($total_modules - 1))
+    $summary{total_cof} = ($totals{'acc'}) / ($total_modules * ($total_modules - 1))
   }
   else {
-    $summary{cof} = $totals{'cof'};
+    $summary{total_cof} = $totals{'acc'};
   }
 
   return Dump(\%summary) . $details;
