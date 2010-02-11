@@ -4,6 +4,7 @@ use base qw(Class::Accessor::Fast);
 use List::Compare;
 use Graph;
 use YAML;
+use Statistics::Descriptive;
 
 __PACKAGE__->mk_accessors(qw(model report_global_metrics_only));
 
@@ -29,12 +30,6 @@ sub new {
   return bless { model => $args{model} }, $package;
 }
 
-sub total_abstract_classes {
-  my $self = shift;
-  my @total_of_abstract_classes = $self->model->abstract_classes;
-  return @total_of_abstract_classes ? scalar(@total_of_abstract_classes) : 0;
-}
-
 sub acc {
   my ($self, $module) = @_;
 
@@ -53,6 +48,11 @@ sub acc {
   return scalar @seen_modules + $self->_recursive_noc($module);
 }
 
+sub amloc {
+  my ($self, $loc, $count) = @_;
+  return ($count > 0) ? ($loc / $count) : 0;
+}
+
 sub accm {
   my ($self, $module) = @_;
 
@@ -66,11 +66,6 @@ sub accm {
   }
 
   return ($number_of_functions > 0) ? ($total_of_conditional_paths / $number_of_functions) : 0;
-}
-
-sub amloc {
-  my ($self, $loc, $count) = @_;
-  return ($count > 0) ? ($loc / $count) : 0;
 }
 
 sub anpm {
@@ -201,6 +196,12 @@ sub tloc {
   return ($tloc, $max);
 }
 
+sub total_abstract_classes{
+  my ($self)= @_;
+  my @total_of_abstract_classes = $self->model->abstract_classes;
+  return @total_of_abstract_classes ? scalar(@total_of_abstract_classes) : 0; 
+}
+
 sub _recursive_noc {
   my ($self, $module) = @_;
 
@@ -263,15 +264,26 @@ sub report {
   my $details = '';
   my $total_modules = 0;
   my %totals = (
-    anpm      => 0,
+    acc       => 0,
     accm      => 0,
+    amloc     => 0,
+    anpm      => 0,
     cbo       => 0,
+    dit       => 0,
     lcom4     => 0,
+    mmloc     => 0,
+    noc       => 0,
     nom       => 0,
     npm       => 0,
     npv       => 0,
+    rfc       => 0,
     tloc      => 0
   );
+  my %list_values = %totals;
+
+  for my $metric (keys %list_values) {
+    $list_values{$metric} = [];
+  }
 
   my @module_names = $self->model->module_names;
   if (scalar(@module_names) == 0) {
@@ -285,44 +297,38 @@ sub report {
       $details .= Dump(\%data);
     }
 
-    $totals{'anpm'}    += $data{anpm};
-    $totals{'accm'}    += $data{accm};
-    $totals{'cbo'}     += $data{cbo};
-    $totals{'lcom4'}   += $data{lcom4};
-    $totals{'nom'}     += $data{nom};
-    $totals{'npm'}     += $data{npm};
-    $totals{'tloc'}    += $data{tloc};
-    $totals{'cof'}     += $data{acc};
-    $totals{'npv'}     += $data{npv};
     $total_modules += 1;
+    for my $metric (keys %totals){
+      push @{$list_values{$metric}}, $data{$metric};
+      $totals{$metric} += $data{$metric} ;
+    }
   }
 
   my %summary = (
-    total_modules        => $total_modules,
+    total_modules          => $total_modules,
     total_nom              => $totals{'nom'},
-    total_npm              => $totals{'npm'},
-    total_npv              => $totals{'npv'},
     total_tloc             => $totals{'tloc'},
     total_abstract_classes => $self->total_abstract_classes
   );
-  if ($total_modules > 0) {
-    $summary{average_anpm}   = ($totals{'anpm'})  / $total_modules;
-    $summary{average_accm}   = ($totals{'accm'})  / $total_modules;
-    $summary{average_cbo}    = ($totals{'cbo'})   / $total_modules;
-    $summary{average_lcom4}  = ($totals{'lcom4'}) / $total_modules;
-  }
-  else {
-    $summary{average_anpm}   = 0;
-    $summary{average_cbo}    = 0;
-    $summary{average_lcom4}  = 0;
-    $summary{average_accm}   = 0;
+
+  for my $metric (keys %totals){
+    my $statistics = Statistics::Descriptive::Full->new();
+    $statistics->add_data(@{$list_values{$metric}});
+
+    $summary{"average_".$metric} = $statistics->mean();
+    $summary{"maximum_".$metric} = $statistics->max();
+    $summary{"mininum_".$metric} = $statistics->min();
+    $summary{"mode_".$metric} = $statistics->mode();
+    $summary{"median_".$metric}= $statistics->median();
+    $summary{"standard_deviation_".$metric}= $statistics->standard_deviation();
+    $summary{"variance_".$metric}= $statistics->variance();
   }
 
   if ($total_modules > 1) {
-    $summary{total_cof} = ($totals{'acc'}) / ($total_modules * ($total_modules - 1))
+    $summary{"total_cof"} = ($totals{'acc'}) / ($total_modules * ($total_modules - 1));
   }
   else {
-    $summary{total_cof} = $totals{'acc'};
+    $summary{"total_cof"} = 1;
   }
 
   return Dump(\%summary) . $details;
