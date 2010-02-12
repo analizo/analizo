@@ -315,13 +315,13 @@ sub report {
     my $statistics = Statistics::Descriptive::Full->new();
     $statistics->add_data(@{$list_values{$metric}});
 
-    $summary{"average_".$metric} = $statistics->mean();
-    $summary{"maximum_".$metric} = $statistics->max();
-    $summary{"mininum_".$metric} = $statistics->min();
-    $summary{"mode_".$metric} = $statistics->mode();
-    $summary{"median_".$metric}= $statistics->median();
-    $summary{"standard_deviation_".$metric}= $statistics->standard_deviation();
-    $summary{"variance_".$metric}= $statistics->variance();
+    $summary{$metric . "_average"} = $statistics->mean();
+    $summary{$metric . "_maximum"} = $statistics->max();
+    $summary{$metric . "_mininum"} = $statistics->min();
+    $summary{$metric . "_mode"} = $statistics->mode();
+    $summary{$metric . "_median"}= $statistics->median();
+    $summary{$metric . "_standard_deviation"}= $statistics->standard_deviation();
+    $summary{$metric . "_variance"}= $statistics->variance();
   }
 
   if ($total_modules > 1) {

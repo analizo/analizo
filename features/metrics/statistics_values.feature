@@ -6,13 +6,13 @@ Feature: output statistics values of metrics
   Scenario Outline: "Hello, world" project
     Given I am in samples/hello_world/
     When I run "analizo metrics ."
-    Then the output must match "average_<metric>:"
-    Then the output must match "maximum_<metric>:"
-    Then the output must match "median_<metric>:"
-    Then the output must match "mininum_<metric>:"
-    Then the output must match "mode_<metric>:"
-    Then the output must match "standard_deviation_<metric>:"
-    Then the output must match "variance_<metric>:"
+    Then the output must match "<metric>_average:"
+    Then the output must match "<metric>_maximum:"
+    Then the output must match "<metric>_median:"
+    Then the output must match "<metric>_mininum:"
+    Then the output must match "<metric>_mode:"
+    Then the output must match "<metric>_standard_deviation:"
+    Then the output must match "<metric>_variance:"
 
   Examples:
     | metric |
