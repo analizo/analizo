@@ -279,9 +279,9 @@ sub report {
     rfc       => 0,
     tloc      => 0
   );
-  my %list_values = %totals;
+  my %list_values = ();
 
-  for my $metric (keys %list_values) {
+  for my $metric (keys %totals) {
     $list_values{$metric} = [];
   }
 
