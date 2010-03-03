@@ -326,7 +326,9 @@ sub report {
     $summary{$metric . "_mode"} = $statistics->mode();
     $summary{$metric . "_median"}= $statistics->median();
     $summary{$metric . "_standard_deviation"}= $statistics->standard_deviation();
+    $summary{$metric . "_sum"} = $statistics->sum();
     $summary{$metric . "_variance"}= $variance;
+
 
     if (($variance > 0) && ($distributions->count >= 4)) {
       $summary{$metric . "_kurtosis"} = $distributions->kurtosis;

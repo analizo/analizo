@@ -15,6 +15,7 @@ Feature: output statistics values of metrics
     Then the output must match "<metric>_variance:"
     Then the output must match "<metric>_kurtosis:"
     Then the output must match "<metric>_skewness:"
+    Then the output must match "<metric>_sum:"
 
   Examples:
     | metric |
