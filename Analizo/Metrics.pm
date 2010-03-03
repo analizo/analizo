@@ -5,6 +5,7 @@ use List::Compare;
 use Graph;
 use YAML;
 use Statistics::Descriptive;
+use Statistics::OnLine;
 
 __PACKAGE__->mk_accessors(qw(model report_global_metrics_only));
 
@@ -199,7 +200,7 @@ sub tloc {
 sub total_abstract_classes{
   my ($self)= @_;
   my @total_of_abstract_classes = $self->model->abstract_classes;
-  return @total_of_abstract_classes ? scalar(@total_of_abstract_classes) : 0; 
+  return @total_of_abstract_classes ? scalar(@total_of_abstract_classes) : 0;
 }
 
 sub _recursive_noc {
@@ -313,7 +314,11 @@ sub report {
 
   for my $metric (keys %totals){
     my $statistics = Statistics::Descriptive::Full->new();
+    my $distributions = Statistics::OnLine->new();
+
     $statistics->add_data(@{$list_values{$metric}});
+    $distributions->add_data(@{$list_values{$metric}});
+    my $variance = $statistics->variance();
 
     $summary{$metric . "_average"} = $statistics->mean();
     $summary{$metric . "_maximum"} = $statistics->max();
@@ -321,7 +326,16 @@ sub report {
     $summary{$metric . "_mode"} = $statistics->mode();
     $summary{$metric . "_median"}= $statistics->median();
     $summary{$metric . "_standard_deviation"}= $statistics->standard_deviation();
-    $summary{$metric . "_variance"}= $statistics->variance();
+    $summary{$metric . "_variance"}= $variance;
+
+    if (($variance > 0) && ($distributions->count >= 4)) {
+      $summary{$metric . "_kurtosis"} = $distributions->kurtosis;
+      $summary{$metric . "_skewness"} = $distributions->skewness;
+    }
+    else {
+      $summary{$metric . "_kurtosis"} = 0;
+      $summary{$metric . "_skewness"} = 0;
+    }
   }
 
   if ($total_modules > 1) {

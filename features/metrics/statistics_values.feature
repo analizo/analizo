@@ -13,6 +13,8 @@ Feature: output statistics values of metrics
     Then the output must match "<metric>_mode:"
     Then the output must match "<metric>_standard_deviation:"
     Then the output must match "<metric>_variance:"
+    Then the output must match "<metric>_kurtosis:"
+    Then the output must match "<metric>_skewness:"
 
   Examples:
     | metric |
@@ -30,3 +32,4 @@ Feature: output statistics values of metrics
     | npv    |
     | rfc    |
     | tloc   |
+
