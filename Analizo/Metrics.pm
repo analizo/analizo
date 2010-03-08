@@ -361,5 +361,16 @@ sub list_of_metrics {
   return %list;
 }
 
+sub list_of_global_metrics {
+  my %list = (
+      total_abstract_classes => "Total Abstract Classes",
+      total_cof => "Total Coupling Factor",
+      total_modules => "Total Number of Modules/Classes",
+      total_nom => "Total Number of Methods",
+      total_tloc => "Total Number of Lines"
+  );
+  return %list;
+}
+
 1;
 

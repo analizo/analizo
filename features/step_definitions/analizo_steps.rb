@@ -96,7 +96,9 @@ end
 
 Then /^analizo must present a list of metrics$/ do
   @stdout.size.should > 0
-  @stdout.each do |item|
-    item.should match(/^\w+ - .+$/)
+
+  @stdout.each do |line|
+    line.should match(/(^[^-]+ - .+$)|(^Global Metrics:\n$)|(^Module Metrics:\n)|(^\n$)/)
   end
 end
+
