@@ -264,6 +264,7 @@ sub report {
   my $self = shift;
   my $details = '';
   my $total_modules = 0;
+  my $total_modules_with_defined_methods = 0;
   my %totals = (
     acc       => 0,
     accm      => 0,
@@ -301,15 +302,17 @@ sub report {
     $total_modules += 1;
     for my $metric (keys %totals){
       push @{$list_values{$metric}}, $data{$metric};
-      $totals{$metric} += $data{$metric} ;
+      $totals{$metric} += $data{$metric};
     }
+    $total_modules_with_defined_methods += 1 if $data{'nom'} > 0;
   }
 
   my %summary = (
     total_modules          => $total_modules,
     total_nom              => $totals{'nom'},
     total_tloc             => $totals{'tloc'},
-    total_abstract_classes => $self->total_abstract_classes
+    total_abstract_classes => $self->total_abstract_classes,
+    total_modules_with_defined_methods => $total_modules_with_defined_methods
   );
 
   for my $metric (keys %totals){
@@ -367,7 +370,8 @@ sub list_of_global_metrics {
       total_cof => "Total Coupling Factor",
       total_modules => "Total Number of Modules/Classes",
       total_nom => "Total Number of Methods",
-      total_tloc => "Total Number of Lines"
+      total_tloc => "Total Number of Lines",
+      total_modules_with_defined_methods => "Total number of modules with at least one defined method"
   );
   return %list;
 }
