@@ -203,6 +203,16 @@ sub lcom4_3 : Tests {
   is($metrics->lcom4('mod1'), 2, 'functions outside the module don\'t count for LCOM4');
 }
 
+sub noa : Tests {
+  is($metrics->noa('module1'), 0, 'empty modules have no attributes');
+
+  $model->declare_variable('module1', 'attr1');
+  is($metrics->noa('module1'), 1, 'module with one defined attribute');
+
+  $model->declare_variable('module1', 'attr2');
+  is($metrics->noa('module1'), 2, 'module with two defined attribute');
+}
+
 sub noc : Tests {
   $model->declare_module('A');
   $model->declare_module('B');

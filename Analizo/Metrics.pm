@@ -18,6 +18,7 @@ my %DESCRIPTIONS = (
   dit       => "Depth of Inheritance Tree",
   lcom4     => "Lack of Cohesion of Methods ",
   mmloc     => "Max Method LOC",
+  noa       => "Number of Attributes",
   noc       => "Number of Children",
   nom       => "Number of Methods",
   npm       => "Number of Public Methods",
@@ -127,6 +128,12 @@ sub lcom4 {
   return scalar @components;
 }
 
+sub noa {
+  my ($self, $module) = @_;
+  my @variables = $self->model->variables($module);
+  return scalar(@variables);
+}
+
 sub noc {
   my ($self, $module) = @_;
 
@@ -231,6 +238,7 @@ sub _report_module {
   my $cbo                  = $self->cbo($module);
   my $dit                  = $self->dit($module);
   my $lcom4                = $self->lcom4($module);
+  my $noa                  = $self->noa($module);
   my $noc                  = $self->noc($module);
   my $nom                  = $self->nom($module);
   my $npm                  = $self->npm($module);
@@ -249,6 +257,7 @@ sub _report_module {
     dit                  => $dit,
     lcom4                => $lcom4,
     mmloc                => $mmloc,
+    noa                  => $noa,
     noc                  => $noc,
     nom                  => $nom,
     npm                  => $npm,
@@ -274,6 +283,7 @@ sub report {
     dit       => 0,
     lcom4     => 0,
     mmloc     => 0,
+    noa       => 0,
     noc       => 0,
     nom       => 0,
     npm       => 0,

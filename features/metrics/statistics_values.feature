@@ -27,6 +27,7 @@ Feature: output statistics values of metrics
     | dit    |
     | lcom4  |
     | mmloc  |
+    | noa    |
     | noc    |
     | nom    |
     | npm    |
