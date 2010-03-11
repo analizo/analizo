@@ -1,3 +1,10 @@
+analizo (1.13.0-1) unstable; urgency=low
+
+  * New upstream relase
+  * debian/control: adding new dependency on libstatistics-online-perl
+
+ -- Antonio Terceiro <terceiro@softwarelivre.org>  Thu, 11 Mar 2010 14:03:18 -0300
+
 analizo (1.12.1-1) unstable; urgency=low
 
   * New upstream release
