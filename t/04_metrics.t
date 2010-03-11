@@ -21,6 +21,19 @@ sub model : Tests {
   is($metrics->model, $model);
 }
 
+sub abstract_classes : Tests {
+  $model->declare_module('A');
+  is($metrics->total_abstract_classes, 0, 'no abstract class');
+
+  $model->declare_module('A');
+  $model->add_abstract_class('A');
+  is($metrics->total_abstract_classes, 1, 'one abstract class');
+
+  $model->declare_module('B');
+  $model->add_abstract_class('B');
+  is($metrics->total_abstract_classes, 2, 'two abstract class');
+}
+
 sub acc : Tests {
   $model->declare_module('A');
   $model->declare_function('A', 'fA');
@@ -83,8 +96,33 @@ sub acc_with_inheritance : Tests {
   is($metrics->acc('Mother'), 4, 'the deeper the tree, the biggest acc');
 }
 
+# Average Cyclomatic Complexity per Method
+sub accm : Tests {
+  $model->declare_module('module');
+  is($metrics->accm('module'), 0, 'no function');
+
+  $model->declare_function('module', 'module::function');
+  $model->add_conditional_paths('module::function', 3);
+  is($metrics->accm('module'), 3, 'one function with three conditional paths');
+
+  $model->declare_function('module', 'module::function1');
+  $model->add_conditional_paths('module::function1', 2);
+  $model->declare_function('module', 'module::function2');
+  $model->add_conditional_paths('module::function2', 4);
+  is($metrics->accm('module'), 3, 'two function with three average cyclomatic complexity per method');
+}
+
 sub amloc_with_no_functions_at_all : Tests {
   is($metrics->amloc(0, 0), 0);
+}
+
+sub anpm : Tests {
+  $model->declare_module('module');
+  is($metrics->anpm('module'), 0, 'no parameters declared');
+
+  $model->declare_function('module', 'module::function');
+  $model->add_parameters('module::function', 1);
+  is($metrics->anpm('module'), 1, 'one function with one parameter');
 }
 
 sub cbo : Tests {
@@ -281,7 +319,7 @@ sub report : Tests {
 
   my $output = $metrics->report;
 
-  ok($output =~ /sum_classes: 2/, 'reporting number of classes in YAML stream');
+  ok($output =~ /total_modules: 2/, 'reporting number of classes in YAML stream');
   ok($output =~ /_module: mod1/, 'reporting module 1');
   ok($output =~ /_module: mod2/, 'reporting module 2');
 }
@@ -292,7 +330,7 @@ sub report_global_only : Tests {
   $metrics->report_global_metrics_only(1);
   my $output = $metrics->report;
 
-  ok($output =~ /sum_classes: 2/, 'reporting number of classes (it is global)');
+  ok($output =~ /total_modules: 2/, 'reporting number of classes (it is global)');
   ok($output !~ /_module: mod1/, 'not reporting module 1 details');
   ok($output !~ /_module: mod2/, 'not reporting module 2 details');
 }

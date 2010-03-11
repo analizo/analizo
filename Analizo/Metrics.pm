@@ -4,12 +4,16 @@ use base qw(Class::Accessor::Fast);
 use List::Compare;
 use Graph;
 use YAML;
+use Statistics::Descriptive;
+use Statistics::OnLine;
 
 __PACKAGE__->mk_accessors(qw(model report_global_metrics_only));
 
 my %DESCRIPTIONS = (
   acc       => "Afferent Connections per Class (to calculate Coupling Factor - COF)",
+  accm      => "Average Cyclomatic Complexity per Method",
   amloc     => "Average Method LOC ",
+  anpm      => "Average Number of Parameters per Method",
   cbo       => "Coupling Between Objects",
   dit       => "Depth of Inheritance Tree",
   lcom4     => "Lack of Cohesion of Methods ",
@@ -48,6 +52,36 @@ sub acc {
 sub amloc {
   my ($self, $loc, $count) = @_;
   return ($count > 0) ? ($loc / $count) : 0;
+}
+
+sub accm {
+  my ($self, $module) = @_;
+
+  my @functions = $self->model->functions($module);
+  my $total_of_conditional_paths = 0;
+  my $number_of_functions = 0;
+
+  for my $function(@functions) {
+    $total_of_conditional_paths += $self->model->{conditional_paths}->{$function};
+    $number_of_functions++;
+  }
+
+  return ($number_of_functions > 0) ? ($total_of_conditional_paths / $number_of_functions) : 0;
+}
+
+sub anpm {
+  my ($self, $module) = @_;
+
+  my @functions = $self->model->functions($module);
+  my $total_of_parameters = 0;
+  my $number_of_functions = 0;
+
+  for my $function (@functions) {
+    $total_of_parameters += $self->model->{parameters}->{$function};
+    $number_of_functions++;
+  }
+
+  return ($number_of_functions > 0) ? ($total_of_parameters / $number_of_functions) : 0;
 }
 
 sub cbo {
@@ -163,6 +197,12 @@ sub tloc {
   return ($tloc, $max);
 }
 
+sub total_abstract_classes{
+  my ($self)= @_;
+  my @total_of_abstract_classes = $self->model->abstract_classes;
+  return @total_of_abstract_classes ? scalar(@total_of_abstract_classes) : 0;
+}
+
 sub _recursive_noc {
   my ($self, $module) = @_;
 
@@ -186,6 +226,8 @@ sub _report_module {
   my ($self, $module) = @_;
 
   my $acc                  = $self->acc($module);
+  my $accm                 = $self->accm($module);
+  my $anpm                 = $self->anpm($module);
   my $cbo                  = $self->cbo($module);
   my $dit                  = $self->dit($module);
   my $lcom4                = $self->lcom4($module);
@@ -200,7 +242,9 @@ sub _report_module {
   my %data = (
     _module              => $module,
     acc                  => $acc,
+    accm                 => $accm,
     amloc                => $amloc,
+    anpm                 => $anpm,
     cbo                  => $cbo,
     dit                  => $dit,
     lcom4                => $lcom4,
@@ -219,16 +263,28 @@ sub _report_module {
 sub report {
   my $self = shift;
   my $details = '';
+  my $total_modules = 0;
   my %totals = (
+    acc       => 0,
+    accm      => 0,
+    amloc     => 0,
+    anpm      => 0,
     cbo       => 0,
-    classes   => 0,
-    cof       => 0,
+    dit       => 0,
     lcom4     => 0,
+    mmloc     => 0,
+    noc       => 0,
     nom       => 0,
     npm       => 0,
     npv       => 0,
+    rfc       => 0,
     tloc      => 0
   );
+  my %list_values = ();
+
+  for my $metric (keys %totals) {
+    $list_values{$metric} = [];
+  }
 
   my @module_names = $self->model->module_names;
   if (scalar(@module_names) == 0) {
@@ -242,29 +298,53 @@ sub report {
       $details .= Dump(\%data);
     }
 
-    $totals{'cbo'}     += $data{cbo};
-    $totals{'lcom4'}   += $data{lcom4};
-    $totals{'classes'} += 1;
-    $totals{'nom'}     += $data{nom};
-    $totals{'npm'}     += $data{npm};
-    $totals{'tloc'}    += $data{tloc};
-    $totals{'cof'}     += $data{acc};
-    $totals{'npv'}     += $data{npv};
+    $total_modules += 1;
+    for my $metric (keys %totals){
+      push @{$list_values{$metric}}, $data{$metric};
+      $totals{$metric} += $data{$metric} ;
+    }
   }
 
   my %summary = (
-    sum_classes         => $totals{'classes'},
-    sum_nom             => $totals{'nom'},
-    sum_npm             => $totals{'npm'},
-    sum_npv             => $totals{'npv'},
-    sum_tloc            => $totals{'tloc'}
+    total_modules          => $total_modules,
+    total_nom              => $totals{'nom'},
+    total_tloc             => $totals{'tloc'},
+    total_abstract_classes => $self->total_abstract_classes
   );
-  if ($totals{classes} > 0) {
-    $summary{average_cbo}    = ($totals{'cbo'}) / $totals{'classes'};
-    $summary{average_lcom4}  = ($totals{'lcom4'}) / $totals{'classes'};
+
+  for my $metric (keys %totals){
+    my $statistics = Statistics::Descriptive::Full->new();
+    my $distributions = Statistics::OnLine->new();
+
+    $statistics->add_data(@{$list_values{$metric}});
+    $distributions->add_data(@{$list_values{$metric}});
+    my $variance = $statistics->variance();
+
+    $summary{$metric . "_average"} = $statistics->mean();
+    $summary{$metric . "_maximum"} = $statistics->max();
+    $summary{$metric . "_mininum"} = $statistics->min();
+    $summary{$metric . "_mode"} = $statistics->mode();
+    $summary{$metric . "_median"}= $statistics->median();
+    $summary{$metric . "_standard_deviation"}= $statistics->standard_deviation();
+    $summary{$metric . "_sum"} = $statistics->sum();
+    $summary{$metric . "_variance"}= $variance;
+
+
+    if (($variance > 0) && ($distributions->count >= 4)) {
+      $summary{$metric . "_kurtosis"} = $distributions->kurtosis;
+      $summary{$metric . "_skewness"} = $distributions->skewness;
+    }
+    else {
+      $summary{$metric . "_kurtosis"} = 0;
+      $summary{$metric . "_skewness"} = 0;
+    }
   }
-  if ($totals{classes} > 1) {
-    $summary{cof} = ($totals{'cof'}) / ($totals{'classes'} * ($totals{'classes'} - 1))
+
+  if ($total_modules > 1) {
+    $summary{"total_cof"} = ($totals{'acc'}) / ($total_modules * ($total_modules - 1));
+  }
+  else {
+    $summary{"total_cof"} = 1;
   }
 
   return Dump(\%summary) . $details;

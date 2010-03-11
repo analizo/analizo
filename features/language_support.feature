@@ -38,7 +38,7 @@ Feature: multi-language support
   Scenario Outline: some metrics
     Given I am in samples/hello_world/<language>
     When I run "analizo metrics ."
-    Then analizo must report that the project has sum_classes = 2
+    Then analizo must report that the project has total_modules = 2
     And analizo must report that module <main_module> has nom = 1
     And analizo must report that module <hello_world_module> has npm = 3
     And analizo must report that module <hello_world_module> has nom = <total_functions>
@@ -65,7 +65,6 @@ Feature: multi-language support
     | cpp      |
     | java     |
 
-  @wip
   Scenario Outline: argument versus instance variable
     Given I am in samples/printer/<language>
     When I run "analizo graph ."
@@ -75,3 +74,12 @@ Feature: multi-language support
     | language |
     | cpp |
     | java |
+
+  # not sure what to expect in this case
+  Scenario: mixed Java and C
+    Given I am in samples/mixed
+    When I run "analizo metrics ."
+    And the output must match "_module: native_backend"
+    Then the output must match "_module: UI"
+    And the output must match "_module: Backend"
+

@@ -10,6 +10,9 @@ sub new {
     lines => {},
     protection => {},
     inheritance => {},
+    parameters  => {},
+    conditional_paths => {},
+    abstract_classes => [],
     module_names => [],
   );
   return bless { @defaults }, __PACKAGE__;
@@ -108,6 +111,17 @@ sub calls {
   return $self->{calls};
 }
 
+sub abstract_classes {
+  my $self = shift;
+  my $list = $self->{abstract_classes};
+  return $list ? @$list : ();
+}
+
+sub add_abstract_class {
+  my ($self, $module) = @_;
+  push @{$self->{abstract_classes}},$module;
+}
+
 sub add_variable_use {
   add_call(@_, 'variable');
 }
@@ -117,9 +131,19 @@ sub add_loc {
     $self->{lines}->{$function} = $lines;
 }
 
+sub add_conditional_paths {
+  my ($self, $function, $conditional_paths) = @_;
+  $self->{conditional_paths}->{$function} = $conditional_paths;
+}
+
 sub add_protection {
     my ($self, $member, $protection) = @_;
      $self->{protection}->{$member} = $protection;
+}
+
+sub add_parameters {
+  my ($self, $function, $parameters) = @_;
+  $self->{parameters}->{$function} = $parameters;
 }
 
 sub functions {

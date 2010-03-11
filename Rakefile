@@ -2,24 +2,37 @@ task :default => ['test', 'cucumber']
 
 ENV['PERL5LIB'] = '.'
 
+def cucumber(args)
+  options = "--format progress #{args}"
+  sh "which cucumber && cucumber #{options} || bundle exec cucumber #{options}"
+end
+
+def banner(msg)
+  puts "\033[33;01m%s\033[m" % ('=' * 72)
+  puts "\033[33;01m%s\033[m" % msg
+  puts "\033[33;01m%s\033[m" % ('=' * 72)
+end
+
 desc 'Run unit tests'
 task 'test' do
+  banner 'Unit tests'
   sh('prove t/')
 end
 
 desc 'Run acceptance tests'
 task 'cucumber' do
-  sh 'cucumber --tags ~@wip features/'
+  banner 'Acceptance tests'
+  cucumber '--tags ~@wip features/'
 end
 
 desc "Run all acceptance tests (even those marked as WIP)"
 task 'cucumber:all' do
-  sh 'cucumber features/'
+  cucumber 'features/'
 end
 
 desc "Run acceptance tests marked as WIP"
 task 'cucumber:wip' do
-  sh 'cucumber --tags @wip features/'
+  cucumber '--tags @wip features/'
 end
 
 desc 'updates MANIFEST from contents of git repository'

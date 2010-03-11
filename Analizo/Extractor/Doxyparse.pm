@@ -52,7 +52,22 @@ sub feed {
 
   # method LOC
   if($line =~ m/^\s{6}(\d+) lines of code$/){
-      $self->model->add_loc($self->current_member, $1);
+    $self->model->add_loc($self->current_member, $1);
+  }
+
+  #method parameters
+  if($line =~ m/^\s{6}(\d+) parameters$/) {
+    $self->model->add_parameters($self->current_member, $1);
+  }
+
+  #method conditional paths
+  if($line =~ m/^\s{6}(\d+) conditional paths$/){
+    $self->model->add_conditional_paths($self->current_member, $1);
+  }
+
+  # abstract class
+  if ($line =~ m/^\s{3}abstract class$/) {
+    $self->model->add_abstract_class($self->current_module);
   }
 }
 
@@ -91,3 +106,4 @@ sub process {
 }
 
 1;
+

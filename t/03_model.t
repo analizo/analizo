@@ -134,5 +134,23 @@ sub declating_lines_of_code : Tests {
   is($model->{lines}->{'main::f1'}, 50);
 }
 
+sub declaring_number_of_parameters {
+  my $model = new Analizo::Model;
+  $model->add_parameters('main::function', 2);
+  is($model->{parameters}->{'main::function'}, 2);
+}
+
+sub declaring_number_of_conditional_paths : Tests {
+  my $model = new Analizo::Model;
+  $model->add_conditional_paths('main::function', 2);
+  is($model->{conditional_paths}->{'main::function'}, 2);
+}
+
+sub adding_abstract_class : Tests {
+  my $model = new Analizo::Model;
+  $model->add_abstract_class('An_Abstract_Class');
+  is($model->abstract_classes, 1, 'model detects an abstract class');
+}
+
 ModelTests->runtests;
 

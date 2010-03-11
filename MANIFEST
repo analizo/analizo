@@ -1,3 +1,4 @@
+.gitignore
 .mailmap
 AUTHORS
 Analizo/Extractor.pm
@@ -5,6 +6,7 @@ Analizo/Extractor/Doxyparse.pm
 Analizo/Metrics.pm
 Analizo/Model.pm
 Analizo/Output/DOT.pm
+Gemfile
 HACKING
 MANIFEST
 MANIFEST.SKIP
@@ -23,10 +25,14 @@ features/graph/omit.feature
 features/graph/output-file.feature
 features/graph/plain.feature
 features/language_support.feature
+features/metrics/abstract_classes.feature
+features/metrics/cyclomatic_complexity.feature
 features/metrics/global-only.feature
 features/metrics/input-files.feature
 features/metrics/list.feature
+features/metrics/number-of-arguments.feature
 features/metrics/output-file.feature
+features/metrics/statistics_values.feature
 features/step_definitions/analizo_steps.rb
 features/support/analizo_exception.rb
 features/wrapper.feature
@@ -44,6 +50,10 @@ samples/animals/java/Dog.java
 samples/animals/java/Main.java
 samples/animals/java/Makefile
 samples/animals/java/Mammal.java
+samples/conditionals/c/cc1.c
+samples/conditionals/c/cc2.c
+samples/conditionals/c/cc3.c
+samples/conditionals/c/cc4.c
 samples/hello_world/c/Makefile
 samples/hello_world/c/hello_world.c
 samples/hello_world/c/hello_world.h
@@ -55,6 +65,16 @@ samples/hello_world/cpp/main.cc
 samples/hello_world/java/HelloWorld.java
 samples/hello_world/java/Main.java
 samples/hello_world/java/Makefile
+samples/mixed/Backend.java
+samples/mixed/UI.java
+samples/mixed/native_backend.c
+samples/polygons/cpp/Polygon.cpp
+samples/polygons/java/Polygon.java
+samples/polygons/java/Polygons.java
+samples/polygons/java/Retangle.java
+samples/polygons/java/Square.java
+samples/polygons/java/Tetragon.java
+samples/polygons/java/Triangle.java
 samples/printer/cpp/Makefile
 samples/printer/cpp/printer.cc
 samples/printer/java/Printer1.java
