@@ -3,7 +3,8 @@ task :default => ['test', 'cucumber']
 ENV['PERL5LIB'] = '.'
 
 def cucumber(args)
-  sh "cucumber --format progress #{args}"
+  options = "--format progress #{args}"
+  sh "which cucumber && cucumber #{options} || bundle exec cucumber #{options}"
 end
 
 def banner(msg)
