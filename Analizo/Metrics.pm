@@ -40,7 +40,8 @@ sub list_of_global_metrics {
     total_nom => "Total Number of Methods",
     total_tloc => "Total Number of Lines",
     total_modules_with_defined_methods => "Total number of modules with at least one defined method",
-    total_modules_with_defined_attributes => "Total number of modules with at least one defined attributes"
+    total_modules_with_defined_attributes => "Total number of modules with at least one defined attributes",
+    total_methods_per_abstract_class => "Total number of methods per abstract class"
   );
   return %list;
 }
@@ -223,6 +224,18 @@ sub total_abstract_classes{
   return @total_of_abstract_classes ? scalar(@total_of_abstract_classes) : 0;
 }
 
+sub methods_per_abstract_class {
+  my $self = shift;
+  my $total_number_of_methods = 0;
+  my @abstract_classes = $self->model->abstract_classes;
+
+  for my $abstract_class (@abstract_classes) {
+    $total_number_of_methods += scalar $self->model->functions($abstract_class);
+  }
+
+  return (scalar @abstract_classes > 0  ) ? ($total_number_of_methods / scalar @abstract_classes) : 0;
+}
+
 sub _recursive_noc {
   my ($self, $module) = @_;
 
@@ -338,7 +351,8 @@ sub report {
     total_tloc             => $totals{'tloc'},
     total_abstract_classes => $self->total_abstract_classes,
     total_modules_with_defined_methods => $total_modules_with_defined_methods,
-    total_modules_with_defined_attributes => $total_modules_with_defined_attributes
+    total_modules_with_defined_attributes => $total_modules_with_defined_attributes,
+    total_methods_per_abstract_class => $self->methods_per_abstract_class
   );
 
   for my $metric (keys %totals){

@@ -203,6 +203,22 @@ sub lcom4_3 : Tests {
   is($metrics->lcom4('mod1'), 2, 'functions outside the module don\'t count for LCOM4');
 }
 
+sub methods_per_abstract_class : Tests {
+  is($metrics->methods_per_abstract_class, 0, 'no abstract classes');
+
+  $model->declare_module('A');
+  $model->add_abstract_class('A');
+  is($metrics->methods_per_abstract_class, 0, 'no methods on abstract classes');
+
+  $model->declare_function('A', 'functionA');
+  is($metrics->methods_per_abstract_class, 1, 'one methods on one abstract classes');
+
+  $model->declare_module('B');
+  $model->add_abstract_class('B');
+  $model->declare_function('B', 'functionB');
+  is($metrics->methods_per_abstract_class, 1, 'one methods on one abstract classes');
+}
+
 sub noa : Tests {
   is($metrics->noa('module1'), 0, 'empty modules have no attributes');
 
