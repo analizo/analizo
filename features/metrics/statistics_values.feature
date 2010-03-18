@@ -31,7 +31,7 @@ Feature: output statistics values of metrics
     | noc    |
     | nom    |
     | npm    |
-    | npv    |
+    | npa    |
     | rfc    |
-    | tloc   |
+    | loc    |
 

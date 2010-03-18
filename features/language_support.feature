@@ -30,10 +30,10 @@ Feature: multi-language support
     Then analizo must report that "<hello_say>" depends on "<hello_id>"
     And  analizo must report that "<hello_destroy>" depends on "<hello_id>"
   Examples:
-    | language | hello_say       | hello_destroy       | hello_id        |
+    | language | hello_say                    | hello_destroy                    | hello_id                      |
     | c        | hello_world::hello_world_say | hello_world::hello_world_destroy | hello_world::_hello_world::id |
-    | cpp      | HelloWorld::say | HelloWorld::destroy | HelloWorld::_id |
-    | java     | HelloWorld::say | HelloWorld::destroy | HelloWorld::_id |
+    | cpp      | HelloWorld::say              | HelloWorld::destroy              | HelloWorld::_id               |
+    | java     | HelloWorld::say              | HelloWorld::destroy              | HelloWorld::_id               |
 
   Scenario Outline: some metrics
     Given I am in samples/hello_world/<language>
@@ -41,13 +41,13 @@ Feature: multi-language support
     Then analizo must report that the project has total_modules = 2
     And analizo must report that module <main_module> has nom = 1
     And analizo must report that module <hello_world_module> has npm = 3
-    And analizo must report that module <hello_world_module> has nom = <total_functions>
-    And analizo must report that module <hello_world_module> has npv = <public_variables>
+    And analizo must report that module <hello_world_module> has nom = <total_methods>
+    And analizo must report that module <hello_world_module> has npa = <public_attributes>
   Examples:
-    | language | main_module | hello_world_module | total_functions | public_variables |
-    | c        | main        | hello_world        | 3               | 2                |
-    | cpp      | main        | HelloWorld         | 4               | 1                |
-    | java     | Main        | HelloWorld         | 4               | 1                |
+    | language | main_module | hello_world_module | total_methods   | public_attributes |
+    | c        | main        | hello_world        | 3               | 2                 |
+    | cpp      | main        | HelloWorld         | 4               | 1                 |
+    | java     | Main        | HelloWorld         | 4               | 1                 |
 
   Scenario Outline: inheritance data
     Given I am in samples/animals/<language>
