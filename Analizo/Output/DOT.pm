@@ -89,8 +89,8 @@ sub _include_caller {
 }
 
 sub _include_callee {
-  my ($self, $function) = @_;
-  return $self->_include_caller($function) && (exists($self->model->members->{$function}) || $self->include_externals)
+  my ($self, $member) = @_;
+  return $self->_include_caller($member) && ( exists($self->model->members->{$member}) || $self->include_externals );
 }
 
 sub _calculate_clusters {

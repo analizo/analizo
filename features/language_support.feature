@@ -19,10 +19,10 @@ Feature: multi-language support
     Then analizo must report that "<main_function>" depends on "<hello_say>"
     And  analizo must report that "<main_function>" depends on "<hello_destroy>"
   Examples:
-    | language | main_function | hello_say                    | hello_destroy                    |
-    | c        | main::main    | hello_world::hello_world_say | hello_world::hello_world_destroy |
-    | cpp      | main::main    | HelloWorld::say              | HelloWorld::destroy              |
-    | java     | Main::main    | HelloWorld::say              | HelloWorld::destroy              |
+    | language | main_function        | hello_say                                   | hello_destroy                                   |
+    | c        | main::main()         | hello_world::hello_world_say(hello_world *) | hello_world::hello_world_destroy(hello_world *) |
+    | cpp      | main::main()         | HelloWorld::say()                           | HelloWorld::destroy()                           |
+    | java     | Main::main(String[]) | HelloWorld::say()                           | HelloWorld::destroy()                           |
 
   Scenario Outline: intra-module dependencies
     Given I am in samples/hello_world/<language>
@@ -30,10 +30,10 @@ Feature: multi-language support
     Then analizo must report that "<hello_say>" depends on "<hello_id>"
     And  analizo must report that "<hello_destroy>" depends on "<hello_id>"
   Examples:
-    | language | hello_say                    | hello_destroy                    | hello_id                      |
-    | c        | hello_world::hello_world_say | hello_world::hello_world_destroy | hello_world::_hello_world::id |
-    | cpp      | HelloWorld::say              | HelloWorld::destroy              | HelloWorld::_id               |
-    | java     | HelloWorld::say              | HelloWorld::destroy              | HelloWorld::_id               |
+    | language | hello_say                                   | hello_destroy                                   | hello_id                      |
+    | c        | hello_world::hello_world_say(hello_world *) | hello_world::hello_world_destroy(hello_world *) | hello_world::_hello_world::id |
+    | cpp      | HelloWorld::say()                           | HelloWorld::destroy()                           | HelloWorld::_id               |
+    | java     | HelloWorld::say()                           | HelloWorld::destroy()                           | HelloWorld::_id               |
 
   Scenario Outline: some metrics
     Given I am in samples/hello_world/<language>
@@ -68,12 +68,12 @@ Feature: multi-language support
   Scenario Outline: argument versus instance variable
     Given I am in samples/printer/<language>
     When I run "analizo graph ."
-    Then analizo must report that "Printer1::Printer1" depends on "Printer1::message"
-    Then analizo must report that "Printer2::Printer2" depends on "Printer2::message"
+    Then analizo must report that "Printer1::Printer1(<msg_type>)" depends on "Printer1::message"
+    Then analizo must report that "Printer2::Printer2(<msg_type>)" depends on "Printer2::message"
   Examples:
-    | language |
-    | cpp |
-    | java |
+    | language | msg_type |
+    | cpp      | string       |
+    | java     | String       |
 
   # not sure what to expect in this case
   Scenario: mixed Java and C

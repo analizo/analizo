@@ -24,9 +24,9 @@ Feature: total number of methods per abstract class
   Scenario Outline: "Polygons" project
     Given I am in samples/polygons/<language>
     When I run "analizo metrics ."
-    Then analizo must report that the project has total_methods_per_abstract_class = 2
+    Then analizo must report that the project has total_methods_per_abstract_class = <value>
   Examples:
-    | language |
-    | cpp      |
-    | java     |
+    | language | value |
+    | cpp      |  1.5  |
+    | java     |   2   |
 

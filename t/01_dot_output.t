@@ -85,16 +85,16 @@ sub listing_calls : Tests {
 
 sub listing_two_calls : Tests {
   my $output = new Analizo::Output::DOT;
-  $output->model->declare_function('module1', 'function1');
-  $output->model->declare_function('module1', 'function2');
-  $output->model->declare_function('module1', 'function3');
-  $output->model->add_call('function1', 'function2', 'direct');
-  $output->model->add_call('function1', 'function3', 'direct');
+  $output->model->declare_function('module1', 'function1(type)');
+  $output->model->declare_function('module1', 'function2(type1, type2)');
+  $output->model->declare_function('module1', 'function3()');
+  $output->model->add_call('function1(type *)', 'function2(type1, type2)', 'direct');
+  $output->model->add_call('function1(type *)', 'function3()', 'direct');
   is(
     $output->string,
     'digraph callgraph {
-"function1" -> "function2" [style=solid];
-"function1" -> "function3" [style=solid];
+"function1(type *)" -> "function3()" [style=solid];
+"function1(type *)" -> "function2(type1, type2)" [style=solid];
 }
 ',
     'must generate correctly a graph with f1 -> f2, f1 -> f3'
@@ -344,3 +344,4 @@ sub use_of_variables : Tests {
 }
 
 DOTOutputTests->runtests;
+

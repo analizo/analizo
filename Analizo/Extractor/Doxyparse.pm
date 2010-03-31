@@ -16,7 +16,7 @@ sub feed {
   my ($self, $line) = @_;
 
   # function declarations
-  if ($line =~ m/^\s{3}function (\S+) in line \d+$/) {
+  if ($line =~ m/^\s{3}function (.*) in line \d+$/) {
     my $function = _qualified_name($self->current_module, $1);
     $self->model->declare_function($self->current_module, $function);
     $self->{current_member} = $function;
@@ -34,7 +34,7 @@ sub feed {
   }
 
   # function calls/uses
-  if ($line =~ m/^\s{6}uses function (\S+) defined in (\S+)$/) {
+  if ($line =~ m/^\s{6}uses function (.*) defined in (\S+)$/) {
     my $function = _qualified_name($2, $1);
     $self->model->add_call($self->current_member, $function, 'direct');
   }
