@@ -1,3 +1,9 @@
+analizo (1.13.0-2) unstable; urgency=low
+
+  * Add missing dependency: libstatistics-descriptive-perl
+
+ -- Antonio Terceiro <terceiro@softwarelivre.org>  Thu, 08 Apr 2010 15:33:48 -0300
+
 analizo (1.13.0-1) unstable; urgency=low
 
   * New upstream relase
