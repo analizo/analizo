@@ -7,10 +7,14 @@ def cucumber(args)
   sh "which cucumber && cucumber #{options} || bundle exec cucumber #{options}"
 end
 
+def banner_format
+  $stdout.isatty ? "\033[33;01m%s\033[m" : "%s"
+end
+
 def banner(msg)
-  puts "\033[33;01m%s\033[m" % ('=' * 72)
-  puts "\033[33;01m%s\033[m" % msg
-  puts "\033[33;01m%s\033[m" % ('=' * 72)
+  puts banner_format % ('=' * 72)
+  puts banner_format % msg
+  puts banner_format % ('=' * 72)
 end
 
 desc 'Run unit tests'
