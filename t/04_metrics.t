@@ -340,6 +340,11 @@ sub loc : Tests {
   is($result[1], 20, 'adding another module with 20 loc makes the max LOC equal 20');
 }
 
+sub total_eloc : Tests {
+  $model->declare_total_eloc(28);
+  is($metrics->total_eloc, 28, 'calculating total eloc');
+}
+
 sub sample_modules_for_report {
   # first module
   $model->declare_module('mod1');
@@ -357,12 +362,14 @@ sub sample_modules_for_report {
 
 sub report : Tests {
   sample_modules_for_report();
+  $model->declare_total_eloc(38);
 
   my $output = $metrics->report;
 
   ok($output =~ /total_modules: 2/, 'reporting number of classes in YAML stream');
   ok($output =~ /_module: mod1/, 'reporting module 1');
   ok($output =~ /_module: mod2/, 'reporting module 2');
+  ok($output =~ /total_eloc: 38/, 'reporting total eloc');
 }
 
 sub report_global_only : Tests {

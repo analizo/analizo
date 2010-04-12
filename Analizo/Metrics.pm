@@ -250,6 +250,11 @@ sub methods_per_abstract_class {
   return (scalar @abstract_classes > 0  ) ? ($total_number_of_methods / scalar @abstract_classes) : 0;
 }
 
+sub total_eloc {
+  my $self = shift;
+  return $self->model->total_eloc;
+}
+
 sub _recursive_noc {
   my ($self, $module) = @_;
 
@@ -366,7 +371,8 @@ sub report {
     total_abstract_classes                 => $self->total_abstract_classes,
     total_modules_with_defined_methods     => $total_modules_with_defined_methods,
     total_modules_with_defined_attributes  => $total_modules_with_defined_attributes,
-    total_methods_per_abstract_class       => $self->methods_per_abstract_class
+    total_methods_per_abstract_class       => $self->methods_per_abstract_class,
+    total_eloc                             => $self->total_eloc
   );
 
   for my $metric (keys %totals){

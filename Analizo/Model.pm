@@ -14,6 +14,7 @@ sub new {
     conditional_paths => {},
     abstract_classes => [],
     module_names => [],
+    total_eloc => 0
   );
   return bless { @defaults }, __PACKAGE__;
 }
@@ -26,6 +27,16 @@ sub modules {
 sub module_names {
   my $self = shift;
   return @{$self->{module_names}};
+}
+
+sub declare_total_eloc {
+  my ($self, $total_eloc) = @_;
+  $self->{total_eloc} = $total_eloc;
+}
+
+sub total_eloc {
+  my ($self) = shift;
+  return $self->{total_eloc};
 }
 
 sub declare_module {
