@@ -80,6 +80,7 @@ sub type {
 
 sub declare_function {
   my ($self, $module, $function, $demangled_name) = @_;
+  return unless $module;
   $self->declare_member($module, $function, $demangled_name, 'function');
 
   if (!exists($self->{modules}->{$module})){

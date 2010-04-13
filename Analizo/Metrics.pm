@@ -80,7 +80,7 @@ sub accm {
   my $number_of_functions = 0;
 
   for my $function(@functions) {
-    $total_of_conditional_paths += $self->model->{conditional_paths}->{$function};
+    $total_of_conditional_paths += ($self->model->{conditional_paths}->{$function} || 0);
     $number_of_functions++;
   }
 
@@ -96,7 +96,7 @@ sub anpm {
   my $number_of_functions = 0;
 
   for my $function (@functions) {
-    $total_of_parameters += $self->model->{parameters}->{$function};
+    $total_of_parameters += ($self->model->{parameters}->{$function} || 0);
     $number_of_functions++;
   }
 
@@ -244,7 +244,7 @@ sub methods_per_abstract_class {
   my @abstract_classes = $self->model->abstract_classes;
 
   for my $abstract_class (@abstract_classes) {
-    $total_number_of_methods += scalar $self->model->functions($abstract_class);
+    $total_number_of_methods += (scalar $self->model->functions($abstract_class)) || 0;
   }
 
   return (scalar @abstract_classes > 0  ) ? ($total_number_of_methods / scalar @abstract_classes) : 0;
