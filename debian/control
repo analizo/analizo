@@ -16,5 +16,5 @@ Description: multi-language source code analysis toolkit
  Analizo parses source code in multiple languages and report useful information
  about it, such as module dependency, source code metrics and more.
  .
- Analizoi uses doxyparse to parse the source code, and is currently tested and
+ Analizo uses doxyparse to parse the source code, and is currently tested and
  expected to work well with C, C++ and Java source code.
