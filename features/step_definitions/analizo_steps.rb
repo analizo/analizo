@@ -33,9 +33,11 @@ When /^I run "([^\"]*)"$/ do |command|
   @stderr = File.readlines('tmp.err')
 end
 
-Then /^analizo must report that "([^\"]*)" depends on "([^\"]*)"$/ do |module1, module2|
-  if (@stdout.select { |line| line =~ /"#{module1}" -> "#{module2}"/ }).size < 1
-    raise AnalizoException.new("Output should say that %s depends on %s!" % [module1.inspect, module2.inspect], @stdout, @stderr)
+Then /^analizo must report that "([^\"]*)" depends on "([^\"]*)"$/ do |dependent, depended|
+  dependent_regex = Regexp.escape dependent
+  depended_regex = Regexp.escape depended
+  if (@stdout.select { |line| line =~ /"#{dependent_regex}" -> "#{depended_regex}"/ }).size < 1
+    raise AnalizoException.new("Output should say that %s depends on %s!" % [dependent.inspect, depended.inspect], @stdout, @stderr)
   end
 end
 
@@ -49,12 +51,13 @@ end
 
 Then /^analizo must report that "([^\"]*)" is part of "([^\"]*)"$/ do |func,mod|
   line = (0...(@stdout.size)).find { |i| @stdout[i] =~ /subgraph "cluster_#{mod}"/ }
+  func_regex = Regexp.escape func
   found = false
   if line
     for i in (line...(@stdout.size))
       if @stdout[i] =~ /^\s*\}\s*$/
         break
-      elsif @stdout[i] =~ /node.*"#{func}";/
+      elsif @stdout[i] =~ /node.*"#{func_regex}";/
         found = true
       end
     end
@@ -83,9 +86,9 @@ Then /^analizo must emit a warning matching "([^\"]*)"$/ do |pattern|
   @stderr.join.should match(pattern)
 end
 
-Then /^analizo must report that the project has (.+) = (\d+)$/ do |metric,n|
+Then /^analizo must report that the project has (.+) = ([\d\.]+)$/ do |metric,n|
   stream = YAML.load_stream(@stdout.join)
-  stream.documents.first[metric].should == n.to_i
+  stream.documents.first[metric].should == n.to_f
 end
 
 Then /^analizo must report that module (.+) has (.+) = (\d+|\d+\.\d+)$/ do |mod, metric, n|
@@ -96,7 +99,9 @@ end
 
 Then /^analizo must present a list of metrics$/ do
   @stdout.size.should > 0
-  @stdout.each do |item|
-    item.should match(/^\w+ - .+$/)
+
+  @stdout.each do |line|
+    line.should match(/(^[^-]+ - .+$)|(^Global Metrics:\n$)|(^Module Metrics:\n)|(^\n$)/)
   end
 end
+

@@ -77,11 +77,19 @@ use strict;
 
 use Analizo::Extractor;
 use Analizo::Metrics;
-
+use Analizo::Extractor::Sloccount;
 
 if($ARGV{'--list'}){
     my $metrics_handler = new Analizo::Metrics(model => new Analizo::Model);
     my %metrics = $metrics_handler->list_of_metrics();
+    my %global_metrics = $metrics_handler->list_of_global_metrics();
+
+    print "Global Metrics:\n";
+    foreach my $key (sort keys %global_metrics){
+        print "$key - $global_metrics{$key}\n";
+    }
+
+    print "\nModule Metrics:\n";
     foreach my $key (sort keys %metrics){
         print "$key - $metrics{$key}\n";
     }
@@ -94,6 +102,7 @@ if($ARGV{'<input>'} =~ /^\s*$/){
 }
 
 my $extractor = Analizo::Extractor->load($ARGV{'--extractor'});
+my $eloc_extractor = Analizo::Extractor::Sloccount->new(model => $extractor->model);
 my $metrics = Analizo::Metrics->new(model => $extractor->model);
 
 if ($ARGV{'--global-only'}) {
@@ -102,9 +111,11 @@ if ($ARGV{'--global-only'}) {
 
 
 $extractor->process(@{$ARGV{'<input>'}});
+$eloc_extractor->process(@{$ARGV{'<input>'}});
 
 open STDOUT, '>', $ARGV{'--output'} if $ARGV{'--output'};
 print $metrics->report;
 close STDOUT;
 
 exit(0);
+

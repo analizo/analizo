@@ -21,6 +21,7 @@ sub model : Tests {
   is($metrics->model, $model);
 }
 
+#Abstract Classes
 sub abstract_classes : Tests {
   $model->declare_module('A');
   is($metrics->total_abstract_classes, 0, 'no abstract class');
@@ -34,6 +35,7 @@ sub abstract_classes : Tests {
   is($metrics->total_abstract_classes, 2, 'two abstract class');
 }
 
+#Afferent Connections per Class
 sub acc : Tests {
   $model->declare_module('A');
   $model->declare_function('A', 'fA');
@@ -112,10 +114,12 @@ sub accm : Tests {
   is($metrics->accm('module'), 3, 'two function with three average cyclomatic complexity per method');
 }
 
+#Average Method LOC
 sub amloc_with_no_functions_at_all : Tests {
   is($metrics->amloc(0, 0), 0);
 }
 
+#Average Number of Parameters per Methods
 sub anpm : Tests {
   $model->declare_module('module');
   is($metrics->anpm('module'), 0, 'no parameters declared');
@@ -125,6 +129,7 @@ sub anpm : Tests {
   is($metrics->anpm('module'), 1, 'one function with one parameter');
 }
 
+#Coupling Between Objects
 sub cbo : Tests {
   $model->declare_function('mod1', 'f1');
   $model->declare_function('mod2', 'f2');
@@ -145,6 +150,7 @@ sub cbo : Tests {
   is($metrics->cbo('mod1'), 2, 'calling two different functions in the same module');
 }
 
+#Depth of Inheritance Tree
 sub dit : Tests {
   $model->add_inheritance('Level1', 'Level2');
   $model->add_inheritance('Level2', 'Level3');
@@ -160,6 +166,7 @@ sub dit_with_multiple_inheritance : Tests {
   is($metrics->dit('Level1'), 2, 'with multiple inheritance take the larger DIT between the parents');
 }
 
+#Lack of Cohesion of Methods
 sub lcom4 : Tests {
   $model->declare_function('mod1', $_) for qw(f1 f2);
   is($metrics->lcom4('mod1'), 2, 'two unrelated functions');
@@ -203,6 +210,35 @@ sub lcom4_3 : Tests {
   is($metrics->lcom4('mod1'), 2, 'functions outside the module don\'t count for LCOM4');
 }
 
+#Methods Per Abstract Class
+sub methods_per_abstract_class : Tests {
+  is($metrics->methods_per_abstract_class, 0, 'no abstract classes');
+
+  $model->declare_module('A');
+  $model->add_abstract_class('A');
+  is($metrics->methods_per_abstract_class, 0, 'no methods on abstract classes');
+
+  $model->declare_function('A', 'functionA');
+  is($metrics->methods_per_abstract_class, 1, 'one methods on one abstract classes');
+
+  $model->declare_module('B');
+  $model->add_abstract_class('B');
+  $model->declare_function('B', 'functionB');
+  is($metrics->methods_per_abstract_class, 1, 'one methods on one abstract classes');
+}
+
+#Number of Attributes
+sub noa : Tests {
+  is($metrics->noa('module1'), 0, 'empty modules have no attributes');
+
+  $model->declare_variable('module1', 'attr1');
+  is($metrics->noa('module1'), 1, 'module with one defined attribute');
+
+  $model->declare_variable('module1', 'attr2');
+  is($metrics->noa('module1'), 2, 'module with two defined attribute');
+}
+
+#Number of Children
 sub noc : Tests {
   $model->declare_module('A');
   $model->declare_module('B');
@@ -228,6 +264,7 @@ sub noc : Tests {
   is($metrics->noc('D'), 0, 'no children module D');
 }
 
+#Number of Methods
 sub nom : Tests {
   is($metrics->nom('mod1'), 0, 'empty modules have no functions');
 
@@ -238,6 +275,7 @@ sub nom : Tests {
   is($metrics->nom('mod1'), 2, 'module with just two functions has number of functions = 2');
 }
 
+#Number of Public Methods
 sub npm : Tests {
   is($metrics->npm('mod1'), 0, 'empty modules have 0 public functions');
 
@@ -250,18 +288,20 @@ sub npm : Tests {
   is($metrics->npm('mod1'), 2, 'another public function added');
 }
 
-sub npv : Tests {
-  is($metrics->npv('mod1'), 0, 'empty modules have 0 public variables');
+#Number of Public Attributes
+sub npa : Tests {
+  is($metrics->npa('mod1'), 0, 'empty modules have 0 public attributes');
 
   $model->declare_variable('mod1', 'mod1::f1');
   $model->add_protection('mod1::f1', 'public');
-  is($metrics->npv('mod1'), 1, 'one public variable added');
+  is($metrics->npa('mod1'), 1, 'one public attribute added');
 
   $model->declare_variable('mod1', 'mod1::f2');
   $model->add_protection('mod1::f2', 'public');
-  is($metrics->npv('mod1'), 2, 'another public variable added');
+  is($metrics->npa('mod1'), 2, 'another public attribute added');
 }
 
+#Response For a Class
 sub rfc : Tests {
   $model->declare_module('module');
   is($metrics->rfc('module'), 0, "no functions declared on the module");
@@ -281,22 +321,28 @@ sub rfc : Tests {
   is($metrics->rfc('module'), 4, "two functions and two calls declared on the module");
 }
 
-sub tloc : Tests {
-  my @result = $metrics->tloc('mod1');
-  is($result[0], 0, 'empty module has 0 tloc');
-  is($result[1], 0, 'empty module has max tloc 0');
+#Lines Of Code
+sub loc : Tests {
+  my @result = $metrics->loc('mod1');
+  is($result[0], 0, 'empty module has 0 loc');
+  is($result[1], 0, 'empty module has max loc 0');
 
   $model->declare_function('mod1', 'mod1::f1');
   $model->add_loc('mod1::f1', 10);
-  @result = $metrics->tloc('mod1');
-  is($result[0], 10, 'one module, with 10 tloc');
-  is($result[1], 10, 'one module, with 10 tloc, makes max tloc = 10');
+  @result = $metrics->loc('mod1');
+  is($result[0], 10, 'one module, with 10 loc');
+  is($result[1], 10, 'one module, with 10 loc, makes max loc = 10');
 
   $model->declare_function('mod1', 'mod1::f2');
   $model->add_loc('mod1::f2', 20);
-  @result = $metrics->tloc('mod1');
-  is($result[0], 30, 'adding another module with 20 tloc makes the total equal 30');
-  is($result[1], 20, 'adding another module with 20 tloc makes the max LOC equal 20');
+  @result = $metrics->loc('mod1');
+  is($result[0], 30, 'adding another module with 20 loc makes the total equal 30');
+  is($result[1], 20, 'adding another module with 20 loc makes the max LOC equal 20');
+}
+
+sub total_eloc : Tests {
+  $model->declare_total_eloc(28);
+  is($metrics->total_eloc, 28, 'calculating total eloc');
 }
 
 sub sample_modules_for_report {
@@ -316,12 +362,14 @@ sub sample_modules_for_report {
 
 sub report : Tests {
   sample_modules_for_report();
+  $model->declare_total_eloc(38);
 
   my $output = $metrics->report;
 
   ok($output =~ /total_modules: 2/, 'reporting number of classes in YAML stream');
   ok($output =~ /_module: mod1/, 'reporting module 1');
   ok($output =~ /_module: mod2/, 'reporting module 2');
+  ok($output =~ /total_eloc: 38/, 'reporting total eloc');
 }
 
 sub report_global_only : Tests {

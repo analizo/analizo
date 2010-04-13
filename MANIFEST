@@ -3,6 +3,7 @@
 AUTHORS
 Analizo/Extractor.pm
 Analizo/Extractor/Doxyparse.pm
+Analizo/Extractor/Sloccount.pm
 Analizo/Metrics.pm
 Analizo/Model.pm
 Analizo/Output/DOT.pm
@@ -27,10 +28,15 @@ features/graph/plain.feature
 features/language_support.feature
 features/metrics/abstract_classes.feature
 features/metrics/cyclomatic_complexity.feature
+features/metrics/eloc.feature
 features/metrics/global-only.feature
 features/metrics/input-files.feature
 features/metrics/list.feature
+features/metrics/methods_per_abstract_class.feature
+features/metrics/modules_with_defined_attributes.feature
+features/metrics/modules_with_defined_methods.feature
 features/metrics/number-of-arguments.feature
+features/metrics/number_of_methods.feature
 features/metrics/output-file.feature
 features/metrics/statistics_values.feature
 features/step_definitions/analizo_steps.rb
@@ -84,6 +90,7 @@ t/02_extractor.t
 t/03_model.t
 t/04_metrics.t
 t/06_extractor_doxyparse.t
+t/07_extractor_sloccount.t
 t/sample/Makefile
 t/sample/config.sh
 t/sample/module1.c

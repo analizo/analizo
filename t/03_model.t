@@ -15,6 +15,15 @@ sub empty_object : Tests {
   isa_ok($model->members, 'HASH', 'must have members');
 }
 
+sub declaring_project_eloc : Tests {
+  my $model = new Analizo::Model;
+  is($model->{total_eloc}, 0, 'Project eLoc should be initialized');
+
+  $model->declare_total_eloc(28);
+  is($model->{total_eloc}, 28, 'Project eLoc should updated when declare_project_eloc is called');
+  is($model->total_eloc, 28, 'using the getter');
+}
+
 sub declaring_modules : Tests {
   my $model = new Analizo::Model;
   $model->declare_module('Module1');

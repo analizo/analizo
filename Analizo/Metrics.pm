@@ -10,20 +10,21 @@ use Statistics::OnLine;
 __PACKAGE__->mk_accessors(qw(model report_global_metrics_only));
 
 my %DESCRIPTIONS = (
-  acc       => "Afferent Connections per Class (to calculate Coupling Factor - COF)",
+  acc       => "Afferent Connections per Class (used to calculate COF - Coupling Factor)",
   accm      => "Average Cyclomatic Complexity per Method",
-  amloc     => "Average Method LOC ",
+  amloc     => "Average Method LOC",
   anpm      => "Average Number of Parameters per Method",
   cbo       => "Coupling Between Objects",
   dit       => "Depth of Inheritance Tree",
   lcom4     => "Lack of Cohesion of Methods ",
   mmloc     => "Max Method LOC",
+  noa       => "Number of Attributes",
   noc       => "Number of Children",
   nom       => "Number of Methods",
   npm       => "Number of Public Methods",
-  npv       => "Number of Public Variables",
+  npa       => "Number of Public Attributes",
   rfc       => "Response For a Class",
-  tloc      => "Total Lines of Code"
+  loc       => "Lines of Code"
 );
 
 sub new {
@@ -31,6 +32,21 @@ sub new {
   return bless { model => $args{model} }, $package;
 }
 
+sub list_of_global_metrics {
+  my %list = (
+    total_abstract_classes => "Total Abstract Classes",
+    total_cof => "Total Coupling Factor",
+    total_modules => "Total Number of Modules/Classes",
+    total_nom => "Total Number of Methods",
+    total_loc => "Total Lines of Code",
+    total_modules_with_defined_methods => "Total number of modules/classes with at least one defined method",
+    total_modules_with_defined_attributes => "Total number of modules/classes with at least one defined attributes",
+    total_methods_per_abstract_class => "Total number of methods per abstract class"
+  );
+  return %list;
+}
+
+#Afferent Connections per Class
 sub acc {
   my ($self, $module) = @_;
 
@@ -49,11 +65,13 @@ sub acc {
   return scalar @seen_modules + $self->_recursive_noc($module);
 }
 
+#Average Method LOC
 sub amloc {
   my ($self, $loc, $count) = @_;
   return ($count > 0) ? ($loc / $count) : 0;
 }
 
+#Average Cyclomatic Complexity per Method
 sub accm {
   my ($self, $module) = @_;
 
@@ -62,13 +80,14 @@ sub accm {
   my $number_of_functions = 0;
 
   for my $function(@functions) {
-    $total_of_conditional_paths += $self->model->{conditional_paths}->{$function};
+    $total_of_conditional_paths += ($self->model->{conditional_paths}->{$function} || 0);
     $number_of_functions++;
   }
 
   return ($number_of_functions > 0) ? ($total_of_conditional_paths / $number_of_functions) : 0;
 }
 
+#Average Number of Parameters per Method
 sub anpm {
   my ($self, $module) = @_;
 
@@ -77,13 +96,14 @@ sub anpm {
   my $number_of_functions = 0;
 
   for my $function (@functions) {
-    $total_of_parameters += $self->model->{parameters}->{$function};
+    $total_of_parameters += ($self->model->{parameters}->{$function} || 0);
     $number_of_functions++;
   }
 
   return ($number_of_functions > 0) ? ($total_of_parameters / $number_of_functions) : 0;
 }
 
+#Coupling Between Objects
 sub cbo {
   my ($self, $module) = @_;
   my %seen = ();
@@ -97,6 +117,7 @@ sub cbo {
   return (scalar keys(%seen));
 }
 
+#Depth of Inheritance Tree
 sub dit {
   my ($self, $module) = @_;
   my @parents = $self->model->inheritance($module);
@@ -109,6 +130,7 @@ sub dit {
   }
 }
 
+#Lack of Cohesion of Methods
 sub lcom4 {
   my ($self, $module) = @_;
   my $graph = new Graph;
@@ -127,6 +149,14 @@ sub lcom4 {
   return scalar @components;
 }
 
+#Number of Attributes
+sub noa {
+  my ($self, $module) = @_;
+  my @variables = $self->model->variables($module);
+  return scalar(@variables);
+}
+
+#Number of Children
 sub noc {
   my ($self, $module) = @_;
 
@@ -140,12 +170,14 @@ sub noc {
   return $number_of_children;
 }
 
+#Number of Methods
 sub nom {
   my ($self, $module) = @_;
   my @list = $self->model->functions($module);
   return scalar(@list);
 }
 
+#Number of Public Methods
 sub npm {
   my ($self, $module) = @_;
 
@@ -157,17 +189,19 @@ sub npm {
   return $npm;
 }
 
-sub npv {
+#Number of Public Attributes
+sub npa {
   my ($self, $module) = @_;
 
-  my @variables = $self->model->variables($module);
-  my $npv = 0;
-  for my $variable (@variables) {
-    $npv += 1 if $self->_is_public($variable);
+  my @attributes = $self->model->variables($module);
+  my $npa = 0;
+  for my $attributes (@attributes) {
+    $npa += 1 if $self->_is_public($attributes);
   }
-  return $npv;
+  return $npa;
 }
 
+#Response For a Class
 sub rfc {
   my ($self, $module) = @_;
 
@@ -181,26 +215,44 @@ sub rfc {
   return $rfc;
 }
 
-sub tloc {
+#Lines Of Code
+sub loc {
   my ($self, $module) = @_;
 
   my @functions = $self->model->functions($module);
-  my $tloc = 0;
+  my $loc = 0;
   my $max = 0;
 
   for my $function (@functions) {
     my $lines = $self->model->{lines}->{$function} || 0;
-    $tloc += $lines;
+    $loc += $lines;
     $max = $lines if $lines > $max;
   }
 
-  return ($tloc, $max);
+  return ($loc, $max);
 }
 
 sub total_abstract_classes{
   my ($self)= @_;
   my @total_of_abstract_classes = $self->model->abstract_classes;
   return @total_of_abstract_classes ? scalar(@total_of_abstract_classes) : 0;
+}
+
+sub methods_per_abstract_class {
+  my $self = shift;
+  my $total_number_of_methods = 0;
+  my @abstract_classes = $self->model->abstract_classes;
+
+  for my $abstract_class (@abstract_classes) {
+    $total_number_of_methods += (scalar $self->model->functions($abstract_class)) || 0;
+  }
+
+  return (scalar @abstract_classes > 0  ) ? ($total_number_of_methods / scalar @abstract_classes) : 0;
+}
+
+sub total_eloc {
+  my $self = shift;
+  return $self->model->total_eloc;
 }
 
 sub _recursive_noc {
@@ -231,13 +283,14 @@ sub _report_module {
   my $cbo                  = $self->cbo($module);
   my $dit                  = $self->dit($module);
   my $lcom4                = $self->lcom4($module);
+  my $noa                  = $self->noa($module);
   my $noc                  = $self->noc($module);
   my $nom                  = $self->nom($module);
   my $npm                  = $self->npm($module);
-  my $npv                  = $self->npv($module);
+  my $npa                  = $self->npa($module);
   my $rfc                  = $self->rfc($module);
-  my ($tloc, $mmloc)      = $self->tloc($module);
-  my $amloc                = $self->amloc($tloc, $nom);
+  my ($loc, $mmloc)        = $self->loc($module);
+  my $amloc                = $self->amloc($loc, $nom);
 
   my %data = (
     _module              => $module,
@@ -249,12 +302,13 @@ sub _report_module {
     dit                  => $dit,
     lcom4                => $lcom4,
     mmloc                => $mmloc,
+    noa                  => $noa,
     noc                  => $noc,
     nom                  => $nom,
     npm                  => $npm,
-    npv                  => $npv,
+    npa                  => $npa,
     rfc                  => $rfc,
-    tloc                 => $tloc
+    loc                  => $loc
   );
 
   return %data;
@@ -264,6 +318,8 @@ sub report {
   my $self = shift;
   my $details = '';
   my $total_modules = 0;
+  my $total_modules_with_defined_methods = 0;
+  my $total_modules_with_defined_attributes = 0;
   my %totals = (
     acc       => 0,
     accm      => 0,
@@ -273,12 +329,13 @@ sub report {
     dit       => 0,
     lcom4     => 0,
     mmloc     => 0,
+    noa       => 0,
     noc       => 0,
     nom       => 0,
     npm       => 0,
-    npv       => 0,
+    npa       => 0,
     rfc       => 0,
-    tloc      => 0
+    loc       => 0
   );
   my %list_values = ();
 
@@ -301,15 +358,21 @@ sub report {
     $total_modules += 1;
     for my $metric (keys %totals){
       push @{$list_values{$metric}}, $data{$metric};
-      $totals{$metric} += $data{$metric} ;
+      $totals{$metric} += $data{$metric};
     }
+    $total_modules_with_defined_methods += 1 if $data{'nom'} > 0;
+    $total_modules_with_defined_attributes += 1 if $data{'noa'} > 0;
   }
 
   my %summary = (
-    total_modules          => $total_modules,
-    total_nom              => $totals{'nom'},
-    total_tloc             => $totals{'tloc'},
-    total_abstract_classes => $self->total_abstract_classes
+    total_modules                          => $total_modules,
+    total_nom                              => $totals{'nom'},
+    total_loc                              => $totals{'loc'},
+    total_abstract_classes                 => $self->total_abstract_classes,
+    total_modules_with_defined_methods     => $total_modules_with_defined_methods,
+    total_modules_with_defined_attributes  => $total_modules_with_defined_attributes,
+    total_methods_per_abstract_class       => $self->methods_per_abstract_class,
+    total_eloc                             => $self->total_eloc
   );
 
   for my $metric (keys %totals){
