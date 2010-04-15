@@ -3,16 +3,11 @@ package Analizo::Extractor::Sloccount;
 use strict;
 use warnings;
 
-use Analizo::Extractor;
+use base qw(Analizo::Extractor);
 
 sub new {
- my ($package, %args) = @_;
-  return bless { model => $args{model} }, $package;
-}
-
-sub model {
-  my $self = shift;
-  return $self->{model};
+  my $package = shift;
+  return bless { @_ }, $package;
 }
 
 sub feed {
