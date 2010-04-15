@@ -48,7 +48,7 @@ Tells analizo which source code directory(ies) you want to parse.
 =for Euclid:
   input.type: readable
 
-=item --output <file>
+=item --output <file> | -o <file>
 
 Use a file as output
 

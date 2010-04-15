@@ -74,7 +74,7 @@ is the only extractor available.  Default is Doxyparse.
   extractor.type: string, extractor =~ /\A\w+\Z/
   extractor.default: 'Doxyparse'
 
-=item --output <file>
+=item --output <file> | -o <file>
 
 Use a file as output
 
