@@ -18,5 +18,6 @@ WriteMakefile(
       'Graph' => 0,
       'YAML' => 0,
       'Test::Exception' => 0,
+      'Statistics::Descriptive' => 0,
   },
 );

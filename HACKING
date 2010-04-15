@@ -40,6 +40,7 @@ Install the following Perl modules, using CPAN or your native package manager:
   * Test::Exception
   * YAML
   * Class::Accessor
+  * Statistics::Descriptive
 
 Install doxyparse's build dependencies: flex, bison, libqt4-dev (your operating
 system probably already has packages for these)
@@ -51,6 +52,8 @@ Install doxyparse
     ./configure --with-doxyparse
     make
     sudo install bin/doxyparse /usr/local/bin/
+
+Install sloccount.
 
 If you don't plan to develop analizo (i.e. you only want to use it), you can stop
 here.
