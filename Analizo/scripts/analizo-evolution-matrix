@@ -2,12 +2,12 @@
 
 # == Synopsis
 #
-# analizo-evolution-matrix: generates an evolution matrix from analizo .yml
+# analizo evolution-matrix: generates an evolution matrix from analizo .yml
 # metric files
 #
 # == Usage
 #
-# analizo-evolution-matrix [OPTION] ... ymlfile [ymlfile [ymlfile ...]]
+# analizo evolution-matrix [OPTION] ... ymlfile [ymlfile [ymlfile ...]]
 #
 # --help:
 #    Show help

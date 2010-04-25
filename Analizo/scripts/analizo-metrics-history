@@ -59,7 +59,7 @@ end
 class AnalizoRunner
   def self.metrics(commit)
     system("git checkout #{commit} > /dev/null 2>> git.log")
-    if "" == yaml_metrics = `analizo-metrics . 2> /dev/null` then
+    if "" == yaml_metrics = `analizo metrics . 2> /dev/null` then
       false
     else
       YAML.load_stream(yaml_metrics).documents
@@ -122,7 +122,7 @@ File.open('metrics.csv', 'w') do |file|
       print "."
     else
       print "E"
-      system("analizo-metrics . >> analizo.log 2>> analizo.log")
+      system("analizo metrics . >> analizo.log 2>> analizo.log")
       system("doxyparse . >> doxyparse.log 2>> doxyparse.log")
       error_counter +=1
     end
