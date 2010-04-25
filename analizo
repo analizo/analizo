@@ -134,7 +134,7 @@ if (scalar(@ARGV) == 0) {
 }
 
 my $tool = shift(@ARGV);
-if ($tool !~ /^[a-z]+$/) {
+if ($tool !~ /^[a-z][a-z-]+$/) {
   if ($tool eq '--version') {
     show_version();
   } elsif($tool eq '--help') {
