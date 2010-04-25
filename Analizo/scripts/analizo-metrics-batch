@@ -75,7 +75,7 @@ for dir in $input; do
 
   i=$(($i+1))
   project=$(basename $dir)
-  output="$project.yml"
+  output="$(dirname $dir)/$project.yml"
 
   if [ -e "$output" ]; then
     info "$project already processed, skipping (remove $output to force reprocessing)"
