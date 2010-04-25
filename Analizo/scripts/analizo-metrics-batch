@@ -18,8 +18,8 @@ usage() {
   echo "Options:"
   echo
   echo "  --help                 Displays the help (this screen)"
-  echo "  -s|--summary FILE      Outputs a total of all projects in CSV format to FILE"
-  echo "  -m|--modules           Outputs module metrics as well for each project. Conflicts with -s."
+  echo "  -s|--summary FILE      Outputs a total of all projects in CSV format to FILE. Implies --global-only."
+  echo "  -g|--global-only       Outputs only project-wide metrics (e.g. no module metrics)."
   echo
   echo "If you specify no directories to operate on, all directories"
   echo "immediately below the current directory will be scanned."
@@ -28,7 +28,7 @@ usage() {
 # defaults
 input=""
 summary=false
-analizo_options="-g"
+analizo_options=""
 
 while [ $# -gt 0 ]; do
   opt="$1"
@@ -40,6 +40,7 @@ while [ $# -gt 0 ]; do
       ;;
     -s|--summary)
       summary=true
+      analizo_options="-g"
       if [ $# -eq 0 ]; then
         usage
         exit 1
@@ -48,9 +49,8 @@ while [ $# -gt 0 ]; do
         shift
       fi
       ;;
-    -m|--modules)
-      summary=false
-      analizo_options=""
+    -g|--global-only)
+      analizo_options="-g"
       ;;
     -*|--*)
       echo "Invalid option: $opt"
