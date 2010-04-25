@@ -1,30 +1,59 @@
 #!/usr/bin/env ruby
 
-# == Synopsis
+## =head1 NAME
+##
+## analizo evolution-matrix: generates an evolution matrix from analizo .yml
+## metric files
+##
+#* =head1 USAGE
+#*
+#* analizo evolution-matrix [OPTION] ... ymlfile [ymlfile [ymlfile ...]]
+#*
+## =head1 DESCRIPTION
+##
+## B<analizo evolution-matrix> will process the YML files passed in the command
+## line and generate an evolution matrix. To do that we assume that the YML
+## files are name as project-name-I<X.Y.X>.yml, where I<X.Y.Z> represents the
+## version numbers of different versions of the same project.
+##
+## The output is HTML code corresponding to the evolution matrix of the #
+## project, considering all the versions passed in the command line. By default
+## the output is trown in the standard output, but once can override that with
+## the B<-o> option.
+##
+#* =head1 OPTIONS
+#*
+#* =over
+#*
+#* =item --help
+#*
+#* Displays help for B<analizo evolution-matrix>.
+#*
+#* =item --width <metric>, -w <metric>
+#*
+#* Uses <metric> as width of the matrix cells. Available metrics can be
+#* checked with `analizo metrics --list`, in the "Module metrics" section.
+#*
+#* =item --height <metric>, -h <metric>
+#*
+#* Uses <metric> as height of the matrix cells. Available metrics can be
+#* checked with `analizo metrics --list`, in the "Module metrics" section.
+#*
+#* =item --name <name>
+#*
+#* Sets the name of the project being analysed. Used in the generated report.
+#*
+#* =item --output <file>, -o <file>
 #
-# analizo evolution-matrix: generates an evolution matrix from analizo .yml
-# metric files
-#
-# == Usage
-#
-# analizo evolution-matrix [OPTION] ... ymlfile [ymlfile [ymlfile ...]]
-#
-# --help:
-#    Show help
-#
-# --width <metric>, -w <metric>
-#    Uses <metric> as width of the matrix cells. Available metrics can be
-#    checked with `analizo metrics --list`, in the "Module metrics" section.
-#
-# --height <metric>, -h <metric>
-#    Uses <metric> as height of the matrix cells. Available metrics can be
-#    checked with `analizo metrics --list`, in the "Module metrics" section.
-#
-# --name <name>
-#    Sets the name of the project being analysed. Used in the generated report.
-#
-# --output <file>, -o <file>
-#    Writes output to <file> instead of to standard output.
+#* Writes output to <file> instead of to standard output.
+#*
+#* =back
+##
+## =head1 COPYRIGHT AND AUTHORS
+##
+## See B<analizo(1)>
+##
+## =cut
 
 class EvolutionMatrix
   class Cell
@@ -108,7 +137,6 @@ if $PROGRAM_NAME == __FILE__
   require 'erb'
   require 'yaml'
   require 'getoptlong'
-  require 'rdoc/usage'
 
   matrix = EvolutionMatrix.new
   my_binding = binding
@@ -124,7 +152,7 @@ if $PROGRAM_NAME == __FILE__
   opts.each do |opt, arg|
     case opt
     when '--help'
-      RDoc::usage
+      system 'analizo', 'doc', __FILE__
     when '--name'
       matrix.name = arg
     when '--width'
@@ -138,7 +166,8 @@ if $PROGRAM_NAME == __FILE__
 
   data_files = ARGV
   if data_files.empty?
-    RDoc::usage
+    $stderr.puts "E: No input files!"
+    exit 1
   end
 
   data_files.each do |yml|

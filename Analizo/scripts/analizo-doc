@@ -1,0 +1,103 @@
+#!/bin/sh
+
+## =head1 NAME
+##
+## analizo doc - displays documentation of and analizo script
+##
+#* =head1 USAGE
+#*
+#* analizo doc [OPTION] FILE
+#*
+#* =head1 DESCRIPTION
+#*
+#* B<analizo doc> will display the documentation corresponding to the script  whose name is passed in the command line (FILE). The default bahaviour is to display the documentation in manpage format, but that can be changed by passing command line options (See below).
+#*
+#* =head1 OPTIONS
+#*
+#* =over
+#*
+#* =item --usage
+#*
+#* Displays the only usage of the named script, instead of display its full manpage.
+#*
+#* =item --help
+#*
+#* Displays the help of B<analizo doc> itself.
+#*
+#* =back
+#*
+## =head1 COPYRIGHT AND AUTHORS
+##
+## See B<analizo(1)>
+##
+## =cut
+
+display_analizo_doc(){
+  file="$1"
+  if grep -q '^#!.*perl' "$1"; then
+    # Perl programs
+    if [ "$usage" = 'true' ]; then
+      pod2usage --verbose 1 "$1"
+    else
+      pod2man --name="$(basename $file)" --release="$(analizo --version)" --center="Analizo documentation" "$1" | man -l -
+    fi
+  else
+    # non-Perl programs
+    if [ "$usage" = 'true' ]; then
+      sed -e '/^#[*]/!d ; s/^#[*] \?//;' "$1" | pod2text
+    else
+      sed -e '/^#[#*]/!d ; s/^#[#*] \?//;' "$1" | pod2man --name="$(basename $file)" --release="$(analizo --version)" --center="Analizo documentation" | man -l -
+    fi
+  fi
+}
+
+usage() {
+  echo -n "Usage: "
+  usage=true
+  display_analizo_doc $0
+}
+
+help() {
+  usage=false
+  display_analizo_doc $0
+}
+
+file=""
+usage=false
+while [ $# -gt 0 ]; do
+  opt="$1"
+  shift
+  case "$opt" in
+    --usage)
+      usage=true
+      ;;
+    --help)
+      help
+      exit 0
+      ;;
+    -*|--*)
+      echo "Invalid option: $opt"
+      exit 1
+      ;;
+    *)
+      if [ -z "$file" ]; then
+        file="$opt"
+      else
+        usage
+        exit 1
+      fi
+      ;;
+  esac
+done
+
+if [ -z "$file" ]; then
+  echo "E: no input files!"
+  exit 1
+fi
+
+if [ ! -e "$file" ]; then
+  echo "E: file \"$file\" not found"
+  exit 1;
+fi
+
+display_analizo_doc "$file"

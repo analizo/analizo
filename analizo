@@ -34,6 +34,9 @@ passing "." or "./src" as input directories).
 The options and output are specific to each tool, so make sure to read the
 corresponding manual for the tool(s) you want.
 
+Run B<analizo> withtout any command line arguments to see the list of available
+tools.
+
 =head1 OPTIONS
 
 The following are the options for the wrapper analizo script. The options for
@@ -109,22 +112,44 @@ if (scalar(@script_dir) == 0) {
 
 my $script_dir = $script_dir[0] . "/Analizo/scripts";
 
-sub usage {
-  my $status = shift;
-  pod2usage(-verbose => 1, -exitval => "NOEXIT");
-  list_tools();
-  exit($status);
-}
-
 sub list_tools {
-  print("Available commands:\n");
+  print("Available tools:\n");
   print("\n");
-  for my $cmd_program (sort(glob("$script_dir/$suite-*"))) {
+  my @scripts = sort(grep { -x $_ } glob("$script_dir/$suite-*"));
+  for my $cmd_program (@scripts) {
     $cmd_program =~ /^.*$suite-(.*)$/;
     my $cmd = $1;
     printf("    %s\n", $cmd);
   }
   print("\n");
+}
+
+sub run_tool {
+  my ($tool, @args) = @_;
+
+  my $program = "$script_dir/$suite-$tool";
+  if (! -x $program) {
+    printf("\"%s\" is not an %s tool.\n\n", $tool, $suite);
+    list_tools();
+    exit(1);
+  }
+
+  # Do not pass --version option ahead, since the tools don't have a version on
+  # their own.
+  if (grep { $_ eq '--version' } @ARGV) {
+    print("Invalid option: --version\n");
+    exit(1);
+  } else {
+    system($program, @args);
+    exit($? >> 8);
+  }
+}
+
+sub usage {
+  my $status = shift;
+  pod2usage(-verbose => 1, -exitval => "NOEXIT");
+  list_tools();
+  exit($status);
 }
 
 sub show_version {
@@ -141,29 +166,11 @@ if ($tool !~ /^[a-z][a-z-]+$/) {
   if ($tool eq '--version') {
     show_version();
   } elsif($tool eq '--help') {
-    usage(0);
+    run_tool 'doc', __FILE__;
   } else {
     printf("Invalid option: %s\n", $tool);
-    usage(1);
+    exit(1)
   }
 }
 
-my $program = "$script_dir/$suite-$tool";
-if (! -x $program) {
-  printf("\"%s\" is not an %s command.\n\n", $tool, $suite);
-  list_tools();
-  exit(1);
-}
-
-# do not pass --version option ahead, since the tools don't have a version on
-# their own.
-my @args;
-if (grep { $_ eq '--version' } @ARGV) {
-  print("Invalid option: --version\n");
-  system($program, '--help');
-  exit(1);
-} else {
-  system($program, @ARGV);
-  exit($? >> 8);
-}
-
+run_tool($tool, @ARGV);

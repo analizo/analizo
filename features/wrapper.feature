@@ -12,7 +12,7 @@ Feature: analizo wrapper script
 
   Scenario: display help
     When I run "analizo --help"
-    Then the output must match "Usage:"
+    Then the output must match "Analizo documentation"
     And the exit status must be 0
 
   Scenario: display version
