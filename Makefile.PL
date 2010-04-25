@@ -1,15 +1,20 @@
 use ExtUtils::MakeMaker;
+use File::Basename;
 
-my @exe_files = glob('analizo*');
+my %manpages = ();
+for my $script (glob('Analizo/scripts/*')) {
+  $manpages{$script} = 'blib/man1/' . basename($script) . '.1';
+}
 
 WriteMakefile(
   NAME => 'analizo',
   VERSION_FROM => 'analizo',
-  EXE_FILES => \@exe_files,
+  EXE_FILES => ['analizo'],
   PMLIBDIRS => [ 'Analizo' ],
+  MAN1PODS => \%manpages,
   AUTHOR => 'Antonio Terceiro <terceiro@softwarelivre.org>',
   LICENSE => 'perl',
-  ABSTRACT => 'A dependency extractor for C/C++ projects',
+  ABSTRACT => 'Source code analysis toolkit',
   PREREQ_PM => {
       'Class::Accessor::Fast' => 0,
       'Test::Class' => 0,

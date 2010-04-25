@@ -7,6 +7,8 @@ Analizo/Extractor/Sloccount.pm
 Analizo/Metrics.pm
 Analizo/Model.pm
 Analizo/Output/DOT.pm
+Analizo/scripts/analizo-graph
+Analizo/scripts/analizo-metrics
 Gemfile
 HACKING
 MANIFEST
@@ -16,8 +18,6 @@ README
 Rakefile
 TODO
 analizo
-analizo-graph
-analizo-metrics
 features/graph/cluster.feature
 features/graph/help.feature
 features/graph/input-files.feature

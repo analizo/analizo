@@ -90,8 +90,21 @@ list.
 use strict;
 use File::Basename;
 
-my $base = dirname(__FILE__);
+my $top_dir = dirname(__FILE__);
 my $suite = basename(__FILE__);
+
+if (-e "$top_dir/Makefile.PL") {
+  # Development mode: local library dir has precedence
+  unshift @INC, $top_dir;
+}
+
+my @script_dir = grep { -d "$_/Analizo/scripts" } @INC;
+if (scalar(@script_dir) == 0) {
+  print STDERR "E: Could not find analizo scripts directory.\n";
+  exit 1;
+}
+
+my $script_dir = $script_dir[0] . "/Analizo/scripts";
 
 sub usage {
   my $status = shift;
@@ -103,7 +116,7 @@ sub usage {
 sub list_tools {
   print("Available commands:\n");
   print("\n");
-  for my $cmd_program (sort(glob("$base/$suite-*"))) {
+  for my $cmd_program (sort(glob("$script_dir/$suite-*"))) {
     $cmd_program =~ /^.*$suite-(.*)$/;
     my $cmd = $1;
     printf("    %s\n", $cmd);
@@ -132,7 +145,7 @@ if ($tool !~ /^[a-z]+$/) {
   }
 }
 
-my $program = "$base/$suite-$tool";
+my $program = "$script_dir/$suite-$tool";
 if (! -x $program) {
   printf("\"%s\" is not an %s command.\n\n", $tool, $suite);
   list_tools();
