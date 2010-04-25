@@ -94,8 +94,11 @@ my $top_dir = dirname(__FILE__);
 my $suite = basename(__FILE__);
 
 if (-e "$top_dir/Makefile.PL") {
-  # Development mode: local library dir has precedence
+  # Development mode:
+  #   * local library dir has precedence
+  #   * local analizo program has precedence
   unshift @INC, $top_dir;
+  $ENV{PATH} = join(':', ($top_dir, $ENV{PATH}));
 }
 
 my @script_dir = grep { -d "$_/Analizo/scripts" } @INC;
