@@ -57,7 +57,7 @@ end
 
 desc 'updates the AUTHORS file'
 task :authors do
-  sh "(echo 'Andreas Gustafsson <gson@gson.org>'; git log --pretty=format:'%aN <%aE>') | sort | uniq > AUTHORS"
+  sh "(echo 'Andreas Gustafsson <gson@gson.org>'; echo 'Luiz Romário Santana Rios <luizromario@gmail.com>'; git log --pretty=format:'%aN <%aE>') | sort | uniq > AUTHORS"
 end
 
 desc 'checks if there are uncommitted changes in the repo'
