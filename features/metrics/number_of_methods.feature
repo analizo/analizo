@@ -4,7 +4,7 @@ Feature: number of methods
   So that I can evaluate it
 
   Scenario Outline: number of methods of the polygon java sample
-    Given I am in samples/polygons/java
+    Given I am in t/samples/polygons/java
     When I run "analizo metrics ."
     Then analizo must report that module <module> has nom = <nom>
   Examples:

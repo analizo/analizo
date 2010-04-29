@@ -4,7 +4,7 @@ Feature: output statistics values of metrics
   So that I can evaluate a project at once
 
   Scenario Outline: "Hello, world" project
-    Given I am in samples/hello_world/
+    Given I am in t/samples/hello_world/
     When I run "analizo metrics ."
     Then the output must match "<metric>_average:"
     Then the output must match "<metric>_maximum:"

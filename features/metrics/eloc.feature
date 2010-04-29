@@ -4,7 +4,7 @@ Feature: number of abstract classes
   So that I can evaluate it
 
   Scenario Outline: "Hello, world" project
-    Given I am in samples/hello_world/<language>
+    Given I am in t/samples/hello_world/<language>
     When I run "analizo metrics ."
     Then analizo must report that the project has total_eloc = <eloc>
   Examples:
