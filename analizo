@@ -91,17 +91,14 @@ list.
 =cut
 
 use strict;
-use File::Basename;
+use FindBin qw($Bin $Script);
 
-my $top_dir = dirname(__FILE__);
-my $suite = basename(__FILE__);
-
-if (-e "$top_dir/Makefile.PL") {
+if (-e "$Bin/Makefile.PL") {
   # Development mode:
   #   * local library dir has precedence
   #   * local analizo program has precedence
-  unshift @INC, $top_dir;
-  $ENV{PATH} = join(':', ($top_dir, $ENV{PATH}));
+  unshift @INC, $Bin;
+  $ENV{PATH} = join(':', ($Bin, $ENV{PATH}));
 }
 
 my @script_dir = grep { -d "$_/Analizo/scripts" } @INC;
@@ -115,9 +112,9 @@ my $script_dir = $script_dir[0] . "/Analizo/scripts";
 sub list_tools {
   print("Available tools:\n");
   print("\n");
-  my @scripts = sort(grep { -x $_ } glob("$script_dir/$suite-*"));
+  my @scripts = sort(grep { -x $_ } glob("$script_dir/$Script-*"));
   for my $cmd_program (@scripts) {
-    $cmd_program =~ /^.*$suite-(.*)$/;
+    $cmd_program =~ /^.*$Script-(.*)$/;
     my $cmd = $1;
     printf("    %s\n", $cmd);
   }
@@ -127,9 +124,9 @@ sub list_tools {
 sub run_tool {
   my ($tool, @args) = @_;
 
-  my $program = "$script_dir/$suite-$tool";
+  my $program = "$script_dir/$Script-$tool";
   if (! -x $program) {
-    printf("\"%s\" is not an %s tool.\n\n", $tool, $suite);
+    printf("\"%s\" is not an %s tool.\n\n", $tool, $Script);
     list_tools();
     exit(1);
   }
@@ -153,7 +150,7 @@ sub usage {
 }
 
 sub show_version {
-  printf("$suite version %s\n", $VERSION);
+  printf("$Script version %s\n", $VERSION);
   exit(0);
 }
 
