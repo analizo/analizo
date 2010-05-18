@@ -1,3 +1,5 @@
+Feature: clustering subroutines in the same module together
+
   Scenario: clustering dependencies
     Given I am in t/sample/
     When I run "analizo graph --cluster ."

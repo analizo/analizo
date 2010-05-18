@@ -1,3 +1,5 @@
+Feature: plain analizo graph run
+
   Scenario: simply running analizo
     Given I am in t/sample/
     When I run "analizo graph ."
