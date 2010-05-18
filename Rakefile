@@ -22,7 +22,7 @@ end
 desc 'Run unit tests'
 task 'test' do
   banner 'Unit tests'
-  sh('prove t/')
+  sh('prove -Ilib t/')
 end
 
 desc 'Run acceptance tests'
