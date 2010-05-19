@@ -97,7 +97,9 @@ if (-e "$Bin/Makefile.PL") {
   # Development mode:
   #   * local library dir has precedence
   #   * local analizo program has precedence
-  unshift @INC, "$Bin/lib";
+  my $local_lib = "$Bin/lib";
+  unshift @INC, $local_lib;
+  $ENV{PERL5LIB} = $ENV{PERL5LIB} ? join(':', ($local_lib, $ENV{PERL5LIB})) : $local_lib;
   $ENV{PATH} = join(':', ($Bin, $ENV{PATH}));
 }
 
