@@ -193,6 +193,18 @@ analizo evolution-matrix [OPTION] ... ymlfile [ymlfile [ymlfile ...]]
 
 =head1 DESCRIPTION
 
+B<analizo evolution-matrix> generates evolution matrices from project metrics
+data.
+
+The evolution matrix is a techinique for software evolution analysis
+introduced in
+I<Lanza, M. 2001. The evolution matrix: recovering software evolution using
+software visualization techniques. In Proceedings of the 4th international
+Workshop on Principles of Software Evolution (Vienna, Austria, September 10 -
+11, 2001). IWPSE '01. ACM, New York, NY, 37-42. DOI=
+http://doi.acm.org/10.1145/602461.602467>. Please refer to that paper for a
+very nice explanation of the uses for an evolution matrix.
+
 B<analizo evolution-matrix> will process the YML files passed in the command
 line and generate an evolution matrix. To do that we assume that the YML
 files are name as project-name-I<X.Y.X>.yml, where I<X.Y.Z> represents the
