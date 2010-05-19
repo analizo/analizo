@@ -35,20 +35,10 @@ See B<analizo(1)>
 
 display_analizo_doc(){
   file="$1"
-  if grep -q '^#!.*perl' "$1"; then
-    # Perl programs
-    if [ "$usage" = 'true' ]; then
-      pod2usage --verbose 1 "$1"
-    else
-      pod2man --name="$(basename $file)" --release="$(analizo --version)" --center="Analizo documentation" "$1" | man -l -
-    fi
+  if [ "$usage" = 'true' ]; then
+    pod2usage --verbose 1 "$1"
   else
-    # non-Perl programs
-    if [ "$usage" = 'true' ]; then
-      sed -e '/^#[*]/!d ; s/^#[*] \?//;' "$1" | pod2text
-    else
-      sed -e '/^#[#*]/!d ; s/^#[#*] \?//;' "$1" | pod2man --name="$(basename $file)" --release="$(analizo --version)" --center="Analizo documentation" | man -l -
-    fi
+    pod2man --name="$(basename $file)" --release="$(analizo --version)" --center="Analizo documentation" "$1" | man -l -
   fi
 }
 
