@@ -97,7 +97,7 @@ if $PROGRAM_NAME == __FILE__
   opts.each do |opt, arg|
     case opt
     when '--help'
-      system 'analizo', 'doc', __FILE__
+      exec 'analizo', 'doc', __FILE__
     when '--name'
       matrix.name = arg
     when '--width'
