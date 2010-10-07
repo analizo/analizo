@@ -3,6 +3,7 @@ require 'fileutils'
 top_dir = FileUtils.pwd
 saved_path = ENV["PATH"]
 saved_perl5lib = ENV["PERL5LIB"]
+ENV['LC_ALL'] = 'C'
 
 Before do
   ENV['PATH'] = top_dir + ':' + ENV['PATH']
