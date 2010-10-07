@@ -19,9 +19,18 @@ sub alias {
   exists $aliases{$alias} ? $aliases{$alias} : $alias;
 }
 
+sub sanitize {
+  my ($extractor_name) = @_;
+  if ($extractor_name =~ /^\w+$/) {
+    return $extractor_name;
+  } else {
+    return 'Doxyparse';
+  }
+}
+
 sub load {
-  shift; # discard self ref
-  my $extractor_method = alias shift;
+  my ($self, $extractor_method) = @_;
+  $extractor_method = alias(sanitize($extractor_method));
   my $extractor = "Analizo::Extractor::$extractor_method";
 
   eval "use $extractor";

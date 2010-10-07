@@ -49,4 +49,10 @@ sub load_doxyparse_extractor_by_alias : Tests {
   }
 }
 
+sub dont_allow_code_injection: Tests {
+  lives_ok {
+    isa_ok(Analizo::Extractor->load('Doxyparse; die("BOOM!")'), 'Analizo::Extractor::Doxyparse');
+  }
+}
+
 ExtractorTests->runtests;

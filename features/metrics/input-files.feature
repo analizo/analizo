@@ -10,4 +10,13 @@ Feature: input files for metrics tool
   Scenario: passing unexisting file
     Given I am in t/samples/sample_basic/
     When I run "analizo metrics unexisting-file.c"
-    Then analizo must emit a warning matching "<input> must be readable but the supplied value .* isn't"
+    Then the exit status must not be 0
+    And analizo must emit a warning matching "not readable"
+
+  Scenario: passing unreadable file
+    Given I am in .
+    When I run "touch unreadable.tmp"
+    And I run "chmod 000 unreadable.tmp"
+    When I run "analizo metrics unreadable.c"
+    Then the exit status must not be 0
+    And analizo must emit a warning matching "not readable"
