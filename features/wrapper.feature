@@ -1,7 +1,7 @@
 Feature: analizo wrapper script
 
   Scenario: invoking a tool
-    When I run "analizo metrics --help"
+    When I run "analizo metrics"
     Then the output must match "Usage:"
     And the output must match "analizo.metrics"
 

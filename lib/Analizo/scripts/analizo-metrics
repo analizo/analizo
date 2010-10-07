@@ -29,7 +29,7 @@ supported by doxyparse are processed.
 
 =item --help
 
-Displays a help message on how to use this tool.
+Displays the manual page.
 
 =item --list | -l
 
@@ -82,6 +82,10 @@ GetOptions(
   'output=s'    => \$__output,
   'help'        => \$__help,
 ) or exit(1);
+
+if ($__help) {
+  exec('analizo', 'doc', __FILE__)
+}
 
 if($__list){
     my $metrics_handler = new Analizo::Metrics(model => new Analizo::Model);
