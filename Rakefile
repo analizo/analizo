@@ -1,5 +1,3 @@
-task :default => ['test', 'cucumber']
-
 def cucumber(args)
   options = "--format progress #{args}"
   if system("which cucumber")
@@ -19,16 +17,40 @@ def banner(msg)
   puts banner_format % ('=' * 72)
 end
 
-desc 'Run unit tests'
-task 'test' do
-  banner 'Unit tests'
+desc 'Run Perl unit tests'
+task 'test:perl' do
+  banner 'Perl unit tests'
   sh('prove -Ilib t/')
+end
+
+require 'rake/testtask'
+Rake::TestTask.new('test:ruby:run') do |t|
+  t.libs << "test"
+  t.test_files = FileList['test/*_test.rb']
+  t.verbose = true
+end
+
+task 'test:ruby' do
+  banner 'Ruby unit tests'
+  Rake::Task['test:ruby:run'].invoke
 end
 
 desc 'Run acceptance tests'
 task 'cucumber' do
   banner 'Acceptance tests'
   cucumber '--tags ~@wip features/'
+end
+
+task :default do
+  errors = ['test:perl', 'test:ruby', 'cucumber'].map do |task|
+    begin
+      Rake::Task[task].invoke
+      nil
+    rescue => e
+      task
+    end
+  end.compact
+  abort "Errors running #{errors.inspect}!" if errors.any?
 end
 
 desc "Run all acceptance tests (even those marked as WIP)"
