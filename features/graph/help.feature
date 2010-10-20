@@ -1,4 +1,4 @@
 Feature: displaying version
-  Scenario: running with --help
-    When I run "analizo graph --help"
+  Scenario: running without any arguments
+    When I run "analizo graph"
     Then the output must match "Usage:"

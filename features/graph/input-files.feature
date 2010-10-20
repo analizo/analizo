@@ -10,4 +10,4 @@ Feature: input files for graph tool
   Scenario: passing unexisting file
     Given I am in t/samples/sample_basic/
     When I run "analizo graph unexisting-file.c"
-    Then analizo must emit a warning matching "<input> must be readable but the supplied value .* isn't"
+    Then analizo must emit a warning matching "is not readable"
