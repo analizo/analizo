@@ -1,6 +1,4 @@
 * change metrics and graph scripts to call `analizo doc` on --help
-  * requires dropping Getopt::Euclid and using Getopt::Long
-* remove declared dependency on Getopt::Euclid.
 * provide short version for all command-line switches in all tools!
 * analizo-metrics-history: try to remove dependency on grit
 * remove all usage of shift when getting method arguments

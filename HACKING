@@ -18,7 +18,7 @@ Install the needed Debian packages:
 
   $ wget -q -O - http://app.dcc.ufba.br/~terceiro/analizo/signing-key.asc | sudo apt-key add -
   $ sudo apt-get update
-  $ sudo apt-get install doxyparse libgetopt-euclid-perl libgraph-perl liblist-compare-perl libtest-class-perl libtest-exception-perl libyaml-perl libclass-accessor-perl
+  $ sudo apt-get install doxyparse libgraph-perl liblist-compare-perl libtest-class-perl libtest-exception-perl libyaml-perl libclass-accessor-perl
 
 If you don't plan to develop analizo (i.e. you only want to use it), you can stop
 here.
@@ -33,7 +33,6 @@ Long version (general instructions):
 
 Install the following Perl modules, using CPAN or your native package manager:
 
-  * Getopt::Euclid
   * Graph
   * Test::Class
   * List::Compare

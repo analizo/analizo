@@ -18,7 +18,6 @@ WriteMakefile(
   PREREQ_PM => {
       'Class::Accessor::Fast' => 0,
       'Test::Class' => 0,
-      'Getopt::Euclid' => 0,
       'List::Compare' => 0,
       'Graph' => 0,
       'YAML' => 0,
