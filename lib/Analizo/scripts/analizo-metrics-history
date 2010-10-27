@@ -85,9 +85,30 @@ class AnalizoRunner
   end
 end
 
+def usage(status)
+  puts "Usage: #{$PROGRAM_NAME} [OPTIONS] directory"
+  exit(status)
+end
+
+require 'getoptlong'
+require 'rdoc/usage'
+
+opts = GetoptLong.new(
+  [ '--help', '-h', GetoptLong::NO_ARGUMENT ],
+  [ '--usage', GetoptLong::NO_ARGUMENT ]
+)
+
+opts.each do |opt,value|
+  case opt
+  when '--help'
+    exec 'analizo', 'doc', __FILE__
+  when '--usage'
+    usage(0)
+  end
+end
+
 if !ARGV[0] then
-  puts "Usage: #{$PROGRAM_NAME} directory"
-  exit
+  usage(1)
 end
 begin
   tree = Grit::Repo.new(ARGV[0]).commits.first
@@ -143,3 +164,57 @@ end
 system("echo \"Log closed at: #{Time.now}\" >> git.log")
 system("echo \"Log closed at: #{Time.now}\" >> analizo.log")
 system("echo \"Log closed at: #{Time.now}\" >> doxyparse.log")
+
+__END__
+
+=head1 NAME
+
+analizo metrics-history - processes a Git repository collection metrics for
+every single revision.
+
+=head1 USAGE
+
+analizo metrics-history [OPTION] DIRECTORY
+
+=head1 DESCRIPTION
+
+B<analizo metrics-history> will process I<DIRECTORY>, a Git repository with a
+working copy of the source code (i.e. not a bare git repository), checkout
+every relevant commit and run B<analizo metrics> on it. The metrics for all of
+the revisions will be accumulated in a file called I<metrics.csv> inside
+I<DIRECTORY>.
+
+=head1 RELEVANT COMMITS
+
+B<analizo metrics-history> considers as relevant the commits that changed at
+least one source code file. Consequently, it skips all the commits where no
+source code file was changed, such as documentation, translations, build system
+changes, etc.
+
+Currently we support C, C++ and Java projects, and therefore files considered
+source code are the ones terminated in I<.c>, I<.h>, I<.cpp>, I<.cxx>, I<.cc>,
+I<.hpp>, and I<.java>.
+
+=head1 OPTIONS
+
+=over
+
+=item --help
+
+Displays help for B<analizo metrics-history>.
+
+=item --usage
+
+Displays usage information for B<analizo metrics-history>.
+
+=back
+
+=head1 SEE ALSO
+
+B<analizo-metrics(1)>
+
+=head1 COPYRIGHT AND AUTHORS
+
+See B<analizo(1)>
+
+=cut

@@ -1,4 +1,3 @@
-* change metrics and graph scripts to call `analizo doc` on --help
 * provide short version for all command-line switches in all tools!
 * analizo-metrics-history: try to remove dependency on grit
 * remove all usage of shift when getting method arguments
