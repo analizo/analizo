@@ -210,6 +210,23 @@ sub lcom4_3 : Tests {
   is($metrics->lcom4('mod1'), 2, 'functions outside the module don\'t count for LCOM4');
 }
 
+sub sc_definition : Tests {
+  local *Analizo::Metrics::lcom4 = sub { 2 };
+  local *Analizo::Metrics::cbo = sub { 3 };
+  is($metrics->sc('mod1'), 6);
+}
+
+sub sc_implementation : Tests {
+  my $lcom4_called = undef;
+  my $cbo_called = undef;
+  local *Analizo::Metrics::lcom4 = sub { $lcom4_called = 1; return 2; };
+  local *Analizo::Metrics::cbo = sub { $cbo_called = 1; return 5; };
+  my $sc = $metrics->sc('mod1');
+  ok($lcom4_called);
+  ok($cbo_called);
+  is($sc, 10);
+}
+
 #Methods Per Abstract Class
 sub methods_per_abstract_class : Tests {
   is($metrics->methods_per_abstract_class, 0, 'no abstract classes');
