@@ -219,8 +219,8 @@ sub sc_definition : Tests {
 sub sc_implementation : Tests {
   my $lcom4_called = undef;
   my $cbo_called = undef;
-  local *Analizo::Metrics::lcom4 = sub { $lcom4_called = 1; return 2; };
-  local *Analizo::Metrics::cbo = sub { $cbo_called = 1; return 5; };
+  local *Analizo::Metrics::lcom4 = sub { $lcom4_called = ($_[0] == $metrics && $_[1] eq 'mod1'); return 2; };
+  local *Analizo::Metrics::cbo = sub { $cbo_called = ($_[0] == $metrics && $_[1] eq 'mod1'); return 5; };
   my $sc = $metrics->sc('mod1');
   ok($lcom4_called);
   ok($cbo_called);
