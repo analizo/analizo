@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 use Pod::Usage;
-our $VERSION = '1.14.0';
+our $VERSION = '1.15.0';
 
 =head1 NAME
 
@@ -33,6 +33,9 @@ passing "." or "./src" as input directories).
 
 The options and output are specific to each tool, so make sure to read the
 corresponding manual for the tool(s) you want.
+
+Run B<analizo> withtout any command line arguments to see the list of available
+tools.
 
 =head1 OPTIONS
 
@@ -88,10 +91,58 @@ list.
 =cut
 
 use strict;
-use File::Basename;
+use FindBin qw($Bin $Script);
 
-my $base = dirname(__FILE__);
-my $suite = basename(__FILE__);
+if (-e "$Bin/Makefile.PL") {
+  # Development mode:
+  #   * local library dir has precedence
+  #   * local analizo program has precedence
+  my $local_lib = "$Bin/lib";
+  unshift @INC, $local_lib;
+  $ENV{PERL5LIB} = $ENV{PERL5LIB} ? join(':', ($local_lib, $ENV{PERL5LIB})) : $local_lib;
+  $ENV{PATH} = join(':', ($Bin, $ENV{PATH}));
+}
+
+my @script_dir = grep { -d "$_/Analizo/scripts" } @INC;
+if (scalar(@script_dir) == 0) {
+  print STDERR "E: Could not find analizo scripts directory.\n";
+  exit 1;
+}
+
+my $script_dir = $script_dir[0] . "/Analizo/scripts";
+
+sub list_tools {
+  print("Available tools:\n");
+  print("\n");
+  my @scripts = sort(grep { -x $_ } glob("$script_dir/$Script-*"));
+  for my $cmd_program (@scripts) {
+    $cmd_program =~ /^.*$Script-(.*)$/;
+    my $cmd = $1;
+    printf("    %s\n", $cmd);
+  }
+  print("\n");
+}
+
+sub run_tool {
+  my ($tool, @args) = @_;
+
+  my $program = "$script_dir/$Script-$tool";
+  if (! -x $program) {
+    printf("\"%s\" is not an %s tool.\n\n", $tool, $Script);
+    list_tools();
+    exit(1);
+  }
+
+  # Do not pass --version option ahead, since the tools don't have a version on
+  # their own.
+  if (grep { $_ eq '--version' } @ARGV) {
+    print("Invalid option: --version\n");
+    exit(1);
+  } else {
+    system($program, @args);
+    exit($? >> 8);
+  }
+}
 
 sub usage {
   my $status = shift;
@@ -100,19 +151,8 @@ sub usage {
   exit($status);
 }
 
-sub list_tools {
-  print("Available commands:\n");
-  print("\n");
-  for my $cmd_program (sort(glob("$base/$suite-*"))) {
-    $cmd_program =~ /^.*$suite-(.*)$/;
-    my $cmd = $1;
-    printf("    %s\n", $cmd);
-  }
-  print("\n");
-}
-
 sub show_version {
-  printf("$suite version %s\n", $VERSION);
+  printf("$Script version %s\n", $VERSION);
   exit(0);
 }
 
@@ -121,33 +161,15 @@ if (scalar(@ARGV) == 0) {
 }
 
 my $tool = shift(@ARGV);
-if ($tool !~ /^[a-z]+$/) {
+if ($tool !~ /^[a-z][a-z-]+$/) {
   if ($tool eq '--version') {
     show_version();
   } elsif($tool eq '--help') {
-    usage(0);
+    run_tool 'doc', __FILE__;
   } else {
     printf("Invalid option: %s\n", $tool);
-    usage(1);
+    exit(1)
   }
 }
 
-my $program = "$base/$suite-$tool";
-if (! -x $program) {
-  printf("\"%s\" is not an %s command.\n\n", $tool, $suite);
-  list_tools();
-  exit(1);
-}
-
-# do not pass --version option ahead, since the tools don't have a version on
-# their own.
-my @args;
-if (grep { $_ eq '--version' } @ARGV) {
-  print("Invalid option: --version\n");
-  system($program, '--help');
-  exit(1);
-} else {
-  system($program, @ARGV);
-  exit($? >> 8);
-}
-
+run_tool($tool, @ARGV);

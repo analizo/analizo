@@ -4,7 +4,7 @@ Feature: output only global metrics
   So that I can evaluate several projects at once
 
   Background:
-    Given I am in t/sample/
+    Given I am in t/samples/sample_basic/
 
   Scenario: simple case
     When I run "analizo metrics --global-only ."

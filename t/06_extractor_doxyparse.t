@@ -136,7 +136,7 @@ sub detect_abstract_class : Tests {
 
 sub reading_from_one_input_file : Tests {
   # set up
-  my $sample_dir = dirname(__FILE__) . '/sample';
+  my $sample_dir = dirname(__FILE__) . '/samples/sample_basic';
   my $extractor = Analizo::Extractor->load('Doxyparse');
 
   # one file
@@ -149,7 +149,7 @@ sub reading_from_one_input_file : Tests {
 
 sub reading_from_some_input_files : Tests {
   # set up
-  my $sample_dir = dirname(__FILE__) . '/sample';
+  my $sample_dir = dirname(__FILE__) . '/samples/sample_basic';
   my $extractor = Analizo::Extractor->load('Doxyparse');
 
   # some files
@@ -162,7 +162,7 @@ sub reading_from_some_input_files : Tests {
 
 sub reading_from_directories : Tests {
   # set up
-  my $sample_dir = dirname(__FILE__) . '/sample';
+  my $sample_dir = dirname(__FILE__) . '/samples/sample_basic';
   my $extractor = Analizo::Extractor->load('Doxyparse');
 
   # directory

@@ -4,7 +4,7 @@ Feature: number of abstract classes
   So that I can evaluate it
 
   Scenario Outline: "Hello, world" project
-    Given I am in samples/hello_world/<language>
+    Given I am in t/samples/hello_world/<language>
     When I run "analizo metrics ."
     Then analizo must report that the project has total_modules_with_defined_methods = 2
   Examples:
@@ -13,7 +13,7 @@ Feature: number of abstract classes
     | java     |
 
   Scenario Outline: "Animals" project
-    Given I am in samples/animals/<language>
+    Given I am in t/samples/animals/<language>
     When I run "analizo metrics ."
     Then analizo must report that the project has total_modules_with_defined_methods = 4
   Examples:

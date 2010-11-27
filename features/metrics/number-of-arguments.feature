@@ -4,7 +4,7 @@ Feature: number of arguments metric
   So that I can evaluate my code
 
   Scenario Outline: number of parameters in the "Animals" project
-    Given I am in samples/animals/<language>
+    Given I am in t/samples/animals/<language>
     When I run "analizo metrics ."
     Then analizo must report that module Dog has anpm = 0.5
     And  analizo must report that module Cat has anpm = 0.5

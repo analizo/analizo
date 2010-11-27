@@ -4,7 +4,7 @@ Feature: multi-language support
   In order do compare them
 
   Scenario Outline: dependency between modules
-    Given I am in samples/hello_world/<language>
+    Given I am in t/samples/hello_world/<language>
     When I run "analizo graph --modules ."
     Then analizo must report that "<main_module>" depends on "<hello_world_module>"
   Examples:
@@ -14,7 +14,7 @@ Feature: multi-language support
     | java     | Main        | HelloWorld         |
 
   Scenario Outline: dependency between specific functions
-    Given I am in samples/hello_world/<language>
+    Given I am in t/samples/hello_world/<language>
     When I run "analizo graph ."
     Then analizo must report that "<main_function>" depends on "<hello_say>"
     And  analizo must report that "<main_function>" depends on "<hello_destroy>"
@@ -25,7 +25,7 @@ Feature: multi-language support
     | java     | Main::main(String[]) | HelloWorld::say()                           | HelloWorld::destroy()                           |
 
   Scenario Outline: intra-module dependencies
-    Given I am in samples/hello_world/<language>
+    Given I am in t/samples/hello_world/<language>
     When I run "analizo graph ."
     Then analizo must report that "<hello_say>" depends on "<hello_id>"
     And  analizo must report that "<hello_destroy>" depends on "<hello_id>"
@@ -36,7 +36,7 @@ Feature: multi-language support
     | java     | HelloWorld::say()                           | HelloWorld::destroy()                           | HelloWorld::_id               |
 
   Scenario Outline: some metrics
-    Given I am in samples/hello_world/<language>
+    Given I am in t/samples/hello_world/<language>
     When I run "analizo metrics ."
     Then analizo must report that the project has total_modules = 2
     And analizo must report that module <main_module> has nom = 1
@@ -50,7 +50,7 @@ Feature: multi-language support
     | java     | Main        | HelloWorld         | 4               | 1                 |
 
   Scenario Outline: inheritance data
-    Given I am in samples/animals/<language>
+    Given I am in t/samples/animals/<language>
     When I run "analizo graph --modules ."
     Then analizo must report that "Cat" depends on "Mammal"
     Then analizo must report that "Dog" depends on "Mammal"
@@ -66,7 +66,7 @@ Feature: multi-language support
     | java     |
 
   Scenario Outline: argument versus instance variable
-    Given I am in samples/printer/<language>
+    Given I am in t/samples/printer/<language>
     When I run "analizo graph ."
     Then analizo must report that "Printer1::Printer1(<msg_type>)" depends on "Printer1::message"
     Then analizo must report that "Printer2::Printer2(<msg_type>)" depends on "Printer2::message"
@@ -77,7 +77,7 @@ Feature: multi-language support
 
   # not sure what to expect in this case
   Scenario: mixed Java and C
-    Given I am in samples/mixed
+    Given I am in t/samples/mixed
     When I run "analizo metrics ."
     And the output must match "_module: native_backend"
     Then the output must match "_module: UI"

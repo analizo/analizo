@@ -4,7 +4,7 @@ Feature: number of abstract classes
   So that I can evaluate it
 
   Scenario Outline: "Hello, world" project
-    Given I am in samples/hello_world/<language>
+    Given I am in t/samples/hello_world/<language>
     When I run "analizo metrics ."
     Then analizo must report that the project has total_abstract_classes = 0
   Examples:
@@ -13,7 +13,7 @@ Feature: number of abstract classes
     | java     |
 
   Scenario Outline: "Animals" project
-    Given I am in samples/animals/<language>
+    Given I am in t/samples/animals/<language>
     When I run "analizo metrics ."
     Then analizo must report that the project has total_abstract_classes = 1
   Examples:
@@ -22,7 +22,7 @@ Feature: number of abstract classes
     | java     |
 
   Scenario Outline: "Polygons" project
-    Given I am in samples/polygons/<language>
+    Given I am in t/samples/polygons/<language>
     When I run "analizo metrics ."
     Then analizo must report that the project has total_abstract_classes = 2
   Examples:

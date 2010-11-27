@@ -1,5 +1,7 @@
+Feature: clustering subroutines in the same module together
+
   Scenario: clustering dependencies
-    Given I am in t/sample/
+    Given I am in t/samples/sample_basic/
     When I run "analizo graph --cluster ."
     Then analizo must report that "module1::main()" is part of "module1"
     Then analizo must report that "module2::say_hello()" is part of "module2"

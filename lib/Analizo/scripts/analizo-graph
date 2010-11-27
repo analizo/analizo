@@ -1,7 +1,5 @@
 #!/usr/bin/perl -w
 
-use Getopt::Euclid;
-
 =head1 NAME
 
 analizo graph - dependency graph generator
@@ -31,9 +29,6 @@ you pass entire source directories. If you pass just a couple of files, their
 dependencies on modules that are not declared and/or implemented in those
 files will not be calculated.
 
-=for Euclid:
-  input.type: readable
-
 =back
 
 =head1 OPTIONS
@@ -44,10 +39,6 @@ files will not be calculated.
 
 Omit the given functions from the call graph.  Multiple function names
 may be given separated by commas.
-
-=for Euclid:
-  functions.type: string
-  functions.type.error: --omit must be given a comma-separated list of function names
 
 =item --cluster
 
@@ -70,16 +61,9 @@ It doesn't make much sense to use --modules together with --cluster.
 Define wich extractor method use to analise source code. Currenly "Doxyparse"
 is the only extractor available.  Default is Doxyparse.
 
-=for Euclid:
-  extractor.type: string, extractor =~ /\A\w+\Z/
-  extractor.default: 'Doxyparse'
-
-=item --output <file>
+=item --output <file> | -o <file>
 
 Use a file as output
-
-=for Euclid:
-  file.type: writeable
 
 =item --help
 
@@ -150,24 +134,60 @@ use strict;
 use Analizo::Extractor;
 use Analizo::Output::DOT;
 
-my $extractor = Analizo::Extractor->load($ARGV{'--extractor'});
+use Pod::Usage;
+use Getopt::Long;
+
+my $__extractor = 'Doxyparse';
+my $__omit = '';
+my $__cluster = undef;
+my $__modules = undef;
+my $__output = undef;
+my $__help = undef;
+GetOptions(
+  'extractor=s' => \$__extractor,
+  'omit=s'      => \$__omit,
+  'cluster'     => \$__cluster,
+  'modules'     => \$__modules,
+  'output=s'    => \$__output,
+  'help'        => \$__help,
+) or exit(1);
+
+if ($__help) {
+  exec('analizo', 'doc', __FILE__)
+}
+
+if(!@ARGV){
+    pod2usage(-verbose => 1, -exitval => 0)
+}
+
+my $extractor = Analizo::Extractor->load($__extractor);
 my $model = $extractor->model;
 my $output = new Analizo::Output::DOT(model => $model);
 
 # functions to omit
-for my $omited (split(/,/, $ARGV{'--omit'} || '')) {
+for my $omited (split(/,/, $__omit)) {
   $output->omit($omited);
 }
 
 # whether to cluster functions by file or not
-$output->cluster($ARGV{'--cluster'});
+$output->cluster($__cluster);
 
 # wheter to group by module or not
-$output->group_by_module($ARGV{'--modules'});
+$output->group_by_module($__modules);
 
-$extractor->process(@{$ARGV{'<input>'}});
+my @unreadable = grep { ! -r $_ || ! -e $_ } @ARGV;
+if (@unreadable) {
+  foreach my $file (@unreadable) {
+    printf STDERR "%s: %s is not readable\n", 'analizo metrics', $file;
+  }
+  exit(2);
+}
 
-open STDOUT, '>', $ARGV{'--output'} if $ARGV{'--output'};
+$extractor->process(@ARGV);
+
+if ($__output) {
+  open STDOUT, '>', $__output or die($!);
+}
 print $output->string;
 close STDOUT;
 

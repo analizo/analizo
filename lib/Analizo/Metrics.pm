@@ -17,6 +17,7 @@ my %DESCRIPTIONS = (
   cbo       => "Coupling Between Objects",
   dit       => "Depth of Inheritance Tree",
   lcom4     => "Lack of Cohesion of Methods ",
+  sc        => "Structural Complexity (CBO X LCOM4)",
   mmloc     => "Max Method LOC",
   noa       => "Number of Attributes",
   noc       => "Number of Children",
@@ -147,6 +148,11 @@ sub lcom4 {
   }
   my @components = $graph->weakly_connected_components;
   return scalar @components;
+}
+
+sub sc {
+  my ($self, $module) = @_;
+  return $self->lcom4($module) * $self->cbo($module);
 }
 
 #Number of Attributes
@@ -283,6 +289,7 @@ sub _report_module {
   my $cbo                  = $self->cbo($module);
   my $dit                  = $self->dit($module);
   my $lcom4                = $self->lcom4($module);
+  my $sc                   = $self->sc($module);
   my $noa                  = $self->noa($module);
   my $noc                  = $self->noc($module);
   my $nom                  = $self->nom($module);
@@ -301,6 +308,7 @@ sub _report_module {
     cbo                  => $cbo,
     dit                  => $dit,
     lcom4                => $lcom4,
+    sc                   => $sc,
     mmloc                => $mmloc,
     noa                  => $noa,
     noc                  => $noc,
@@ -328,6 +336,7 @@ sub report {
     cbo       => 0,
     dit       => 0,
     lcom4     => 0,
+    sc        => 0,
     mmloc     => 0,
     noa       => 0,
     noc       => 0,

@@ -1,14 +1,12 @@
 #!/usr/bin/perl
 
-use Getopt::Euclid;
-
 =head1 NAME
 
 analizo metrics - analizo's metric reporting tool
 
 =head1 SYNOPSIS
 
-  analizo metrics [options] [<input> ...]
+  analizo metrics [options] <input> [<input> ...]
 
 =head1 DESCRIPTION
 
@@ -26,16 +24,12 @@ analizo metrics is part of the analizo suite.
 
 Define wich extractor method use to analise source code. Default is Doxyparse.
 
-=for Euclid:
-  extractor.type: string, extractor =~ /\A\w+\Z/
-  extractor.default: 'Doxyparse'
-
 When using the Doxyparse extractor (default), all files matching the languages
 supported by doxyparse are processed.
 
 =item --help
 
-Displays a help message on how to use this tool.
+Displays the manual page.
 
 =item --list | -l
 
@@ -45,15 +39,9 @@ Displays metric list
 
 Tells analizo which source code directory(ies) you want to parse.
 
-=for Euclid:
-  input.type: readable
+=item --output <file> | -o <file>
 
-=item --output <file>
-
-Use a file as output
-
-=for Euclid:
-  file.type: writeable
+Writes the output to <file> instead of standard output.
 
 =item --global-only | -g
 
@@ -79,7 +67,27 @@ use Analizo::Extractor;
 use Analizo::Metrics;
 use Analizo::Extractor::Sloccount;
 
-if($ARGV{'--list'}){
+use Pod::Usage;
+use Getopt::Long;
+my $__list        = undef;
+my $__extractor   = 'Doxyparse';
+my $__global_only = undef;
+my $__output      = undef;
+my $__help        = undef;
+
+GetOptions(
+  'list'        => \$__list,
+  'extractor=s' => \$__extractor,
+  'global-only' => \$__global_only,
+  'output=s'    => \$__output,
+  'help'        => \$__help,
+) or exit(1);
+
+if ($__help) {
+  exec('analizo', 'doc', __FILE__)
+}
+
+if($__list){
     my $metrics_handler = new Analizo::Metrics(model => new Analizo::Model);
     my %metrics = $metrics_handler->list_of_metrics();
     my %global_metrics = $metrics_handler->list_of_global_metrics();
@@ -96,24 +104,34 @@ if($ARGV{'--list'}){
     exit(0);
 }
 
-if($ARGV{'<input>'} =~ /^\s*$/){
-    printf("%s: No input files!\n", 'analizo metrics');
-    exit(0);
+my @unreadable = grep { ! -r $_ || ! -e $_ } @ARGV;
+if (@unreadable) {
+  foreach my $file (@unreadable) {
+    printf STDERR "%s: %s is not readable\n", 'analizo metrics', $file;
+  }
+  exit(2);
 }
 
-my $extractor = Analizo::Extractor->load($ARGV{'--extractor'});
+if(!@ARGV){
+    pod2usage(-verbose => 1, -exitval => 0)
+}
+
+my $extractor = Analizo::Extractor->load($__extractor);
 my $eloc_extractor = Analizo::Extractor::Sloccount->new(model => $extractor->model);
 my $metrics = Analizo::Metrics->new(model => $extractor->model);
 
-if ($ARGV{'--global-only'}) {
+if ($__global_only) {
   $metrics->report_global_metrics_only(1);
 }
 
 
-$extractor->process(@{$ARGV{'<input>'}});
-$eloc_extractor->process(@{$ARGV{'<input>'}});
+$extractor->process(@ARGV);
+$eloc_extractor->process(@ARGV);
 
-open STDOUT, '>', $ARGV{'--output'} if $ARGV{'--output'};
+if ($__output) {
+  open STDOUT, '>', $__output or die($!);
+}
+
 print $metrics->report;
 close STDOUT;
 

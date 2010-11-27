@@ -1,0 +1,199 @@
+#!/bin/sh
+
+: <<=cut
+=head1 NAME
+
+analizo metrics-batch - processes several source code directories in batch,
+running B<analizo metrics> for each and optionally consolidating the results in
+a single data file.
+
+=head1 USAGE
+
+analizo metrics-batch [OPTIONS] [directory [directory ...]]
+
+=head1 DESCRIPTION
+
+B<analizo metrics-batch> is useful when you want to analyze several projects at
+once, or several different versions of the same project. For example, suppose
+you want to process 5 consecutive releases of I<myproject>, from version 0.1.0
+to 0.5.0.
+
+=over
+
+=item
+
+First you unpack the release tarballs for those versions in a directory, say
+/tmp/analysis:
+
+  $ ls -1 /tmp/analysis
+  myproject-0.1.0
+  myproject-0.2.0
+  myproject-0.3.0
+  myproject-0.4.0
+  myproject-0.5.0
+
+=item
+
+Then you change to that directory, and then run B<analizo metrics-batch>:
+
+  $ cd /tmp/analysis
+  $ analizo metrics-batch
+
+=item
+
+For each directory, B<analizo metrics-batch> will drop a YML data file, e.g.
+
+  $ ls -1 /tmp/analysis/*.yml
+  myproject-0.1.0.yml
+  myproject-0.2.0.yml
+  myproject-0.3.0.yml
+  myproject-0.4.0.yml
+  myproject-0.5.0.yml
+
+=item
+
+If you pass the I<-s> option, B<analizo metrics-batch> will collect the metrics
+data in a single .csv file, that you can import in spreadsheet software or
+statistical packages.
+
+=back
+
+=head1 OPTIONS
+
+=over
+
+=item --help
+
+Displays manual page (which you are currently reading).
+
+=item -g, --global-only
+
+Outputs only project-wide metrics (e.g. no module metrics). By default, each
+YAML data file will contain both project-level metrics and module-level
+metrics. Using this option will disable the module-level metrics.
+
+=item -s FILE, --summary FILE
+
+When this option is used, the metrics, B<analizo metrics-batch> will write a
+summary of each input directory in CSV format to I<FILE>. That file can then
+be opened in data analysis programs.
+
+Using I<--summary FILE> implies I<--global-only>.
+
+=back
+
+=head1 COPYRIGHT AND AUTHORS
+
+See B<analizo(1)>.
+
+=cut
+
+PROGRAM_NAME=$(basename $0)
+SCRIPT_PATH=$(readlink -f $0)
+
+warn() {
+  msg="$1"
+  echo "W: $msg"
+}
+
+info(){
+  msg="$1"
+  echo "I: $msg"
+}
+
+usage() {
+  echo "Usage: $0 [OPTIONS] [directory [directory ...]]"
+  echo
+  echo "Options:"
+  echo
+  echo "  --help                 Displays the help"
+  echo "  -s|--summary FILE      Outputs a total of all projects in CSV format to FILE. Implies --global-only."
+  echo "  -g|--global-only       Outputs only project-wide metrics (e.g. no module metrics)."
+  echo
+  echo "If you specify no directories to operate on, all directories"
+  echo "immediately below the current directory will be scanned."
+}
+
+# defaults
+input=""
+summary=false
+analizo_options=""
+
+while [ $# -gt 0 ]; do
+  opt="$1"
+  shift
+  case "$opt" in
+    --help)
+      exec analizo doc $SCRIPT_PATH
+      ;;
+    -s|--summary)
+      summary=true
+      analizo_options="-g"
+      if [ $# -eq 0 ]; then
+        usage
+        exit 1
+      else
+        summary_file="$1"
+        shift
+      fi
+      ;;
+    -g|--global-only)
+      analizo_options="-g"
+      ;;
+    -*|--*)
+      echo "Invalid option: $opt"
+      usage
+      exit 1
+      ;;
+    *)
+      input="$input $opt"
+      ;;
+  esac
+done
+
+if [ "$input" = "" ]; then
+  input=$(find . -mindepth 1 -maxdepth 1 -type d -not -name .git -and -not -name .svn  | sort)
+fi
+
+input_count=$(echo $input | wc -w)
+
+summary_header=""
+i=0
+for dir in $input; do
+
+  i=$(($i+1))
+  project=$(basename $dir)
+  output="$(dirname $dir)/$project.yml"
+
+  if [ -e "$output" ]; then
+    info "$project already processed, skipping (remove $output to force reprocessing)"
+    continue
+  else
+    info "Processing $project ..."
+  fi
+
+  analizo metrics $analizo_options "$dir" > "$output"
+
+  # directory did not contain source code, analizo produced nothing
+  if [ ! -s "$output" ]; then
+    warn "It looks like $dir does not contain source code to be analyzed."
+    warn "You'll probably want to check it out manually."
+    rm -f "$output"
+    continue
+  fi
+
+  # accumulate results
+  if [ $summary = true ]; then
+    # header
+    if [ "$summary_header" = "" ]; then
+      summary_header=$(awk -F ': ' 'BEGIN { line="" } {if ($1) line = line "," $1; end} END { print line }' $output)
+      echo "project$summary_header" > $summary_file
+    fi
+    # body
+    data=$(awk -F ': ' 'BEGIN { line="" } {if ($1) line = line "," $2; end} END { print line }' $output)
+    echo "$project$data" >> $summary_file
+  fi
+
+  info "Processed $project ($i/$input_count)"
+
+done
