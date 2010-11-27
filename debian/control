@@ -4,7 +4,7 @@ Priority: extra
 Maintainer: Antonio Terceiro <terceiro@softwarelivre.org>
 Build-Depends: debhelper (>= 7)
 Build-Depends-Indep: doxyparse, libgraph-perl, liblist-compare-perl, libtest-class-perl, libtest-exception-perl, libyaml-perl, libclass-accessor-perl, libstatistics-descriptive-perl, libstatistics-online-perl
-Standards-Version: 3.8.3
+Standards-Version: 3.9.1
 Homepage: http://softwarelivre.org/mezuro/analizo
 DM-Upload-Allowed: yes
 
