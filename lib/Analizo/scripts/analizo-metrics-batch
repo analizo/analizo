@@ -3,7 +3,7 @@
 : <<=cut
 =head1 NAME
 
-analizo metrics-batch - processes several source code directories in batch,
+analizo-metrics-batch - processes several source code directories in batch,
 running B<analizo metrics> for each and optionally consolidating the results in
 a single data file.
 

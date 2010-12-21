@@ -169,7 +169,7 @@ __END__
 
 =head1 NAME
 
-analizo metrics-history - processes a Git repository collection metrics for
+analizo-metrics-history - processes a Git repository collection metrics for
 every single revision.
 
 =head1 USAGE
