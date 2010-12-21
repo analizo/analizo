@@ -5,7 +5,7 @@ my %manpages = ();
 for my $script (glob('lib/Analizo/scripts/*')) {
   $manpages{$script} = 'blib/man1/' . basename($script) . '.1';
 }
-$manpages{'analizo'} = 'blib/man1/analizo';
+$manpages{'analizo'} = 'blib/man1/analizo.1';
 
 WriteMakefile(
   NAME => 'analizo',
