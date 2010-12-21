@@ -1,2 +1,0 @@
-version=3
-http://github.com/terceiro/analizo/downloads .*terceiro/analizo/tarball/([0-9]+.[0-9]+.[0-9]+)
