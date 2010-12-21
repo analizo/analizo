@@ -1,9 +1,10 @@
-analizo (1.15.0-1) unstable; urgency=low
+analizo (1.15.0) unstable; urgency=low
 
   * New upstream release
+  * Changing The package into a native one
   * debian/control: removed dependency on libgetopt-euclid-perl
 
- -- Antonio Terceiro <terceiro@softwarelivre.org>  Sat, 27 Nov 2010 12:37:51 -0300
+ -- Antonio Terceiro <terceiro@softwarelivre.org>  Mon, 20 Dec 2010 21:50:50 -0300
 
 analizo (1.14.0-1) unstable; urgency=low
 
