@@ -85,7 +85,6 @@ sub _file_to_module {
 
 sub process {
   my $self = shift;
-  my @files = ();
   eval {
     open DOXYPARSE, sprintf("doxyparse %s |", join(' ', @_) ) or die $!;
     while (<DOXYPARSE>) {
