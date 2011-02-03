@@ -7,14 +7,25 @@ def cucumber(args)
   end
 end
 
-def banner_format
-  $stdout.isatty ? "\033[33;01m%s\033[m" : "%s"
+def puts_with_color(msg, color = nil)
+  color ||= :yellow
+  colors = {
+    :yellow => 33,
+    :green => 32,
+    :red => 31,
+  }
+  color_code = colors[color] || colors[:yellow]
+  if $stdout.isatty
+    puts("\033[%s;01m%s\033[m" % [color_code, msg])
+  else
+    puts(msg)
+  end
 end
 
-def banner(msg)
-  puts banner_format % ('=' * 72)
-  puts banner_format % msg
-  puts banner_format % ('=' * 72)
+def banner(msg, color = nil)
+  puts_with_color('=' * 72, color)
+  puts_with_color(msg, color)
+  puts_with_color('=' * 72, color)
 end
 
 desc 'Run Perl unit tests'
@@ -43,7 +54,8 @@ end
 
 task :default do
   unless system('which doxyparse > /dev/null')
-    raise "E: doxyparse program not found, bailing out"
+    banner("doxyparse program not found, bailing out.\nYou have to install doxyparse to run analizo tests", :red)
+    fail
   end
   errors = ['test:perl', 'test:ruby', 'cucumber'].map do |task|
     begin
@@ -53,7 +65,12 @@ task :default do
       task
     end
   end.compact
-  abort "Errors running #{errors.inspect}!" if errors.any?
+  if errors.empty?
+    banner("All tests passed", :green)
+  else
+    banner("Errors running #{errors.inspect}!", :red)
+    fail
+  end
 end
 
 desc "Run all acceptance tests (even those marked as WIP)"
