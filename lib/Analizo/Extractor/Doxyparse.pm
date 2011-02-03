@@ -6,6 +6,7 @@ use warnings;
 use base qw(Analizo::Extractor);
 
 use File::Basename;
+use File::Temp qw/ tempfile /;
 
 sub new {
   my $package = shift;
@@ -85,8 +86,14 @@ sub _file_to_module {
 
 sub process {
   my $self = shift;
+  my ($temp_handle, $temp_filename) = tempfile();
+  foreach my $input_file (@_) {
+    print $temp_handle "$input_file\n"
+  }
+  close $temp_handle;
+
   eval {
-    open DOXYPARSE, sprintf("doxyparse %s |", join(' ', @_) ) or die $!;
+    open DOXYPARSE, "doxyparse - < $temp_filename |" or die $!;
     while (<DOXYPARSE>) {
        if (/^module (\S+)$/) {
          my $modulename = _file_to_module($1);
@@ -97,6 +104,7 @@ sub process {
        }
     }
     close DOXYPARSE;
+    unlink $temp_filename;
   };
   if($@) {
     warn($@);
