@@ -42,6 +42,9 @@ task 'cucumber' do
 end
 
 task :default do
+  unless system('which doxyparse > /dev/null')
+    raise "E: doxyparse program not found, bailing out"
+  end
   errors = ['test:perl', 'test:ruby', 'cucumber'].map do |task|
     begin
       Rake::Task[task].invoke
