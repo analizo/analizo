@@ -84,7 +84,7 @@ sub _file_to_module {
   $filename ? fileparse($filename, qr/\.[^.]*/) : 'unknown';
 }
 
-sub process {
+sub actually_process {
   my $self = shift;
   my ($temp_handle, $temp_filename) = tempfile();
   foreach my $input_file (@_) {

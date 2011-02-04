@@ -4,12 +4,14 @@ use strict;
 use warnings;
 
 use base qw(Class::Accessor::Fast);
+use File::Find;
 
 use Analizo::Model;
 
 our $QUIET = undef;
 
 __PACKAGE__->mk_ro_accessors(qw(current_member));
+__PACKAGE__->mk_accessors(qw(language));
 
 sub alias {
   my $alias = shift;
@@ -64,8 +66,26 @@ sub current_module {
   return $self->{current_module};
 }
 
+sub actually_process {
+  # This method must be overriden by subclasses
+}
+
 sub process {
-   die "you must override 'process' method in a subclass";
+  my ($self, @input) = @_;
+  my $language = $self->language;
+  if ($language) {
+    my @filtered_input = ();
+    for my $filename (@input) {
+      if (-d $filename) {
+        find(sub { push @filtered_input, $File::Find::name if $language->matches($_)  }, $filename);
+      } else {
+        push @filtered_input, $filename if $language->matches($filename);
+      }
+    }
+    $self->actually_process(@filtered_input);
+  } else {
+    $self->actually_process(@input);
+  }
 }
 
 sub info {
