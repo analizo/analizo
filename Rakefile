@@ -16,7 +16,7 @@ def puts_with_color(msg, color = nil)
   }
   color_code = colors[color] || colors[:yellow]
   if $stdout.isatty
-    puts("\033[%s;01m%s\033[m" % [color_code, msg])
+    puts("\033[%s;40m%s\033[m" % [color_code, msg])
   else
     puts(msg)
   end
@@ -28,27 +28,19 @@ def banner(msg, color = nil)
   puts_with_color('=' * 72, color)
 end
 
-desc 'Run Perl unit tests'
-task 'test:perl' do
-  banner 'Perl unit tests'
+$TEST_TASKS = []
+def test_task(name, &block)
+  $TEST_TASKS << name
+  task(name, &block)
+end
+
+desc 'Perl unit tests'
+test_task 'test:perl' do
   sh('prove -Ilib t/')
 end
 
-require 'rake/testtask'
-Rake::TestTask.new('test:ruby:run') do |t|
-  t.libs << "test"
-  t.test_files = FileList['test/*_test.rb']
-  t.verbose = true
-end
-
-task 'test:ruby' do
-  banner 'Ruby unit tests'
-  Rake::Task['test:ruby:run'].invoke
-end
-
-desc 'Run acceptance tests'
-task 'cucumber' do
-  banner 'Acceptance tests'
+desc 'Acceptance tests'
+test_task 'test:acceptance' do
   cucumber '--tags ~@wip features/'
 end
 
@@ -57,30 +49,20 @@ task :default do
     banner("doxyparse program not found, bailing out.\nYou have to install doxyparse to run analizo tests", :red)
     fail
   end
-  errors = ['test:perl', 'test:ruby', 'cucumber'].map do |task|
+  failed_test_suites = $TEST_TASKS.map { |t| Rake::Task[t] }.map do |task|
     begin
-      Rake::Task[task].invoke
+      puts_with_color(task.comment)
+      task.invoke
+      banner("#{task.comment} passed \\o/", :green)
       nil
     rescue => e
-      task
+      task.comment
     end
   end.compact
-  if errors.empty?
-    banner("All tests passed", :green)
-  else
-    banner("Errors running #{errors.inspect}!", :red)
+  if !failed_test_suites.empty?
+    banner("Failed test suites: #{failed_test_suites.join(', ')}", :red)
     fail
   end
-end
-
-desc "Run all acceptance tests (even those marked as WIP)"
-task 'cucumber:all' do
-  cucumber 'features/'
-end
-
-desc "Run acceptance tests marked as WIP"
-task 'cucumber:wip' do
-  cucumber '--tags @wip features/'
 end
 
 desc 'updates MANIFEST from contents of git repository'
