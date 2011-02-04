@@ -25,7 +25,7 @@ sub _strip_commas {
   return $number;
 }
 
-sub process {
+sub actually_process {
   my $self = shift;
   my @files = ();
   eval {

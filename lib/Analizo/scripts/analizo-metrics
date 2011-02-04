@@ -25,7 +25,7 @@ analizo metrics is part of the analizo suite.
 Define wich extractor method use to analise source code. Default is Doxyparse.
 
 When using the Doxyparse extractor (default), all files matching the languages
-supported by doxyparse are processed.
+supported by doxyparse are processed, unless I<--language> is used.
 
 =item --help
 
@@ -46,6 +46,13 @@ Writes the output to <file> instead of standard output.
 =item --global-only | -g
 
 Don't output the details about modules: only output global (project-wide) metrics.
+
+=back
+
+=item --language <lang>
+
+Process only filenames matching known extensions for the <I<lang>> programming
+language. To see which languages are supported, pass B<--language list>.
 
 =back
 
@@ -74,12 +81,14 @@ my $__extractor   = 'Doxyparse';
 my $__global_only = undef;
 my $__output      = undef;
 my $__help        = undef;
+my $__language    = undef;
 
 GetOptions(
-  'list'        => \$__list,
+  'list|l'        => \$__list,
   'extractor=s' => \$__extractor,
   'global-only' => \$__global_only,
   'output=s'    => \$__output,
+  'language=s'  => \$__language,
   'help'        => \$__help,
 ) or exit(1);
 
@@ -118,6 +127,12 @@ if(!@ARGV){
 
 my $extractor = Analizo::Extractor->load($__extractor);
 my $eloc_extractor = Analizo::Extractor::Sloccount->new(model => $extractor->model);
+if ($__language) {
+  require Analizo::LanguageFilter;
+  my $language = Analizo::LanguageFilter->new($__language);
+  $extractor->language($language);
+  $eloc_extractor->language($language);
+}
 my $metrics = Analizo::Metrics->new(model => $extractor->model);
 
 if ($__global_only) {
