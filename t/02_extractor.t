@@ -109,6 +109,42 @@ sub must_filter_input_with_language_filter : Tests {
   is_deeply(\@processed, \@expected);
 }
 
+sub must_have_a_list_of_excluded_dirs : Tests {
+  my $extractor = new Analizo::Extractor;
+  ok(!defined($extractor->exclude));
+  $extractor->exclude('test');
+  is_deeply($extractor->exclude, ['test']);
+  $extractor->exclude('uitest');
+  is_deeply($extractor->exclude, ['test', 'uitest']);
+}
+
+sub must_not_process_files_in_excluded_dirs : Tests {
+  my @processed = ();
+  no warnings;
+  local *Analizo::Extractor::actually_process = sub {
+    my $self = shift;
+    @processed = sort(@_);
+  };
+  use warnings;
+
+  my $extractor = new Analizo::Extractor;
+  $extractor->exclude('t/samples/multidir/cpp/test');
+  $extractor->process('t/samples/multidir/cpp');
+  is_deeply(\@processed, ['t/samples/multidir/cpp/src']);
+}
+
+sub _excluded_tests : Tests {
+  my $extractor = new Analizo::Extractor;
+  $extractor->exclude('test');
+  ok($extractor->_excluded('test'));
+  ok($extractor->_excluded('./test'));
+
+  # now also exclude 'src'
+  $extractor->exclude('src');
+  ok($extractor->_excluded('src'));
+  ok($extractor->_excluded('./src'));
+}
+
 package LanguageFilterStub;
 sub new {
   return bless {}, __PACKAGE__;

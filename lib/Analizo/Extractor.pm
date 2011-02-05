@@ -72,20 +72,76 @@ sub actually_process {
 
 sub process {
   my ($self, @input) = @_;
-  my $language = $self->language;
-  if ($language) {
-    my @filtered_input = ();
-    for my $filename (@input) {
-      if (-d $filename) {
-        find(sub { push @filtered_input, $File::Find::name if $language->matches($_)  }, $filename);
-      } else {
-        push @filtered_input, $filename if $language->matches($filename);
-      }
-    }
-    $self->actually_process(@filtered_input);
-  } else {
-    $self->actually_process(@input);
+  @input = $self->filter(@input);
+  $self->actually_process(@input);
+}
+
+sub filter {
+  my ($self, @input) = @_;
+  if ($self->exclude) {
+    @input = $self->filter_by_excluded_directories(@input);
   }
+  if ($self->language) {
+    @input = $self->filter_by_language(@input);
+  }
+  return @input;
+}
+
+sub filter_by_excluded_directories {
+  my ($self, @input) = @_;
+  my @result = ();
+  for my $filename (@input) {
+    if (-d $filename) {
+      find(
+        sub {
+          if ($File::Find::name ne $filename && -d $_ && !$self->_excluded($File::Find::name)) {
+            push @result, $File::Find::name;
+          }
+        },
+        $filename
+      );
+    } else {
+      push @result, $filename if !$self->_excluded($filename);
+    }
+  }
+  return @result;
+}
+
+sub exclude {
+  my ($self, @dirs) = @_;
+  if (@dirs) {
+    $self->{exclude} ||= [];
+    push @{$self->{exclude}}, @dirs;
+  }
+  return $self->{exclude};
+}
+
+sub _excluded {
+  my ($self, $filename) = @_;
+  my $list = $self->exclude;
+  if (@$list && grep { $filename =~ /^$_/ || $filename =~ /^.\/$_/ } @$list) {
+    return 1;
+  } else {
+    return 0;
+  }
+}
+
+sub filter_by_language {
+  my ($self, @input) = @_;
+  my @result = ();
+  for my $filename (@input) {
+    if (-d $filename) {
+      find(
+        sub {
+          push @result, $File::Find::name if $self->language->matches($_);
+        },
+        $filename
+      );
+    } else {
+      push @result, $filename if $self->language->matches($filename);
+    }
+  }
+  return @result;
 }
 
 sub info {
