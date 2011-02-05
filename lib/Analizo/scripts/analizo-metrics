@@ -141,8 +141,9 @@ if ($__language) {
   $eloc_extractor->language($language);
 }
 if ($__exclude) {
-  $extractor->exclude($__exclude);
-  $eloc_extractor->exclude($__exclude);
+  my @excluded_directories = split(':', $__exclude);
+  $extractor->exclude(@excluded_directories);
+  $eloc_extractor->exclude(@excluded_directories);
 }
 my $metrics = Analizo::Metrics->new(model => $extractor->model);
 

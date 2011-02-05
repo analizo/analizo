@@ -8,3 +8,9 @@ Feature: exclude directories from the analysis
     When  I run "analizo metrics --exclude test ."
     Then  the output must match "HelloWorld"
     And   the output must not match "hello_test"
+
+  Scenario: excluding a list of directories
+    Given I am in t/samples/multidir/cpp
+    When  I run "analizo metrics --exclude test:src ."
+    Then  the output must not match "HelloWorld"
+    And   the output must not match "hello_test"
