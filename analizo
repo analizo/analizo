@@ -91,16 +91,16 @@ list.
 =cut
 
 use strict;
-use FindBin qw($Bin $Script);
+use FindBin qw($RealBin $RealScript);
 
-if (-e "$Bin/Makefile.PL") {
+if (-e "$RealBin/Makefile.PL") {
   # Development mode:
   #   * local library dir has precedence
   #   * local analizo program has precedence
-  my $local_lib = "$Bin/lib";
+  my $local_lib = "$RealBin/lib";
   unshift @INC, $local_lib;
   $ENV{PERL5LIB} = $ENV{PERL5LIB} ? join(':', ($local_lib, $ENV{PERL5LIB})) : $local_lib;
-  $ENV{PATH} = join(':', ($Bin, $ENV{PATH}));
+  $ENV{PATH} = join(':', ($RealBin, $ENV{PATH}));
 }
 
 my @script_dir = grep { -d "$_/Analizo/scripts" } @INC;
@@ -114,9 +114,9 @@ my $script_dir = $script_dir[0] . "/Analizo/scripts";
 sub list_tools {
   print("Available tools:\n");
   print("\n");
-  my @scripts = sort(grep { -x $_ } glob("$script_dir/$Script-*"));
+  my @scripts = sort(grep { -x $_ } glob("$script_dir/$RealScript-*"));
   for my $cmd_program (@scripts) {
-    $cmd_program =~ /^.*$Script-(.*)$/;
+    $cmd_program =~ /^.*$RealScript-(.*)$/;
     my $cmd = $1;
     printf("    %s\n", $cmd);
   }
@@ -126,9 +126,9 @@ sub list_tools {
 sub run_tool {
   my ($tool, @args) = @_;
 
-  my $program = "$script_dir/$Script-$tool";
+  my $program = "$script_dir/$RealScript-$tool";
   if (! -x $program) {
-    printf("\"%s\" is not an %s tool.\n\n", $tool, $Script);
+    printf("\"%s\" is not an %s tool.\n\n", $tool, $RealScript);
     list_tools();
     exit(1);
   }
@@ -152,7 +152,7 @@ sub usage {
 }
 
 sub show_version {
-  printf("$Script version %s\n", $VERSION);
+  printf("$RealScript version %s\n", $VERSION);
   exit(0);
 }
 
