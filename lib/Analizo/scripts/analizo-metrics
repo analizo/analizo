@@ -47,12 +47,17 @@ Writes the output to <file> instead of standard output.
 
 Don't output the details about modules: only output global (project-wide) metrics.
 
-=back
-
 =item --language <lang>
 
 Process only filenames matching known extensions for the <I<lang>> programming
 language. To see which languages are supported, pass B<--language list>.
+
+=item --exclude <dirs> | -x <dirs>
+
+Exclude <I<dirs>> (a colon-separated list of directories) from the analysis.
+This is useful, for example, when you want to focus on production code and
+exclude test code from the analysis. You could do that by passing something
+like pass B<--exclude test>.
 
 =back
 
@@ -82,6 +87,7 @@ my $__global_only = undef;
 my $__output      = undef;
 my $__help        = undef;
 my $__language    = undef;
+my $__exclude     = undef;
 
 GetOptions(
   'list|l'        => \$__list,
@@ -90,6 +96,7 @@ GetOptions(
   'output=s'    => \$__output,
   'language=s'  => \$__language,
   'help'        => \$__help,
+  'exclude|x=s' => \$__exclude,
 ) or exit(1);
 
 if ($__help) {
@@ -132,6 +139,11 @@ if ($__language) {
   my $language = Analizo::LanguageFilter->new($__language);
   $extractor->language($language);
   $eloc_extractor->language($language);
+}
+if ($__exclude) {
+  my @excluded_directories = split(':', $__exclude);
+  $extractor->exclude(@excluded_directories);
+  $eloc_extractor->exclude(@excluded_directories);
 }
 my $metrics = Analizo::Metrics->new(model => $extractor->model);
 
