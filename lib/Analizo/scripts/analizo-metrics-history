@@ -15,6 +15,7 @@ require 'grit'
 require 'yaml'
 require 'benchmark'
 
+$ANALIZO_METRICS_OPTIONS = nil
 FILTER = /\.(c|h|cpp|cxx|cc|hpp|java)$/
 
 class Grit::Commit
@@ -59,7 +60,7 @@ end
 class AnalizoRunner
   def self.metrics(commit)
     system("git checkout #{commit} > /dev/null 2>> git.log")
-    if "" == yaml_metrics = `analizo metrics . 2> /dev/null` then
+    if "" == yaml_metrics = `analizo metrics #{$ANALIZO_METRICS_OPTIONS} . 2> /dev/null` then
       false
     else
       YAML.load_stream(yaml_metrics).documents
@@ -94,12 +95,15 @@ require 'getoptlong'
 require 'rdoc/usage'
 
 opts = GetoptLong.new(
+  [ '--analizo-metrics-options', '-o', GetoptLong::REQUIRED_ARGUMENT ],
   [ '--help', '-h', GetoptLong::NO_ARGUMENT ],
   [ '--usage', GetoptLong::NO_ARGUMENT ]
 )
 
 opts.each do |opt,value|
   case opt
+  when '--analizo-metrics-options'
+    $ANALIZO_METRICS_OPTIONS = value
   when '--help'
     exec 'analizo', 'doc', __FILE__
   when '--usage'
@@ -143,7 +147,7 @@ File.open('metrics.csv', 'w') do |file|
       print "."
     else
       print "E"
-      system("analizo metrics . >> analizo.log 2>> analizo.log")
+      system("analizo metrics #{$ANALIZO_METRICS_OPTIONS} . >> analizo.log 2>> analizo.log")
       system("doxyparse . >> doxyparse.log 2>> doxyparse.log")
       error_counter +=1
     end
@@ -198,6 +202,13 @@ I<.hpp>, and I<.java>.
 =head1 OPTIONS
 
 =over
+
+=item --analizo-metrics-options "OPTIONS" | -o "OPTIONS"
+
+Passes I<OPTIONS> to the I<analizo metrics> calls. For example, if you want to
+ignore the "test" directory while analysing the project history, you call
+analizo metrics-history as B<analizo metrics-history --analizo-metrics-options
+"--exclude test">.
 
 =item --help
 
