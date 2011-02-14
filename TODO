@@ -4,3 +4,6 @@
   * use `my ($self, $arg1, $arg2) = @_;` instead
 * fix the evolution matrix to do some sorting; display modules that appear earlier in the top
 * do some marketing of the tool.
+* refectoring: extract common behaviour from analizo-metrics-history and
+  analizo-metrics-batch ("run analizo metrics against this batch of source code
+  trees") and re-implement them in terms of that common behaviour.
