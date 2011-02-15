@@ -1,4 +1,5 @@
 require 'fileutils'
+require 'tmpdir'
 
 top_dir = FileUtils.pwd
 saved_path = ENV["PATH"]
@@ -21,6 +22,19 @@ end
 
 Given /^I am in (.+)$/ do |dir|
   FileUtils.cd(dir)
+end
+
+Given /^I explode (.+) and run "([^\"]*)"$/ do |tarball, command|
+  tarball_full_path = File.expand_path(tarball)
+  dirname = File.basename(tarball).sub('.tar.gz', '')
+  Dir.mktmpdir do |tmpdir|
+    Dir.chdir(tmpdir) do
+      system("tar xzf #{tarball_full_path}")
+      Dir.chdir(dirname) do
+        When("I run \"#{command}\"")
+      end
+    end
+  end
 end
 
 When /^I run "([^\"]*)"$/ do |command|
