@@ -20,20 +20,16 @@ FILTER = /\.(c|h|cpp|cxx|cc|hpp|java)$/
 
 class Repository
   def wanted_commits
+    repository = {}
     result = []
     commit = nil
     last_wanted = nil
-    `git log --no-merges --reverse --pretty=format:%H --name-only`.each_line do |line|
+    `git log --pretty=format:%H`.each_line do |line|
       line.strip!
-      if line =~ /^[a-f0-9]{40}$/
-        commit = Commit.new(line)
-        commit.previous_wanted = last_wanted
-      else
-        if commit && line =~ FILTER
-          commit.changed_files << line
-          result << commit unless result.include?(commit)
-          last_wanted = commit
-        end
+      commit = Commit.new(line, repository)
+      repository[commit.id] = commit
+      if commit.wanted?
+        result << commit
       end
     end
     result
@@ -42,16 +38,19 @@ end
 
 class Commit
   attr_reader :id, :repository
-  attr_accessor :previous_wanted
   alias :to_s :id
-  def initialize(id)
+  def initialize(id, repository)
     @id = id
+    @repository = repository
   end
   def changed_files
-    @changed_files ||= []
+    @changed_files ||= `git show --pretty=format:%H --name-only #{id}`.split.select { |line| line != self.id }
+  end
+  def parent_ids
+    data[:parent_ids]
   end
   def parents
-    data[:parents]
+    parent_ids.map { |i| repository[i] }
   end
   def authored_date
     data[:authored_date]
@@ -63,10 +62,28 @@ class Commit
     data[:author_email]
   end
   def merge?
-    parents.size > 1
+    parent_ids.size > 1
+  end
+  def first_commit?
+    parent_ids.size == 0
   end
   def wanted?
-    !merge? && !changed_files.empty?
+    !merge? && relevant?
+  end
+  def relevant?
+    changed_files.any? { |file| file =~ FILTER }
+  end
+  def previous_wanted
+    if merge? || first_commit?
+      nil
+    else
+      parent = parents.first
+      if parent.relevant?
+        parent
+      else
+        parent.previous_wanted
+      end
+    end
   end
 
   private
@@ -75,7 +92,7 @@ class Commit
       begin
         output = `git show --quiet --format=%P/%aD/%aN/%aE #{id}`.strip.split('/')
         {
-          :parents => output[0].split,
+          :parent_ids => output[0].split,
           :authored_date => Time.parse(output[1]),
           :author_name => output[2],
           :author_email => output[3],
