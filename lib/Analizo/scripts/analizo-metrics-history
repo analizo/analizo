@@ -11,49 +11,76 @@
 # ongoing work.
 #
 require 'rubygems'
-require 'grit'
 require 'yaml'
 require 'benchmark'
+require 'time'
 
 $ANALIZO_METRICS_OPTIONS = nil
 FILTER = /\.(c|h|cpp|cxx|cc|hpp|java)$/
 
-class Grit::Commit
-  def merge?
-    self.parents.size > 1
+class Repository
+  def wanted_commits
+    result = []
+    commit = nil
+    last_wanted = nil
+    `git log --no-merges --reverse --pretty=format:%H --name-only`.each_line do |line|
+      line.strip!
+      if line =~ /^[a-f0-9]{40}$/
+        commit = Commit.new(line)
+        commit.previous_wanted = last_wanted
+      else
+        if commit && line =~ FILTER
+          commit.changed_files << line
+          result << commit unless result.include?(commit)
+          last_wanted = commit
+        end
+      end
+    end
+    result
   end
-  def parentless
-    self.parents.size == 0
+end
+
+class Commit
+  attr_reader :id, :repository
+  attr_accessor :previous_wanted
+  alias :to_s :id
+  def initialize(id)
+    @id = id
+  end
+  def changed_files
+    @changed_files ||= []
+  end
+  def parents
+    data[:parents]
+  end
+  def authored_date
+    data[:authored_date]
+  end
+  def author_name
+    data[:author_name]
+  end
+  def author_email
+    data[:author_email]
+  end
+  def merge?
+    parents.size > 1
   end
   def wanted?
-    files = `git show --pretty=format: --name-only #{id}`.split
-    matches = (files.any? { |path| path =~ FILTER })
-    !merge? && matches 
+    !merge? && !changed_files.empty?
   end
-  def previous_wanted
-    if merge? || parentless
-      nil
-    else
-      previous = self.parents.first
-      if previous.wanted?
-        previous
-      else
-        previous.previous_wanted
+
+  private
+  def data
+    @data ||=
+      begin
+        output = `git show --quiet --format=%P/%aD/%aN/%aE #{id}`.strip.split('/')
+        {
+          :parents => output[0].split,
+          :authored_date => Time.parse(output[1]),
+          :author_name => output[2],
+          :author_email => output[3],
+        }
       end
-    end
-  end
-  def wanted_list
-    commit = self.wanted? ? self : self.previous_wanted
-    if commit
-      result = []
-      while commit
-        result << commit
-        commit = commit.previous_wanted
-      end
-      result
-    else
-      []
-    end
   end
 end
 
@@ -76,8 +103,8 @@ class AnalizoRunner
         csv_string << commit.previous_wanted.id
       end
       csv_string << ","
-      csv_string << commit.author.name.inspect; csv_string << ","
-      csv_string << commit.author.email; csv_string << ","
+      csv_string << commit.author_name.inspect; csv_string << ","
+      csv_string << commit.author_email; csv_string << ","
 
       csv_string << metr[0].keys.sort.map{|key| metr[0][key]}.join(','); csv_string << ","
       csv_string << `git show --pretty=format: --name-only #{commit.id}`.split.join(',').inspect; csv_string << ","
@@ -95,11 +122,13 @@ require 'getoptlong'
 require 'rdoc/usage'
 
 opts = GetoptLong.new(
+  [ '--list', '-l', GetoptLong::NO_ARGUMENT ],
   [ '--analizo-metrics-options', '-o', GetoptLong::REQUIRED_ARGUMENT ],
   [ '--help', '-h', GetoptLong::NO_ARGUMENT ],
   [ '--usage', GetoptLong::NO_ARGUMENT ]
 )
 
+list_only = false
 opts.each do |opt,value|
   case opt
   when '--analizo-metrics-options'
@@ -108,15 +137,15 @@ opts.each do |opt,value|
     exec 'analizo', 'doc', __FILE__
   when '--usage'
     usage(0)
+  when '--list'
+    list_only = true
   end
 end
 
 if !ARGV[0] then
   usage(1)
 end
-begin
-  tree = Grit::Repo.new(ARGV[0]).commits.first
-rescue Grit::InvalidGitRepositoryError
+if !File.exists?(File.join(ARGV[0], '.git'))
   puts "Fatal: Not a git repository."
   exit
 end
@@ -128,8 +157,12 @@ system("echo \"Log opened at: #{Time.now}\" >> doxyparse.log")
 system("git checkout master > /dev/null 2>> git.log")
 
 File.open('metrics.csv', 'w') do |file|
-  file.puts "commit_id,nearest_chngend_ancestral_id,author,e-mail,average_coupiling,average_lcom4,number_of_functions,number_of_modules,number_of_public_functions,total_loc,changed_files,date\n"
-  wl = tree.wanted_list
+  file.puts "commit_id,previous_commit_id,author,e-mail,average_coupiling,average_lcom4,number_of_functions,number_of_modules,number_of_public_functions,total_loc,changed_files,date\n"
+  wl = Repository.new.wanted_commits
+  if list_only
+    puts wl
+    exit 0
+  end
   if wl.size == 0 then
     puts "No relevant commits to proccess"
   else
@@ -209,6 +242,11 @@ Passes I<OPTIONS> to the I<analizo metrics> calls. For example, if you want to
 ignore the "test" directory while analysing the project history, you call
 analizo metrics-history as B<analizo metrics-history --analizo-metrics-options
 "--exclude test">.
+
+=item --list | -l
+
+Instead of actually processing the history, just print out the ids of the
+commits that would be processed.
 
 =item --help
 
