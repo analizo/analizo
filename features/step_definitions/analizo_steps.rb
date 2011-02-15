@@ -80,6 +80,12 @@ Then /^analizo must report that "([^\"]*)" is part of "([^\"]*)"$/ do |func,mod|
   found.should == true
 end
 
+Then /^the output lines must match "([^\"]*)"$/ do |pattern|
+  unless @stdout.join.match(pattern)
+    raise AnalizoException.new("Output does not match %s! (expected to match)!" % pattern.inspect, @stdout, @stderr)
+  end
+end
+
 Then /^the output must match "([^\"]*)"$/ do |pattern|
   unless @stdout.any? {|item| item.match(pattern) }
     raise AnalizoException.new("Output does not match %s! (expected to match)!" % pattern.inspect, @stdout, @stderr)
