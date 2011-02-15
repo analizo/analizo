@@ -18,16 +18,15 @@ require 'time'
 $ANALIZO_METRICS_OPTIONS = nil
 FILTER = /\.(c|h|cpp|cxx|cc|hpp|java)$/
 
-class Repository
+class Repository < Hash
   def wanted_commits
-    repository = {}
     result = []
     commit = nil
     last_wanted = nil
     `git log --pretty=format:%H`.each_line do |line|
       line.strip!
-      commit = Commit.new(line, repository)
-      repository[commit.id] = commit
+      commit = Commit.new(line, self)
+      self[commit.id] = commit
       if commit.relevant?
         result << commit
       end
@@ -39,6 +38,7 @@ end
 class Commit
   attr_reader :id, :repository
   alias :to_s :id
+  alias :inspect :id
   def initialize(id, repository)
     @id = id
     @repository = repository
@@ -71,15 +71,36 @@ class Commit
     changed_files.any? { |file| file =~ FILTER }
   end
   def previous_wanted
-    if merge? || first_commit?
+    if merge?
       nil
     else
-      parent = parents.first
-      if parent.relevant?
-        parent
-      else
-        parent.previous_wanted
-      end
+      previous_relevant
+    end
+  end
+  def previous_relevant
+    if instance_variable_defined?('@previous_relevant')
+      @previous_relevant
+    else
+      @previous_relevant =
+        begin
+          if first_commit?
+            nil
+          elsif merge?
+            possibilities = parents.map(&:previous_relevant).uniq
+            if possibilities.size == 1
+              possibilities.first
+            else
+              nil
+            end
+          else
+            parent = parents.first
+            if parent.relevant?
+              parent
+            else
+              parent.previous_relevant
+            end
+          end
+        end
     end
   end
 

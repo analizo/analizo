@@ -27,3 +27,5 @@ Feature: analizo metrics-history
     And the output must match "d7f52e74dc3d8f57640e83d41c5e9f8fcf621c00,0d3c023120ad4e9f519a03fff275d048c52671ad"
     # first commit:
     And the output must match "0d3c023120ad4e9f519a03fff275d048c52671ad,,"
+    # first commit after a non-relevant merge:
+    And the output must match "8183eafad3a0f3eff6e8869f1bdbfd255e86825a,0a06a6fcc2e7b4fe56d134e89d74ad028bb122ed"
