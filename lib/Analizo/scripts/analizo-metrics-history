@@ -28,7 +28,7 @@ class Repository
       line.strip!
       commit = Commit.new(line, repository)
       repository[commit.id] = commit
-      if commit.wanted?
+      if commit.relevant?
         result << commit
       end
     end
@@ -66,9 +66,6 @@ class Commit
   end
   def first_commit?
     parent_ids.size == 0
-  end
-  def wanted?
-    !merge? && relevant?
   end
   def relevant?
     changed_files.any? { |file| file =~ FILTER }
