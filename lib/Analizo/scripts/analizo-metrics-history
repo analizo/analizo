@@ -44,7 +44,7 @@ class Commit
     @repository = repository
   end
   def changed_files
-    @changed_files ||= `git show --pretty=format:%H --name-only #{id}`.split.select { |line| line != self.id }
+    data[:changed_files]
   end
   def parent_ids
     data[:parent_ids]
@@ -90,12 +90,14 @@ class Commit
   def data
     @data ||=
       begin
-        output = `git show --quiet --format=%P/%aD/%aN/%aE #{id}`.strip.split('/')
+        output = `git show --name-only --format=%P/%aD/%aN/%aE #{id}`.lines.map(&:strip)
+        header = output.shift.split('/')
         {
-          :parent_ids => output[0].split,
-          :authored_date => Time.parse(output[1]),
-          :author_name => output[2],
-          :author_email => output[3],
+          :changed_files => output.reject { |line| line.empty? },
+          :parent_ids => header[0].split,
+          :authored_date => Time.parse(header[1]),
+          :author_name => header[2],
+          :author_email => header[3],
         }
       end
   end
