@@ -6,3 +6,4 @@
 * refectoring: extract common behaviour from analizo-metrics-history and
   analizo-metrics-batch ("run analizo metrics against this batch of source code
   trees") and re-implement them in terms of that common behaviour.
+* bash completion
