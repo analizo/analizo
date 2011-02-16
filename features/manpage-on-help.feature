@@ -14,4 +14,5 @@ Feature: give manpage on --help
     | metrics          |
     | metrics-batch    |
     | metrics-history  |
+    | tree-evolution   |
 
