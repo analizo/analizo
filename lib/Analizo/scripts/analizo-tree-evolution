@@ -1,0 +1,176 @@
+#!/usr/bin/env ruby
+
+class LanguageFilter
+  FILTERS = {
+    :null =>  /./,
+    :java =>  /\.java$/,
+    :c    =>  /\.(c|h)$/,
+    :cpp  =>  /\.(c|h|cpp|cxx|cc|hpp)$/
+  }
+  def initialize(filter_name)
+    @regex = FILTERS[filter_name]
+    if !@regex
+      raise "E: Unknown filter \"#{filter_name}\"."
+    end
+  end
+  def match(filename)
+    if filename =~ @regex
+      true
+    else
+      false
+    end
+  end
+end
+
+class Tree
+  attr_accessor :contents
+  attr_accessor :introduced_by
+  def initialize(contents, introduced_by)
+    @contents = contents
+    @introduced_by = introduced_by
+  end
+  def sha1
+    @sha1 ||= Digest::SHA1.hexdigest(contents.inspect)
+  end
+end
+
+require 'digest/sha1'
+class TreeTracker
+
+  def all
+    @all ||= {}
+  end
+
+  def add(tree)
+    unless all.has_key?(tree.sha1)
+      all[tree.sha1] = tree
+      yield(tree)
+    end
+  end
+
+end
+
+class Runner
+  attr_accessor :language_filter, :tracker
+  def run
+    `git log --pretty=format:%H --reverse`.each_line do |commit|
+      commit.strip!
+      process_commit(commit)
+    end
+  end
+  def process_commit(commit)
+    seen_directories = []
+    `git ls-tree -r --name-only #{commit}`.each_line do |filename|
+      filename.strip!
+      if language_filter.match(filename)
+        directory = File.dirname(filename)
+        unless directory == '.' || seen_directories.include?(directory)
+          seen_directories << directory
+        end
+      end
+    end
+    seen_directories.sort!
+    tracker.add(Tree.new(seen_directories, commit)) do |tree|
+      puts "# #{tree.introduced_by}"
+      puts tree.contents
+    end
+  end
+end
+
+if $PROGRAM_NAME == __FILE__
+  options = {
+    :language => :null,
+  }
+  require 'optparse'
+  option_parser = OptionParser.new do |opts|
+    opts.on('-l', '--language LANGUAGE', 'Filters files by language') do |language|
+      options[:language] = language.to_sym
+    end
+    opts.on('-h', '--help', 'Displays the manual') do
+      exec 'analizo', 'doc', __FILE__
+    end
+  end
+  option_parser.parse!(ARGV)
+
+  runner = Runner.new
+  runner.tracker = TreeTracker.new
+  runner.language_filter = LanguageFilter.new(options[:language])
+  runner.run
+end
+
+__END__
+
+=head1 NAME
+
+analizo-tree-evolution - watch the evolution of the source code tree in a Git repository
+
+=head1 USAGE
+
+analizo evolution-matrix [OPTIONS]
+
+=head1 DESCRIPTION
+
+When run inside a Git repository, B<analizo tree-evolution> will output all
+different sets of directories found in the project's history. For each commit
+in which a new directory was added or removed, you will have the commit hash
+and a snapshot of the source code tree at that commit.
+
+For example, consider the following sample execution of B<analizo
+tree-evolution> against a sample Git repository:
+
+  $ analizo tree-evolution
+  # 073290fbad0254793bd3ecfb97654c04368d0039
+  src
+  # 85f7db08f7b7b0b62e3c0023b2743d529b0d5b4b
+  src
+  src/input
+  # f41cf7d0351e812285efd60c6d957c330b1f61a1
+  src
+  src/input
+  src/output
+
+The output shows us the following information:
+
+=over
+
+=item
+
+Commit I<073290fbad0254793bd3ecfb97654c04368d0039> was the first commit in the
+project, and back then the project had a "src" directory.
+
+=item
+
+In commit I<85f7db08f7b7b0b62e3c0023b2743d529b0d5b4b>, a directory called
+src/input was added to the tree.
+
+=item
+
+Finally, commit I<f41cf7d0351e812285efd60c6d957c330b1f61a1> introduced another
+directory called src/output.
+
+=back
+
+=head1 OPTIONS
+
+=over
+
+=item -l LANGUAGE | --language LANGUAGE
+
+Filters the source tree by language. When determining the contents of the
+source tree, only consider directories that contain files that match the
+expected file extensions for LANGUAGE.
+
+LANGUAGE can be one of I<c>, I<cpp> and I<java>. The default behaviour is to
+condider all files in the repository.
+
+=item -h | --help
+
+Displays the manual page (which you are currently reading).
+
+=back
+
+=head1 COPYRIGHT AND AUTHORS
+
+See B<analizo(1)>
+
+=cut
