@@ -7,16 +7,18 @@ use base qw(Class::Accessor::Fast);
 use File::Find;
 
 use Analizo::Model;
+use Analizo::FilenameFilter;
+use Analizo::LanguageFilter;
 
 our $QUIET = undef;
 
 __PACKAGE__->mk_ro_accessors(qw(current_member));
-__PACKAGE__->mk_accessors(qw(language));
 
 sub alias {
   my $alias = shift;
   my %aliases = (
     doxy => 'Doxyparse',
+    excluding_dirs => 0,
   );
   exists $aliases{$alias} ? $aliases{$alias} : $alias;
 }
@@ -72,76 +74,57 @@ sub actually_process {
 
 sub process {
   my ($self, @input) = @_;
-  @input = $self->filter(@input);
+  @input = $self->_filter_input(@input);
   $self->actually_process(@input);
 }
 
-sub filter {
+sub _filter_input {
   my ($self, @input) = @_;
-  if ($self->exclude) {
-    @input = $self->filter_by_excluded_directories(@input);
+  if ($self->filters) {
+    return $self->_apply_filters(@input);
+  } else {
+    return @input;
   }
-  if ($self->language) {
-    @input = $self->filter_by_language(@input);
-  }
-  return @input;
 }
 
-sub filter_by_excluded_directories {
+sub filters {
+  my ($self, @new_filters) = @_;
+  $self->{filters} ||= [];
+  if (@new_filters) {
+    push @{$self->{filters}}, @new_filters;
+  }
+  return @{$self->{filters}};
+}
+
+sub _apply_filters {
   my ($self, @input) = @_;
   my @result = ();
-  for my $filename (@input) {
-    if (-d $filename) {
-      find(
-        sub {
-          if ($File::Find::name ne $filename && -d $_ && !$self->_excluded($File::Find::name)) {
-            push @result, $File::Find::name;
-          }
-        },
-        $filename
-      );
-    } else {
-      push @result, $filename if !$self->_excluded($filename);
-    }
+  for my $input (@input) {
+    find(
+      { wanted => sub { push @result, $_ if !-d $_ && $self->_matches_filters($_); }, no_chdir => 1 },
+      $input
+    );
   }
   return @result;
+}
+
+sub _matches_filters {
+  my ($self, $filename) = @_;
+  for my $filter ($self->filters) {
+    unless ($filter->matches($filename)) {
+      return 0;
+    }
+  }
+  return 1;
 }
 
 sub exclude {
   my ($self, @dirs) = @_;
-  if (@dirs) {
-    $self->{exclude} ||= [];
-    push @{$self->{exclude}}, @dirs;
+  if (!$self->{excluding_dirs}) {
+    $self->{excluding_dirs} = 1;
+    $self->filters(Analizo::LanguageFilter->new);
   }
-  return $self->{exclude};
-}
-
-sub _excluded {
-  my ($self, $filename) = @_;
-  my $list = $self->exclude;
-  if (@$list && grep { $filename =~ /^$_/ || $filename =~ /^.\/$_/ } @$list) {
-    return 1;
-  } else {
-    return 0;
-  }
-}
-
-sub filter_by_language {
-  my ($self, @input) = @_;
-  my @result = ();
-  for my $filename (@input) {
-    if (-d $filename) {
-      find(
-        sub {
-          push @result, $File::Find::name if $self->language->matches($_);
-        },
-        $filename
-      );
-    } else {
-      push @result, $filename if $self->language->matches($filename);
-    }
-  }
-  return @result;
+  $self->filters(Analizo::FilenameFilter->exclude(@dirs));
 }
 
 sub info {
