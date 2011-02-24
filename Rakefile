@@ -35,7 +35,7 @@ def test_task(name, &block)
 end
 
 desc 'Perl unit tests'
-test_task 'test:perl' do
+test_task 'test:unit' do
   sh('prove -Ilib t/')
 end
 
