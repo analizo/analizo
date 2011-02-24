@@ -19,7 +19,6 @@ sub new {
     croak "E: Unknown language filter $filter_type";
   }
   my $self = {
-    filter_type => $filter_type,
     regex => $regex,
   };
   return bless $self, $package;
@@ -27,7 +26,6 @@ sub new {
 
 sub matches {
   my ($self, $filename) = @_;
-  print("Filter type: [$self->{filter_type}]\n");
   if ($filename =~ /$self->{regex}/) {
     return 1;
   }
