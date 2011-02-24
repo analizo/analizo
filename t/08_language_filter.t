@@ -11,10 +11,11 @@ sub constructor : Tests {
   isa_ok(Analizo::LanguageFilter->new, 'Analizo::LanguageFilter');
 }
 
-sub null_object_matches_everything : Tests {
+sub null_object_matches_everything_that_is_supported : Tests {
   my $filter = Analizo::LanguageFilter->new();
   ok($filter->matches('test.c'));
   ok($filter->matches('Test.java'));
+  ok(!$filter->matches('Makefile'))
 }
 
 sub c_filter_matches_dot_c_and_dot_h : Tests {

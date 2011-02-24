@@ -4,12 +4,14 @@ use strict;
 use warnings;
 use Carp;
 
+use base qw(Analizo::FilenameFilter);
+
 our $FILTERS = {
-  null      => '.',
-  c         => '\.(c|h)$',
-  cpp       => '\.(cpp|cxx|cc|h|hpp)$',
-  java      => '\.java$',
+  c         => 'c|h',
+  cpp       => 'cpp|cxx|cc|h|hpp',
+  java      => 'java',
 };
+$FILTERS->{null} = join('|', values(%$FILTERS));
 
 sub new {
   my ($package, $filter_type) = @_;
@@ -19,17 +21,9 @@ sub new {
     croak "E: Unknown language filter $filter_type";
   }
   my $self = {
-    regex => $regex,
+    regex => '\.(' . $regex . ')$',
   };
   return bless $self, $package;
-}
-
-sub matches {
-  my ($self, $filename) = @_;
-  if ($filename =~ /$self->{regex}/) {
-    return 1;
-  }
-  return 0;
 }
 
 1;

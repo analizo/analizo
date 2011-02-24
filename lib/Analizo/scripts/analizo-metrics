@@ -136,9 +136,9 @@ my $extractor = Analizo::Extractor->load($__extractor);
 my $eloc_extractor = Analizo::Extractor::Sloccount->new(model => $extractor->model);
 if ($__language) {
   require Analizo::LanguageFilter;
-  my $language = Analizo::LanguageFilter->new($__language);
-  $extractor->language($language);
-  $eloc_extractor->language($language);
+  my $language_filter = Analizo::LanguageFilter->new($__language);
+  $extractor->filters($language_filter);
+  $eloc_extractor->filters($language_filter);
 }
 if ($__exclude) {
   my @excluded_directories = split(':', $__exclude);

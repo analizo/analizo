@@ -60,16 +60,18 @@ sub dont_allow_code_injection: Tests {
   }
 }
 
-sub possibly_has_one_language_filter : Tests {
+sub has_filters : Tests {
   my $extractor = new Analizo::Extractor;
-  can_ok($extractor, 'language');
-  ok(!defined($extractor->language));
+  can_ok($extractor, 'filters');
+  my @filters = $extractor->filters;
+  is_deeply([], \@filters);
   my $language = {};
-  $extractor->language($language);
-  ok($extractor->language == $language);
+  $extractor->filters($language);
+  @filters = $extractor->filters;
+  is($language, $filters[0]);
 }
 
-sub must_not_filter_input_with_a_language_filter : Tests {
+sub must_not_filter_input_without_a_language_filter : Tests {
   my $extractor = new Analizo::Extractor;
   my @processed = ();
   no warnings;
@@ -101,7 +103,7 @@ sub must_filter_input_with_language_filter : Tests {
   use warnings;
 
   my $extractor = new Analizo::Extractor;
-  $extractor->language(new LanguageFilterStub);
+  $extractor->filters(new LanguageFilterStub);
   $extractor->process('t/samples/mixed');
 
   my @expected = ('t/samples/mixed/Backend.java', 't/samples/mixed/UI.java');
@@ -109,13 +111,19 @@ sub must_filter_input_with_language_filter : Tests {
   is_deeply(\@processed, \@expected);
 }
 
-sub must_have_a_list_of_excluded_dirs : Tests {
+sub must_create_filters_for_excluded_dirs : Tests {
   my $extractor = new Analizo::Extractor;
-  ok(!defined($extractor->exclude));
+  my @filters = $extractor->filters;
+  is(scalar @filters, 0);
+
+  # addding the first excluded directory filter also adds a null language filter
   $extractor->exclude('test');
-  is_deeply($extractor->exclude, ['test']);
+  @filters = $extractor->filters;
+  is(scalar @filters, 2);
+
   $extractor->exclude('uitest');
-  is_deeply($extractor->exclude, ['test', 'uitest']);
+  @filters = $extractor->filters;
+  is(scalar(@filters), 3);
 }
 
 sub must_not_process_files_in_excluded_dirs : Tests {
@@ -130,19 +138,25 @@ sub must_not_process_files_in_excluded_dirs : Tests {
   my $extractor = new Analizo::Extractor;
   $extractor->exclude('t/samples/multidir/cpp/test');
   $extractor->process('t/samples/multidir/cpp');
-  is_deeply(\@processed, ['t/samples/multidir/cpp/src']);
+  is_deeply(\@processed, ['t/samples/multidir/cpp/hello.cc', 't/samples/multidir/cpp/src/hello.cc', 't/samples/multidir/cpp/src/hello.h']);
 }
 
-sub _excluded_tests : Tests {
-  my $extractor = new Analizo::Extractor;
-  $extractor->exclude('test');
-  ok($extractor->_excluded('test'));
-  ok($extractor->_excluded('./test'));
+sub must_not_exclude_everything_in_the_case_of_unexisting_excluded_dir : Tests {
+  my @processed = ();
+  no warnings;
+  local *Analizo::Extractor::actually_process = sub {
+    my $self = shift;
+    @processed = sort(@_);
+  };
+  use warnings;
 
-  # now also exclude 'src'
-  $extractor->exclude('src');
-  ok($extractor->_excluded('src'));
-  ok($extractor->_excluded('./src'));
+  my $extractor = new Analizo::Extractor;
+
+  ok(! -e 't/samples/animals/cpp/test');
+  $extractor->exclude('t/samples/animals/cpp/test');  # does not exist!
+  $extractor->process('t/samples/animals/cpp');
+
+  isnt(0, scalar @processed);
 }
 
 package LanguageFilterStub;
