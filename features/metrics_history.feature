@@ -19,7 +19,8 @@ Feature: analizo metrics-history
 
   Scenario: actually processing
     When I explode t/samples/evolution.tar.gz and run "(analizo metrics-history . && cat metrics.csv)"
-    Then the output must match "0a06a6fcc2e7b4fe56d134e89d74ad028bb122ed,eb67c27055293e835049b58d7d73ce3664d3f90e"
+    Then the output must match "^commit_id,previous_commit_id,date,author,email,.*,sc_average"
+    And the output must match "0a06a6fcc2e7b4fe56d134e89d74ad028bb122ed,eb67c27055293e835049b58d7d73ce3664d3f90e"
     # merge commit:
     And the output must match "eb67c27055293e835049b58d7d73ce3664d3f90e,,"
     And the output must match "aa2d0fcb7879485d5ff1cd189743f91f04bea8ce,d7f52e74dc3d8f57640e83d41c5e9f8fcf621c00"
@@ -29,3 +30,9 @@ Feature: analizo metrics-history
     And the output must match "0d3c023120ad4e9f519a03fff275d048c52671ad,,"
     # first commit after a non-relevant merge:
     And the output must match "8183eafad3a0f3eff6e8869f1bdbfd255e86825a,0a06a6fcc2e7b4fe56d134e89d74ad028bb122ed"
+
+  Scenario: passing analizo metrics options along
+    When I explode t/samples/evolution.tar.gz and run "(analizo metrics-history -o '--language cpp' . && cat metrics.csv)"
+    Then the output must match "^commit_id,previous_commit_id,date,author,email,.*,sc_average"
+    # There must be enough commas (i.e. all the needed metrics are there)
+    And the output must match "0a06a6fcc2e7b4fe56d134e89d74ad028bb122ed(,[^,]+){20}"

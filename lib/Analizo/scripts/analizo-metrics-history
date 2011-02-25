@@ -122,30 +122,49 @@ class Commit
 end
 
 class AnalizoRunner
-  def self.metrics(commit)
+
+  COMMIT_FIELDS = %w[
+    commit_id
+    previous_commit_id
+    date
+    author
+    email
+    changed_files
+  ]
+
+  def csv_data(commit)
     system("git checkout #{commit} > /dev/null 2>> git.log")
-    if "" == yaml_metrics = `analizo metrics #{$ANALIZO_METRICS_OPTIONS} . 2> /dev/null` then
-      false
+    analizo_metrics_output = `analizo metrics #{$ANALIZO_METRICS_OPTIONS} . 2> /dev/null`
+    if analizo_metrics_output.nil? || analizo_metrics_output.empty?
+      nil
     else
-      YAML.load_stream(yaml_metrics).documents
+      metrics = YAML.load_stream(analizo_metrics_output).documents.first
+      header(metrics) + [commit_data(commit), metrics_data(metrics)].join(',')
     end
   end
-  def self.metricsCSV(commit)
-    metr = metrics(commit)
-    if metr then
-      csv_string = ""
-      csv_string << commit.id; csv_string << ","
-      pa = commit.previous_wanted
-      if pa then
-        csv_string << commit.previous_wanted.id
-      end
-      csv_string << ","
-      csv_string << commit.author_name.inspect; csv_string << ","
-      csv_string << commit.author_email; csv_string << ","
 
-      csv_string << metr[0].keys.sort.map{|key| metr[0][key]}.join(','); csv_string << ","
-      csv_string << `git show --pretty=format: --name-only #{commit.id}`.split.join(',').inspect; csv_string << ","
-      csv_string << commit.authored_date.rfc2822.inspect
+  protected
+
+  def commit_data(commit)
+    [
+      commit.id,
+      commit.previous_wanted && commit.previous_wanted.id || nil,
+      commit.authored_date.rfc2822.inspect,
+      commit.author_name.inspect,
+      commit.author_email,
+      commit.changed_files.join(',').inspect
+    ].join(',')
+  end
+
+  def metrics_data(metrics)
+    metrics.keys.sort.map{|key| metrics[key]}.join(',')
+  end
+
+  def header(metrics)
+    if @header_written
+      ""
+    else
+      @header_written = (COMMIT_FIELDS + metrics.keys.sort).join(',') + "\n"
     end
   end
 end
@@ -193,26 +212,27 @@ system("echo \"Log opened at: #{Time.now}\" >> analizo.log")
 system("echo \"Log opened at: #{Time.now}\" >> doxyparse.log")
 system("git checkout master > /dev/null 2>> git.log")
 
-File.open('metrics.csv', 'w') do |file|
-  file.puts "commit_id,previous_commit_id,author,e-mail,average_coupiling,average_lcom4,number_of_functions,number_of_modules,number_of_public_functions,total_loc,changed_files,date\n"
-  wl = Repository.new.wanted_commits
-  if list_only
-    puts wl
-    exit 0
-  end
-  if wl.size == 0 then
-    puts "No relevant commits to proccess"
+wl = Repository.new.wanted_commits
+if list_only
+  puts wl
+  exit 0
+end
+if wl.size == 0 then
+  puts "No relevant commits to proccess"
+else
+  print "Processing "
+  if wl.size == 1 then
+    puts "one commit"
   else
-    print "Processing " 
-    if wl.size == 1 then
-      puts "one commit"
-    else
-      puts "#{wl.size} commits..."
-    end
+    puts "#{wl.size} commits..."
   end
+end
+runner = AnalizoRunner.new
+
+File.open('metrics.csv', 'w') do |file|
   error_counter = 0
   wl.each do |commit|
-    if mcsv = AnalizoRunner.metricsCSV(commit) then
+    if mcsv = runner.csv_data(commit) then
       file.puts mcsv
       print "."
     else
@@ -238,6 +258,8 @@ end
 system("echo \"Log closed at: #{Time.now}\" >> git.log")
 system("echo \"Log closed at: #{Time.now}\" >> analizo.log")
 system("echo \"Log closed at: #{Time.now}\" >> doxyparse.log")
+
+Dir.chdir(previous_directory)
 
 __END__
 
