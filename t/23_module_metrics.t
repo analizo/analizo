@@ -17,10 +17,6 @@ sub constructor : Tests {
   isa_ok($module_metrics, 'Analizo::ModuleMetrics');
 }
 
-sub model : Tests {
-  is($module_metrics->model, $model);
-}
-
 sub list_of_metrics : Tests {
   my %metrics = $module_metrics->list();
   cmp_ok(scalar(keys(%metrics)), '>', 0, 'must list metrics');

@@ -19,12 +19,11 @@ use Analizo::Metric::NumberOfPublicMethods;
 use Analizo::Metric::ResponseForClass;
 
 
-__PACKAGE__->mk_accessors(qw(model metric_calculators));
+__PACKAGE__->mk_accessors(qw(metric_calculators));
 
 sub new {
   my ($package, %args) = @_;
   my @instance_variables = (
-    model => $args{model},
     metric_calculators => _initialize_metric_calculators($args{model})
   );
   return bless { @instance_variables }, $package;
@@ -59,16 +58,6 @@ sub list {
     $list{$metric} = $self->metric_calculators->{$metric}->description;
   }
   return %list;
-}
-
-sub short_metric_names {
-  my $self = shift;
-
-  my @list = ();
-  for my $metric (keys %{$self->metric_calculators}) {
-    push @list, $metric;
-  }
-  return @list;
 }
 
 sub report {
