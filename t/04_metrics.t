@@ -321,25 +321,6 @@ sub response_for_class : Tests {
   is($metrics->response_for_class('module'), 4, "two functions and two calls declared on the module");
 }
 
-#Lines Of Code
-sub lines_of_code : Tests {
-  my @result = $metrics->lines_of_code('mod1');
-  is($result[0], 0, 'empty module has 0 loc');
-  is($result[1], 0, 'empty module has max loc 0');
-
-  $model->declare_function('mod1', 'mod1::f1');
-  $model->add_loc('mod1::f1', 10);
-  @result = $metrics->lines_of_code('mod1');
-  is($result[0], 10, 'one module, with 10 loc');
-  is($result[1], 10, 'one module, with 10 loc, makes max loc = 10');
-
-  $model->declare_function('mod1', 'mod1::f2');
-  $model->add_loc('mod1::f2', 20);
-  @result = $metrics->lines_of_code('mod1');
-  is($result[0], 30, 'adding another module with 20 loc makes the total equal 30');
-  is($result[1], 20, 'adding another module with 20 loc makes the max LOC equal 20');
-}
-
 sub total_eloc : Tests {
   $model->declare_total_eloc(28);
   is($metrics->total_eloc, 28, 'calculating total eloc');

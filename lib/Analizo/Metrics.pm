@@ -2,10 +2,24 @@ package Analizo::Metrics;
 use strict;
 use base qw(Class::Accessor::Fast);
 use List::Compare;
-use Graph;
 use YAML;
 use Statistics::Descriptive;
 use Statistics::OnLine;
+
+use Analizo::Metric::AfferentConnections;
+use Analizo::Metric::AverageCycloComplexity;
+use Analizo::Metric::AverageNumberOfParameters;
+use Analizo::Metric::CouplingBetweenObjects;
+use Analizo::Metric::DepthOfInheritanceTree;
+use Analizo::Metric::LackOfCohesionOfMethods;
+use Analizo::Metric::LinesOfCode;
+use Analizo::Metric::MaximumMethodLinesOfCode;
+use Analizo::Metric::NumberOfAttributes;
+use Analizo::Metric::NumberOfChildren;
+use Analizo::Metric::NumberOfMethods;
+use Analizo::Metric::NumberOfPublicAttributes;
+use Analizo::Metric::NumberOfPublicMethods;
+use Analizo::Metric::ResponseForClass;
 
 __PACKAGE__->mk_accessors(qw(
     model
@@ -62,270 +76,91 @@ sub list_of_global_metrics {
 
 sub afferent_connections_per_class {
   my ($self, $module) = @_;
-
-  my $number_of_caller_modules = $self->_number_of_modules_that_call_module($module);
-  my $number_of_modules_on_inheritance_tree = $self->_recursive_number_of_children($module);
-
-  return $number_of_caller_modules + $number_of_modules_on_inheritance_tree;
+  my $acc = new Analizo::Metric::AfferentConnections(model => $self->model);
+  return $acc->calculate($module);
 }
 
-sub _number_of_modules_that_call_module {
+sub average_cyclo_complexity_per_method {
   my ($self, $module) = @_;
-
-  my @seen_modules = ();
-  for my $caller_member (keys(%{$self->model->calls})){
-    $self->_push_member_module_if_it_calls_searched_module($caller_member, $module, \@seen_modules);
-  }
-
-  return scalar @seen_modules;
+  my $accm = new Analizo::Metric::AverageCycloComplexity(model => $self->model);
+  return $accm->calculate($module);
 }
 
-sub _push_member_module_if_it_calls_searched_module {
-  my ($self, $caller_member, $searched_module, $seen_modules) = @_;
-
-  my $caller_module = $self->model->members->{$caller_member};
-  if($self->_member_calls_searched_module($caller_member, $caller_module, $searched_module)){
-    push @{$seen_modules}, $caller_module;
-  }
-}
-
-sub _member_calls_searched_module {
-  my ($self, $caller_member, $caller_module, $searched_module) = @_;
-
-  for my $called_member (keys(%{$self->model->calls->{$caller_member}})) {
-    my $called_module = $self->model->members->{$called_member};
-    if(_called_module_is_the_searched($called_module, $searched_module, $caller_module)) {
-        return 1;
-    }
-  }
-  return 0;
-}
-
-sub _called_module_is_the_searched {
-  my ($called_module, $searched_module, $caller_module) = @_;
-  return $caller_module ne $called_module && $called_module eq $searched_module;
-}
-
-sub _recursive_number_of_children {
+sub average_number_of_parameters_per_method {
   my ($self, $module) = @_;
+  my $anpm = new Analizo::Metric::AverageNumberOfParameters(model => $self->model);
+  return $anpm->calculate($module);
+}
 
-  my $number_of_children = 0;
+sub coupling_between_objects {
+  my ($self, $module) = @_;
+  my $cbo = new Analizo::Metric::CouplingBetweenObjects(model => $self->model);
+  return $cbo->calculate($module);
+}
 
-  for my $other_module ($self->model->module_names){
-    if ($self->_module_parent_of_other($module, $other_module)) {
-      $number_of_children += $self->_recursive_number_of_children($other_module) + 1;
-    }
-  }
+sub depth_of_inheritance_tree {
+  my ($self, $module) = @_;
+  my $dit = new Analizo::Metric::DepthOfInheritanceTree(model => $self->model);
+  return $dit->calculate($module);
+}
 
-  return $number_of_children;
+sub lack_of_cohesion_of_methods {
+  my ($self, $module) = @_;
+  my $lcom4 = new Analizo::Metric::LackOfCohesionOfMethods(model => $self->model);
+  return $lcom4->calculate($module);
+}
+
+sub number_of_attributes {
+  my ($self, $module) = @_;
+  my $noa = new Analizo::Metric::NumberOfAttributes(model => $self->model);
+  return $noa->calculate($module);
+}
+
+sub number_of_children {
+  my ($self, $module) = @_;
+  my $noc = new Analizo::Metric::NumberOfChildren(model => $self->model);
+  return $noc->calculate($module);
+}
+
+sub number_of_methods {
+  my ($self, $module) = @_;
+  my $nom = new Analizo::Metric::NumberOfMethods(model => $self->model);
+  return $nom->calculate($module);
+}
+
+sub number_of_public_methods {
+  my ($self, $module) = @_;
+  my $npm = new Analizo::Metric::NumberOfPublicMethods(model => $self->model);
+  return $npm->calculate($module);
+}
+
+sub number_of_public_attributes {
+  my ($self, $module) = @_;
+  my $npa = new Analizo::Metric::NumberOfPublicAttributes(model => $self->model);
+  return $npa->calculate($module);
+}
+
+sub response_for_class {
+  my ($self, $module) = @_;
+  my $rfc = new Analizo::Metric::ResponseForClass(model => $self->model);
+  return $rfc->calculate($module);
+}
+
+sub lines_of_code {
+  my ($self, $module) = @_;
+  my $loc = new Analizo::Metric::LinesOfCode(model => $self->model);
+  return $loc->calculate($module);
+}
+
+sub maximum_method_lines_of_code {
+  my ($self, $module) = @_;
+  my $mmloc = new Analizo::Metric::MaximumMethodLinesOfCode(model => $self->model);
+  return $mmloc->calculate($module);
 }
 
 sub average_method_lines_of_code {
   my ($self, $lines_of_code, $count) = @_;
   return ($count > 0) ? ($lines_of_code / $count) : 0;
-}
-
-sub average_cyclo_complexity_per_method {
-  my ($self, $module) = @_;
-
-  my $statisticalCalculator = Statistics::Descriptive::Full->new();
-  for my $function ($self->model->functions($module)) {
-    $statisticalCalculator->add_data($self->model->{conditional_paths}->{$function} || 0);
-  }
-
-  return $statisticalCalculator->mean();
-}
-
-sub average_number_of_parameters_per_method {
-  my ($self, $module) = @_;
-
-  my $statisticalCalculator = Statistics::Descriptive::Full->new();
-  for my $function ($self->model->functions($module)) {
-    $statisticalCalculator->add_data($self->model->{parameters}->{$function} || 0);
-  }
-
-  return $statisticalCalculator->mean();
-}
-
-sub coupling_between_objects {
-  my ($self, $module) = @_;
-  return $self->_number_of_calls_to_other_modules($module);
-}
-
-sub _number_of_calls_to_other_modules {
-  my ($self, $module) = @_;
-
-  my %calls_to = ();
-  for my $caller_function ($self->model->functions($module)) {
-    $self->_add_number_of_calls_to_other_modules($caller_function, $module, \%calls_to);
-  }
-
-  return (scalar keys(%calls_to));
-}
-
-sub _add_number_of_calls_to_other_modules {
-  my ($self, $caller_function, $module, $calls_to) = @_;
-
-  for my $called_function (keys(%{$self->model->calls->{$caller_function}})) {
-    $self->_add_function_module_other_then_searched_module($called_function, $module, $calls_to);
-  }
-}
-
-sub _add_function_module_other_then_searched_module {
-  my ($self, $called_function, $searched_module, $calls_to) = @_;
-
-  my $called_module = $self->model->members->{$called_function};
-  $calls_to->{$called_module}++ if ($called_module && $called_module ne $searched_module);
-}
-
-sub depth_of_inheritance_tree {
-  my ($self, $module) = @_;
-
-  my @parents = $self->model->inheritance($module);
-  if (@parents) {
-   return 1 + $self->_depth_of_deepest_inheritance_tree(@parents);
-  }
-  return 0;
-}
-
-sub _depth_of_deepest_inheritance_tree {
-  my ($self, @parents) = @_;
-  my @parent_dits = map { $self->depth_of_inheritance_tree($_) } @parents;
-  my @sorted = reverse(sort(@parent_dits));
-  return $sorted[0];
-}
-
-#lcom4
-sub lack_of_cohesion_of_methods {
-  my ($self, $module) = @_;
-
-  my $graph = $self->_cohesion_graph_of_module($module);
-  my $number_of_components = scalar $graph->weakly_connected_components;
-
-  return $number_of_components;
-}
-
-sub _cohesion_graph_of_module {
-  my ($self, $module) = @_;
-
-  my $graph = new Graph;
-  my @functions = $self->model->functions($module);
-  my @variables = $self->model->variables($module);
-
-  for my $function (@functions) {
-    $self->_add_function_as_vertix($graph, $function);
-    $self->_add_edges_to_used_functions_and_variables($graph, $function, @functions, @variables);
-  }
-
-  return $graph;
-}
-
-sub _add_function_as_vertix {
-  my ($self, $graph, $function) = @_;
-  $graph->add_vertex($function);
-}
-
-sub _add_edges_to_used_functions_and_variables {
-  my ($self, $graph, $function, @functions, @variables) = @_;
-
-  for my $used (keys(%{$self->model->calls->{$function}})) {
-    if (_used_inside_the_module($used, @functions, @variables)) {
-      $graph->add_edge($function, $used);
-    }
-  }
-}
-
-sub _used_inside_the_module {
-  my ($used, @functions, @variables) = @_;
-  return (grep { $_ eq $used } @functions) || (grep { $_ eq $used } @variables);
-}
-
-sub number_of_attributes {
-  my ($self, $module) = @_;
-  my @variables = $self->model->variables($module);
-  return scalar(@variables);
-}
-
-sub number_of_children {
-  my ($self, $module) = @_;
-
-  my $number_of_children = 0;
-  for my $other_module ($self->model->module_names) {
-    $number_of_children++ if ($self->_module_parent_of_other($module, $other_module));
-  }
-  return $number_of_children;
-}
-
-sub _module_parent_of_other {
-  my ($self, $module, $other_module) = @_;
-  return grep {$_ eq $module} $self->model->inheritance($other_module);
-}
-
-sub number_of_methods {
-  my ($self, $module) = @_;
-  my @functions = $self->model->functions($module);
-  return scalar(@functions);
-}
-
-sub number_of_public_methods {
-  my ($self, $module) = @_;
-
-  my @functions = $self->model->functions($module);
-  return $self->_number_of_public(@functions);
-}
-
-sub number_of_public_attributes {
-  my ($self, $module) = @_;
-
-  my @variables = $self->model->variables($module);
-  return $self->_number_of_public(@variables);
-}
-
-sub _number_of_public {
-  my ($self, @members) = @_;
-
-  my $count = 0;
-  for my $member (@members) {
-    $count += 1 if $self->_is_public($member);
-  }
-  return $count;
-}
-
-sub _is_public {
-  my ($self, $member) = @_;
-  return $self->model->{protection}->{$member} && $self->model->{protection}->{$member} eq "public";
-}
-
-sub response_for_class {
-  my ($self, $module) = @_;
-
-  my @functions = $self->model->functions($module);
-  my $number_of_functions = scalar @functions;
-  my $number_of_functions_called_by_module_functions = $self->_number_of_functions_called_by(@functions);
-
-  return $number_of_functions + $number_of_functions_called_by_module_functions;
-}
-
-sub _number_of_functions_called_by {
-  my ($self, @functions) = @_;
-
-  my $count = 0;
-  for my $function (@functions){
-    $count += scalar keys(%{$self->model->calls->{$function}});
- }
- return $count;
-}
-
-sub lines_of_code {
-  my ($self, $module) = @_;
-
-  my $statisticalCalculator = Statistics::Descriptive::Full->new();
-
-  for my $function ($self->model->functions($module)) {
-    $statisticalCalculator->add_data($self->model->{lines}->{$function} || 0);
-  }
-
-  return ($statisticalCalculator->sum(), $statisticalCalculator->max() || 0);
 }
 
 sub total_abstract_classes{
@@ -342,7 +177,6 @@ sub methods_per_abstract_class {
   for my $abstract_class (@abstract_classes) {
     $total_number_of_methods += (scalar $self->model->functions($abstract_class)) || 0;
   }
-
   return _division($total_number_of_methods, scalar @abstract_classes,);
 }
 
@@ -365,13 +199,15 @@ sub _report_module {
   my $cbo                  = $self->coupling_between_objects($module);
   my $dit                  = $self->depth_of_inheritance_tree($module);
   my $lcom4                = $self->lack_of_cohesion_of_methods($module);
+  my $loc                  = $self->lines_of_code($module);
+  my $mmloc                = $self->maximum_method_lines_of_code($module);
   my $noa                  = $self->number_of_attributes($module);
   my $noc                  = $self->number_of_children($module);
   my $nom                  = $self->number_of_methods($module);
   my $npm                  = $self->number_of_public_methods($module);
   my $npa                  = $self->number_of_public_attributes($module);
   my $rfc                  = $self->response_for_class($module);
-  my ($loc, $mmloc)        = $self->lines_of_code($module);
+
   my $amloc                = $self->average_method_lines_of_code($loc, $nom);
 
   my %data = (

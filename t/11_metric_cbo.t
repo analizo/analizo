@@ -1,0 +1,51 @@
+package MetricCboTests;
+use base qw(Test::Class);
+use Test::More 'no_plan'; # REMOVE THE 'no_plan'
+
+use strict;
+use warnings;
+use File::Basename;
+
+use Analizo::Model;
+use Analizo::Metric::CouplingBetweenObjects;
+
+eval('$Analizo::Metric::QUIET = 1;'); # the eval is to avoid Test::* complaining about possible typo
+
+use vars qw($model $cbo);
+
+sub setup : Test(setup) {
+  $model = new Analizo::Model;
+  $cbo = new Analizo::Metric::CouplingBetweenObjects(model => $model);
+}
+
+sub use_package : Tests {
+  use_ok('Analizo::Metric::CouplingBetweenObjects');
+}
+
+sub has_model : Tests {
+  is($cbo->model, $model);
+}
+
+
+sub calculate : Tests {
+  $model->declare_function('mod1', 'f1');
+  $model->declare_function('mod2', 'f2');
+
+  is($cbo->calculate('mod1'), 0, 'no cbo');
+  $model->add_call('f1', 'f1');
+  is($cbo->calculate('mod1'), 0, 'calling itself does not count as cbo');
+
+  $model->add_call('f1', 'f2');
+  is($cbo->calculate('mod1'), 1, 'calling a single other module');
+
+  $model->declare_function('mod3', 'f3');
+  $model->add_call('f1', 'f3');
+  is($cbo->calculate('mod1'), 2, 'calling two function in distinct modules');
+
+  $model->declare_function('mod3', 'f3a');
+  $model->add_call('f1', 'f3a');
+  is($cbo->calculate('mod1'), 2, 'calling two different functions in the same module');
+}
+
+MetricCboTests->runtests;
+
