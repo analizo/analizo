@@ -26,6 +26,10 @@ sub has_model : Tests {
   is($dit->model, $model);
 }
 
+sub description : Tests {
+  return "Depth of Inheritance Tree";
+}
+
 sub calculate : Tests {
   $model->add_inheritance('Level1', 'Level2');
   $model->add_inheritance('Level2', 'Level3');

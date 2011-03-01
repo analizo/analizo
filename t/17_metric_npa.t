@@ -26,6 +26,10 @@ sub has_model : Tests {
   is($npa->model, $model);
 }
 
+sub description : Tests {
+  is($npa->description, "Number of Public Attributes");
+}
+
 sub calculate : Tests {
   is($npa->calculate('mod1'), 0, 'empty modules have 0 public attributes');
 

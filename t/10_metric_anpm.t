@@ -26,6 +26,10 @@ sub has_model : Tests {
   is($anpm->model, $model);
 }
 
+sub description : Tests {
+  is($anpm->description, "Average Number of Parameters per Method");
+}
+
 sub calculate : Tests {
   $model->declare_module('module');
   is($anpm->calculate('module'), 0, 'no parameters declared');

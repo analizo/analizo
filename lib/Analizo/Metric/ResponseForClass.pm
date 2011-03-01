@@ -12,6 +12,10 @@ sub new {
   return bless { @instance_variables }, $package;
 }
 
+sub description {
+  return "Response for a Class";
+}
+
 sub calculate {
   my ($self, $module) = @_;
 

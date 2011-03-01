@@ -26,6 +26,10 @@ sub has_model : Tests {
   is($noa->model, $model);
 }
 
+sub description : Tests {
+  is($noa->description, "Number of Attributes");
+}
+
 sub calculate : Tests {
   is($noa->calculate('module1'), 0, 'empty modules have no attributes');
 

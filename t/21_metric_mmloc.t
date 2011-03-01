@@ -26,6 +26,10 @@ sub has_model : Tests {
   is($mmloc->model, $model);
 }
 
+sub description : Tests {
+  is($mmloc->description, "Max Method LOC");
+}
+
 sub calculate : Tests {
   is($mmloc->calculate('mod1'), 0, 'empty module has max loc 0');
 

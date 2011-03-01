@@ -26,6 +26,10 @@ sub has_model : Tests {
   is($nom->model, $model);
 }
 
+sub description : Tests {
+  is($nom->description, "Number of Methods");
+}
+
 sub calculate : Tests {
   is($nom->calculate('mod1'), 0, 'empty modules have no functions');
 

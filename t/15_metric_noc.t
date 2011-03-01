@@ -26,6 +26,10 @@ sub has_model : Tests {
   is($noc->model, $model);
 }
 
+sub description : Tests{
+  is($noc->description, "Number of Children");
+}
+
 sub calculate : Tests {
   $model->declare_module('A');
   $model->declare_module('B');

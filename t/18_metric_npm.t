@@ -26,6 +26,10 @@ sub has_model : Tests {
   is($npm->model, $model);
 }
 
+sub description : Tests {
+  is($npm->description, "Number of Public Methods");
+}
+
 sub calculate : Tests {
   is($npm->calculate('mod1'), 0, 'empty modules have 0 public functions');
 

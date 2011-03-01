@@ -26,6 +26,10 @@ sub has_model : Tests {
   is($loc->model, $model);
 }
 
+sub description : Tests {
+  is($loc->description, "Lines of Code");
+}
+
 sub calculate : Tests {
   is($loc->calculate('mod1'), 0, 'empty module has 0 loc');
 

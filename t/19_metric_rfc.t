@@ -26,6 +26,10 @@ sub has_model : Tests {
   is($rfc->model, $model);
 }
 
+sub description : Tests {
+  is($rfc->description, "Response for a Class");
+}
+
 sub calculate : Tests {
   $model->declare_module('module');
   is($rfc->calculate('module'), 0, "no functions declared on the module");

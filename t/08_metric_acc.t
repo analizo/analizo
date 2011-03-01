@@ -26,6 +26,10 @@ sub has_model : Tests {
   is($acc->model, $model);
 }
 
+sub description : Tests {
+  is($acc->description, 'Afferent Connections per Class (used to calculate COF - Coupling Factor)');
+}
+
 sub calculate : Tests {
   $model->declare_module('A');
   $model->declare_function('A', 'fA');

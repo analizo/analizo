@@ -13,6 +13,10 @@ sub new {
   return bless { @instance_variables }, $package;
 }
 
+sub description {
+  return "Average Number of Parameters per Method";
+}
+
 sub calculate {
   my ($self, $module) = @_;
 

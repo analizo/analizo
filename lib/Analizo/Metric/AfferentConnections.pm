@@ -2,60 +2,66 @@ package Analizo::Metric::AfferentConnections;
 use strict;
 use base qw(Class::Accessor::Fast);
 
-__PACKAGE__->mk_accessors(qw( model ));
+__PACKAGE__->mk_accessors(qw( model analized_module));
 
 sub new {
   my ($package, %args) = @_;
    my @instance_variables = (
-    model => $args{model}
+    model => $args{model},
+    analized_modules => undef
   );
   return bless { @instance_variables }, $package;
 }
 
+sub description {
+  return 'Afferent Connections per Class (used to calculate COF - Coupling Factor)';
+}
+
 sub calculate {
   my ($self, $module) = @_;
+  $self->analized_module($module);
 
-  my $number_of_caller_modules = $self->_number_of_modules_that_call_module($module);
-  my $number_of_modules_on_inheritance_tree = $self->_recursive_number_of_children($module);
+  my $number_of_caller_modules = $self->_number_of_modules_that_call_module();
+  my $number_of_modules_on_inheritance_tree = $self->_recursive_number_of_children($self->analized_module);
 
   return $number_of_caller_modules + $number_of_modules_on_inheritance_tree;
 }
 
 sub _number_of_modules_that_call_module {
-  my ($self, $module) = @_;
+  my $self = shift;
 
   my @seen_modules = ();
   for my $caller_member (keys(%{$self->model->calls})){
-    $self->_push_member_module_if_it_calls_searched_module($caller_member, $module, \@seen_modules);
+    $self->_push_member_module_if_it_calls_analized_module($caller_member, \@seen_modules);
   }
 
   return scalar @seen_modules;
 }
 
-sub _push_member_module_if_it_calls_searched_module {
-  my ($self, $caller_member, $searched_module, $seen_modules) = @_;
+sub _push_member_module_if_it_calls_analized_module {
+  my ($self, $caller_member, $seen_modules) = @_;
 
   my $caller_module = $self->model->members->{$caller_member};
-  if($self->_member_calls_searched_module($caller_member, $caller_module, $searched_module)){
+  if($self->_member_calls_analized_module($caller_member, $caller_module)){
     push @{$seen_modules}, $caller_module;
   }
 }
 
-sub _member_calls_searched_module {
-  my ($self, $caller_member, $caller_module, $searched_module) = @_;
+sub _member_calls_analized_module {
+  my ($self, $caller_member, $caller_module) = @_;
 
   for my $called_member (keys(%{$self->model->calls->{$caller_member}})) {
     my $called_module = $self->model->members->{$called_member};
-    if(_called_module_is_the_searched($called_module, $searched_module, $caller_module)) {
+    if($self->_called_module_is_the_analized($called_module, $caller_module)) {
         return 1;
     }
   }
   return 0;
 }
 
-sub _called_module_is_the_searched {
-  my ($called_module, $searched_module, $caller_module) = @_;
-  return $caller_module ne $called_module && $called_module eq $searched_module;
+sub _called_module_is_the_analized {
+  my ($self, $called_module, $caller_module) = @_;
+  return $caller_module ne $called_module && $called_module eq $self->analized_module;
 }
 
 sub _recursive_number_of_children {

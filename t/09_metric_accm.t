@@ -26,6 +26,10 @@ sub has_model : Tests {
   is($accm->model, $model);
 }
 
+sub description : Tests {
+  is($accm->description, "Average Cyclomatic Complexity per Method");
+}
+
 sub calculate : Tests {
   $model->declare_module('module');
   is($accm->calculate('module'), 0, 'no function');

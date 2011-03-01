@@ -26,6 +26,9 @@ sub has_model : Tests {
   is($cbo->model, $model);
 }
 
+sub description : Tests {
+  is($cbo->description, "Coupling Between Objects");
+}
 
 sub calculate : Tests {
   $model->declare_function('mod1', 'f1');
@@ -45,6 +48,15 @@ sub calculate : Tests {
   $model->declare_function('mod3', 'f3a');
   $model->add_call('f1', 'f3a');
   is($cbo->calculate('mod1'), 2, 'calling two different functions in the same module');
+}
+
+sub discard_external_symbols_for_calculate : Tests {
+  $model->declare_function('mod1', 'f1');
+  $model->declare_function('mod2', 'f2');
+
+  $model->add_call('f1', 'f2');
+  $model->add_call('f1', 'external_function');
+  is($cbo->calculate('mod1'), 1, 'calling a external function');
 }
 
 MetricCboTests->runtests;

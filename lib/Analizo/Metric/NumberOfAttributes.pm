@@ -12,12 +12,15 @@ sub new {
   return bless { @instance_variables }, $package;
 }
 
+sub description {
+  return "Number of Attributes";
+}
+
 sub calculate {
   my ($self, $module) = @_;
   my @variables = $self->model->variables($module);
   return scalar(@variables);
 }
-
 
 1;
 

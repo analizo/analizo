@@ -26,6 +26,10 @@ sub has_model : Tests {
   is($lcom4->model, $model);
 }
 
+sub description : Tests {
+  is($lcom4->description, "Lack of Cohesion of Methods");
+}
+
 sub calculate : Tests {
   $model->declare_function('mod1', $_) for qw(f1 f2);
   is($lcom4->calculate('mod1'), 2, 'two unrelated functions');

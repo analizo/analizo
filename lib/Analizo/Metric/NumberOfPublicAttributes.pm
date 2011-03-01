@@ -12,6 +12,10 @@ sub new {
   return bless { @instance_variables }, $package;
 }
 
+sub description {
+  return "Number of Public Attributes";
+}
+
 sub calculate {
   my ($self, $module) = @_;
 

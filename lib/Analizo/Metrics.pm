@@ -27,25 +27,8 @@ __PACKAGE__->mk_accessors(qw(
     module_counts
     values_lists
     global_report
-    report_global_metrics_only)
-);
-
-my %DESCRIPTIONS = (
-  acc       => "Afferent Connections per Class (used to calculate COF - Coupling Factor)",
-  accm      => "Average Cyclomatic Complexity per Method",
-  amloc     => "Average Method LOC",
-  anpm      => "Average Number of Parameters per Method",
-  cbo       => "Coupling Between Objects",
-  dit       => "Depth of Inheritance Tree",
-  lcom4     => "Lack of Cohesion of Methods ",
-  mmloc     => "Max Method LOC",
-  noa       => "Number of Attributes",
-  noc       => "Number of Children",
-  nom       => "Number of Methods",
-  npm       => "Number of Public Methods",
-  npa       => "Number of Public Attributes",
-  rfc       => "Response For a Class",
-  loc       => "Lines of Code"
+    report_global_metrics_only
+    metric_calculators)
 );
 
 sub new {
@@ -55,7 +38,8 @@ sub new {
     module_metrics_totals => _initialize_module_metrics_totals(),
     module_counts => _initialize_module_counts(),
     values_lists => _initialize_values_lists(),
-    global_report => _initialize_global_report()
+    global_report => _initialize_global_report(),
+    metric_calculators => _initialize_metric_calculators($args{model})
   );
   return bless { @instance_variables }, $package;
 }
@@ -72,90 +56,6 @@ sub list_of_global_metrics {
     total_methods_per_abstract_class => "Total number of methods per abstract class"
   );
   return %list;
-}
-
-sub afferent_connections_per_class {
-  my ($self, $module) = @_;
-  my $acc = new Analizo::Metric::AfferentConnections(model => $self->model);
-  return $acc->calculate($module);
-}
-
-sub average_cyclo_complexity_per_method {
-  my ($self, $module) = @_;
-  my $accm = new Analizo::Metric::AverageCycloComplexity(model => $self->model);
-  return $accm->calculate($module);
-}
-
-sub average_number_of_parameters_per_method {
-  my ($self, $module) = @_;
-  my $anpm = new Analizo::Metric::AverageNumberOfParameters(model => $self->model);
-  return $anpm->calculate($module);
-}
-
-sub coupling_between_objects {
-  my ($self, $module) = @_;
-  my $cbo = new Analizo::Metric::CouplingBetweenObjects(model => $self->model);
-  return $cbo->calculate($module);
-}
-
-sub depth_of_inheritance_tree {
-  my ($self, $module) = @_;
-  my $dit = new Analizo::Metric::DepthOfInheritanceTree(model => $self->model);
-  return $dit->calculate($module);
-}
-
-sub lack_of_cohesion_of_methods {
-  my ($self, $module) = @_;
-  my $lcom4 = new Analizo::Metric::LackOfCohesionOfMethods(model => $self->model);
-  return $lcom4->calculate($module);
-}
-
-sub number_of_attributes {
-  my ($self, $module) = @_;
-  my $noa = new Analizo::Metric::NumberOfAttributes(model => $self->model);
-  return $noa->calculate($module);
-}
-
-sub number_of_children {
-  my ($self, $module) = @_;
-  my $noc = new Analizo::Metric::NumberOfChildren(model => $self->model);
-  return $noc->calculate($module);
-}
-
-sub number_of_methods {
-  my ($self, $module) = @_;
-  my $nom = new Analizo::Metric::NumberOfMethods(model => $self->model);
-  return $nom->calculate($module);
-}
-
-sub number_of_public_methods {
-  my ($self, $module) = @_;
-  my $npm = new Analizo::Metric::NumberOfPublicMethods(model => $self->model);
-  return $npm->calculate($module);
-}
-
-sub number_of_public_attributes {
-  my ($self, $module) = @_;
-  my $npa = new Analizo::Metric::NumberOfPublicAttributes(model => $self->model);
-  return $npa->calculate($module);
-}
-
-sub response_for_class {
-  my ($self, $module) = @_;
-  my $rfc = new Analizo::Metric::ResponseForClass(model => $self->model);
-  return $rfc->calculate($module);
-}
-
-sub lines_of_code {
-  my ($self, $module) = @_;
-  my $loc = new Analizo::Metric::LinesOfCode(model => $self->model);
-  return $loc->calculate($module);
-}
-
-sub maximum_method_lines_of_code {
-  my ($self, $module) = @_;
-  my $mmloc = new Analizo::Metric::MaximumMethodLinesOfCode(model => $self->model);
-  return $mmloc->calculate($module);
 }
 
 sub average_method_lines_of_code {
@@ -190,45 +90,39 @@ sub total_eloc {
   return $self->model->total_eloc;
 }
 
-sub _report_module {
+sub _initialize_metric_calculators {
+  my $model = shift;
+  my  %calculators = (
+    acc                  => new Analizo::Metric::AfferentConnections(model => $model),
+    accm                 => new Analizo::Metric::AverageCycloComplexity(model => $model),
+    anpm                 => new Analizo::Metric::AverageNumberOfParameters(model => $model),
+    cbo                  => new Analizo::Metric::CouplingBetweenObjects(model => $model),
+    dit                  => new Analizo::Metric::DepthOfInheritanceTree(model => $model),
+    lcom4                => new Analizo::Metric::LackOfCohesionOfMethods(model => $model),
+    loc                  => new Analizo::Metric::LinesOfCode(model => $model),
+    mmloc                => new Analizo::Metric::MaximumMethodLinesOfCode(model => $model),
+    noa                  => new Analizo::Metric::NumberOfAttributes(model => $model),
+    noc                  => new Analizo::Metric::NumberOfChildren(model => $model),
+    nom                  => new Analizo::Metric::NumberOfMethods(model => $model),
+    npm                  => new Analizo::Metric::NumberOfPublicMethods(model => $model),
+    npa                  => new Analizo::Metric::NumberOfPublicAttributes(model => $model),
+    rfc                  => new Analizo::Metric::ResponseForClass(model => $model)
+  );
+  return \%calculators;
+}
+
+sub metrics_of_module {
   my ($self, $module) = @_;
 
-  my $acc                  = $self->afferent_connections_per_class($module);
-  my $accm                 = $self->average_cyclo_complexity_per_method($module);
-  my $anpm                 = $self->average_number_of_parameters_per_method($module);
-  my $cbo                  = $self->coupling_between_objects($module);
-  my $dit                  = $self->depth_of_inheritance_tree($module);
-  my $lcom4                = $self->lack_of_cohesion_of_methods($module);
-  my $loc                  = $self->lines_of_code($module);
-  my $mmloc                = $self->maximum_method_lines_of_code($module);
-  my $noa                  = $self->number_of_attributes($module);
-  my $noc                  = $self->number_of_children($module);
-  my $nom                  = $self->number_of_methods($module);
-  my $npm                  = $self->number_of_public_methods($module);
-  my $npa                  = $self->number_of_public_attributes($module);
-  my $rfc                  = $self->response_for_class($module);
+  my %values = ();
+  $values{'_module'} = $module;
 
-  my $amloc                = $self->average_method_lines_of_code($loc, $nom);
+  for my $metric (keys %{$self->metric_calculators}) {
+      $values{$metric} = $self->metric_calculators->{$metric}->calculate($module);
+  }
 
-  my %data = (
-    _module              => $module,
-    acc                  => $acc,
-    accm                 => $accm,
-    amloc                => $amloc,
-    anpm                 => $anpm,
-    cbo                  => $cbo,
-    dit                  => $dit,
-    lcom4                => $lcom4,
-    mmloc                => $mmloc,
-    noa                  => $noa,
-    noc                  => $noc,
-    nom                  => $nom,
-    npm                  => $npm,
-    npa                  => $npa,
-    rfc                  => $rfc,
-    loc                  => $loc
-  );
-  return %data;
+  $values{'amloc'} = $self->average_method_lines_of_code($values{'loc'}, $values{'nom'});
+  return %values;
 }
 
 sub report {
@@ -294,7 +188,7 @@ sub _collect_and_dump_all_modules_report {
 
   my $modules_report = '';
   for my $module ($self->model->module_names) {
-    my %data = $self->_report_module($module);
+    my %data = $self->metrics_of_module($module);
     $self->_update_module_metrics_totals_and_values_lists(\%data);
     $self->_update_module_counts(\%data);
     $modules_report .= Dump(\%data);
@@ -404,12 +298,11 @@ sub _number_of_combinations {
 
 sub list_of_metrics {
   my $self = shift;
-  my %report = $self->_report_module('dummy-module');
-  my @names = grep { $_ !~ /^_/ } keys(%report);
   my %list = ();
-  for my $name (@names) {
-    $list{$name} = $DESCRIPTIONS{$name};
+  for my $metric (keys %{$self->metric_calculators}) {
+    $list{$metric} = $self->metric_calculators->{$metric}->description;
   }
+  $list{'amloc'} = "Average Method LOC";
   return %list;
 }
 

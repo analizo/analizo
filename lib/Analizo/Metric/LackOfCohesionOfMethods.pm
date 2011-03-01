@@ -3,51 +3,53 @@ use strict;
 use base qw(Class::Accessor::Fast);
 use Graph;
 
-__PACKAGE__->mk_accessors(qw( model ));
+__PACKAGE__->mk_accessors(qw( model graph));
 
 sub new {
   my ($package, %args) = @_;
    my @instance_variables = (
-    model => $args{model}
+    model => $args{model},
+    graph => new Graph()
   );
   return bless { @instance_variables }, $package;
+}
+
+sub description {
+  return "Lack of Cohesion of Methods";
 }
 
 sub calculate {
   my ($self, $module) = @_;
 
-  my $graph = $self->_cohesion_graph_of_module($module);
-  my $number_of_components = scalar $graph->weakly_connected_components;
+  $self->_build_cohesion_graph_of_module($module);
+  my $number_of_components = scalar $self->graph->weakly_connected_components;
 
   return $number_of_components;
 }
 
-sub _cohesion_graph_of_module {
+sub _build_cohesion_graph_of_module {
   my ($self, $module) = @_;
 
-  my $graph = new Graph;
   my @functions = $self->model->functions($module);
   my @variables = $self->model->variables($module);
 
   for my $function (@functions) {
-    $self->_add_function_as_vertix($graph, $function);
-    $self->_add_edges_to_used_functions_and_variables($graph, $function, @functions, @variables);
+    $self->_add_function_as_vertix($function);
+    $self->_add_edges_to_used_functions_and_variables($function, @functions, @variables);
   }
-
-  return $graph;
 }
 
 sub _add_function_as_vertix {
-  my ($self, $graph, $function) = @_;
-  $graph->add_vertex($function);
+  my ($self, $function) = @_;
+  $self->graph->add_vertex($function);
 }
 
 sub _add_edges_to_used_functions_and_variables {
-  my ($self, $graph, $function, @functions, @variables) = @_;
+  my ($self, $function, @functions, @variables) = @_;
 
   for my $used (keys(%{$self->model->calls->{$function}})) {
     if (_used_inside_the_module($used, @functions, @variables)) {
-      $graph->add_edge($function, $used);
+      $self->graph->add_edge($function, $used);
     }
   }
 }

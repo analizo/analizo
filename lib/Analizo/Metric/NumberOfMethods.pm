@@ -12,6 +12,10 @@ sub new {
   return bless { @instance_variables }, $package;
 }
 
+sub description {
+  return "Number of Methods";
+}
+
 sub calculate {
   my ($self, $module) = @_;
   my @functions = $self->model->functions($module);
