@@ -1,26 +1,25 @@
-package Analizo::Metric::NumberOfMethods;
+package Analizo::GlobalMetric::TotalAbstractClasses;
 use strict;
 use base qw(Class::Accessor::Fast);
-
 
 __PACKAGE__->mk_accessors(qw( model ));
 
 sub new {
   my ($package, %args) = @_;
    my @instance_variables = (
-    model => $args{model}
+    model => $args{model},
   );
   return bless { @instance_variables }, $package;
 }
 
 sub description {
-  return "Number of Methods";
+  return "Total Abstract Classes";
 }
 
 sub calculate {
-  my ($self, $module) = @_;
-  my @functions = $self->model->functions($module);
-  return scalar(@functions);
+  my ($self)= @_;
+  my @total_of_abstract_classes = $self->model->abstract_classes;
+  return scalar(@total_of_abstract_classes) || 0;
 }
 
 1;
