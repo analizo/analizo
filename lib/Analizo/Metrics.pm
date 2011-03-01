@@ -7,7 +7,14 @@ use YAML;
 use Statistics::Descriptive;
 use Statistics::OnLine;
 
-__PACKAGE__->mk_accessors(qw(model report_global_metrics_only));
+__PACKAGE__->mk_accessors(qw(
+    model
+    module_metrics_totals
+    module_counts
+    values_lists
+    global_report
+    report_global_metrics_only)
+);
 
 my %DESCRIPTIONS = (
   acc       => "Afferent Connections per Class (used to calculate COF - Coupling Factor)",
@@ -29,7 +36,14 @@ my %DESCRIPTIONS = (
 
 sub new {
   my ($package, %args) = @_;
-  return bless { model => $args{model} }, $package;
+  my @instance_variables = (
+    model => $args{model},
+    module_metrics_totals => _initialize_module_metrics_totals(),
+    module_counts => _initialize_module_counts(),
+    values_lists => _initialize_values_lists(),
+    global_report => _initialize_global_report()
+  );
+  return bless { @instance_variables }, $package;
 }
 
 sub list_of_global_metrics {
@@ -295,7 +309,7 @@ sub response_for_class {
 sub _number_of_functions_called_by {
   my ($self, @functions) = @_;
 
-  my $count = ();
+  my $count = 0;
   for my $function (@functions){
     $count += scalar keys(%{$self->model->calls->{$function}});
  }
@@ -384,17 +398,13 @@ sub _report_module {
 sub report {
   my $self = shift;
 
-  my $module_metrics_totals = $self->_initialize_module_metrics_totals();
-  my $module_counts = $self->_initialize_module_counts();
-  my $values_lists = $self->_initialize_values_lists();
-
   return '' if $self->_there_are_no_modules();
 
-  my $modules_report = $self->_collect_all_modules_report($module_metrics_totals, $module_counts, $values_lists);
-  my $global_report = $self->_collect_global_metrics_report($module_metrics_totals, $module_counts, $values_lists);
+  my $modules_report = $self->_collect_and_dump_all_modules_report();
+  $self->_collect_global_metrics_report();
 
-  return Dump($global_report) if $self->report_global_metrics_only();
-  return Dump($global_report) . $modules_report;
+  return Dump($self->global_report) if $self->report_global_metrics_only();
+  return Dump($self->global_report) . $modules_report;
 }
 
 sub _there_are_no_modules {
@@ -403,7 +413,6 @@ sub _there_are_no_modules {
 }
 
 sub _initialize_module_metrics_totals {
-  my $self = shift;
   my %module_metrics_totals = (
     acc       => 0,
     accm      => 0,
@@ -425,7 +434,6 @@ sub _initialize_module_metrics_totals {
 }
 
 sub _initialize_module_counts {
-  my $self = shift;
   my %module_counts = (
     total_modules => 0,
     total_modules_with_defined_methods => 0,
@@ -435,7 +443,7 @@ sub _initialize_module_counts {
 }
 
 sub _initialize_values_lists {
-  my ($self, %module_metrics_totals) = @_;
+  my ( %module_metrics_totals) = @_;
   my %values_lists = ();
 
   for my $metric (keys %module_metrics_totals) {
@@ -445,113 +453,117 @@ sub _initialize_values_lists {
   return \%values_lists;
 }
 
-sub _collect_all_modules_report {
-  my ($self, $module_metrics_totals, $module_counts, $values_lists) = @_;
+sub _collect_and_dump_all_modules_report {
+  my $self = shift;
 
   my $modules_report = '';
   for my $module ($self->model->module_names) {
     my %data = $self->_report_module($module);
-    $self->_update_module_metrics_totals_and_values_lists(\%data, $module_metrics_totals, $values_lists);
-    $self->_update_module_counts(\%data, $module_counts);
+    $self->_update_module_metrics_totals_and_values_lists(\%data);
+    $self->_update_module_counts(\%data);
     $modules_report .= Dump(\%data);
   }
   return $modules_report;
 }
 
 sub _update_module_metrics_totals_and_values_lists {
-  my ($self, $data, $module_metrics_totals, $values_lists) = @_;
-  for my $metric (keys %{$module_metrics_totals}){
-    push @{$values_lists->{$metric}}, $data->{$metric};
-    $module_metrics_totals->{$metric} += $data->{$metric};
+  my ($self, $data) = @_;
+  for my $metric (keys %{$self->module_metrics_totals}){
+    push @{$self->values_lists->{$metric}}, $data->{$metric};
+    $self->module_metrics_totals->{$metric} += $data->{$metric};
   }
 }
 
 sub _update_module_counts {
-  my ($self, $data, $module_counts) = @_;
-  $module_counts->{'total_modules'} += 1;
-  $module_counts->{'total_modules_with_defined_methods'} += 1 if $data->{'nom'} > 0;
-  $module_counts->{'total_modules_with_defined_attributes'} += 1 if $data->{'noa'} > 0;
+  my ($self, $data) = @_;
+  $self->module_counts->{'total_modules'} += 1;
+  $self->module_counts->{'total_modules_with_defined_methods'} += 1 if $data->{'nom'} > 0;
+  $self->module_counts->{'total_modules_with_defined_attributes'} += 1 if $data->{'noa'} > 0;
 }
 
 sub _collect_global_metrics_report {
-  my ($self, $module_metrics_totals, $module_counts, $values_lists) = @_;
-  my $summary = $self->_initialize_summary();
-  $self->_add_module_metrics_totals($summary, $module_metrics_totals);
-  $self->_add_module_counts($summary, $module_counts);
-  $self->_add_statistical_values($summary, $values_lists);
-  $self->_add_total_cof($summary, $module_counts->{'total_modules'}, $module_metrics_totals->{'acc'});
-  return $summary;
+  my $self = shift;
+  $self->_add_module_metrics_totals();
+  $self->_add_module_counts();
+  $self->_add_statistical_values();
+  $self->_add_total_coupling_factor();
 }
 
-sub _initialize_summary {
-  my ($self) = @_;
-  my %summary = ();
-  return \%summary;
-}
-
-sub _add_module_counts {
-  my ($self, $summary, $module_counts) = @_;
-  for my $count (keys  %{$module_counts}) {
-      $summary->{$count} = $module_counts->{$count};
-  }
+sub _initialize_global_report {
+  my %global_report = ();
+  return \%global_report;
 }
 
 sub _add_module_metrics_totals {
-  my ($self, $summary, $module_metrics_totals) = @_;
-  $summary->{'total_nom'} = $module_metrics_totals->{'nom'};
-  $summary->{'total_loc'} = $module_metrics_totals->{'loc'};
-  $summary->{'total_abstract_classes'} = $self->total_abstract_classes;
-  $summary->{'total_methods_per_abstract_class'} = $self->methods_per_abstract_class;
-  $summary->{'total_eloc'} = $self->total_eloc;
+  my $self = shift;
+  $self->global_report->{'total_nom'} = $self->module_metrics_totals->{'nom'};
+  $self->global_report->{'total_loc'} = $self->module_metrics_totals->{'loc'};
+  $self->global_report->{'total_abstract_classes'} = $self->total_abstract_classes;
+  $self->global_report->{'total_methods_per_abstract_class'} = $self->methods_per_abstract_class;
+  $self->global_report->{'total_eloc'} = $self->total_eloc;
 }
 
+sub _add_module_counts {
+  my $self = shift;
+  for my $count (keys  %{$self->module_counts}) {
+      $self->global_report->{$count} = $self->module_counts->{$count};
+  }
+}
 sub _add_statistical_values {
-  my ($self, $summary, $values_lists) = @_;
-  for my $metric (keys %{$values_lists}){
+  my $self = shift;
+  for my $metric (keys %{$self->values_lists}){
     my $statistics = Statistics::Descriptive::Full->new();
     my $distributions = Statistics::OnLine->new();
 
-    $statistics->add_data(@{$values_lists->{$metric}});
-    $distributions->add_data(@{$values_lists->{$metric}});
+    $statistics->add_data(@{$self->values_lists->{$metric}});
+    $distributions->add_data(@{$self->values_lists->{$metric}});
 
     my $variance = $statistics->variance();
-    $self->_add_descriptive_statistics($summary, $statistics, $metric);
-    $self->_add_distributions_statistics($summary, $distributions, $metric, $variance);
+    $self->_add_descriptive_statistics($statistics, $metric);
+    $self->_add_distributions_statistics($distributions, $metric, $variance);
   }
 }
 
 sub _add_descriptive_statistics {
-  my ($self, $summary, $statistics, $metric) = @_;
-  $summary->{$metric . "_average"} = $statistics->mean();
-  $summary->{$metric . "_maximum"} = $statistics->max();
-  $summary->{$metric . "_mininum"} = $statistics->min();
-  $summary->{$metric . "_mode"} = $statistics->mode();
-  $summary->{$metric . "_median"}= $statistics->median();
-  $summary->{$metric . "_standard_deviation"}= $statistics->standard_deviation();
-  $summary->{$metric . "_sum"} = $statistics->sum();
-  $summary->{$metric . "_variance"}= $statistics->variance;
+  my ($self, $statistics, $metric) = @_;
+  $self->global_report->{$metric . "_average"} = $statistics->mean;
+  $self->global_report->{$metric . "_maximum"} = $statistics->max;
+  $self->global_report->{$metric . "_mininum"} = $statistics->min;
+  $self->global_report->{$metric . "_mode"} = $statistics->mode;
+  $self->global_report->{$metric . "_median"} = $statistics->median;
+  $self->global_report->{$metric . "_standard_deviation"} = $statistics->standard_deviation;
+  $self->global_report->{$metric . "_sum"} = $statistics->sum;
+  $self->global_report->{$metric . "_variance"} = $statistics->variance;
 }
 
 sub _add_distributions_statistics {
-  my ($self, $summary, $distributions, $metric, $variance) = @_;
-  if (($variance > 0) && ($distributions->count >= 4)) {
-    $summary->{$metric . "_kurtosis"} = $distributions->kurtosis;
-    $summary->{$metric . "_skewness"} = $distributions->skewness;
+  my ($self, $distributions, $metric) = @_;
+  if (($distributions->variance > 0) && ($distributions->count >= 4)) {
+    $self->global_report->{$metric . "_kurtosis"} = $distributions->kurtosis;
+    $self->global_report->{$metric . "_skewness"} = $distributions->skewness;
   }
   else {
-    $summary->{$metric . "_kurtosis"} = 0;
-    $summary->{$metric . "_skewness"} = 0;
+    $self->global_report->{$metric . "_kurtosis"} = 0;
+    $self->global_report->{$metric . "_skewness"} = 0;
   }
 }
 
-sub _add_total_cof {
-  my ($self, $summary, $total_modules, $acc) = @_;
+sub _add_total_coupling_factor {
+  my $self = shift;
+  my $total_modules = $self->module_counts->{'total_modules'};
+  my $total_acc = $self->module_metrics_totals->{'acc'};
+
   if ($total_modules > 1) {
-    $summary->{"total_cof"} = ($acc) / ($total_modules * ($total_modules - 1));
+    $self->global_report->{"total_cof"} = $total_acc / _number_of_combinations($total_modules);
   }
   else {
-    $summary->{"total_cof"} = 1;
+    $self->global_report->{"total_cof"} = 1;
   }
+}
+
+sub _number_of_combinations {
+  my $total_modules = shift;
+  return $total_modules * ($total_modules - 1);
 }
 
 sub list_of_metrics {
