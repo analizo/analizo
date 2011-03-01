@@ -46,196 +46,278 @@ sub list_of_global_metrics {
   return %list;
 }
 
-#Afferent Connections per Class
-sub acc {
+sub afferent_connections_per_class {
+  my ($self, $module) = @_;
+
+  my $number_of_caller_modules = $self->_number_of_modules_that_call_module($module);
+  my $number_of_modules_on_inheritance_tree = $self->_recursive_number_of_children($module);
+
+  return $number_of_caller_modules + $number_of_modules_on_inheritance_tree;
+}
+
+sub _number_of_modules_that_call_module {
   my ($self, $module) = @_;
 
   my @seen_modules = ();
   for my $caller_member (keys(%{$self->model->calls})){
-    my $caller_module = $self->model->members->{$caller_member};
-    for my $called_member (keys(%{$self->model->calls->{$caller_member}})) {
-      my $called_module = $self->model->members->{$called_member};
-      if($caller_module ne $called_module && $called_module eq $module){
-        if(! grep { $_ eq $caller_module } @seen_modules){
-          push @seen_modules, $caller_module;
-        }
-      }
+    $self->_push_member_module_if_it_calls_searched_module($caller_member, $module, \@seen_modules);
+  }
+
+  return scalar @seen_modules;
+}
+
+sub _push_member_module_if_it_calls_searched_module {
+  my ($self, $caller_member, $searched_module, $seen_modules) = @_;
+
+  my $caller_module = $self->model->members->{$caller_member};
+  if($self->_member_calls_searched_module($caller_member, $caller_module, $searched_module)){
+    push @{$seen_modules}, $caller_module;
+  }
+}
+
+sub _member_calls_searched_module {
+  my ($self, $caller_member, $caller_module, $searched_module) = @_;
+
+  for my $called_member (keys(%{$self->model->calls->{$caller_member}})) {
+    my $called_module = $self->model->members->{$called_member};
+    if(_called_module_is_the_searched($called_module, $searched_module, $caller_module)) {
+        return 1;
     }
   }
-  return scalar @seen_modules + $self->_recursive_noc($module);
+  return 0;
 }
 
-#Average Method LOC
-sub amloc {
-  my ($self, $loc, $count) = @_;
-  return ($count > 0) ? ($loc / $count) : 0;
+sub _called_module_is_the_searched {
+  my ($called_module, $searched_module, $caller_module) = @_;
+  return $caller_module ne $called_module && $called_module eq $searched_module;
 }
 
-#Average Cyclomatic Complexity per Method
-sub accm {
+sub _recursive_number_of_children {
   my ($self, $module) = @_;
 
-  my @functions = $self->model->functions($module);
-  my $total_of_conditional_paths = 0;
-  my $number_of_functions = 0;
+  my $number_of_children = 0;
 
-  for my $function(@functions) {
-    $total_of_conditional_paths += ($self->model->{conditional_paths}->{$function} || 0);
-    $number_of_functions++;
+  for my $other_module ($self->model->module_names){
+    if ($self->_module_parent_of_other($module, $other_module)) {
+      $number_of_children += $self->_recursive_number_of_children($other_module) + 1;
+    }
   }
 
-  return ($number_of_functions > 0) ? ($total_of_conditional_paths / $number_of_functions) : 0;
+  return $number_of_children;
 }
 
-#Average Number of Parameters per Method
-sub anpm {
+sub average_method_lines_of_code {
+  my ($self, $lines_of_code, $count) = @_;
+  return ($count > 0) ? ($lines_of_code / $count) : 0;
+}
+
+sub average_cyclo_complexity_per_method {
   my ($self, $module) = @_;
 
-  my @functions = $self->model->functions($module);
-  my $total_of_parameters = 0;
-  my $number_of_functions = 0;
-
-  for my $function (@functions) {
-    $total_of_parameters += ($self->model->{parameters}->{$function} || 0);
-    $number_of_functions++;
+  my $statisticalCalculator = Statistics::Descriptive::Full->new();
+  for my $function ($self->model->functions($module)) {
+    $statisticalCalculator->add_data($self->model->{conditional_paths}->{$function} || 0);
   }
 
-  return ($number_of_functions > 0) ? ($total_of_parameters / $number_of_functions) : 0;
+  return $statisticalCalculator->mean();
 }
 
-#Coupling Between Objects
-sub cbo {
+sub average_number_of_parameters_per_method {
   my ($self, $module) = @_;
-  my %seen = ();
+
+  my $statisticalCalculator = Statistics::Descriptive::Full->new();
+  for my $function ($self->model->functions($module)) {
+    $statisticalCalculator->add_data($self->model->{parameters}->{$function} || 0);
+  }
+
+  return $statisticalCalculator->mean();
+}
+
+sub coupling_between_objects {
+  my ($self, $module) = @_;
+  return $self->_number_of_calls_to_other_modules($module);
+}
+
+sub _number_of_calls_to_other_modules {
+  my ($self, $module) = @_;
+
+  my %calls_to = ();
   for my $caller_function ($self->model->functions($module)) {
-    for my $called_function (keys(%{$self->model->calls->{$caller_function}})) {
-      my $called_module = $self->model->members->{$called_function};
-      next if $called_module && ($called_module eq $module);
-      $seen{$called_module}++ if $called_module;
-    }
+    $self->_add_number_of_calls_to_other_modules($caller_function, $module, \%calls_to);
   }
-  return (scalar keys(%seen));
+
+  return (scalar keys(%calls_to));
 }
 
-#Depth of Inheritance Tree
-sub dit {
+sub _add_number_of_calls_to_other_modules {
+  my ($self, $caller_function, $module, $calls_to) = @_;
+
+  for my $called_function (keys(%{$self->model->calls->{$caller_function}})) {
+    $self->_add_function_module_other_then_searched_module($called_function, $module, $calls_to);
+  }
+}
+
+sub _add_function_module_other_then_searched_module {
+  my ($self, $called_function, $searched_module, $calls_to) = @_;
+
+  my $called_module = $self->model->members->{$called_function};
+  $calls_to->{$called_module}++ if ($called_module && $called_module ne $searched_module);
+}
+
+sub depth_of_inheritance_tree {
   my ($self, $module) = @_;
+
   my @parents = $self->model->inheritance($module);
   if (@parents) {
-    my @parent_dits = map { $self->dit($_) } @parents;
-    my @sorted = reverse(sort(@parent_dits));
-    return 1 + $sorted[0];
-  } else {
-    return 0;
+   return 1 + $self->_depth_of_deepest_inheritance_tree(@parents);
   }
+  return 0;
 }
 
-#Lack of Cohesion of Methods
-sub lcom4 {
+sub _depth_of_deepest_inheritance_tree {
+  my ($self, @parents) = @_;
+  my @parent_dits = map { $self->depth_of_inheritance_tree($_) } @parents;
+  my @sorted = reverse(sort(@parent_dits));
+  return $sorted[0];
+}
+
+#lcom4
+sub lack_of_cohesion_of_methods {
   my ($self, $module) = @_;
+
+  my $graph = $self->_cohesion_graph_of_module($module);
+  my $number_of_components = scalar $graph->weakly_connected_components;
+
+  return $number_of_components;
+}
+
+sub _cohesion_graph_of_module {
+  my ($self, $module) = @_;
+
   my $graph = new Graph;
   my @functions = $self->model->functions($module);
   my @variables = $self->model->variables($module);
+
   for my $function (@functions) {
-    $graph->add_vertex($function);
-    for my $used (keys(%{$self->model->calls->{$function}})) {
-      # only include in the graph functions and variables that are inside the module.
-      if ((grep { $_ eq $used } @functions) || (grep { $_ eq $used } @variables)) {
-        $graph->add_edge($function, $used);
-      }
-    }
+    $self->_add_function_as_vertix($graph, $function);
+    $self->_add_edges_to_used_functions_and_variables($graph, $function, @functions, @variables);
   }
-  my @components = $graph->weakly_connected_components;
-  return scalar @components;
+
+  return $graph;
 }
 
-#Number of Attributes
-sub noa {
+sub _add_function_as_vertix {
+  my ($self, $graph, $function) = @_;
+  $graph->add_vertex($function);
+}
+
+sub _add_edges_to_used_functions_and_variables {
+  my ($self, $graph, $function, @functions, @variables) = @_;
+
+  for my $used (keys(%{$self->model->calls->{$function}})) {
+    if (_used_inside_the_module($used, @functions, @variables)) {
+      $graph->add_edge($function, $used);
+    }
+  }
+}
+
+sub _used_inside_the_module {
+  my ($used, @functions, @variables) = @_;
+  return (grep { $_ eq $used } @functions) || (grep { $_ eq $used } @variables);
+}
+
+sub number_of_attributes {
   my ($self, $module) = @_;
   my @variables = $self->model->variables($module);
   return scalar(@variables);
 }
 
-#Number of Children
-sub noc {
+sub number_of_children {
   my ($self, $module) = @_;
 
   my $number_of_children = 0;
-
-  for my $module_name ($self->model->module_names) {
-    if (grep {$_ eq $module} $self->model->inheritance($module_name)) {
-      $number_of_children++;
-    }
+  for my $other_module ($self->model->module_names) {
+    $number_of_children++ if ($self->_module_parent_of_other($module, $other_module));
   }
   return $number_of_children;
 }
 
-#Number of Methods
-sub nom {
-  my ($self, $module) = @_;
-  my @list = $self->model->functions($module);
-  return scalar(@list);
+sub _module_parent_of_other {
+  my ($self, $module, $other_module) = @_;
+  return grep {$_ eq $module} $self->model->inheritance($other_module);
 }
 
-#Number of Public Methods
-sub npm {
+sub number_of_methods {
+  my ($self, $module) = @_;
+  my @functions = $self->model->functions($module);
+  return scalar(@functions);
+}
+
+sub number_of_public_methods {
   my ($self, $module) = @_;
 
   my @functions = $self->model->functions($module);
-  my $npm = 0;
-  for my $function (@functions) {
-    $npm += 1 if $self->_is_public($function);
-  }
-  return $npm;
+  return $self->_number_of_public(@functions);
 }
 
-#Number of Public Attributes
-sub npa {
+sub number_of_public_attributes {
   my ($self, $module) = @_;
 
-  my @attributes = $self->model->variables($module);
-  my $npa = 0;
-  for my $attributes (@attributes) {
-    $npa += 1 if $self->_is_public($attributes);
-  }
-  return $npa;
+  my @variables = $self->model->variables($module);
+  return $self->_number_of_public(@variables);
 }
 
-#Response For a Class
-sub rfc {
+sub _number_of_public {
+  my ($self, @members) = @_;
+
+  my $count = 0;
+  for my $member (@members) {
+    $count += 1 if $self->_is_public($member);
+  }
+  return $count;
+}
+
+sub _is_public {
+  my ($self, $member) = @_;
+  return $self->model->{protection}->{$member} && $self->model->{protection}->{$member} eq "public";
+}
+
+sub response_for_class {
   my ($self, $module) = @_;
 
   my @functions = $self->model->functions($module);
+  my $number_of_functions = scalar @functions;
+  my $number_of_functions_called_by_module_functions = $self->_number_of_functions_called_by(@functions);
 
-  my $rfc = scalar @functions;
+  return $number_of_functions + $number_of_functions_called_by_module_functions;
+}
+
+sub _number_of_functions_called_by {
+  my ($self, @functions) = @_;
+
+  my $count = ();
   for my $function (@functions){
-    $rfc += scalar keys(%{$self->model->calls->{$function}});
-  }
-
-  return $rfc;
+    $count += scalar keys(%{$self->model->calls->{$function}});
+ }
+ return $count;
 }
 
-#Lines Of Code
-sub loc {
+sub lines_of_code {
   my ($self, $module) = @_;
 
-  my @functions = $self->model->functions($module);
-  my $loc = 0;
-  my $max = 0;
+  my $statisticalCalculator = Statistics::Descriptive::Full->new();
 
-  for my $function (@functions) {
-    my $lines = $self->model->{lines}->{$function} || 0;
-    $loc += $lines;
-    $max = $lines if $lines > $max;
+  for my $function ($self->model->functions($module)) {
+    $statisticalCalculator->add_data($self->model->{lines}->{$function} || 0);
   }
 
-  return ($loc, $max);
+  return ($statisticalCalculator->sum(), $statisticalCalculator->max() || 0);
 }
 
 sub total_abstract_classes{
   my ($self)= @_;
   my @total_of_abstract_classes = $self->model->abstract_classes;
-  return @total_of_abstract_classes ? scalar(@total_of_abstract_classes) : 0;
+  return scalar(@total_of_abstract_classes) || 0;
 }
 
 sub methods_per_abstract_class {
@@ -247,7 +329,12 @@ sub methods_per_abstract_class {
     $total_number_of_methods += (scalar $self->model->functions($abstract_class)) || 0;
   }
 
-  return (scalar @abstract_classes > 0  ) ? ($total_number_of_methods / scalar @abstract_classes) : 0;
+  return _division($total_number_of_methods, scalar @abstract_classes,);
+}
+
+sub _division {
+  my ($dividend, $divisor) = @_;
+  return ($divisor > 0) ? ($dividend / $divisor) : 0;
 }
 
 sub total_eloc {
@@ -255,42 +342,23 @@ sub total_eloc {
   return $self->model->total_eloc;
 }
 
-sub _recursive_noc {
-  my ($self, $module) = @_;
-
-  my $number_of_children = 0;
-
-  for my $module_name ($self->model->module_names){
-    if (grep {$_ eq $module} $self->model->inheritance($module_name)) {
-      $number_of_children += $self->_recursive_noc($module_name) + 1;
-    }
-  }
-
-  return $number_of_children;
-}
-
-sub _is_public {
-  my ($self, $member) = @_;
-  return $self->model->{protection}->{$member} && $self->model->{protection}->{$member} eq "public";
-}
-
 sub _report_module {
   my ($self, $module) = @_;
 
-  my $acc                  = $self->acc($module);
-  my $accm                 = $self->accm($module);
-  my $anpm                 = $self->anpm($module);
-  my $cbo                  = $self->cbo($module);
-  my $dit                  = $self->dit($module);
-  my $lcom4                = $self->lcom4($module);
-  my $noa                  = $self->noa($module);
-  my $noc                  = $self->noc($module);
-  my $nom                  = $self->nom($module);
-  my $npm                  = $self->npm($module);
-  my $npa                  = $self->npa($module);
-  my $rfc                  = $self->rfc($module);
-  my ($loc, $mmloc)        = $self->loc($module);
-  my $amloc                = $self->amloc($loc, $nom);
+  my $acc                  = $self->afferent_connections_per_class($module);
+  my $accm                 = $self->average_cyclo_complexity_per_method($module);
+  my $anpm                 = $self->average_number_of_parameters_per_method($module);
+  my $cbo                  = $self->coupling_between_objects($module);
+  my $dit                  = $self->depth_of_inheritance_tree($module);
+  my $lcom4                = $self->lack_of_cohesion_of_methods($module);
+  my $noa                  = $self->number_of_attributes($module);
+  my $noc                  = $self->number_of_children($module);
+  my $nom                  = $self->number_of_methods($module);
+  my $npm                  = $self->number_of_public_methods($module);
+  my $npa                  = $self->number_of_public_attributes($module);
+  my $rfc                  = $self->response_for_class($module);
+  my ($loc, $mmloc)        = $self->lines_of_code($module);
+  my $amloc                = $self->average_method_lines_of_code($loc, $nom);
 
   my %data = (
     _module              => $module,
@@ -310,17 +378,33 @@ sub _report_module {
     rfc                  => $rfc,
     loc                  => $loc
   );
-
   return %data;
 }
 
 sub report {
   my $self = shift;
-  my $details = '';
-  my $total_modules = 0;
-  my $total_modules_with_defined_methods = 0;
-  my $total_modules_with_defined_attributes = 0;
-  my %totals = (
+
+  my $module_metrics_totals = $self->_initialize_module_metrics_totals();
+  my $module_counts = $self->_initialize_module_counts();
+  my $values_lists = $self->_initialize_values_lists();
+
+  return '' if $self->_there_are_no_modules();
+
+  my $modules_report = $self->_collect_all_modules_report($module_metrics_totals, $module_counts, $values_lists);
+  my $global_report = $self->_collect_global_metrics_report($module_metrics_totals, $module_counts, $values_lists);
+
+  return Dump($global_report) if $self->report_global_metrics_only();
+  return Dump($global_report) . $modules_report;
+}
+
+sub _there_are_no_modules {
+  my $self = shift;
+  return scalar $self->model->module_names == 0;
+}
+
+sub _initialize_module_metrics_totals {
+  my $self = shift;
+  my %module_metrics_totals = (
     acc       => 0,
     accm      => 0,
     amloc     => 0,
@@ -337,80 +421,137 @@ sub report {
     rfc       => 0,
     loc       => 0
   );
-  my %list_values = ();
+  return \%module_metrics_totals;
+}
 
-  for my $metric (keys %totals) {
-    $list_values{$metric} = [];
-  }
-
-  my @module_names = $self->model->module_names;
-  if (scalar(@module_names) == 0) {
-    return '';
-  }
-
-  for my $module (@module_names) {
-    my %data = $self->_report_module($module);
-
-    unless ($self->report_global_metrics_only()) {
-      $details .= Dump(\%data);
-    }
-
-    $total_modules += 1;
-    for my $metric (keys %totals){
-      push @{$list_values{$metric}}, $data{$metric};
-      $totals{$metric} += $data{$metric};
-    }
-    $total_modules_with_defined_methods += 1 if $data{'nom'} > 0;
-    $total_modules_with_defined_attributes += 1 if $data{'noa'} > 0;
-  }
-
-  my %summary = (
-    total_modules                          => $total_modules,
-    total_nom                              => $totals{'nom'},
-    total_loc                              => $totals{'loc'},
-    total_abstract_classes                 => $self->total_abstract_classes,
-    total_modules_with_defined_methods     => $total_modules_with_defined_methods,
-    total_modules_with_defined_attributes  => $total_modules_with_defined_attributes,
-    total_methods_per_abstract_class       => $self->methods_per_abstract_class,
-    total_eloc                             => $self->total_eloc
+sub _initialize_module_counts {
+  my $self = shift;
+  my %module_counts = (
+    total_modules => 0,
+    total_modules_with_defined_methods => 0,
+    total_modules_with_defined_attributes => 0
   );
+  return \%module_counts;
+}
 
-  for my $metric (keys %totals){
+sub _initialize_values_lists {
+  my ($self, %module_metrics_totals) = @_;
+  my %values_lists = ();
+
+  for my $metric (keys %module_metrics_totals) {
+    $values_lists{$metric} = [];
+  }
+
+  return \%values_lists;
+}
+
+sub _collect_all_modules_report {
+  my ($self, $module_metrics_totals, $module_counts, $values_lists) = @_;
+
+  my $modules_report = '';
+  for my $module ($self->model->module_names) {
+    my %data = $self->_report_module($module);
+    $self->_update_module_metrics_totals_and_values_lists(\%data, $module_metrics_totals, $values_lists);
+    $self->_update_module_counts(\%data, $module_counts);
+    $modules_report .= Dump(\%data);
+  }
+  return $modules_report;
+}
+
+sub _update_module_metrics_totals_and_values_lists {
+  my ($self, $data, $module_metrics_totals, $values_lists) = @_;
+  for my $metric (keys %{$module_metrics_totals}){
+    push @{$values_lists->{$metric}}, $data->{$metric};
+    $module_metrics_totals->{$metric} += $data->{$metric};
+  }
+}
+
+sub _update_module_counts {
+  my ($self, $data, $module_counts) = @_;
+  $module_counts->{'total_modules'} += 1;
+  $module_counts->{'total_modules_with_defined_methods'} += 1 if $data->{'nom'} > 0;
+  $module_counts->{'total_modules_with_defined_attributes'} += 1 if $data->{'noa'} > 0;
+}
+
+sub _collect_global_metrics_report {
+  my ($self, $module_metrics_totals, $module_counts, $values_lists) = @_;
+  my $summary = $self->_initialize_summary();
+  $self->_add_module_metrics_totals($summary, $module_metrics_totals);
+  $self->_add_module_counts($summary, $module_counts);
+  $self->_add_statistical_values($summary, $values_lists);
+  $self->_add_total_cof($summary, $module_counts->{'total_modules'}, $module_metrics_totals->{'acc'});
+  return $summary;
+}
+
+sub _initialize_summary {
+  my ($self) = @_;
+  my %summary = ();
+  return \%summary;
+}
+
+sub _add_module_counts {
+  my ($self, $summary, $module_counts) = @_;
+  for my $count (keys  %{$module_counts}) {
+      $summary->{$count} = $module_counts->{$count};
+  }
+}
+
+sub _add_module_metrics_totals {
+  my ($self, $summary, $module_metrics_totals) = @_;
+  $summary->{'total_nom'} = $module_metrics_totals->{'nom'};
+  $summary->{'total_loc'} = $module_metrics_totals->{'loc'};
+  $summary->{'total_abstract_classes'} = $self->total_abstract_classes;
+  $summary->{'total_methods_per_abstract_class'} = $self->methods_per_abstract_class;
+  $summary->{'total_eloc'} = $self->total_eloc;
+}
+
+sub _add_statistical_values {
+  my ($self, $summary, $values_lists) = @_;
+  for my $metric (keys %{$values_lists}){
     my $statistics = Statistics::Descriptive::Full->new();
     my $distributions = Statistics::OnLine->new();
 
-    $statistics->add_data(@{$list_values{$metric}});
-    $distributions->add_data(@{$list_values{$metric}});
+    $statistics->add_data(@{$values_lists->{$metric}});
+    $distributions->add_data(@{$values_lists->{$metric}});
+
     my $variance = $statistics->variance();
-
-    $summary{$metric . "_average"} = $statistics->mean();
-    $summary{$metric . "_maximum"} = $statistics->max();
-    $summary{$metric . "_mininum"} = $statistics->min();
-    $summary{$metric . "_mode"} = $statistics->mode();
-    $summary{$metric . "_median"}= $statistics->median();
-    $summary{$metric . "_standard_deviation"}= $statistics->standard_deviation();
-    $summary{$metric . "_sum"} = $statistics->sum();
-    $summary{$metric . "_variance"}= $variance;
-
-
-    if (($variance > 0) && ($distributions->count >= 4)) {
-      $summary{$metric . "_kurtosis"} = $distributions->kurtosis;
-      $summary{$metric . "_skewness"} = $distributions->skewness;
-    }
-    else {
-      $summary{$metric . "_kurtosis"} = 0;
-      $summary{$metric . "_skewness"} = 0;
-    }
+    $self->_add_descriptive_statistics($summary, $statistics, $metric);
+    $self->_add_distributions_statistics($summary, $distributions, $metric, $variance);
   }
+}
 
-  if ($total_modules > 1) {
-    $summary{"total_cof"} = ($totals{'acc'}) / ($total_modules * ($total_modules - 1));
+sub _add_descriptive_statistics {
+  my ($self, $summary, $statistics, $metric) = @_;
+  $summary->{$metric . "_average"} = $statistics->mean();
+  $summary->{$metric . "_maximum"} = $statistics->max();
+  $summary->{$metric . "_mininum"} = $statistics->min();
+  $summary->{$metric . "_mode"} = $statistics->mode();
+  $summary->{$metric . "_median"}= $statistics->median();
+  $summary->{$metric . "_standard_deviation"}= $statistics->standard_deviation();
+  $summary->{$metric . "_sum"} = $statistics->sum();
+  $summary->{$metric . "_variance"}= $statistics->variance;
+}
+
+sub _add_distributions_statistics {
+  my ($self, $summary, $distributions, $metric, $variance) = @_;
+  if (($variance > 0) && ($distributions->count >= 4)) {
+    $summary->{$metric . "_kurtosis"} = $distributions->kurtosis;
+    $summary->{$metric . "_skewness"} = $distributions->skewness;
   }
   else {
-    $summary{"total_cof"} = 1;
+    $summary->{$metric . "_kurtosis"} = 0;
+    $summary->{$metric . "_skewness"} = 0;
   }
+}
 
-  return Dump(\%summary) . $details;
+sub _add_total_cof {
+  my ($self, $summary, $total_modules, $acc) = @_;
+  if ($total_modules > 1) {
+    $summary->{"total_cof"} = ($acc) / ($total_modules * ($total_modules - 1));
+  }
+  else {
+    $summary->{"total_cof"} = 1;
+  }
 }
 
 sub list_of_metrics {

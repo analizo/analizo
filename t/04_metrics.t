@@ -36,7 +36,7 @@ sub abstract_classes : Tests {
 }
 
 #Afferent Connections per Class
-sub acc : Tests {
+sub afferent_connections_per_class : Tests {
   $model->declare_module('A');
   $model->declare_function('A', 'fA');
   $model->declare_function('A', 'fA2');
@@ -49,30 +49,30 @@ sub acc : Tests {
   $model->declare_function('C', 'fC');
   $model->declare_variable('C', 'vC');
 
-  is($metrics->acc('A'), 0, 'no acc module A');
-  is($metrics->acc('B'), 0, 'no acc module B');
-  is($metrics->acc('C'), 0, 'no acc module C');
+  is($metrics->afferent_connections_per_class('A'), 0, 'no acc module A');
+  is($metrics->afferent_connections_per_class('B'), 0, 'no acc module B');
+  is($metrics->afferent_connections_per_class('C'), 0, 'no acc module C');
 
   $model->add_call('fA', 'fB');
-  is($metrics->acc('A'), 0, 'no calls to a module');
-  is($metrics->acc('B'), 1, 'calling function of another module');
+  is($metrics->afferent_connections_per_class('A'), 0, 'no calls to a module');
+  is($metrics->afferent_connections_per_class('B'), 1, 'calling function of another module');
 
   $model->add_variable_use('fA', 'vB');
-  is($metrics->acc('A'), 0, 'no calls to a module');
-  is($metrics->acc('B'), 1, 'calling variable of another module');
+  is($metrics->afferent_connections_per_class('A'), 0, 'no calls to a module');
+  is($metrics->afferent_connections_per_class('B'), 1, 'calling variable of another module');
 
   $model->add_call('fA', 'fC');
-  is($metrics->acc('A'), 0, 'no calls to a module');
-  is($metrics->acc('C'), 1, 'calling variable of another module');
+  is($metrics->afferent_connections_per_class('A'), 0, 'no calls to a module');
+  is($metrics->afferent_connections_per_class('C'), 1, 'calling variable of another module');
 
   $model->add_call('fA', 'fA2');
-  is($metrics->acc('A'), 0, 'calling itself does not count as acc');
+  is($metrics->afferent_connections_per_class('A'), 0, 'calling itself does not count as acc');
 
   $model->add_variable_use('fB', 'vC');
-  is($metrics->acc('C'), 2, 'calling module twice');
+  is($metrics->afferent_connections_per_class('C'), 2, 'calling module twice');
 }
 
-sub acc_with_inheritance : Tests {
+sub afferent_connections_per_class_with_inheritance : Tests {
   $model->declare_module('Mother');
   $model->declare_module('Child1');
   $model->declare_module('Child2');
@@ -80,113 +80,113 @@ sub acc_with_inheritance : Tests {
   $model->declare_module('Grandchild2');
 
   $model->add_inheritance('Child1', 'Mother');
-  is($metrics->acc('Mother'), 1, 'inheritance counts as acc to superclass');
-  is($metrics->acc('Child1'), 0, 'inheritance does not count as acc to child');
+  is($metrics->afferent_connections_per_class('Mother'), 1, 'inheritance counts as acc to superclass');
+  is($metrics->afferent_connections_per_class('Child1'), 0, 'inheritance does not count as acc to child');
 
   $model->add_inheritance('Child2', 'Mother');
-  is($metrics->acc('Mother'), 2, 'multiple inheritance counts as acc');
-  is($metrics->acc('Child2'), 0, 'inheritance does not count as acc to another child');
+  is($metrics->afferent_connections_per_class('Mother'), 2, 'multiple inheritance counts as acc');
+  is($metrics->afferent_connections_per_class('Child2'), 0, 'inheritance does not count as acc to another child');
 
   $model->add_inheritance('Grandchild1', 'Child1');
-  is($metrics->acc('Grandchild1'), 0, 'grandchilds acc is not affected');
-  is($metrics->acc('Child1'), 1, 'grandchild extending a child counts');
-  is($metrics->acc('Mother'), 3, 'the deeper the tree, the biggest acc');
+  is($metrics->afferent_connections_per_class('Grandchild1'), 0, 'grandchilds acc is not affected');
+  is($metrics->afferent_connections_per_class('Child1'), 1, 'grandchild extending a child counts');
+  is($metrics->afferent_connections_per_class('Mother'), 3, 'the deeper the tree, the biggest acc');
 
   $model->add_inheritance('Grandchild2', 'Child2');
-  is($metrics->acc('Grandchild2'), 0, 'grandchilds acc is not affected');
-  is($metrics->acc('Child2'), 1, 'grandchild extending a child counts');
-  is($metrics->acc('Mother'), 4, 'the deeper the tree, the biggest acc');
+  is($metrics->afferent_connections_per_class('Grandchild2'), 0, 'grandchilds acc is not affected');
+  is($metrics->afferent_connections_per_class('Child2'), 1, 'grandchild extending a child counts');
+  is($metrics->afferent_connections_per_class('Mother'), 4, 'the deeper the tree, the biggest acc');
 }
 
 # Average Cyclomatic Complexity per Method
-sub accm : Tests {
+sub average_cyclo_complexity_per_method : Tests {
   $model->declare_module('module');
-  is($metrics->accm('module'), 0, 'no function');
+  is($metrics->average_cyclo_complexity_per_method('module'), 0, 'no function');
 
   $model->declare_function('module', 'module::function');
   $model->add_conditional_paths('module::function', 3);
-  is($metrics->accm('module'), 3, 'one function with three conditional paths');
+  is($metrics->average_cyclo_complexity_per_method('module'), 3, 'one function with three conditional paths');
 
   $model->declare_function('module', 'module::function1');
   $model->add_conditional_paths('module::function1', 2);
   $model->declare_function('module', 'module::function2');
   $model->add_conditional_paths('module::function2', 4);
-  is($metrics->accm('module'), 3, 'two function with three average cyclomatic complexity per method');
+  is($metrics->average_cyclo_complexity_per_method('module'), 3, 'two function with three average cyclomatic complexity per method');
 }
 
 #Average Method LOC
-sub amloc_with_no_functions_at_all : Tests {
-  is($metrics->amloc(0, 0), 0);
+sub average_method_lines_of_code_with_no_functions_at_all : Tests {
+  is($metrics->average_method_lines_of_code(0, 0), 0);
 }
 
 #Average Number of Parameters per Methods
-sub anpm : Tests {
+sub average_number_of_parameters_per_method : Tests {
   $model->declare_module('module');
-  is($metrics->anpm('module'), 0, 'no parameters declared');
+  is($metrics->average_number_of_parameters_per_method('module'), 0, 'no parameters declared');
 
   $model->declare_function('module', 'module::function');
   $model->add_parameters('module::function', 1);
-  is($metrics->anpm('module'), 1, 'one function with one parameter');
+  is($metrics->average_number_of_parameters_per_method('module'), 1, 'one function with one parameter');
 }
 
 #Coupling Between Objects
-sub cbo : Tests {
+sub coupling_between_objects : Tests {
   $model->declare_function('mod1', 'f1');
   $model->declare_function('mod2', 'f2');
 
-  is($metrics->cbo('mod1'), 0, 'no cbo');
+  is($metrics->coupling_between_objects('mod1'), 0, 'no cbo');
   $model->add_call('f1', 'f1');
-  is($metrics->cbo('mod1'), 0, 'calling itself does not count as cbo');
+  is($metrics->coupling_between_objects('mod1'), 0, 'calling itself does not count as cbo');
 
   $model->add_call('f1', 'f2');
-  is($metrics->cbo('mod1'), 1, 'calling a single other module');
+  is($metrics->coupling_between_objects('mod1'), 1, 'calling a single other module');
 
   $model->declare_function('mod3', 'f3');
   $model->add_call('f1', 'f3');
-  is($metrics->cbo('mod1'), 2, 'calling two function in distinct modules');
+  is($metrics->coupling_between_objects('mod1'), 2, 'calling two function in distinct modules');
 
   $model->declare_function('mod3', 'f3a');
   $model->add_call('f1', 'f3a');
-  is($metrics->cbo('mod1'), 2, 'calling two different functions in the same module');
+  is($metrics->coupling_between_objects('mod1'), 2, 'calling two different functions in the same module');
 }
 
 #Depth of Inheritance Tree
-sub dit : Tests {
+sub depth_of_inheritance_tree : Tests {
   $model->add_inheritance('Level1', 'Level2');
   $model->add_inheritance('Level2', 'Level3');
-  is($metrics->dit('Level1'), 2, 'DIT = 2');
-  is($metrics->dit('Level2'), 1, 'DIT = 1');
-  is($metrics->dit('Level3'), 0, 'DIT = 0');
+  is($metrics->depth_of_inheritance_tree('Level1'), 2, 'DIT = 2');
+  is($metrics->depth_of_inheritance_tree('Level2'), 1, 'DIT = 1');
+  is($metrics->depth_of_inheritance_tree('Level3'), 0, 'DIT = 0');
 }
 
 sub dit_with_multiple_inheritance : Tests {
   $model->add_inheritance('Level1', 'Level2A');
   $model->add_inheritance('Level1', 'Level2B');
   $model->add_inheritance('Level2B', 'Level3B');
-  is($metrics->dit('Level1'), 2, 'with multiple inheritance take the larger DIT between the parents');
+  is($metrics->depth_of_inheritance_tree('Level1'), 2, 'with multiple inheritance take the larger DIT between the parents');
 }
 
-#Lack of Cohesion of Methods
-sub lcom4 : Tests {
+#Lack of Cohesion of Methods 4
+sub lack_of_cohesion_of_methods : Tests {
   $model->declare_function('mod1', $_) for qw(f1 f2);
-  is($metrics->lcom4('mod1'), 2, 'two unrelated functions');
+  is($metrics->lack_of_cohesion_of_methods('mod1'), 2, 'two unrelated functions');
 
   $model->declare_variable('mod1', 'v1');
   $model->add_variable_use($_, 'v1') for qw(f1 f2);
-  is($metrics->lcom4('mod1'), 1, 'two cohesive functions');
+  is($metrics->lack_of_cohesion_of_methods('mod1'), 1, 'two cohesive functions');
 
   $model->declare_function('mod1', 'f3');
   $model->declare_variable('mod1', 'v2');
   $model->add_variable_use('f3', 'v2');
-  is($metrics->lcom4('mod1'), 2, 'two different usage components');
+  is($metrics->lack_of_cohesion_of_methods('mod1'), 2, 'two different usage components');
 
   $model->declare_function('mod1', 'f4');
   $model->declare_variable('mod1', 'v3');
   $model->add_variable_use('f4', 'v3');
-  is($metrics->lcom4('mod1'), 3, 'three different usage components');
+  is($metrics->lack_of_cohesion_of_methods('mod1'), 3, 'three different usage components');
 }
 
-sub lcom4_2 : Tests {
+sub lack_of_cohesion_of_methods_2 : Tests {
   $model->declare_function('mod1', 'f1');
   $model->declare_function('mod1', 'f2');
   $model->declare_function('mod1', 'f3');
@@ -194,10 +194,10 @@ sub lcom4_2 : Tests {
   $model->add_call('f1', 'f2');
   $model->add_call('f1', 'f3', 'indirect');
   $model->add_variable_use('f2', 'v1');
-  is($metrics->lcom4('mod1'), '1', 'different types of connections');
+  is($metrics->lack_of_cohesion_of_methods('mod1'), '1', 'different types of connections');
 }
 
-sub lcom4_3 : Tests {
+sub lack_of_cohesion_of_methods_3 : Tests {
   $model->declare_function('mod1', 'f1');
   $model->declare_function('mod1', 'f2');
   $model->declare_function('mod1', 'f3');
@@ -207,7 +207,7 @@ sub lcom4_3 : Tests {
   $model->add_call('f1', 'ff');
   $model->add_call('f3', 'ff');
 
-  is($metrics->lcom4('mod1'), 2, 'functions outside the module don\'t count for LCOM4');
+  is($metrics->lack_of_cohesion_of_methods('mod1'), 2, 'functions outside the module don\'t count for LCOM4');
 }
 
 #Methods Per Abstract Class
@@ -228,114 +228,114 @@ sub methods_per_abstract_class : Tests {
 }
 
 #Number of Attributes
-sub noa : Tests {
-  is($metrics->noa('module1'), 0, 'empty modules have no attributes');
+sub number_of_attributes : Tests {
+  is($metrics->number_of_attributes('module1'), 0, 'empty modules have no attributes');
 
   $model->declare_variable('module1', 'attr1');
-  is($metrics->noa('module1'), 1, 'module with one defined attribute');
+  is($metrics->number_of_attributes('module1'), 1, 'module with one defined attribute');
 
   $model->declare_variable('module1', 'attr2');
-  is($metrics->noa('module1'), 2, 'module with two defined attribute');
+  is($metrics->number_of_attributes('module1'), 2, 'module with two defined attribute');
 }
 
 #Number of Children
-sub noc : Tests {
+sub number_of_children : Tests {
   $model->declare_module('A');
   $model->declare_module('B');
   $model->declare_module('C');
   $model->declare_module('D');
 
-  is($metrics->noc('A'), 0, 'no children module A');
-  is($metrics->noc('B'), 0, 'no children module B');
-  is($metrics->noc('C'), 0, 'no children module C');
+  is($metrics->number_of_children('A'), 0, 'no children module A');
+  is($metrics->number_of_children('B'), 0, 'no children module B');
+  is($metrics->number_of_children('C'), 0, 'no children module C');
 
   $model->add_inheritance('B', 'A');
-  is($metrics->noc('A'), 1, 'one child module A');
-  is($metrics->noc('B'), 0, 'no children module B');
+  is($metrics->number_of_children('A'), 1, 'one child module A');
+  is($metrics->number_of_children('B'), 0, 'no children module B');
 
   $model->add_inheritance('C', 'A');
 
-  is($metrics->noc('A'), 2, 'two children module A');
-  is($metrics->noc('C'), 0, 'no children module C');
+  is($metrics->number_of_children('A'), 2, 'two children module A');
+  is($metrics->number_of_children('C'), 0, 'no children module C');
 
   $model->add_inheritance('D', 'C');
-  is($metrics->noc('A'), 2, 'two children module A');
-  is($metrics->noc('C'), 1, 'one child module C');
-  is($metrics->noc('D'), 0, 'no children module D');
+  is($metrics->number_of_children('A'), 2, 'two children module A');
+  is($metrics->number_of_children('C'), 1, 'one child module C');
+  is($metrics->number_of_children('D'), 0, 'no children module D');
 }
 
 #Number of Methods
-sub nom : Tests {
-  is($metrics->nom('mod1'), 0, 'empty modules have no functions');
+sub number_of_methods : Tests {
+  is($metrics->number_of_methods('mod1'), 0, 'empty modules have no functions');
 
   $model->declare_function("mod1", 'f1');
-  is($metrics->nom('mod1'), 1, 'module with just one function has number of functions = 1');
+  is($metrics->number_of_methods('mod1'), 1, 'module with just one function has number of functions = 1');
 
   $model->declare_function('mod1', 'f2');
-  is($metrics->nom('mod1'), 2, 'module with just two functions has number of functions = 2');
+  is($metrics->number_of_methods('mod1'), 2, 'module with just two functions has number of functions = 2');
 }
 
 #Number of Public Methods
-sub npm : Tests {
-  is($metrics->npm('mod1'), 0, 'empty modules have 0 public functions');
+sub number_of_public_methods : Tests {
+  is($metrics->number_of_public_methods('mod1'), 0, 'empty modules have 0 public functions');
 
   $model->declare_function('mod1', 'mod1::f1');
   $model->add_protection('mod1::f1', 'public');
-  is($metrics->npm('mod1'), 1, 'one public function added');
+  is($metrics->number_of_public_methods('mod1'), 1, 'one public function added');
 
   $model->declare_function('mod1', 'mod1::f2');
   $model->add_protection('mod1::f2', 'public');
-  is($metrics->npm('mod1'), 2, 'another public function added');
+  is($metrics->number_of_public_methods('mod1'), 2, 'another public function added');
 }
 
 #Number of Public Attributes
-sub npa : Tests {
-  is($metrics->npa('mod1'), 0, 'empty modules have 0 public attributes');
+sub number_of_public_attributes : Tests {
+  is($metrics->number_of_public_attributes('mod1'), 0, 'empty modules have 0 public attributes');
 
   $model->declare_variable('mod1', 'mod1::f1');
   $model->add_protection('mod1::f1', 'public');
-  is($metrics->npa('mod1'), 1, 'one public attribute added');
+  is($metrics->number_of_public_attributes('mod1'), 1, 'one public attribute added');
 
   $model->declare_variable('mod1', 'mod1::f2');
   $model->add_protection('mod1::f2', 'public');
-  is($metrics->npa('mod1'), 2, 'another public attribute added');
+  is($metrics->number_of_public_attributes('mod1'), 2, 'another public attribute added');
 }
 
 #Response For a Class
-sub rfc : Tests {
+sub response_for_class : Tests {
   $model->declare_module('module');
-  is($metrics->rfc('module'), 0, "no functions declared on the module");
+  is($metrics->response_for_class('module'), 0, "no functions declared on the module");
 
   $model->declare_function('module', 'function');
-  is($metrics->rfc('module'), 1, "one function declared on the module");
+  is($metrics->response_for_class('module'), 1, "one function declared on the module");
 
   $model->declare_function('module', 'another_function');
-  is($metrics->rfc('module'), 2, "two functions declared on the module");
+  is($metrics->response_for_class('module'), 2, "two functions declared on the module");
 
   $model->declare_function('module2', 'function2');
   $model->add_call('function', 'function2');
-  is($metrics->rfc('module'), 3, "two functions and one call declared on the module");
+  is($metrics->response_for_class('module'), 3, "two functions and one call declared on the module");
 
   $model->declare_function('module2', 'function3');
   $model->add_call('another_function', 'function3');
-  is($metrics->rfc('module'), 4, "two functions and two calls declared on the module");
+  is($metrics->response_for_class('module'), 4, "two functions and two calls declared on the module");
 }
 
 #Lines Of Code
-sub loc : Tests {
-  my @result = $metrics->loc('mod1');
+sub lines_of_code : Tests {
+  my @result = $metrics->lines_of_code('mod1');
   is($result[0], 0, 'empty module has 0 loc');
   is($result[1], 0, 'empty module has max loc 0');
 
   $model->declare_function('mod1', 'mod1::f1');
   $model->add_loc('mod1::f1', 10);
-  @result = $metrics->loc('mod1');
+  @result = $metrics->lines_of_code('mod1');
   is($result[0], 10, 'one module, with 10 loc');
   is($result[1], 10, 'one module, with 10 loc, makes max loc = 10');
 
   $model->declare_function('mod1', 'mod1::f2');
   $model->add_loc('mod1::f2', 20);
-  @result = $metrics->loc('mod1');
+  @result = $metrics->lines_of_code('mod1');
   is($result[0], 30, 'adding another module with 20 loc makes the total equal 30');
   is($result[1], 20, 'adding another module with 20 loc makes the max LOC equal 20');
 }
@@ -388,13 +388,13 @@ sub report_without_modules_at_all : Tests {
   $metrics->report;
 }
 
-sub discard_external_symbols_for_cbo : Tests {
+sub discard_external_symbols_for_coupling_between_objects : Tests {
   $model->declare_function('mod1', 'f1');
   $model->declare_function('mod2', 'f2');
 
   $model->add_call('f1', 'f2');
   $model->add_call('f1', 'external_function');
-  is($metrics->cbo('mod1'), 1, 'calling a external function');
+  is($metrics->coupling_between_objects('mod1'), 1, 'calling a external function');
 }
 
 sub list_of_metrics : Tests {
