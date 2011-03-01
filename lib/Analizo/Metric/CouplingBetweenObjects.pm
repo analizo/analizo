@@ -37,11 +37,11 @@ sub _add_number_of_calls_to_other_modules {
   my ($self, $caller_function) = @_;
 
   for my $called_function (keys(%{$self->model->calls->{$caller_function}})) {
-    $self->_add_function_module_other_then_searched_module($called_function);
+    $self->_add_function_module_other_then_analized_module($called_function);
   }
 }
 
-sub _add_function_module_other_then_searched_module {
+sub _add_function_module_other_then_analized_module {
   my ($self, $called_function) = @_;
 
   my $called_module = $self->model->members->{$called_function};

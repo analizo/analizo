@@ -20,9 +20,7 @@ sub calculate {
   my ($self, $module) = @_;
 
   my @parents = $self->model->inheritance($module);
-  if (@parents) {
-   return 1 + $self->_depth_of_deepest_inheritance_tree(@parents);
-  }
+  return 1 + $self->_depth_of_deepest_inheritance_tree(@parents) if (@parents);
   return 0;
 }
 
