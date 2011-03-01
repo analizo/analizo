@@ -119,19 +119,15 @@ sub _add_statistics {
   my $self = shift;
 
   for my $metric (keys %{$self->values_lists}) {
-    my $statistics = Statistics::Descriptive::Full->new();
-    my $distributions = Statistics::OnLine->new();
-
-    $statistics->add_data(@{$self->values_lists->{$metric}});
-    $distributions->add_data(@{$self->values_lists->{$metric}});
-
-    $self->_add_descriptive_statistics($statistics, $metric);
-    $self->_add_distributions_statistics($distributions, $metric);
+    $self->_add_descriptive_statistics($metric);
+    $self->_add_distributions_statistics($metric);
   }
 }
 
 sub _add_descriptive_statistics {
-  my ($self, $statistics, $metric) = @_;
+  my ($self, $metric) = @_;
+  my $statistics = Statistics::Descriptive::Full->new();
+  $statistics->add_data(@{$self->values_lists->{$metric}});
   $self->metric_report->{$metric . "_average"} = $statistics->mean;
   $self->metric_report->{$metric . "_maximum"} = $statistics->max;
   $self->metric_report->{$metric . "_mininum"} = $statistics->min;
@@ -143,7 +139,10 @@ sub _add_descriptive_statistics {
 }
 
 sub _add_distributions_statistics {
-  my ($self, $distributions, $metric) = @_;
+  my ($self, $metric) = @_;
+  my $distributions = Statistics::OnLine->new();
+  $distributions->add_data(@{$self->values_lists->{$metric}});
+
   if (($distributions->count >= 4) && ($distributions->variance > 0)) {
     $self->metric_report->{$metric . "_kurtosis"} = $distributions->kurtosis;
     $self->metric_report->{$metric . "_skewness"} = $distributions->skewness;
