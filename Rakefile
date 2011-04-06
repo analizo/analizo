@@ -2,8 +2,11 @@ def cucumber(args)
   options = "--format progress #{args}"
   if system("which cucumber")
     sh "cucumber #{options}"
-  else
+  elsif system("which bundle")
     sh "bundle exec cucumber #{options}"
+  else
+    banner "cucumber not found in $PATH. Please install cucumber and rspec to run Analizo's acceptance tests.", :red
+    exit
   end
 end
 
