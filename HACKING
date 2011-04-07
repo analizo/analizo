@@ -4,69 +4,79 @@
 
 This section will help you to install two different sets of packages:
 
-  1) analizo dependencies
-  2) extra programs needed to run analizo's test suite (if needed)
+  1) Analizo dependencies
+  2) extra programs needed to run Analizo test suite (if needed)
 
 Short version (for Debian users):
 ---------------------------------
 
-Add the following line to your /etc/apt/sources.list:
+All of the steps must be performed as root user:
 
-  deb http://app.dcc.ufba.br/~terceiro/analizo/ ./
+1) Add the following line to your /etc/apt/sources.list:
 
-Install the needed Debian packages:
+  deb http://analizo.org/download/ ./
 
-  $ wget -q -O - http://app.dcc.ufba.br/~terceiro/analizo/signing-key.asc | sudo apt-key add -
+2) Install the needed Debian packages:
+
+  $ wget -O - http://analizo.org/download/signing-key.asc | apt-key add -
   $ sudo apt-get update
-  $ sudo apt-get install doxyparse libgraph-perl liblist-compare-perl libtest-class-perl libtest-exception-perl libyaml-perl libclass-accessor-perl
+  $ sudo apt-get install doxyparse sloccount libgraph-perl liblist-compare-perl libtest-class-perl libtest-exception-perl libyaml-perl libclass-accessor-perl libstatistics-descriptive-perl libstatistics-online-perl ruby graphviz
 
-If you don't plan to develop analizo (i.e. you only want to use it), you can stop
-here.
 
-Install extra software to run the acceptance tests:
+# If you don't plan to develop Analizo (i.e. you only want to use it), you can
+stop here.
+
+3) Install extra software to run the acceptance tests:
 
   $ sudo apt-get install rake rubygems
   $ gem install cucumber rspec
 
+
 Long version (general instructions):
 ------------------------------------
 
-Install the following Perl modules, using CPAN or your native package manager:
+All of the steps must be performed as root user:
 
+1) Install the following Perl modules, using CPAN or your native package manager:
+
+  * Class::Accessor
+  * Getopt::Euclid
   * Graph
-  * Test::Class
   * List::Compare
+  * Statistics::Descriptive
+  * Statistics::OnLine
+  * Test::Class
   * Test::Exception
   * YAML
-  * Class::Accessor
-  * Statistics::Descriptive
 
-Install doxyparse's build dependencies: flex, bison, libqt4-dev (your operating
-system probably already has packages for these)
+2) Install Doxyparse build dependencies: flex, bison, libqt4-dev, gcc, gcc-c++,
+and git (your operating system probably already has packages for these)
 
-Install doxyparse
+3) Install Doxyparse
 
-    git clone git://github.com/terceiro/doxyparse.git
-    cd doxyparse
-    ./configure --with-doxyparse
-    make
-    sudo install bin/doxyparse /usr/local/bin/
+  $ git clone git://gitorious.org/analizo/doxyparse.git
+  $ cd doxyparse
+  $ ./configure --with-doxyparse
+  $ make
+  $ sudo install bin/doxyparse /usr/local/bin/
 
-Install sloccount.
+4) Install sloccount - http://www.dwheeler.com/sloccount/sloccount.html
 
-If you don't plan to develop analizo (i.e. you only want to use it), you can stop
-here.
 
-Install Rake - http://rake.rubyforge.org/
+# If you don't plan to develop Analizo (i.e. you only want to use it), you can
+stop here.
+
+5) Install Rake - http://rake.rubyforge.org/
 
   * your operating system probably already has a pre-built package for it
   * otherwise follow the installation instructions on the website
 
-Install rubygems - http://docs.rubygems.org/. Your operating system will
-probably already have a pre-build package for it. If you have Ruby installed,
-you may already have rubygems installed as well.
+6) Install rubygems - http://docs.rubygems.org/
 
-Install cucumber and rspec using rubygems
+  * your operating system will probably already have a pre-build package for it.
+If you have Ruby installed, you may already have rubygems installed as well.
+
+7) Install cucumber and rspec using rubygems
 
   $ gem install cucumber rspec
 
@@ -74,10 +84,12 @@ Install cucumber and rspec using rubygems
 = Running the test suite
 ========================
 
-Just run `rake` in the root of the sources.
+Just run `rake` in the root of the sources:
+
+  $ rake
 
 See "Installing Dependencies" above for a guide to install all the software
-that's needed to run analizo tests.
+that's needed to run Analizo tests.
 
 ===========================
 = Style and Good practices
@@ -126,20 +138,23 @@ the release process. See the Rakefile for more information.
 = Sending patches
 =================
 
-Send the patches to the analizo mailing list: analizo@listas.softwarelivre.org
+Send the patches to the Analizo mailing list: analizo@listas.softwarelivre.org,
+or to terceiro@softwarelivre.org
 
 You don't need to be subscribed to the mailing list to send, but make sure you
 mention that if you want to receive an off-list reply. But it's recommended
 that you do subscribe to the mailing list. To do so, go to the list
-subscription page: http://listas.softwarelivre.org/cgi-bin/mailman/listinfo/analizo
+subscription page:
+
+  * http://listas.softwarelivre.org/cgi-bin/mailman/listinfo/mezuro
 
 To create a patch:
 
-  git clone git://github.com/terceiro/analizo.git
-  cd analizo
-  edit file
-  git commit file
-  git format-patch origin
+  $ git clone git://gitorious.org/analizo/analizo.git
+  $ cd analizo
+    edit file
+  $ git commit file
+  $ git format-patch origin
 
 This will generate patch files named like:
 
@@ -150,8 +165,7 @@ therefore one patch) for each different logical change you want to make.  In
 this case, after running git format-patch you'll have a series of patch files
 named like 0001-..., 0002-..., just send them all.
 
-You are encouraged to learn how to use git since it's a powerfull version
-control system and it can make it easy for you to keep in sync with analizo's
+You are encouraged to learn how to use git since it's a powerful version
+control system and it can make it easy for you to keep in sync with Analizo
 development.
 
--- Antonio Terceiro <terceiro@softwarelivre.org>, Thu, 08 Oct 2009 19:28:52 -0300
