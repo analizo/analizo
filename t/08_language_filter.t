@@ -45,4 +45,12 @@ sub java_filter_matches_java_only : Tests {
   ok(!$filter->matches('Test.cpp'));
 }
 
+sub must_be_case_insensitive : Tests {
+  my $filter = Analizo::LanguageFilter->new('all');
+  ok($filter->matches('test.C'));
+  ok($filter->matches('test.CPP'));
+  ok($filter->matches('Test.H'));
+  ok($filter->matches('Test.JAVA'));
+}
+
 LanguageFilterTests->runtests;

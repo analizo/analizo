@@ -21,7 +21,7 @@ sub new {
     croak "E: Unknown language filter $filter_type";
   }
   my $self = {
-    regex => '\.(' . $regex . ')$',
+    regex => '\.(' . $regex . '|' . uc($regex) . ')$',
   };
   return bless $self, $package;
 }
