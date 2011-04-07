@@ -54,7 +54,7 @@ sub reading_from_directory : Tests {
   my $extractor = new_sloccount_extractor();
 
   $extractor->process($sample_dir);
-  is($extractor->model->total_eloc, 46, 'reading from an input directory');    
+  is($extractor->model->total_eloc, 40, 'reading from an input directory');
 }
 
 ExtractorSloccountTests->runtests;
