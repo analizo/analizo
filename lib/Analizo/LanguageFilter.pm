@@ -11,11 +11,11 @@ our $FILTERS = {
   cpp       => 'cpp|cxx|cc|h|hpp',
   java      => 'java',
 };
-$FILTERS->{null} = join('|', values(%$FILTERS));
+$FILTERS->{all} = join('|', values(%$FILTERS));
 
 sub new {
   my ($package, $filter_type) = @_;
-  $filter_type ||= 'null';
+  $filter_type ||= 'all';
   my $regex = $FILTERS->{$filter_type};
   if (!defined($regex)) {
     croak "E: Unknown language filter $filter_type";
