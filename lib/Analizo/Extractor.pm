@@ -13,6 +13,7 @@ use Analizo::LanguageFilter;
 our $QUIET = undef;
 
 __PACKAGE__->mk_ro_accessors(qw(current_member));
+__PACKAGE__->mk_accessors(qw(current_file));
 
 sub alias {
   my $alias = shift;
@@ -62,7 +63,7 @@ sub current_module {
     $self->{current_module} = shift;
 
     #declare
-    $self->model->declare_module($self->{current_module});
+    $self->model->declare_module($self->{current_module}, $self->current_file);
   }
 
   return $self->{current_module};
