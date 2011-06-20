@@ -3,12 +3,10 @@ require 'tmpdir'
 
 top_dir = FileUtils.pwd
 saved_path = ENV["PATH"]
-saved_perl5lib = ENV["PERL5LIB"]
 ENV['LC_ALL'] = 'C'
 
 Before do
   ENV['PATH'] = top_dir + ':' + ENV['PATH']
-  ENV['PERL5LIB'] = top_dir + (ENV['PERL5LIB'] ? ':' + ENV['PERL5LIB'] : '')
 end
 
 After do
@@ -17,7 +15,6 @@ After do
   FileUtils.rm_f(Dir.glob('*.tmp'))
   FileUtils.cd(top_dir)
   ENV['PATH'] = saved_path
-  ENV['PERL5LIB'] = saved_perl5lib
 end
 
 Given /^I am in (.+)$/ do |dir|
