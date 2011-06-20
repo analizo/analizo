@@ -139,8 +139,7 @@ sub run_tool {
     print("Invalid option: --version\n");
     exit(1);
   } else {
-    system($program, @args);
-    exit($? >> 8);
+    exec($program, @args);
   }
 }
 
