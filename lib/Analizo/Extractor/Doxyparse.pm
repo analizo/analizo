@@ -22,6 +22,12 @@ sub feed {
     $self->current_file($file);
   }
 
+  # current module declaration
+  if ($line =~ /^module (\S+)$/) {
+    my $modulename = _file_to_module($1);
+    $self->current_module($modulename);
+  }
+
   # function declarations
   if ($line =~ m/^\s{3}function (.*) in line \d+$/) {
     my $function = _qualified_name($self->current_module, $1);
@@ -101,13 +107,7 @@ sub actually_process {
   eval {
     open DOXYPARSE, "doxyparse - < $temp_filename |" or die $!;
     while (<DOXYPARSE>) {
-       if (/^module (\S+)$/) {
-         my $modulename = _file_to_module($1);
-         $self->current_module($modulename);
-       }
-       else {
-         $self->feed($_);
-       }
+      $self->feed($_);
     }
     close DOXYPARSE;
     unlink $temp_filename;
