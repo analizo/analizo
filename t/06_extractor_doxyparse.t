@@ -204,5 +204,13 @@ sub current_file : Tests {
   ok($current_file_called_correctly);
 }
 
+sub current_file_strip_pwd : Tests {
+  use Cwd;
+  my $pwd = getcwd();
+  my $extractor = new Analizo::Extractor::Doxyparse;
+  $extractor->feed("file $pwd/src/test.c");
+  is($extractor->current_file(), 'src/test.c')
+}
+
 ExtractorDoxyparseTests->runtests;
 

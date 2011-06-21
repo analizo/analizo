@@ -7,6 +7,7 @@ use base qw(Analizo::Extractor);
 
 use File::Basename;
 use File::Temp qw/ tempfile /;
+use Cwd;
 
 sub new {
   my $package = shift;
@@ -19,6 +20,8 @@ sub feed {
   # current file declaration
   if ($line =~ /^file (.*)$/) {
     my $file = $1;
+    my $pwd = getcwd();
+    $file =~ s#^$pwd/##;
     $self->current_file($file);
   }
 
