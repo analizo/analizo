@@ -44,9 +44,11 @@ sub declare_module {
   my ($self, $module, $file) = @_;
   if (! grep { $_ eq $module} @{$self->{module_names}}) {
     push @{$self->{module_names}}, $module;
-    if (defined($file)) {
-      $self->{files}->{$module} = $file;
-    }
+  }
+  if (defined($file)) {
+    print STDERR "# $module/$file\n";
+    $self->{files}->{$module} ||= [];
+    push(@{$self->{files}->{$module}}, $file);
   }
 }
 
