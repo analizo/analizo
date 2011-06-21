@@ -16,6 +16,12 @@ sub new {
 sub feed {
   my ($self, $line) = @_;
 
+  # current file declaration
+  if ($line =~ /^file (.*)$/) {
+    my $file = $1;
+    $self->current_file($file);
+  }
+
   # function declarations
   if ($line =~ m/^\s{3}function (.*) in line \d+$/) {
     my $function = _qualified_name($self->current_module, $1);
