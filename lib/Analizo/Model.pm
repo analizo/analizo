@@ -149,8 +149,8 @@ sub add_conditional_paths {
 }
 
 sub add_protection {
-    my ($self, $member, $protection) = @_;
-     $self->{protection}->{$member} = $protection;
+  my ($self, $member, $protection) = @_;
+  $self->{protection}->{$member} = $protection;
 }
 
 sub add_parameters {
@@ -171,10 +171,10 @@ sub variables {
 }
 
 sub all_members {
- my ($self, $module) = @_;
- my @functions = $self->functions($module);
- my @variables = $self->variables($module);
- return @functions, @variables;
+  my ($self, $module) = @_;
+  my @functions = $self->functions($module);
+  my @variables = $self->variables($module);
+  return @functions, @variables;
 }
 
 1;
