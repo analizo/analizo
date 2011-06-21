@@ -5,6 +5,7 @@ sub new {
   my @defaults = (
     members => {},
     modules => {},
+    files => {},
     demangle => {},
     calls => {},
     lines => {},
@@ -40,10 +41,18 @@ sub total_eloc {
 }
 
 sub declare_module {
-  my ($self, $module) = @_;
+  my ($self, $module, $file) = @_;
   if (! grep { $_ eq $module} @{$self->{module_names}}) {
     push @{$self->{module_names}}, $module;
+    if (defined($file)) {
+      $self->{files}->{$module} = $file;
+    }
   }
+}
+
+sub file {
+  my ($self, $module) = @_;
+  return $self->{files}->{$module};
 }
 
 sub inheritance {
