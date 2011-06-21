@@ -112,8 +112,11 @@ end
 Then /^analizo must report that module (.+) has (.+) = (.+)$/ do |mod, metric, value|
   stream = YAML.load_stream(@stdout.join)
   module_metrics = stream.documents.find { |doc| doc['_module'] == mod }
-  if value =~ /^\d+|\d+\.\d+$/
+  case value
+  when /^\d+|\d+\.\d+$/
     value = value.to_f
+  when /^\[(.*)\]$/
+    value = $1.split(/\s*,\s*/)
   end
   module_metrics[metric].should == value
 end
