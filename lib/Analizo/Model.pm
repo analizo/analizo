@@ -5,6 +5,7 @@ sub new {
   my @defaults = (
     members => {},
     modules => {},
+    files => {},
     demangle => {},
     calls => {},
     lines => {},
@@ -40,10 +41,19 @@ sub total_eloc {
 }
 
 sub declare_module {
-  my ($self, $module) = @_;
+  my ($self, $module, $file) = @_;
   if (! grep { $_ eq $module} @{$self->{module_names}}) {
     push @{$self->{module_names}}, $module;
   }
+  if (defined($file)) {
+    $self->{files}->{$module} ||= [];
+    push(@{$self->{files}->{$module}}, $file);
+  }
+}
+
+sub file {
+  my ($self, $module) = @_;
+  return $self->{files}->{$module};
 }
 
 sub inheritance {
@@ -149,8 +159,8 @@ sub add_conditional_paths {
 }
 
 sub add_protection {
-    my ($self, $member, $protection) = @_;
-     $self->{protection}->{$member} = $protection;
+  my ($self, $member, $protection) = @_;
+  $self->{protection}->{$member} = $protection;
 }
 
 sub add_parameters {
@@ -171,10 +181,10 @@ sub variables {
 }
 
 sub all_members {
- my ($self, $module) = @_;
- my @functions = $self->functions($module);
- my @variables = $self->variables($module);
- return @functions, @variables;
+  my ($self, $module) = @_;
+  my @functions = $self->functions($module);
+  my @variables = $self->variables($module);
+  return @functions, @variables;
 }
 
 1;

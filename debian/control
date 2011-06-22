@@ -10,7 +10,7 @@ DM-Upload-Allowed: yes
 
 Package: analizo
 Architecture: all
-Depends: ${misc:Depends}, ${perl:Depends}, doxyparse, sloccount, libgraph-perl, liblist-compare-perl, libtest-class-perl, libtest-exception-perl, libyaml-perl, libclass-accessor-perl, libstatistics-descriptive-perl, libstatistics-online-perl, ruby
+Depends: ${misc:Depends}, ${perl:Depends}, doxyparse (>= 1.5.8-12~), sloccount, libgraph-perl, liblist-compare-perl, libtest-class-perl, libtest-exception-perl, libyaml-perl, libclass-accessor-perl, libstatistics-descriptive-perl, libstatistics-online-perl, ruby
 Recommends: graphviz
 Description: multi-language source code analysis toolkit
  Analizo parses source code in multiple languages and report useful information

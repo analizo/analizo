@@ -1,3 +1,10 @@
+analizo (1.17.0) UNRELEASED; urgency=low
+
+  * New release
+  * Depend on doxyparse >= 1.5.8-12~ for module-to-filename mapping support
+
+ -- Antonio Terceiro <terceiro@softwarelivre.org>  Mon, 20 Jun 2011 15:03:06 -0700
+
 analizo (1.16.0) unstable; urgency=low
 
   * New release
