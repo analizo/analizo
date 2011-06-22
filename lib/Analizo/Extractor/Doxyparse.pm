@@ -11,7 +11,25 @@ use Cwd;
 
 sub new {
   my $package = shift;
-  return bless { @_ }, $package;
+  return bless { files => [], @_ }, $package;
+}
+
+sub _add_file {
+  my ($self, $file) = @_;
+  push(@{$self->{files}}, $file);
+}
+
+sub _cpp_hack {
+  my ($self, $module) = @_;
+  my $current = $self->current_file;
+  if ($current =~ /^(.*)\.(h|hpp)$/) {
+    my $prefix = $1;
+    # look for a previously added .cpp/.cc/etc
+    my @implementations = grep { $_ =~ /^$prefix\.(cpp|cxx|cc)$/} @{$self->{files}};
+    foreach my $impl (@implementations) {
+      $self->model->declare_module($module, $impl);
+    }
+  }
 }
 
 sub feed {
@@ -23,12 +41,14 @@ sub feed {
     my $pwd = getcwd();
     $file =~ s#^$pwd/##;
     $self->current_file($file);
+    $self->_add_file($file);
   }
 
   # current module declaration
   if ($line =~ /^module (\S+)$/) {
     my $modulename = _file_to_module($1);
     $self->current_module($modulename);
+    $self->_cpp_hack($modulename);
   }
 
   # function declarations
