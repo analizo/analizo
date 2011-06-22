@@ -301,6 +301,7 @@ sub _report_module {
 
   my %data = (
     _module              => $module,
+    _filename            => $self->model->file($module),
     acc                  => $acc,
     accm                 => $accm,
     amloc                => $amloc,
