@@ -37,9 +37,7 @@ sub feed {
 
   # current file declaration
   if ($line =~ /^file (.*)$/) {
-    my $file = $1;
-    my $pwd = getcwd();
-    $file =~ s#^$pwd/##;
+    my $file = _strip_current_directory($1);
     $self->current_file($file);
     $self->_add_file($file);
   }
@@ -117,6 +115,13 @@ sub _qualified_name {
 sub _file_to_module {
   my $filename = shift;
   $filename ? fileparse($filename, qr/\.[^.]*/) : 'unknown';
+}
+
+sub _strip_current_directory {
+  my ($file) = @_;
+  my $pwd = getcwd();
+  $file =~ s#^$pwd/##;
+  return $file;
 }
 
 sub actually_process {
