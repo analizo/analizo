@@ -212,5 +212,13 @@ sub current_file_strip_pwd : Tests {
   is($extractor->current_file(), 'src/test.c')
 }
 
+sub use_full_filename_for_C_modules : Tests {
+  my $extractor = new Analizo::Extractor::Doxyparse;
+  $extractor->process('t/samples/multidir/c');
+  my @modules = $extractor->model->module_names();
+  ok(grep { /^lib\/main$/ } @modules);
+  ok(grep { /^src\/main$/ } @modules);
+}
+
 ExtractorDoxyparseTests->runtests;
 

@@ -5,7 +5,6 @@ use warnings;
 
 use base qw(Analizo::Extractor);
 
-use File::Basename;
 use File::Temp qw/ tempfile /;
 use Cwd;
 
@@ -113,8 +112,10 @@ sub _qualified_name {
 
 # discard file suffix (e.g. .c or .h)
 sub _file_to_module {
-  my $filename = shift;
-  $filename ? fileparse($filename, qr/\.[^.]*/) : 'unknown';
+  my ($filename) = @_;
+  $filename ||= 'unknown';
+  $filename =~ s/\.\w+$//;
+  return $filename;
 }
 
 sub _strip_current_directory {
