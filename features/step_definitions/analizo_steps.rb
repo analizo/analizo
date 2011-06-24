@@ -1,5 +1,6 @@
 require 'fileutils'
 require 'tmpdir'
+require 'digest/sha1'
 
 top_dir = FileUtils.pwd
 saved_path = ENV["PATH"]
@@ -43,6 +44,24 @@ When /^I run "([^\"]*)"$/ do |command|
   end
   @stdout = File.readlines('tmp.out')
   @stderr = File.readlines('tmp.err')
+end
+
+at_exit do
+  FileUtils.rm_rf(Dir.glob(File.join(Dir.tmpdir, '*.analizo.{out,err,tmpdir}')))
+end
+
+When /^I run "([^\"]*)" only once$/ do |command|
+  run_marker = Digest::SHA1.hexdigest(Dir.pwd) + Digest::SHA1.hexdigest(command)
+  stdout = File.join(Dir.tmpdir, run_marker + '.analizo.out')
+  stderr = File.join(Dir.tmpdir, run_marker + '.analizo.err')
+  if File.exist?(stdout) && File.exist?(stderr)
+    @stdout = File.readlines(stdout)
+    @stderr = File.readlines(stderr)
+  else
+    Then("I run \"#{command}\"")
+    FileUtils.cp('tmp.out', stdout)
+    FileUtils.cp('tmp.err', stderr)
+  end
 end
 
 Then /^analizo must report that "([^\"]*)" depends on "([^\"]*)"$/ do |dependent, depended|

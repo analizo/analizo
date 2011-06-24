@@ -5,7 +5,7 @@ Feature: output statistics values of metrics
 
   Scenario Outline: "Hello, world" project
     Given I am in t/samples/hello_world/
-    When I run "analizo metrics ."
+    When I run "analizo metrics ." only once
     Then the output must match "<metric>_average:"
     Then the output must match "<metric>_maximum:"
     Then the output must match "<metric>_median:"
