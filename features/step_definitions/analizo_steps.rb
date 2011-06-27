@@ -35,6 +35,12 @@ Given /^I explode (.+) and run "([^\"]*)"$/ do |tarball, command|
   end
 end
 
+When /^I copy (.*) into a temporary directory$/ do |files|
+  tmpdir = Dir.mktmpdir([Process.pid.to_s, '.analizo.tmpdir'])
+  FileUtils.cp_r(Dir.glob(files), tmpdir)
+  FileUtils.cd(tmpdir)
+end
+
 When /^I run "([^\"]*)"$/ do |command|
   system("#{command} >tmp.out 2>tmp.err")
   if $?.is_a?(Fixnum)

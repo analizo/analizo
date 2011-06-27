@@ -204,11 +204,11 @@ for dir in $input; do
   if [ $summary = true ]; then
     # header
     if [ "$summary_header" = "" ]; then
-      summary_header=$(awk -F ': ' 'BEGIN { line="" } {if ($1) line = line "," $1; end} END { print line }' $output)
+      summary_header=$(awk -F ': ' 'BEGIN { line="" } {if (NR > 1 && $1) line = line "," $1; end} END { print line }' $output)
       echo "project$summary_header" > $summary_file
     fi
     # body
-    data=$(awk -F ': ' 'BEGIN { line="" } {if ($1) line = line "," $2; end} END { print line }' $output)
+    data=$(awk -F ': ' 'BEGIN { line="" } {if (NR > 1 && $1) line = line "," $2; end} END { print line }' $output)
     echo "$project$data" >> $summary_file
   fi
 
