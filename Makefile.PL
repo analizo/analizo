@@ -25,5 +25,7 @@ WriteMakefile(
   BUILD_REQUIRES => {
     'Test::Class' => 0,
     'Test::Exception' => 0,
+    'Test::MockObject' => 0,
+    'Test::MockModule' => 0,
   },
 );
