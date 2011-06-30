@@ -30,7 +30,7 @@ sub alias {
 
 sub sanitize {
   my ($extractor_name) = @_;
-  if ($extractor_name =~ /^\w+$/) {
+  if ($extractor_name && $extractor_name =~ /^\w+$/) {
     return $extractor_name;
   } else {
     return 'Doxyparse';
