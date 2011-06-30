@@ -15,6 +15,10 @@ our $QUIET = undef;
 __PACKAGE__->mk_ro_accessors(qw(current_member));
 __PACKAGE__->mk_accessors(qw(current_file));
 
+sub new {
+  die(sprintf("%s cannot be instantied. Try %s->load() instead", __PACKAGE__, __PACKAGE__));
+}
+
 sub alias {
   my $alias = shift;
   my %aliases = (
