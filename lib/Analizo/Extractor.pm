@@ -38,14 +38,14 @@ sub sanitize {
 }
 
 sub load {
-  my ($self, $extractor_method) = @_;
+  my ($self, $extractor_method, @options) = @_;
   $extractor_method = alias(sanitize($extractor_method));
   my $extractor = "Analizo::Extractor::$extractor_method";
 
   eval "use $extractor";
   die "error loading $extractor_method extractor: $@" if $@;
 
-  eval { $extractor = $extractor->new(@_) };
+  eval { $extractor = $extractor->new(@options) };
   die "error instancing extractor: $@" if $@;
 
   return $extractor;
