@@ -3,7 +3,7 @@ use strict;
 use warnings;
 use base qw(Test::Class);
 use Test::More 'no_plan';
-use Test::MockModule;
+use Test::MockObject::Extends;
 
 use Analizo::Batch::Job;
 
@@ -30,15 +30,20 @@ sub before_execute : Tests {
   is($job->metrics, undef);
 }
 
-sub after_execute : Tests {
+sub execute : Tests {
   # model and metrics must be set
-  my $job = new Analizo::Batch::Job;
+  my $job = new Test::MockObject::Extends(new Analizo::Batch::Job);
+
+  my $prepared = 0; $job->mock('prepare', sub { $prepared = 1; });
+  my $cleaned  = 0; $job->mock('cleanup', sub { die('cleanup() must be called after prepare()') unless $prepared; $cleaned  = 1; });
+
   on_dir(
     't/samples/hello_world/c',
     sub {
       $job->execute();
     }
   );
+  ok($prepared && $cleaned, 'must call prepare() and cleanup() on execute');
   isa_ok($job->model, 'Analizo::Model');
   isa_ok($job->metrics, 'Analizo::Metrics');
 }

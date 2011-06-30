@@ -40,6 +40,8 @@ sub cleanup {
 sub execute {
   my ($self) = @_;
 
+  $self->prepare();
+
   # extract model from source
   my $extractor = Analizo::Extractor->load();
   $extractor->process('.');
@@ -47,6 +49,8 @@ sub execute {
 
   # calculate metrics
   $self->metrics(new Analizo::Metrics($self->model));
+
+  $self->cleanup();
 }
 
 
