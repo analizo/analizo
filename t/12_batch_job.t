@@ -5,6 +5,9 @@ use base qw(Test::Class);
 use Test::More 'no_plan';
 use Test::MockObject::Extends;
 
+use lib 't/lib';
+use Test::Analizo;
+
 use Analizo::Batch::Job;
 
 sub constructor : Tests {
@@ -46,15 +49,6 @@ sub execute : Tests {
   ok($prepared && $cleaned, 'must call prepare() and cleanup() on execute');
   isa_ok($job->model, 'Analizo::Model');
   isa_ok($job->metrics, 'Analizo::Metrics');
-}
-
-sub on_dir {
-  my ($dir, $code) = @_;
-  my $previous_pwd = `pwd`;
-  chomp $previous_pwd;
-  chdir $dir;
-  &$code();
-  chdir $previous_pwd;
 }
 
 BatchJobTests->runtests;
