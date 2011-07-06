@@ -48,7 +48,7 @@ sub execute {
   $self->model($extractor->model);
 
   # calculate metrics
-  $self->metrics(new Analizo::Metrics($self->model));
+  $self->metrics(new Analizo::Metrics(model => $self->model));
 
   $self->cleanup();
 }

@@ -48,6 +48,7 @@ sub execute : Tests {
   ok($prepared && $cleaned, 'must call prepare() and cleanup() on execute');
   isa_ok($job->model, 'Analizo::Model');
   isa_ok($job->metrics, 'Analizo::Metrics');
+  isa_ok($job->metrics->model, 'Analizo::Model');
 }
 
 BatchJobTests->runtests;
