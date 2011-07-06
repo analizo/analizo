@@ -5,7 +5,10 @@ use warnings;
 use base qw( Exporter );
 our @EXPORT = qw(
   on_dir
+  mock
 );
+
+use Test::MockObject::Extends;
 
 sub on_dir {
   my ($dir, $code) = @_;
@@ -20,6 +23,11 @@ sub on_dir {
   my $result = &$code();
   chdir $previous_pwd;
   return $result;
+}
+
+sub mock {
+  my $object = shift;
+  new Test::MockObject::Extends($object);
 }
 
 1;
