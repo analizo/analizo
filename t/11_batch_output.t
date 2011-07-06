@@ -3,6 +3,8 @@ use strict;
 use warnings;
 use base qw(Test::Analizo::Class);
 use Test::More 'no_plan';
+use Test::Analizo;
+
 use Analizo::Batch::Output;
 
 sub constructor : Tests {
@@ -18,10 +20,8 @@ sub not_require_metrics_by_default : Tests {
   is($output->requires_metrics, 0);
 }
 
-use Test::MockObject::Extends;
-
 sub should_write_to_output_file : Tests {
-  my $output = new Test::MockObject::Extends(__create());
+  my $output = mock(__create());
   my $delegated = undef;
   $output->mock('write_data', sub { my ($that, $fh) = @_; $delegated = (ref($fh) eq 'GLOB'); });
 
@@ -29,6 +29,14 @@ sub should_write_to_output_file : Tests {
   $output->flush();
   ok(-e 't/tmp/output.tmp', 'output must be written to file');
   ok($delegated, 'must delegate actualy writing to subclasses');
+}
+
+sub must_write_to_stdout_when_no_file_is_given : Tests {
+  my $output = mock(__create());
+  my $write_data_called = 0;
+  $output->mock('write_data', sub { if ($_[1] eq *STDOUT) { $write_data_called++ }});
+  $output->flush();
+  ok($write_data_called == 1);
 }
 
 sub __create {

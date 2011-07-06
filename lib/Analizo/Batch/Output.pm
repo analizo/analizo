@@ -32,12 +32,16 @@ sub push {
 __PACKAGE__->mk_accessors(qw(file));
 
 # Opens a file for output, delegates the actual writing to subclasses, and
-# closes the file.
+# closes the file. If no file was given, write to standard output.
 sub flush {
   my ($self) = @_;
-  open(my $fh, '>', $self->file) or die("Could not open output file $self->file!");
-  $self->write_data($fh);
-  close($fh);
+  if ($self->file) {
+    open(my $fh, '>', $self->file) or die("Could not open output file $self->file: $!");
+    $self->write_data($fh);
+    close($fh);
+  } else {
+    $self->write_data(*STDOUT);
+  }
 }
 
 # Must be overriden by subclasses. Will receive a FILEHANDLE, and must write
