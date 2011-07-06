@@ -22,4 +22,27 @@ sub requires_metrics {
   0;
 }
 
+# Runners must use this method to push jobs into the output object.
+#
+# Subclasses must override this method.
+sub push {
+}
+
+# To which file the output must be written
+__PACKAGE__->mk_accessors(qw(file));
+
+# Opens a file for output, delegates the actual writing to subclasses, and
+# closes the file.
+sub flush {
+  my ($self) = @_;
+  open(my $fh, '>', $self->file) or die("Could not open output file $self->file!");
+  $self->write_data($fh);
+  close($fh);
+}
+
+# Must be overriden by subclasses. Will receive a FILEHANDLE, and must write
+# the data to it.
+sub write_data {
+}
+
 1;
