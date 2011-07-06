@@ -4,7 +4,6 @@ use warnings;
 use base qw(Test::Class);
 use Test::More 'no_plan';
 
-use lib 't/lib';
 use Test::Analizo;
 
 use Analizo::Batch::Job::Directories;

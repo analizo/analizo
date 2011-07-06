@@ -5,7 +5,6 @@ use base qw(Test::Class);
 use Test::More 'no_plan';
 use Test::MockObject::Extends;
 
-use lib 't/lib';
 use Test::Analizo;
 
 use Analizo::Batch::Job;
