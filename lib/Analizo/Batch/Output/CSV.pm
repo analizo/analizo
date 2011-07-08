@@ -20,12 +20,12 @@ sub write_data {
     unless (@fields) {
       @fields = sort(keys(%$summary));
 
-      my $header = join(',', @fields) . "\n";
+      my $header = join(',', 'id', @fields) . "\n";
       print $fh $header;
     }
 
     my @values = map { $summary->{$_} } @fields;
-    my $line = join(',', @values) . "\n";
+    my $line = join(',', $job->id, @values) . "\n";
     print $fh $line;
   }
 }

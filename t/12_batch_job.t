@@ -20,6 +20,8 @@ my @EXPOSED_INTERFACE = qw(
 
   model
   metrics
+
+  id
 );
 
 sub exposed_interface : Tests {

@@ -5,7 +5,7 @@ use Cwd;
 
 sub new {
   my ($class, $directory) = @_;
-  return bless { directory => $directory }, $class;
+  return bless { id => $directory, directory => $directory }, $class;
 }
 
 __PACKAGE__->mk_accessors(qw(directory oldcwd));

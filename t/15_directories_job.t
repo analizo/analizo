@@ -13,6 +13,7 @@ sub constructor : Tests {
   my $job = __create_job('c');
   isa_ok($job, 'Analizo::Batch::Job::Directories');
   is($job->directory, 'c');
+  is($job->id, 'c');
 }
 
 sub prepare_and_cleanup : Tests {
