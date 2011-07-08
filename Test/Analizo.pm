@@ -6,6 +6,8 @@ use base qw( Exporter );
 our @EXPORT = qw(
   on_dir
   mock
+  tmpdir
+  unpack_sample_git_repository
 );
 
 use Test::MockObject::Extends;
@@ -28,6 +30,26 @@ sub on_dir {
 sub mock {
   my $object = shift;
   new Test::MockObject::Extends($object);
+}
+
+sub tmpdir {
+  my ($package, $filename, $line) = caller;
+  return tmpdir_for($filename);
+}
+
+sub tmpdir_for {
+  my ($filename) = @_;
+  return $filename . '.tmpdir';
+}
+
+sub unpack_sample_git_repository {
+  my $code = shift;
+  my ($package, $filename, $line) = caller;
+  my $tmpdir = tmpdir_for($filename);
+  system("mkdir -p $tmpdir");
+  system("tar xzf t/samples/evolution.tar.gz -C $tmpdir");
+  &$code();
+  system("rm -rf $tmpdir");
 }
 
 1;
