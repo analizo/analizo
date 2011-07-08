@@ -5,7 +5,7 @@ use Cwd;
 
 sub new {
   my ($class, $directory) = @_;
-  return bless { id => $directory, directory => $directory }, $class;
+  $class->SUPER::new(id => $directory, directory => $directory);
 }
 
 __PACKAGE__->mk_accessors(qw(directory oldcwd));

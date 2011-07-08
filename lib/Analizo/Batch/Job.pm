@@ -13,8 +13,8 @@ use Analizo::Metrics;
 __PACKAGE__->mk_accessors(qw(model metrics id));
 
 sub new {
-  my ($class) = @_;
-  return bless {}, $class;
+  my ($class, @options) = @_;
+  return bless { @options }, $class;
 }
 
 # This method must be overriden by by subclasses.
