@@ -6,6 +6,7 @@ use base 'Test::Class';
 use Test::More;
 use Test::Analizo;
 use Cwd;
+use Test::MockObject;
 
 use Analizo::Batch::Job::Git;
 use Test::Analizo::Git;
@@ -53,6 +54,31 @@ sub git_checkout_should_actually_checkout : Tests {
   is($commit, $SOME_COMMIT);
   is($master1, $master2);
   is($master2, $MASTER);
+}
+
+sub points_to_batch : Tests {
+  my $job = __create();
+  $job->batch(42);
+  is($job->batch, 42);
+}
+
+sub relevance : Tests {
+  my $batch = new Test::MockObject();
+  $batch->set_series('matches_filters', 1, 0, 1);
+  my $job = __create();
+  $job->batch($batch);
+
+  is($job->relevant, 1);
+  is($job->relevant, 0);
+  is($job->relevant, 1);
+}
+
+sub changed_files : Tests {
+  my $master = __create($TESTDIR, $MASTER);
+  is_deeply($master->changed_files, ['input.cc']);
+
+  my $some_commit = __create($TESTDIR, $SOME_COMMIT);
+  is_deeply($some_commit->changed_files, ['prog.cc']);
 }
 
 sub __create {

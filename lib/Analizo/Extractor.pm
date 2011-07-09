@@ -3,7 +3,7 @@ package Analizo::Extractor;
 use strict;
 use warnings;
 
-use base qw(Class::Accessor::Fast);
+use base qw(Class::Accessor::Fast Analizo::Filter::Client);
 use File::Find;
 
 use Analizo::Model;
@@ -92,44 +92,16 @@ sub _filter_input {
   return $self->_apply_filters(@input);
 }
 
-sub filters {
-  my ($self, @new_filters) = @_;
-  $self->{filters} ||= [];
-  if (@new_filters) {
-    push @{$self->{filters}}, @new_filters;
-  }
-  return @{$self->{filters}};
-}
-
 sub _apply_filters {
   my ($self, @input) = @_;
   my @result = ();
   for my $input (@input) {
     find(
-      { wanted => sub { push @result, $_ if !-d $_ && $self->_matches_filters($_); }, no_chdir => 1 },
+      { wanted => sub { push @result, $_ if !-d $_ && $self->filename_matches_filters($_); }, no_chdir => 1 },
       $input
     );
   }
   return @result;
-}
-
-sub _matches_filters {
-  my ($self, $filename) = @_;
-  for my $filter ($self->filters) {
-    unless ($filter->matches($filename)) {
-      return 0;
-    }
-  }
-  return 1;
-}
-
-sub exclude {
-  my ($self, @dirs) = @_;
-  if (!$self->{excluding_dirs}) {
-    $self->{excluding_dirs} = 1;
-    $self->filters(Analizo::LanguageFilter->new);
-  }
-  $self->filters(Analizo::FilenameFilter->exclude(@dirs));
 }
 
 sub info {
