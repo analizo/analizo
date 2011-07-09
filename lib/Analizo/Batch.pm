@@ -4,8 +4,8 @@ use warnings;
 package Analizo::Batch;
 
 sub new {
-  my ($class) = @_;
-  return bless {}, $class;
+  my ($class, @options) = @_;
+  return bless { @options }, $class;
 }
 
 # This method must be overriden by subclasses, and must return a object that
