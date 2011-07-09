@@ -8,11 +8,10 @@ use Test::Analizo;
 use Cwd;
 
 use Analizo::Batch::Job::Git;
+use Test::Analizo::Git;
 
 my $TESTDIR = 'evolution';
 
-my $MASTER = '8183eafad3a0f3eff6e8869f1bdbfd255e86825a'; # first commit id in sample
-my $SOME_COMMIT = '0a06a6fcc2e7b4fe56d134e89d74ad028bb122ed'; # some commit in the middle of the history
 
 sub constructor : Tests {
   isa_ok(__create(), 'Analizo::Batch::Job::Git');
