@@ -37,6 +37,22 @@ sub prepare {
 sub cleanup {
 }
 
+# This method must return metadata about this job, in the form of an ARRAY
+# reference.  Each element of the ARRAY must be itself an ARRAY with two
+# elements, the first the name of the field and the second the value of the
+# field. Both field names and values must be SCALARs. Example:
+#
+#   return [
+#     ['field1', 'value1'],
+#     ['field2', 10],
+#   ];
+#
+# The implementation in this class returns an empty ARRAY reference.  This
+# method may be overriden by subclasses.
+sub metadata {
+  []
+}
+
 sub execute {
   my ($self) = @_;
 

@@ -22,6 +22,7 @@ my @EXPOSED_INTERFACE = qw(
   metrics
 
   id
+  metadata
 );
 
 sub exposed_interface : Tests {
@@ -51,6 +52,11 @@ sub execute : Tests {
   isa_ok($job->model, 'Analizo::Model');
   isa_ok($job->metrics, 'Analizo::Metrics');
   isa_ok($job->metrics->model, 'Analizo::Model');
+}
+
+sub empty_metadata_by_default : Tests {
+  my $job = new Analizo::Batch::Job;
+  is_deeply($job->metadata(), []);
 }
 
 BatchJobTests->runtests;
