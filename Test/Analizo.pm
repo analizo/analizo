@@ -8,6 +8,7 @@ our @EXPORT = qw(
   mock
   tmpdir
   unpack_sample_git_repository
+  readfile
 );
 
 use Test::MockObject::Extends;
@@ -50,6 +51,15 @@ sub unpack_sample_git_repository {
   system("tar xzf t/samples/evolution.tar.gz -C $tmpdir");
   &$code();
   system("rm -rf $tmpdir");
+}
+
+sub readfile {
+  my $filename = shift;
+  open INPUT, $filename;
+  my @lines = <INPUT>;
+  close INPUT;
+  chomp @lines;
+  return @lines;
 }
 
 1;
