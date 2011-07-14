@@ -22,8 +22,8 @@ sub new {
 
 sub next {
   my ($self) = @_;
-  $self->initialize_if_needed;
-  my $nextcommit = $self->{jobs}->[$self->{index}];
+  $self->initialize();
+  my $nextcommit = $self->{relevant}->[$self->{index}];
   if ($nextcommit) {
     $self->{index}++;
     return $nextcommit;
@@ -32,23 +32,35 @@ sub next {
   }
 }
 
-sub initialize_if_needed {
+sub initialize {
   my ($self) = @_;
   unless(defined($self->{index})) {
+    # read in list of commits
     open COMMITIDS, "(cd $self->{directory} && git log --format=%H)|";
     my @ids = <COMMITIDS>;
     close COMMITIDS;
     chomp @ids;
+    # initialize filter: by default look only for files in known languages
+    unless ($self->filters) {
+      $self->filters(new Analizo::LanguageFilter('all'));
+    }
+    # construct job objects
     my @jobs = map { my $job = new Analizo::Batch::Job::Git($self->directory, $_); $job->batch($self); $job } @ids;
-    @jobs = grep { $_->relevant } @jobs;
-    $self->{jobs} = \@jobs;
+    my %jobs = map { $_->id => $_ } @jobs;
+    my @relevant = grep { $_->relevant } @jobs;
+    $self->{jobs} = \%jobs;
+    $self->{relevant} = \@relevant;
     $self->{index} = 0;
   }
 }
 
+sub find {
+  my ($self, $id) = @_;
+  return $self->{jobs}->{$id};
+}
+
 sub matches_filters {
   my ($self, $job) = @_;
-  return 1 unless ($self->filters);
   for my $file (@{$job->changed_files}) {
     if ($self->filename_matches_filters($file)) {
       return 1;

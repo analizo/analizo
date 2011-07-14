@@ -29,8 +29,6 @@ sub create_with_and_without_args : Tests {
   my $job2 = $batch2->next();
   is($job1->id, $job2->id);
   is($job1->id, $MASTER);
-  is($job1->batch, $batch1);
-  is($job2->batch, $batch2);
 }
 
 sub traverse_repository : Tests {
@@ -59,6 +57,25 @@ sub filters : Tests {
 
   $job->mock('changed_files', sub { ['README'] });
   ok(!$batch->matches_filters($job), 'only README');
+}
+
+sub default_filter : Tests {
+  my $batch = __create($TESTDIR);
+  while (my $job = $batch->next()) {
+    my @files = grep { /\.(cc|h)$/ } @{$job->changed_files};
+    ok(scalar(@files) > 0, sprintf("must not analyze commit containing only (%s)", join(',', @{$job->changed_files})));
+  }
+}
+
+sub find_commit : Tests {
+  my $batch = __create($TESTDIR);
+  $batch->initialize();
+
+  is($batch->find('abczyx1234'), undef);
+
+  my $master = $batch->find($MASTER);
+  isa_ok($master, 'Analizo::Batch::Job::Git');
+  is($master->id, $MASTER);
 }
 
 sub __create {
