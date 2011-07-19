@@ -1,267 +1,4 @@
-#!/usr/bin/ruby
-# metrics-history
-# Generates the metrics of the whole history of an application.
-# Antônio Terceiro (terceiro@dcc.ufba.br)
-# Luiz Romário Santana Rios (luizromario@gmail.com)
-# 
-# Usage: ./metrics-history directory
-#
-# WARNING NOTE: Do not run this script in a work folder, since it 
-# will checkout every commit in history, which may destroy your
-# ongoing work.
-#
-require 'rubygems'
-require 'yaml'
-require 'benchmark'
-require 'time'
-
-$ANALIZO_METRICS_OPTIONS = nil
-FILTER = /\.(c|h|cpp|cxx|cc|hpp|java)$/
-
-class Repository < Hash
-  def wanted_commits
-    result = []
-    commit = nil
-    last_wanted = nil
-    `git log --pretty=format:%H`.each_line do |line|
-      line.strip!
-      commit = Commit.new(line, self)
-      self[commit.id] = commit
-      if commit.relevant?
-        result << commit
-      end
-    end
-    result
-  end
-end
-
-class Commit
-  attr_reader :id, :repository
-  alias :to_s :id
-  alias :inspect :id
-  def initialize(id, repository)
-    @id = id
-    @repository = repository
-  end
-  def changed_files
-    data[:changed_files]
-  end
-  def parent_ids
-    data[:parent_ids]
-  end
-  def parents
-    parent_ids.map { |i| repository[i] }
-  end
-  def authored_date
-    data[:authored_date]
-  end
-  def author_name
-    data[:author_name]
-  end
-  def author_email
-    data[:author_email]
-  end
-  def merge?
-    parent_ids.size > 1
-  end
-  def first_commit?
-    parent_ids.size == 0
-  end
-  def relevant?
-    changed_files.any? { |file| file =~ FILTER }
-  end
-  def previous_wanted
-    if merge?
-      nil
-    else
-      previous_relevant
-    end
-  end
-  def previous_relevant
-    if instance_variable_defined?('@previous_relevant')
-      @previous_relevant
-    else
-      @previous_relevant =
-        begin
-          if first_commit?
-            nil
-          elsif merge?
-            possibilities = parents.map(&:previous_relevant).uniq
-            if possibilities.size == 1
-              possibilities.first
-            else
-              nil
-            end
-          else
-            parent = parents.first
-            if parent.relevant?
-              parent
-            else
-              parent.previous_relevant
-            end
-          end
-        end
-    end
-  end
-
-  private
-  def data
-    @data ||=
-      begin
-        output = `git show --name-only --format=%P/%aD/%aN/%aE #{id}`.lines.map(&:strip)
-        header = output.shift.split('/')
-        {
-          :changed_files => output.reject { |line| line.empty? },
-          :parent_ids => header[0].split,
-          :authored_date => Time.parse(header[1]),
-          :author_name => header[2],
-          :author_email => header[3],
-        }
-      end
-  end
-end
-
-class AnalizoRunner
-
-  COMMIT_FIELDS = %w[
-    commit_id
-    previous_commit_id
-    date
-    author
-    email
-    changed_files
-  ]
-
-  def csv_data(commit)
-    system("git checkout #{commit} > /dev/null 2>> git.log")
-    analizo_metrics_output = `analizo metrics #{$ANALIZO_METRICS_OPTIONS} . 2> /dev/null`
-    if analizo_metrics_output.nil? || analizo_metrics_output.empty?
-      nil
-    else
-      metrics = YAML.load_stream(analizo_metrics_output).documents.first
-      header(metrics) + [commit_data(commit), metrics_data(metrics)].join(',')
-    end
-  end
-
-  protected
-
-  def commit_data(commit)
-    [
-      commit.id,
-      commit.previous_wanted && commit.previous_wanted.id || nil,
-      commit.authored_date.rfc2822.inspect,
-      commit.author_name.inspect,
-      commit.author_email,
-      commit.changed_files.join(',').inspect
-    ].join(',')
-  end
-
-  def metrics_data(metrics)
-    metrics.keys.sort.map{|key| metrics[key]}.join(',')
-  end
-
-  def header(metrics)
-    if @header_written
-      ""
-    else
-      @header_written = (COMMIT_FIELDS + metrics.keys.sort).join(',') + "\n"
-    end
-  end
-end
-
-def usage(status)
-  puts "Usage: #{$PROGRAM_NAME} [OPTIONS] directory"
-  exit(status)
-end
-
-require 'getoptlong'
-require 'rdoc/usage'
-
-opts = GetoptLong.new(
-  [ '--list', '-l', GetoptLong::NO_ARGUMENT ],
-  [ '--analizo-metrics-options', '-o', GetoptLong::REQUIRED_ARGUMENT ],
-  [ '--help', '-h', GetoptLong::NO_ARGUMENT ],
-  [ '--usage', GetoptLong::NO_ARGUMENT ]
-)
-
-list_only = false
-opts.each do |opt,value|
-  case opt
-  when '--analizo-metrics-options'
-    $ANALIZO_METRICS_OPTIONS = value
-  when '--help'
-    exec 'analizo', 'doc', __FILE__
-  when '--usage'
-    usage(0)
-  when '--list'
-    list_only = true
-  end
-end
-
-if !ARGV[0] then
-  usage(1)
-end
-if !File.exists?(File.join(ARGV[0], '.git'))
-  puts "Fatal: Not a git repository."
-  exit
-end
-previous_directory = Dir.pwd
-Dir.chdir(ARGV[0])
-system("echo \"Log opened at: #{Time.now}\" >> git.log")
-system("echo \"Log opened at: #{Time.now}\" >> analizo.log")
-system("echo \"Log opened at: #{Time.now}\" >> doxyparse.log")
-system("git checkout master > /dev/null 2>> git.log")
-
-wl = Repository.new.wanted_commits
-if list_only
-  puts wl
-  exit 0
-end
-if wl.size == 0 then
-  puts "No relevant commits to proccess"
-else
-  print "Processing "
-  if wl.size == 1 then
-    puts "one commit"
-  else
-    puts "#{wl.size} commits..."
-  end
-end
-runner = AnalizoRunner.new
-
-File.open('metrics.csv', 'w') do |file|
-  error_counter = 0
-  wl.each do |commit|
-    if mcsv = runner.csv_data(commit) then
-      file.puts mcsv
-      print "."
-    else
-      print "E"
-      system("analizo metrics #{$ANALIZO_METRICS_OPTIONS} . >> analizo.log 2>> analizo.log")
-      system("doxyparse . >> doxyparse.log 2>> doxyparse.log")
-      error_counter +=1
-    end
-  end
-  if error_counter == 0 then
-    puts "\nDone.\n"
-  else
-    if error_counter == 1 then
-      print "\nOne error"
-    else
-      print "\n#{error_counter} errors"
-    end
-    puts " ocurred. Check analizo.log and git.log for more details.\n"
-  end
-  system("git checkout master > /dev/null 2>> git.log")
-end
-
-system("echo \"Log closed at: #{Time.now}\" >> git.log")
-system("echo \"Log closed at: #{Time.now}\" >> analizo.log")
-system("echo \"Log closed at: #{Time.now}\" >> doxyparse.log")
-
-Dir.chdir(previous_directory)
-
-__END__
+#!/usr/bin/perl
 
 =head1 NAME
 
@@ -295,12 +32,10 @@ I<.hpp>, and I<.java>.
 
 =over
 
-=item --analizo-metrics-options "OPTIONS" | -o "OPTIONS"
+=item --language LANGUAGE, --exclude DIRECTORY
 
-Passes I<OPTIONS> to the I<analizo metrics> calls. For example, if you want to
-ignore the "test" directory while analysing the project history, you call
-analizo metrics-history as B<analizo metrics-history --analizo-metrics-options
-"--exclude test">.
+Use programming language and directory exclusion filters. See
+B<analizo-metrics(1)> for a description of these options.
 
 =item --list | -l
 
@@ -326,3 +61,53 @@ B<analizo-metrics(1)>
 See B<analizo(1)>
 
 =cut
+
+use Getopt::Long;
+
+my $__help          = undef;
+my $__list_only     = undef;
+my $__language      = undef;
+my $__exclude       = undef;
+my $__output        = undef;
+
+GetOptions(
+  'help'          => \$__help,
+  'l|list'        => \$__list_only,
+  'language=s'    => \$__language,
+  'o|output=s'    => \$__output,
+  'exclude|x=s'   => \$__exclude,
+) or exit(1);
+
+if ($__help) {
+  exec('analizo', 'doc', __FILE__)
+}
+
+use Analizo::Batch::Git;
+use Analizo::Batch::Runner::Sequential;
+use Analizo::Batch::Output::CSV;
+
+my $batch = new Analizo::Batch::Git(@ARGV);
+if ($__list_only) {
+  while (my $job = $batch->next()) {
+    print $job->id, "\n";
+  }
+  exit 0;
+}
+
+if ($__language) {
+  require Analizo::LanguageFilter;
+  my $language_filter = Analizo::LanguageFilter->new($__language);
+  $batch->filters($language_filter);
+}
+if ($__exclude) {
+  my @excluded_directories = split(':', $__exclude);
+  $batch->exclude(@excluded_directories);
+}
+
+my $output = new Analizo::Batch::Output::CSV;
+if ($__output) {
+  $output->file($__output);
+}
+
+my $runner = new Analizo::Batch::Runner::Sequential;
+$runner->run($batch, $output);

@@ -6,9 +6,13 @@ use Test::Exception;
 use strict;
 use warnings;
 
-BEGIN {
-   use_ok 'Analizo::Extractor';
-}
+use Analizo::Extractor;
+
+# Redefine constructor so that this test class can instantiate
+# Analizo::Extractor directly
+use Test::MockModule;
+my $AnalizoExtractor = new Test::MockModule('Analizo::Extractor');
+$AnalizoExtractor->mock('new', sub { return bless {}, 'Analizo::Extractor'});
 
 eval('$Analizo::Extractor::QUIET = 1;'); # the eval is to avoid Test::* complaining about possible typo
 

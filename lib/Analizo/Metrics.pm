@@ -324,6 +324,12 @@ sub _report_module {
 }
 
 sub report {
+  my ($self) = @_;
+  my ($summary, $details) = $self->calculate_report;
+  return Dump($summary) . $details;
+}
+
+sub calculate_report {
   my $self = shift;
   my $details = '';
   my $total_modules = 0;
@@ -420,7 +426,7 @@ sub report {
     $summary{"total_cof"} = 1;
   }
 
-  return Dump(\%summary) . $details;
+  return (\%summary, $details);
 }
 
 sub list_of_metrics {

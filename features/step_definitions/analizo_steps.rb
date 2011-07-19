@@ -42,7 +42,7 @@ When /^I copy (.*) into a temporary directory$/ do |files|
 end
 
 When /^I run "([^\"]*)"$/ do |command|
-  system("#{command} >tmp.out 2>tmp.err")
+  system("(#{command}) >tmp.out 2>tmp.err")
   if $?.is_a?(Fixnum)
     @exit_status = $?
   else

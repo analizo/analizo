@@ -3,7 +3,7 @@ package Analizo::Extractor;
 use strict;
 use warnings;
 
-use base qw(Class::Accessor::Fast);
+use base qw(Class::Accessor::Fast Analizo::Filter::Client);
 use File::Find;
 
 use Analizo::Model;
@@ -14,6 +14,10 @@ our $QUIET = undef;
 
 __PACKAGE__->mk_ro_accessors(qw(current_member));
 __PACKAGE__->mk_accessors(qw(current_file));
+
+sub new {
+  die(sprintf("%s cannot be instantied. Try %s->load() instead", __PACKAGE__, __PACKAGE__));
+}
 
 sub alias {
   my $alias = shift;
@@ -26,7 +30,7 @@ sub alias {
 
 sub sanitize {
   my ($extractor_name) = @_;
-  if ($extractor_name =~ /^\w+$/) {
+  if ($extractor_name && $extractor_name =~ /^\w+$/) {
     return $extractor_name;
   } else {
     return 'Doxyparse';
@@ -34,14 +38,14 @@ sub sanitize {
 }
 
 sub load {
-  my ($self, $extractor_method) = @_;
+  my ($self, $extractor_method, @options) = @_;
   $extractor_method = alias(sanitize($extractor_method));
   my $extractor = "Analizo::Extractor::$extractor_method";
 
   eval "use $extractor";
   die "error loading $extractor_method extractor: $@" if $@;
 
-  eval { $extractor = $extractor->new(@_) };
+  eval { $extractor = $extractor->new(@options) };
   die "error instancing extractor: $@" if $@;
 
   return $extractor;
@@ -88,44 +92,16 @@ sub _filter_input {
   return $self->_apply_filters(@input);
 }
 
-sub filters {
-  my ($self, @new_filters) = @_;
-  $self->{filters} ||= [];
-  if (@new_filters) {
-    push @{$self->{filters}}, @new_filters;
-  }
-  return @{$self->{filters}};
-}
-
 sub _apply_filters {
   my ($self, @input) = @_;
   my @result = ();
   for my $input (@input) {
     find(
-      { wanted => sub { push @result, $_ if !-d $_ && $self->_matches_filters($_); }, no_chdir => 1 },
+      { wanted => sub { push @result, $_ if !-d $_ && $self->filename_matches_filters($_); }, no_chdir => 1 },
       $input
     );
   }
   return @result;
-}
-
-sub _matches_filters {
-  my ($self, $filename) = @_;
-  for my $filter ($self->filters) {
-    unless ($filter->matches($filename)) {
-      return 0;
-    }
-  }
-  return 1;
-}
-
-sub exclude {
-  my ($self, @dirs) = @_;
-  if (!$self->{excluding_dirs}) {
-    $self->{excluding_dirs} = 1;
-    $self->filters(Analizo::LanguageFilter->new);
-  }
-  $self->filters(Analizo::FilenameFilter->exclude(@dirs));
 }
 
 sub info {
