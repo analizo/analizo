@@ -80,22 +80,31 @@ use Getopt::Long;
 my $__help          = undef;
 my $__output        = 'metrics.csv';
 my $__quiet         = undef;
+my $__parallelism   = undef;
 
 GetOptions(
-  'help'          => \$__help,
-  'o|output=s'    => \$__output,
-  'q|quiet'       => \$__quiet,
+  'help'            => \$__help,
+  'o|output=s'      => \$__output,
+  'q|quiet'         => \$__quiet,
+  'p|parallelism=i' => \$__parallelism,
 ) or exit(1);
 
 if ($__help) {
   exec('analizo', 'doc', __FILE__)
 }
 
-use Analizo::Batch::Runner::Sequential;
 use Analizo::Batch::Directories;
 use Analizo::Batch::Output::CSV;
 
-my $runner = new Analizo::Batch::Runner::Sequential;
+my $runner = undef;
+if ($__parallelism) {
+  require Analizo::Batch::Runner::Parallel;
+  $runner = new Analizo::Batch::Runner::Parallel($__parallelism);
+} else {
+  require Analizo::Batch::Runner::Sequential;
+  $runner = new Analizo::Batch::Runner::Sequential;
+}
+
 unless ($__quiet) {
   $runner->before_each_job(
     sub {

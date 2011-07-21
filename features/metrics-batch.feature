@@ -19,3 +19,13 @@ Feature: metrics batch
     And the output must match "^cpp,"
     And the output must match "^java,"
     And the output must not match "I: Processing"
+
+  Scenario: support for parallel processing
+    Given I copy t/samples/hello_world/* into a temporary directory
+    And I run "analizo metrics-batch -q -o sequential.csv"
+    And I run "analizo metrics-batch -q -o parallel.csv -p 2"
+    And I run "sort sequential.csv > sequential-sorted.csv"
+    And I run "sort parallel.csv > parallel-sorted.csv"
+    When I run "diff -u sequential-sorted.csv parallel-sorted.csv"
+    Then the output must not match "---"
+    Then the exit status must be 0
