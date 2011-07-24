@@ -16,6 +16,4 @@ sub run {
   $output->flush();
 }
 
-__PACKAGE__->mk_accessors(qw( before_each_job ));
-
 1;

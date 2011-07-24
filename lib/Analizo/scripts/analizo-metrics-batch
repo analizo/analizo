@@ -50,6 +50,16 @@ statistical packages.
 
 =over
 
+=item -p N, --parallel N
+
+Activates support for parallel processing, using I<N> concurrent worker
+processes. Usually you will want N to be less than or equal to the number of
+CPUs in your machine.
+
+Note that analizo metrics extraction is a CPU-intensive process, so setting N
+as the exacty number of CPUs you have may bring your machine to an unusable
+state.
+
 =item --help
 
 Displays manual page (which you are currently reading).
@@ -80,22 +90,31 @@ use Getopt::Long;
 my $__help          = undef;
 my $__output        = 'metrics.csv';
 my $__quiet         = undef;
+my $__parallel      = undef;
 
 GetOptions(
-  'help'          => \$__help,
-  'o|output=s'    => \$__output,
-  'q|quiet'       => \$__quiet,
+  'help'            => \$__help,
+  'o|output=s'      => \$__output,
+  'q|quiet'         => \$__quiet,
+  'p|parallel=i' => \$__parallel,
 ) or exit(1);
 
 if ($__help) {
   exec('analizo', 'doc', __FILE__)
 }
 
-use Analizo::Batch::Runner::Sequential;
 use Analizo::Batch::Directories;
 use Analizo::Batch::Output::CSV;
 
-my $runner = new Analizo::Batch::Runner::Sequential;
+my $runner = undef;
+if ($__parallel) {
+  require Analizo::Batch::Runner::Parallel;
+  $runner = new Analizo::Batch::Runner::Parallel($__parallel);
+} else {
+  require Analizo::Batch::Runner::Sequential;
+  $runner = new Analizo::Batch::Runner::Sequential;
+}
+
 unless ($__quiet) {
   $runner->before_each_job(
     sub {

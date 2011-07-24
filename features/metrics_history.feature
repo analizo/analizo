@@ -30,3 +30,15 @@ Feature: analizo metrics-history
     And the output must match "0d3c023120ad4e9f519a03fff275d048c52671ad,,"
     # first commit after a non-relevant merge:
     And the output must match "8183eafad3a0f3eff6e8869f1bdbfd255e86825a,0a06a6fcc2e7b4fe56d134e89d74ad028bb122ed"
+
+  Scenario: support for parallel processing
+    Given I copy t/samples/evolution.tar.gz into a temporary directory
+    And I run "tar xzf evolution.tar.gz"
+    And I run "cd evolution && analizo metrics-history -o ../sequential.csv"
+    And I run "cd evolution && analizo metrics-history -p 2 -o ../parallel.csv"
+    Then the exit status must be 0
+    When I run "sort sequential.csv > sequential-sorted.csv"
+    And I run "sort parallel.csv > parallel-sorted.csv"
+    And I run "diff -u sequential-sorted.csv parallel-sorted.csv"
+    Then the output must not match "---"
+    Then the exit status must be 0

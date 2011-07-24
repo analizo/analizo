@@ -32,6 +32,16 @@ I<.hpp>, and I<.java>.
 
 =over
 
+=item -p N, --parallel N
+
+Activates support for parallel processing, using I<N> concurrent worker
+processes. Usually you will want N to be less than or equal to the number of
+CPUs in your machine.
+
+Note that analizo metrics extraction is a CPU-intensive process, so setting N
+as the exacty number of CPUs you have may bring your machine to an unusable
+state.
+
 =item --language LANGUAGE, --exclude DIRECTORY
 
 Use programming language and directory exclusion filters. See
@@ -69,6 +79,7 @@ my $__list_only     = undef;
 my $__language      = undef;
 my $__exclude       = undef;
 my $__output        = undef;
+my $__parallel      = undef;
 
 GetOptions(
   'help'          => \$__help,
@@ -76,6 +87,7 @@ GetOptions(
   'language=s'    => \$__language,
   'o|output=s'    => \$__output,
   'exclude|x=s'   => \$__exclude,
+  'p|parallel=i'  => \$__parallel,
 ) or exit(1);
 
 if ($__help) {
@@ -83,7 +95,6 @@ if ($__help) {
 }
 
 use Analizo::Batch::Git;
-use Analizo::Batch::Runner::Sequential;
 use Analizo::Batch::Output::CSV;
 
 my $batch = new Analizo::Batch::Git(@ARGV);
@@ -109,5 +120,13 @@ if ($__output) {
   $output->file($__output);
 }
 
-my $runner = new Analizo::Batch::Runner::Sequential;
+my $runner = undef;
+if ($__parallel) {
+  require Analizo::Batch::Runner::Parallel;
+  $runner = new Analizo::Batch::Runner::Parallel($__parallel);
+} else {
+  require Analizo::Batch::Runner::Sequential;
+  $runner = new Analizo::Batch::Runner::Sequential;
+}
+
 $runner->run($batch, $output);

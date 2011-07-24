@@ -3,8 +3,8 @@ package Analizo::Batch::Runner;
 use base qw(Class::Accessor::Fast);
 
 sub new {
-  my ($class) = @_;
-  return bless {}, $class;
+  my ($class, @args) = @_;
+  return bless { @args }, $class;
 }
 
 # must be implemented by subclasses. Will receive as argument:
@@ -18,5 +18,7 @@ sub new {
 # the runner must call flush() on the output object.
 sub run {
 }
+
+__PACKAGE__->mk_accessors(qw( before_each_job ));
 
 1;

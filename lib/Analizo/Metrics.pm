@@ -325,13 +325,23 @@ sub _report_module {
 
 sub report {
   my ($self) = @_;
-  my ($summary, $details) = $self->calculate_report;
-  return Dump($summary) . $details;
+  my ($summary, $details) = $self->data();
+  return Dump($summary) . join('', map { Dump($_)} @$details);
 }
 
-sub calculate_report {
+sub data {
+  my ($self) = @_;
+  if (!exists($self->{metrics_summary}) && !exists($self->{metrics_details})) {
+    my ($summary, $details) = $self->_actually_calculate_data();
+    $self->{metrics_summary} = $summary;
+    $self->{metrics_details} = $details;
+  }
+  return ($self->{metrics_summary}, $self->{metrics_details});
+}
+
+sub _actually_calculate_data {
   my $self = shift;
-  my $details = '';
+  my @details = ();
   my $total_modules = 0;
   my $total_modules_with_defined_methods = 0;
   my $total_modules_with_defined_attributes = 0;
@@ -368,7 +378,7 @@ sub calculate_report {
     my %data = $self->_report_module($module);
 
     unless ($self->report_global_metrics_only()) {
-      $details .= Dump(\%data);
+      push @details, \%data;
     }
 
     $total_modules += 1;
@@ -426,7 +436,7 @@ sub calculate_report {
     $summary{"total_cof"} = 1;
   }
 
-  return (\%summary, $details);
+  return (\%summary, \@details);
 }
 
 sub list_of_metrics {
