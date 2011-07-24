@@ -80,13 +80,13 @@ use Getopt::Long;
 my $__help          = undef;
 my $__output        = 'metrics.csv';
 my $__quiet         = undef;
-my $__parallelism   = undef;
+my $__parallel      = undef;
 
 GetOptions(
   'help'            => \$__help,
   'o|output=s'      => \$__output,
   'q|quiet'         => \$__quiet,
-  'p|parallelism=i' => \$__parallelism,
+  'p|parallel=i' => \$__parallel,
 ) or exit(1);
 
 if ($__help) {
@@ -97,9 +97,9 @@ use Analizo::Batch::Directories;
 use Analizo::Batch::Output::CSV;
 
 my $runner = undef;
-if ($__parallelism) {
+if ($__parallel) {
   require Analizo::Batch::Runner::Parallel;
-  $runner = new Analizo::Batch::Runner::Parallel($__parallelism);
+  $runner = new Analizo::Batch::Runner::Parallel($__parallel);
 } else {
   require Analizo::Batch::Runner::Sequential;
   $runner = new Analizo::Batch::Runner::Sequential;
