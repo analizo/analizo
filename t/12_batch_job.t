@@ -17,6 +17,7 @@ my @EXPOSED_INTERFACE = qw(
   prepare
   execute
   cleanup
+  parallel_safe
 
   model
   metrics
