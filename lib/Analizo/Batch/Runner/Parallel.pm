@@ -119,11 +119,14 @@ sub worker {
   my $results = $context->socket(ZMQ_PUSH);
   $results->connect($results_spec);
   my $run = 1;
+  my $last_job = undef;
   while ($run) {
     $source->send('');
     my $msg = $source->recv();
     my $job = Load($msg->data);
     if (exists($job->{id})) {
+      $last_job = $job;
+      $job->parallel_prepare();
       $job->execute();
       $results->send(Dump($job));
     } else {
@@ -131,6 +134,9 @@ sub worker {
       # should exit.
       $run = 0;
     }
+  }
+  if ($last_job) {
+    $last_job->parallel_cleanup();
   }
 }
 
