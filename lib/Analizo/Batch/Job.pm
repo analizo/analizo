@@ -97,6 +97,7 @@ sub execute {
 
   # calculate metrics
   $self->metrics(new Analizo::Metrics(model => $self->model));
+  $self->metrics->data();
 
   $self->cleanup();
 }

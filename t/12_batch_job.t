@@ -4,6 +4,7 @@ use warnings;
 use base qw(Test::Class);
 use Test::More 'no_plan';
 use Test::MockObject::Extends;
+use Test::MockModule;
 
 use Test::Analizo;
 
@@ -43,6 +44,10 @@ sub execute : Tests {
 
   my $prepared = 0; $job->mock('prepare', sub { $prepared = 1; });
   my $cleaned  = 0; $job->mock('cleanup', sub { die('cleanup() must be called after prepare()') unless $prepared; $cleaned  = 1; });
+  my $metrics_data_called = undef;
+
+  my $MetricsMock = new Test::MockModule('Analizo::Metrics');
+  $MetricsMock->mock('data', sub { $metrics_data_called = 1; });
 
   on_dir(
     't/samples/hello_world/c',
@@ -54,6 +59,7 @@ sub execute : Tests {
   isa_ok($job->model, 'Analizo::Model');
   isa_ok($job->metrics, 'Analizo::Metrics');
   isa_ok($job->metrics->model, 'Analizo::Model');
+  ok($metrics_data_called, 'must force metrics calculation during execute() bu calling $metrics->data()');
 }
 
 sub empty_metadata_by_default : Tests {
