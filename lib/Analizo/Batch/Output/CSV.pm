@@ -16,7 +16,7 @@ sub write_data {
 
   for my $job (@{$self->{jobs}}) {
 
-    my ($summary, $details) = $job->metrics->calculate_report();
+    my ($summary, $details) = $job->metrics->data();
     my $metadata = $job->metadata;
 
     unless (@fields) {
