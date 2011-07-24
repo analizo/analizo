@@ -2,12 +2,33 @@ package Analizo::Batch::Job::Git;
 
 use base 'Analizo::Batch::Job';
 use Cwd;
+use Cwd 'abs_path';
+use File::Spec;
+use Digest::SHA1 qw/ sha1_hex /;
+use File::Copy::Recursive qw(dircopy);
 
 __PACKAGE__->mk_accessors('batch');
 
 sub new {
   my ($class, $directory, $id) = @_;
   $class->SUPER::new(directory => $directory, id => $id);
+}
+
+sub parallel_safe {
+  my ($self) = @_;
+  $self->{directory} = _create_work_directory($self->{directory});
+}
+
+sub _create_work_directory {
+  my ($original_dir) = @_;
+  my $basename = 'analizo.' . $$ . '.' . sha1_hex(abs_path($original_dir));
+  my $newdir = File::Spec->catfile(File::Spec->tmpdir(), $basename);
+  if (! -d $newdir) {
+    # Assume that the same directory may have been created before by the same
+    # process.
+    dircopy($original_dir, $newdir);
+  }
+  return $newdir;
 }
 
 sub prepare {

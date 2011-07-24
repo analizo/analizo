@@ -26,6 +26,15 @@ sub constructor_with_arguments : Tests {
   is($job->id, $id);
 }
 
+sub parallelism_support : Tests {
+  my $job = __create($TESTDIR, $MASTER);
+  $job->parallel_safe;
+
+  isnt($job->{directory}, $TESTDIR);
+  ok(-d $job->{directory}, "different work directory must be created");
+  ok(-d File::Spec->catfile($job->{directory}, '.git'), "content must be copied");
+}
+
 sub prepare_and_cleanup : Tests {
   my $job = mock(__create($TESTDIR, $SOME_COMMIT));
 
