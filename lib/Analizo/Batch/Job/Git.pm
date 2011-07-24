@@ -6,6 +6,7 @@ use Cwd 'abs_path';
 use File::Spec;
 use Digest::SHA1 qw/ sha1_hex /;
 use File::Copy::Recursive qw(dircopy);
+use File::Path qw(remove_tree);
 
 __PACKAGE__->mk_accessors('batch');
 
@@ -14,9 +15,16 @@ sub new {
   $class->SUPER::new(directory => $directory, id => $id);
 }
 
-sub parallel_safe {
+sub parallel_prepare {
   my ($self) = @_;
+  $self->{original_directory} = $self->{directory};
   $self->{directory} = _create_work_directory($self->{directory});
+}
+
+sub parallel_cleanup {
+  my ($self) = @_;
+  my $workdir = _create_work_directory($self->{original_directory});
+  remove_tree($workdir);
 }
 
 sub _create_work_directory {

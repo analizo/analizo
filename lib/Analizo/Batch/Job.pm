@@ -51,7 +51,22 @@ sub cleanup {
 # therefore one thread would interfere with the others when using chdir().
 #
 # This method must be inherited by subclasses.
-sub parallel_safe {
+#
+# When called, it will be called BEFORE the B<prepare> method. After the first
+# job has its B<parallel_prepare> method called, any subsequent invocations of
+# this method on jobs in the same process must be indepotent.
+sub parallel_prepare {
+}
+
+# This method must cleanup any resources that may have been created to support
+# parallel execution. Such resources were probably allocated by the
+# B<parallel_safe> method.
+#
+# This method will not be called for all jobs in a given batch. I will be
+# called only for the last job in the batch for the current process, which will
+# be responsible for releasing any resources that were created for supporting
+# the execution of jobs by a given process.
+sub parallel_cleanup {
 }
 
 # This method must return metadata about this job, in the form of an ARRAY
