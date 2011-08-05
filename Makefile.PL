@@ -17,10 +17,12 @@ WriteMakefile(
   ABSTRACT => 'Source code analysis toolkit',
   PREREQ_PM => {
     'Class::Accessor::Fast' => 0,
+    'Digest::SHA1' => 0,
     'List::Compare' => 0,
     'Graph' => 0,
     'YAML' => 0,
     'Statistics::Descriptive' => 0,
+    'ZeroMQ' => 0,
   },
   BUILD_REQUIRES => {
     'Test::Class' => 0,
