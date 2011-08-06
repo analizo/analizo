@@ -5,7 +5,7 @@ use warnings;
 
 use base qw( Analizo::Batch::Runner );
 
-sub run {
+sub actually_run {
   my ($self, $batch, $output) = @_;
   my $before_each_job = $self->before_each_job || (sub {});
   while (my $job = $batch->next()) {
@@ -13,7 +13,6 @@ sub run {
     $job->execute();
     $output->push($job);
   }
-  $output->flush();
 }
 
 1;

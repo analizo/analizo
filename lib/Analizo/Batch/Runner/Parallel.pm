@@ -17,12 +17,11 @@ sub parallelism {
   return $self->{parallelism};
 }
 
-sub run {
+sub actually_run {
   my ($self, $batch, $output) = @_;
   $self->start_workers();
   $self->coordinate_workers($batch, $output);
   $self->wait_for_workers();
-  $output->flush();
 }
 
 sub _socket_spec {

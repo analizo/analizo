@@ -31,6 +31,12 @@ sub push {
 # To which file the output must be written
 __PACKAGE__->mk_accessors(qw(file));
 
+# Makes any initialization needed for the given output driver.
+#
+# This method must be overriden by subclasses
+sub initialize {
+}
+
 # Opens a file for output, delegates the actual writing to subclasses, and
 # closes the file. If no file was given, write to standard output.
 sub flush {
