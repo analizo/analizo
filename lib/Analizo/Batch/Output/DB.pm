@@ -17,11 +17,6 @@ sub database($) {
 
 sub push($$) {
   my ($self, $job) = @_;
-  $self->_add_commit($job);
-}
-
-sub _add_commit($$) {
-  my ($self, $job) = @_;
   $self->{st_insert_commit} ||= $self->{dbh}->prepare('INSERT INTO commits (id, project_id,developer_id) VALUES(?,?,?)');
   my $developer_id = $self->_add_developer($job);
   my $project_id = $self->_add_project($job->project_name);
