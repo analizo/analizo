@@ -68,4 +68,14 @@ sub empty_metadata_by_default : Tests {
   is_deeply($job->metadata(), []);
 }
 
+sub project_name : Tests {
+  my $job = new Analizo::Batch::Job;
+
+  $job->directory('myproject');
+  is($job->project_name, 'myproject');
+
+  $job->directory('/path/to/my/project');
+  is($job->project_name, 'project');
+}
+
 BatchJobTests->runtests;

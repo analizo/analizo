@@ -6,6 +6,7 @@ package Analizo::Batch::Job;
 use strict;
 use warnings;
 use base qw(Class::Accessor::Fast);
+use File::Basename;
 
 use Analizo::Extractor;
 use Analizo::Metrics;
@@ -100,6 +101,11 @@ sub execute {
   $self->metrics->data();
 
   $self->cleanup();
+}
+
+sub project_name($) {
+  my ($self) = @_;
+  return basename($self->directory);
 }
 
 
