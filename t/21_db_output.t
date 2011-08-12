@@ -83,7 +83,7 @@ sub add_commit_and_developer_data : Tests {
 
 my $SAMPLE = ('t/samples/animals/cpp');
 
-sub add_module_versions_for_modules_changed_by_commit : Tests {
+sub add_module_data_for_modules_changed_by_commit : Tests {
   my $output = __create($OUTFILE);
   my $job = mock(new Analizo::Batch::Job::Directories($SAMPLE));
   $job->id('foo');
@@ -99,8 +99,13 @@ sub add_module_versions_for_modules_changed_by_commit : Tests {
   $output->push($job);
 
   for my $module ('Mammal', 'Dog') {
+    # module
     select_one_ok($OUTFILE, "SELECT * FROM modules JOIN projects ON (projects.id = modules.project_id) WHERE projects.name = 'animals' AND modules.name = '$module'");
+    # module_versions and commmits_module_versions
     select_one_ok($OUTFILE, "SELECT * FROM modules JOIN module_versions ON (module_versions.module_id = modules.id) JOIN commits_module_versions ON (commits_module_versions.module_version_id = module_versions.id) JOIN commits ON (commits_module_versions.commit_id = commits.id) WHERE commits.id = 'foo' AND modules.name = '$module'");
+    # metrics
+    select_ok($OUTFILE, "SELECT * FROM modules JOIN module_versions ON (module_versions.module_id = modules.id) JOIN metrics ON (metrics.module_version_id = module_versions.id) WHERE modules.name = '$module' AND metrics.name IN ('lcom4','cbo')", 2);
+
   }
 }
 
@@ -132,12 +137,17 @@ sub table_created_ok($$) {
   ok($projects_table, "must create $TABLE table");
 }
 
-sub select_one_ok($$$) {
-  my ($db, $query, $msg) = @_;
+sub select_ok($$$) {
+  my ($db, $query, $count) = @_;
   my $dbh = DBI->connect("dbi:SQLite:$db");
   my $rows = $dbh->selectall_arrayref($query);
   my $row_count = scalar(@$rows);
-  is($row_count, 1, $msg || "[$query] returned $row_count rows instead of exactly 1");
+  is($row_count, $count, "[$query] returned $row_count rows instead of exactly $count");
+}
+
+sub select_one_ok($$) {
+  my ($db, $query) = @_;
+  select_ok($db, $query, 1);
 }
 
 use Cwd 'abs_path';

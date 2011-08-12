@@ -104,6 +104,7 @@ sub _add_modules($$$$) {
         CORE::push @modules, $module;
         my $module_id = $self->_add_module($module, $project_id);
         my $module_version_id = $self->_add_module_version($module_id, $commit_id);
+        $self->_add_metrics($job, $module, $module_version_id);
       }
     }
   }
@@ -136,6 +137,29 @@ sub _add_module_version {
 
   $self->{st_link_commit_and_module_version} ||= $self->{dbh}->prepare('INSERT INTO commits_module_versions (commit_id,module_version_id) VALUES (?,?)');
   $self->{st_link_commit_and_module_version}->execute($commit_id, $module_version_id);
+
+  return $module_version_id;
+}
+
+sub _add_metrics($$$$) {
+  my ($self, $job, $module, $module_version_id) = @_;
+  my ($summary, $details) = $job->metrics->data();
+  # $details is an ARRAY reference containing one HASH reference for each module
+  # We need to find the one we are looking for
+  my @metrics = grep { $_->{_module} eq $module } @$details;
+  if (scalar(@metrics)) {
+    my %metrics = %{$metrics[0]};
+    for my $metric (keys(%metrics)) {
+      next if $metric =~ /^_/;
+      $self->_add_metric($module_version_id, $metric, $metrics{$metric});
+    }
+  }
+}
+
+sub _add_metric($$$$) {
+  my ($self, $module_version_id, $metric, $value) = @_;
+  $self->{st_add_metric} ||= $self->{dbh}->prepare('INSERT INTO metrics (module_version_id, name, value) VALUES(?,?,?)');
+  $self->{st_add_metric}->execute($module_version_id, $metric, $value);
 }
 
 # Initializes the database
