@@ -22,7 +22,7 @@ sub constructor : Tests {
 sub constructor_with_arguments : Tests {
   my $id = $MASTER;
   my $job = __create($TESTDIR, $id);
-  is($job->{directory}, $TESTDIR);
+  is($job->directory, $TESTDIR);
   is($job->id, $id);
 }
 
@@ -30,12 +30,12 @@ sub parallelism_support : Tests {
   my $job = __create($TESTDIR, $MASTER);
   $job->parallel_prepare();
 
-  isnt($job->{directory}, $TESTDIR);
-  ok(-d $job->{directory}, "different work directory must be created");
-  ok(-d File::Spec->catfile($job->{directory}, '.git'), "content must be copied");
+  isnt($job->directory, $TESTDIR);
+  ok(-d $job->directory, "different work directory must be created");
+  ok(-d File::Spec->catfile($job->directory, '.git'), "content must be copied");
 
   $job->parallel_cleanup();
-  ok(! -d $job->{directory}, "different work directory must be removed when parallel_cleanup is called.");
+  ok(! -d $job->directory, "different work directory must be removed when parallel_cleanup is called.");
 }
 
 sub prepare_and_cleanup : Tests {

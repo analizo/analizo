@@ -25,6 +25,7 @@ my @EXPOSED_INTERFACE = qw(
   metrics
 
   id
+  directory
   metadata
 );
 

@@ -17,8 +17,8 @@ sub new {
 
 sub parallel_prepare {
   my ($self) = @_;
-  $self->{original_directory} = $self->{directory};
-  $self->{directory} = _create_work_directory($self->{directory});
+  $self->{original_directory} = $self->directory;
+  $self->directory(_create_work_directory($self->directory));
 }
 
 sub parallel_cleanup {

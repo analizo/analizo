@@ -10,7 +10,7 @@ use base qw(Class::Accessor::Fast);
 use Analizo::Extractor;
 use Analizo::Metrics;
 
-__PACKAGE__->mk_accessors(qw(model metrics id));
+__PACKAGE__->mk_accessors(qw(model metrics id directory));
 
 sub new {
   my ($class, @options) = @_;
