@@ -17,18 +17,15 @@ sub database($) {
 
 sub push($$) {
   my ($self, $job) = @_;
-  $self->_add_project($job->project_name);
   $self->_add_commit($job);
 }
 
-sub _add_project($$) {
-  my ($self, $project) = @_;
-  $self->{st_add_project}   ||= $self->{dbh}->prepare('INSERT INTO projects (name) values(?)');
-
-  if (! $self->_find_project($project)) {
-    $self->{st_add_project}->execute($project);
-    $self->{project_id} = $self->_find_project($project);
-  }
+sub _add_commit($$) {
+  my ($self, $job) = @_;
+  $self->{st_insert_commit} ||= $self->{dbh}->prepare('INSERT INTO commits (id, project_id,developer_id) VALUES(?,?,?)');
+  my $developer_id = $self->_add_developer($job);
+  my $project_id = $self->_add_project($job->project_name);
+  $self->{st_insert_commit}->execute($job->id, $project_id, $developer_id);
 }
 
 sub _find_row_id($$@) {
@@ -44,17 +41,22 @@ sub _find_row_id($$@) {
   }
 }
 
+sub _add_project($$) {
+  my ($self, $project) = @_;
+  $self->{st_add_project}   ||= $self->{dbh}->prepare('INSERT INTO projects (name) values(?)');
+
+  my $project_id = $self->_find_project($project);
+  if (! $project_id) {
+    $self->{st_add_project}->execute($project);
+    $project_id = $self->_find_project($project);
+  }
+
+  return $project_id;
+}
+
 sub _find_project($$) {
   my ($self, $project) = @_;
   return $self->_find_row_id('SELECT id from projects where name = ?', $project);
-}
-
-sub _add_commit($$) {
-  my ($self, $job) = @_;
-  $self->{st_insert_commit} ||= $self->{dbh}->prepare('INSERT INTO commits (id, project_id,developer_id) VALUES(?,?,?)');
-  my $developer_id = $self->_add_developer($job);
-  my $project_id = $self->_find_project($job->project_name);
-  $self->{st_insert_commit}->execute($job->id, $project_id, $developer_id);
 }
 
 sub _add_developer($$) {
