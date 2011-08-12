@@ -3,6 +3,7 @@ use strict;
 use warnings;
 use base qw( Analizo::Batch::Output );
 use DBI;
+use Digest::SHA1 qw(sha1_hex);
 
 sub database($) {
   my ($self) = @_;
@@ -12,6 +13,75 @@ sub database($) {
   } else {
     return 'dbi:SQLite:' . $db;
   }
+}
+
+sub push($$) {
+  my ($self, $job) = @_;
+  $self->_add_project($job->project_name);
+  $self->_add_commit($job);
+}
+
+sub _add_project($$) {
+  my ($self, $project) = @_;
+  $self->{st_add_project}   ||= $self->{dbh}->prepare('INSERT INTO projects (name) values(?)');
+
+  if (! $self->_find_project($project)) {
+    $self->{st_add_project}->execute($project);
+    $self->{project_id} = $self->_find_project($project);
+  }
+}
+
+sub _find_row_id($$@) {
+  my ($self, $sql, @data) = @_;
+  my $statement_id = 'st_find_' . sha1_hex($sql); # is this SHA1 needed at all?
+
+  $self->{$statement_id} ||= $self->{dbh}->prepare($sql);
+  my $list = $self->{dbh}->selectall_arrayref($self->{$statement_id}, {}, @data);
+  if (scalar(@$list) == 0) {
+    return undef;
+  } else {
+    return $list->[0]->[0];
+  }
+}
+
+sub _find_project($$) {
+  my ($self, $project) = @_;
+  return $self->_find_row_id('SELECT id from projects where name = ?', $project);
+}
+
+sub _add_commit($$) {
+  my ($self, $job) = @_;
+  $self->{st_insert_commit} ||= $self->{dbh}->prepare('INSERT INTO commits (id, project_id,developer_id) VALUES(?,?,?)');
+  my $developer_id = $self->_add_developer($job);
+  my $project_id = $self->_find_project($job->project_name);
+  $self->{st_insert_commit}->execute($job->id, $project_id, $developer_id);
+}
+
+sub _add_developer($$) {
+  my ($self, $job) = @_;
+
+  my $metadata = $job->metadata_hashref();
+  my $name  = $metadata->{author_name};
+  my $email = $metadata->{author_email};
+
+  # FIXME unstested
+  if (!$name || !$email) {
+    return undef;
+  }
+
+  $self->{st_add_developer} ||= $self->{dbh}->prepare('INSERT INTO developers (name,email) VALUES (?,?)');
+  my $developer_id = $self->_find_developer($name, $email);
+  if (! $developer_id) {
+    $self->{st_add_developer}->execute($name, $email);
+    $developer_id = $self->_find_developer($name, $email);
+  }
+
+  return $developer_id;
+}
+
+sub _find_developer($$$) {
+  my ($self, $name, $email) = @_;
+  return $self->_find_row_id('SELECT id FROM developers WHERE name = ? AND email = ?', $name, $email);
 }
 
 # Initializes the database
@@ -40,7 +110,7 @@ sub ddl_statements($) {
       $sql .= $line;
       if ($line =~ /;\s*$/) {
         # SQL statement is ready
-        push @DDL_STATEMENTS, $sql;
+        CORE::push @DDL_STATEMENTS, $sql;
         $sql = '';
       }
     }
@@ -66,7 +136,7 @@ CREATE TABLE projects (
 );
 
 CREATE TABLE developers (
-  id CHAR(40) PRIMARY KEY,
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
   name CHAR(250),
   email CHAR(250)
 );

@@ -9,6 +9,7 @@ my $OUTFILE = $TMPDIR . '/out.sqlite3';
 
 use Analizo::Batch::Output::DB;
 use DBI;
+use Analizo::Batch::Job;
 
 sub basics : Tests {
   isa_ok(new Analizo::Batch::Output::DB, 'Analizo::Batch::Output');
@@ -48,6 +49,37 @@ sub setting_up_a_database : Tests {
   $output2->initialize();
 }
 
+sub add_project_data : Tests {
+  my $output = __create($OUTFILE);
+  my $job = new Analizo::Batch::Job;
+  $job->directory('/path/to/niceproject');
+  $output->push($job);
+  select_one_ok($OUTFILE, "select * from projects where name = 'niceproject'", 'must insert project the first time');
+
+  $output->push($job);
+  select_one_ok($OUTFILE, "select * from projects where name = 'niceproject'", 'must not insert same project twice');
+}
+
+sub add_commit_and_developer_data : Tests {
+  my $output = __create($OUTFILE);
+  my $job = mock(new Analizo::Batch::Job);
+  $job->directory('/path/to/niceproject');
+  $job->id('XPTO');
+  $job->mock(
+    'metadata_hashref',
+    sub {
+      {
+        'author_name'   => 'Jonh Doe',
+        'author_email'  => 'jdoe@example.com',
+      }
+    }
+  );
+
+  $output->push($job);
+  select_one_ok($OUTFILE, "SELECT * FROM commits JOIN projects on (projects.id = commits.project_id) WHERE commits.id = 'XPTO'");
+  select_one_ok($OUTFILE, "SELECT * FROM developers JOIN commits on (commits.developer_id = developers.id) WHERE developers.name = 'Jonh Doe' AND developers.email = 'jdoe\@example.com' AND commits.id = 'XPTO'");
+}
+
 sub __create {
   my ($file) = @_;
   my $output = new Analizo::Batch::Output::DB();
@@ -74,6 +106,14 @@ sub table_created_ok($$) {
   my @tables = $dbh->tables();
   my $projects_table = scalar(grep { lc($_) =~ /$table/ } @tables);
   ok($projects_table, "must create $TABLE table");
+}
+
+sub select_one_ok($$$) {
+  my ($db, $query, $msg) = @_;
+  my $dbh = DBI->connect("dbi:SQLite:$db");
+  my $rows = $dbh->selectall_arrayref($query);
+  my $row_count = scalar(@$rows);
+  is($row_count, 1, $msg || "[$query] returned $row_count rows instead of exactly 1");
 }
 
 __PACKAGE__->runtests;
