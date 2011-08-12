@@ -12,19 +12,18 @@ __PACKAGE__->mk_accessors('batch');
 
 sub new {
   my ($class, $directory, $id) = @_;
-  $class->SUPER::new(directory => $directory, id => $id);
+  $class->SUPER::new(directory => $directory, actual_directory => $directory, id => $id);
 }
 
 sub parallel_prepare {
   my ($self) = @_;
-  $self->{original_directory} = $self->directory;
-  $self->directory(_create_work_directory($self->directory));
+  $self->{actual_directory} = _create_work_directory($self->directory);
 }
 
 sub parallel_cleanup {
   my ($self) = @_;
-  my $workdir = _create_work_directory($self->{original_directory});
-  remove_tree($workdir);
+  my $actual_directory = _create_work_directory($self->directory);
+  remove_tree($actual_directory);
 }
 
 sub _create_work_directory {
@@ -43,7 +42,7 @@ sub prepare {
   my ($self) = @_;
   # change directory
   $self->{oldcwd} = getcwd();
-  chdir($self->{directory});
+  chdir($self->{actual_directory});
   # checkout
   $self->{old_branch} = git_current_branch();
   $self->git_checkout($self->id);
@@ -123,7 +122,7 @@ sub changed_files {
 sub data {
   my ($self) = @_;
   unless (defined($self->{data})) {
-    my @output = `cd $self->{directory} && git show --name-only --format=%P/%at/%aN/%aE $self->{id}`;
+    my @output = `cd $self->{actual_directory} && git show --name-only --format=%P/%at/%aN/%aE $self->{id}`;
     chomp @output;
     @output = grep { length($_) > 0 } @output;
     my @header = split('/', shift @output);

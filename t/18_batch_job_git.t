@@ -6,6 +6,7 @@ use base 'Test::Class';
 use Test::More;
 use Test::Analizo;
 use Cwd;
+use File::Basename;
 use Test::MockObject;
 use Test::Analizo::Git;
 
@@ -23,6 +24,7 @@ sub constructor_with_arguments : Tests {
   my $id = $MASTER;
   my $job = __create($TESTDIR, $id);
   is($job->directory, $TESTDIR);
+  is($job->{actual_directory}, $TESTDIR);
   is($job->id, $id);
 }
 
@@ -30,12 +32,14 @@ sub parallelism_support : Tests {
   my $job = __create($TESTDIR, $MASTER);
   $job->parallel_prepare();
 
-  isnt($job->directory, $TESTDIR);
-  ok(-d $job->directory, "different work directory must be created");
-  ok(-d File::Spec->catfile($job->directory, '.git'), "content must be copied");
+  isnt($job->{actual_directory}, $TESTDIR);
+  ok(-d $job->{actual_directory}, "different work directory must be created");
+  ok(-d File::Spec->catfile($job->{actual_directory}, '.git'), "content must be copied");
 
   $job->parallel_cleanup();
-  ok(! -d $job->directory, "different work directory must be removed when parallel_cleanup is called.");
+  ok(! -d $job->{actual_directory}, "different work directory must be removed when parallel_cleanup is called.");
+
+  is($job->project_name, basename($TESTDIR), 'parallelism support must not mess with project name');
 }
 
 sub prepare_and_cleanup : Tests {
