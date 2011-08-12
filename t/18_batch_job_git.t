@@ -129,6 +129,7 @@ sub metadata : Tests {
   metadata_ok($metadata, 'author_email', 'terceiro@softwarelivre.org', 'author email');
   metadata_ok($metadata, 'author_date', 1297788040, 'author date'); # UNIX timestamp for [Tue Feb 15 13:40:40 2011 -0300]
   metadata_ok($metadata, 'previous_commit_id', '0a06a6fcc2e7b4fe56d134e89d74ad028bb122ed', 'previous commit');
+  metadata_ok($metadata, 'changed_files', ['input.cc'], 'changed files');
 
   my $first = $repo->find($FIRST_COMMIT);
   metadata_ok($first->metadata, 'previous_commit_id', undef, 'unexisting commit id');
@@ -152,7 +153,7 @@ sub metadata_ok {
     my @entries = grep { $_->[0] eq $field } @$metadata;
     my $entry = $entries[0];
     if (is(ref($entry), 'ARRAY', $testname)) {
-      is($entry->[1], $value, $testname);
+      is_deeply($entry->[1], $value, $testname);
     }
   }
 }

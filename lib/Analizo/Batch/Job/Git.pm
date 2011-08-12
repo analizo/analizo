@@ -148,6 +148,7 @@ sub metadata {
     ['author_date', $data->{author_date}],
     ['author_name', $data->{author_name}],
     ['author_email', $data->{author_email}],
+    ['changed_files', $data->{changed_files}],
   ];
 }
 
