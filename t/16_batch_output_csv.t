@@ -8,6 +8,17 @@ use Test::Analizo;
 use Analizo::Batch::Output::CSV;
 use Analizo::Batch::Job::Directories;
 
+my $TMPDIR = tmpdir();
+my $TMPFILE = "$TMPDIR/output.csv";
+
+sub setup : Tests(setup) {
+  system("mkdir -p $TMPDIR");
+}
+
+sub teardown : Tests(teardown) {
+  system("rm -rf $TMPDIR");
+}
+
 sub constructor : Tests {
   my $output = __create();
   isa_ok($output, 'Analizo::Batch::Output::CSV');
@@ -24,10 +35,10 @@ sub writing_data : Tests {
   $job2->execute();
   $output->push($job2);
 
-  $output->file('t/tmp/output.csv');
+  $output->file($TMPFILE);
   $output->flush();
 
-  my @lines = readfile 't/tmp/output.csv';
+  my @lines = readfile $TMPFILE;
 
   ok(scalar(@lines) == 3, 'must write data to output file');
 
@@ -44,14 +55,32 @@ sub job_metadata : Tests {
   $job->execute();
 
   my $output = __create();
-  $output->file('t/tmp/output.csv');
+  $output->file($TMPFILE);
   $output->push($job);
   $output->flush();
 
-  my @lines = readfile('t/tmp/output.csv');
+  my @lines = readfile($TMPFILE);
 
   ok($lines[0] =~ /^id,data1,data2/, 'must list metadata fields');
   ok($lines[1] =~ /^99,88,77/, 'must include metadata values');
+}
+
+sub must_write_list_data_as_string : Tests {
+  my $job = mock(new Analizo::Batch::Job::Directories('t/samples/animals/cpp'));
+  $job->execute();
+  $job->mock(
+    'metadata',
+    sub { [['values', ['onething','otherthing']],] }
+  );
+
+  my $output = __create();
+  $output->file($TMPFILE);
+  $output->push($job);
+  $output->flush();
+
+  my @lines = readfile $TMPFILE;
+  like($lines[1], qr/,"onething;otherthing",/);
+
 }
 
 sub __create {

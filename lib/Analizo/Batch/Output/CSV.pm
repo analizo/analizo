@@ -27,11 +27,22 @@ sub write_data {
       print $fh $header;
     }
 
-    my @metadata = map { $_->[1] } @$metadata;
-    my @values = map { $summary->{$_} } @fields;
+    my @metadata = map { _encode_value($_->[1]) } @$metadata;
+    my @values = map { _encode_value($summary->{$_}) } @fields;
     my $line = join(',', $job->id, @metadata, @values) . "\n";
     print $fh $line;
   }
+}
+
+my $__encoders = {
+  _default => sub { $_[0] },
+  ARRAY => sub { '"' . join(';', @{$_[0]}) . '"' },
+};
+
+sub _encode_value($) {
+  my ($value) = @_;
+  my $encoder = $__encoders->{ref($value)} || $__encoders->{_default};
+  return &$encoder($value);
 }
 
 1;
