@@ -24,7 +24,8 @@ sub requires_metrics {
 
 # Runners must use this method to push jobs into the output object.
 #
-# Subclasses must override this method.
+# Subclasses (output drives) must override this method. Output drives MAY NOT
+# ASSUME that the jobs will be pushed in any particular order.
 sub push {
 }
 
