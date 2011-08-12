@@ -6,6 +6,7 @@ sub new {
     members => {},
     modules => {},
     files => {},
+    module_by_file => {},
     demangle => {},
     calls => {},
     lines => {},
@@ -48,12 +49,19 @@ sub declare_module {
   if (defined($file)) {
     $self->{files}->{$module} ||= [];
     push(@{$self->{files}->{$module}}, $file);
+
+    $self->{module_by_file}->{$file} = $module;
   }
 }
 
-sub file {
+sub files {
   my ($self, $module) = @_;
   return $self->{files}->{$module};
+}
+
+sub module_by_file {
+  my ($self, $file) = @_;
+  return $self->{module_by_file}->{$file};
 }
 
 sub inheritance {
