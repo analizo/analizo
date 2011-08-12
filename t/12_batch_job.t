@@ -27,6 +27,7 @@ my @EXPOSED_INTERFACE = qw(
   id
   directory
   metadata
+  metadata_hashref
 );
 
 sub exposed_interface : Tests {
@@ -66,6 +67,15 @@ sub execute : Tests {
 sub empty_metadata_by_default : Tests {
   my $job = new Analizo::Batch::Job;
   is_deeply($job->metadata(), []);
+}
+
+sub metadata_as_hash : Tests {
+  my $job = mock(new Analizo::Batch::Job);
+  $job->mock('metadata', sub { [['field1', 'value1'],['field2', 'value2']]});
+  my $hash = $job->metadata_hashref();
+  is($hash->{field1}, 'value1');
+  is($hash->{field2}, 'value2');
+  is(scalar(keys(%$hash)), 2);
 }
 
 sub project_name : Tests {

@@ -86,6 +86,28 @@ sub metadata {
   []
 }
 
+# Returns the same metadata as the B<metadata> method, but as a HASH reference
+# instead of an ARRAY reference. For example, assume that B<metadata> returns
+# the following:
+#
+#   [
+#     ['field1', 'value1'],
+#     ['field2', 10],
+#   ]
+#
+# In this case, B<metadata_hashref> must return the following:
+#
+#   {
+#     'field1' => 'value1',
+#     'field2' => 10,
+#   }
+#
+sub metadata_hashref($) {
+  my ($self) = @_;
+  my %hash = map { $_->[0] => $_->[1] } @{$self->metadata()};
+  return \%hash;
+}
+
 sub execute {
   my ($self) = @_;
 
