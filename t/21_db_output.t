@@ -10,6 +10,7 @@ my $OUTFILE = $TMPDIR . '/out.sqlite3';
 use Analizo::Batch::Output::DB;
 use DBI;
 use Analizo::Batch::Job;
+use Analizo::Batch::Job::Directories;
 
 sub basics : Tests {
   isa_ok(new Analizo::Batch::Output::DB, 'Analizo::Batch::Output');
@@ -80,6 +81,29 @@ sub add_commit_and_developer_data : Tests {
   select_one_ok($OUTFILE, "SELECT * FROM developers JOIN commits on (commits.developer_id = developers.id) WHERE developers.name = 'Jonh Doe' AND developers.email = 'jdoe\@example.com' AND commits.id = 'XPTO'");
 }
 
+my $SAMPLE = ('t/samples/animals/cpp');
+
+sub add_module_versions_for_modules_changed_by_commit : Tests {
+  my $output = __create($OUTFILE);
+  my $job = mock(new Analizo::Batch::Job::Directories($SAMPLE));
+  $job->id('foo');
+  $job->execute();
+  $job->mock(
+    'metadata_hashref',
+    sub {
+      { 'changed_files' => ['mammal.h', 'dog.cc'] }
+    }
+  );
+  $job->mock('project_name', sub { 'animals'; });
+
+  $output->push($job);
+
+  for my $module ('Mammal', 'Dog') {
+    select_one_ok($OUTFILE, "SELECT * FROM modules JOIN projects ON (projects.id = modules.project_id) WHERE projects.name = 'animals' AND modules.name = '$module'");
+    select_one_ok($OUTFILE, "SELECT * FROM modules JOIN module_versions ON (module_versions.module_id = modules.id) JOIN commits_module_versions ON (commits_module_versions.module_version_id = module_versions.id) JOIN commits ON (commits_module_versions.commit_id = commits.id) WHERE commits.id = 'foo' AND modules.name = '$module'");
+  }
+}
+
 sub __create {
   my ($file) = @_;
   my $output = new Analizo::Batch::Output::DB();
@@ -114,6 +138,16 @@ sub select_one_ok($$$) {
   my $rows = $dbh->selectall_arrayref($query);
   my $row_count = scalar(@$rows);
   is($row_count, 1, $msg || "[$query] returned $row_count rows instead of exactly 1");
+}
+
+use Cwd 'abs_path';
+use File::Copy;
+sub __debug_db($) {
+  my ($origdb) = @_;
+  my $db = '/tmp/debug.sqlite3';
+  system("rm -rf $db");
+  copy($origdb, $db);
+  system("x-terminal-emulator -e sqlite3 $db");
 }
 
 __PACKAGE__->runtests;
