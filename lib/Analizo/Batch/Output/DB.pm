@@ -92,9 +92,11 @@ sub _find_developer($$$) {
 
 sub _add_commit($$$$) {
   my ($self, $job, $project_id, $developer_id) = @_;
-  my $previous_commit_id = $job->metadata_hashref->{previous_commit_id};
-  $self->{st_insert_commit} ||= $self->{dbh}->prepare('INSERT INTO commits (id, project_id,developer_id,previous_commit_id) VALUES(?,?,?,?)');
-  $self->{st_insert_commit}->execute($job->id, $project_id, $developer_id, $previous_commit_id);
+  my $metadata = $job->metadata_hashref;
+  my $previous_commit_id = $metadata->{previous_commit_id};
+  my $date = $metadata->{author_date};
+  $self->{st_insert_commit} ||= $self->{dbh}->prepare('INSERT INTO commits (id, project_id,developer_id,previous_commit_id,date) VALUES(?,?,?,?,?)');
+  $self->{st_insert_commit}->execute($job->id, $project_id, $developer_id, $previous_commit_id, $date);
   return $job->id;
 }
 
@@ -230,6 +232,7 @@ CREATE TABLE commits (
   id CHAR(40) PRIMARY KEY,
   previous_commit_id CHAR(40),
   project_id INTEGER,
+  date INTEGER,
   developer_id CHAR(40)
 );
 CREATE INDEX commits_project_id ON commits (project_id);
