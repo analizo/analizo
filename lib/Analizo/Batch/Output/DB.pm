@@ -22,7 +22,7 @@ sub push($$) {
 
   my $developer_id = $self->_add_developer($job);
 
-  my $commit_id = $self->_add_commit($job->id, $project_id, $developer_id);
+  my $commit_id = $self->_add_commit($job, $project_id, $developer_id);
 
   $self->_add_modules($job, $commit_id, $project_id);
 }
@@ -91,10 +91,11 @@ sub _find_developer($$$) {
 }
 
 sub _add_commit($$$$) {
-  my ($self, $id, $project_id, $developer_id) = @_;
-  $self->{st_insert_commit} ||= $self->{dbh}->prepare('INSERT INTO commits (id, project_id,developer_id) VALUES(?,?,?)');
-  $self->{st_insert_commit}->execute($id, $project_id, $developer_id);
-  return $id;
+  my ($self, $job, $project_id, $developer_id) = @_;
+  my $previous_commit_id = $job->metadata_hashref->{previous_commit_id};
+  $self->{st_insert_commit} ||= $self->{dbh}->prepare('INSERT INTO commits (id, project_id,developer_id,previous_commit_id) VALUES(?,?,?,?)');
+  $self->{st_insert_commit}->execute($job->id, $project_id, $developer_id, $previous_commit_id);
+  return $job->id;
 }
 
 sub _add_modules($$$$) {
@@ -227,7 +228,7 @@ CREATE TABLE developers (
 
 CREATE TABLE commits (
   id CHAR(40) PRIMARY KEY,
-  parent_id CHAR(40),
+  previous_commit_id CHAR(40),
   project_id INTEGER,
   developer_id CHAR(40)
 );
