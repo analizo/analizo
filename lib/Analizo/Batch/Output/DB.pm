@@ -27,6 +27,11 @@ sub push($$) {
   $self->_add_modules($job, $commit_id, $project_id);
 }
 
+sub flush($) {
+  my ($self) = @_;
+  $self->{dbh}->disconnect();
+}
+
 sub _find_row_id($$@) {
   my ($self, $sql, @data) = @_;
   my $statement_id = 'st_find_' . sha1_hex($sql); # is this SHA1 needed at all?
@@ -100,6 +105,7 @@ sub _add_modules($$$$) {
     my @modules = ();
     for my $file (@{$metadata->{changed_files}}) {
       my $module = $job->model->module_by_file($file);
+      next unless $module; # not all files correspond to modules!
       unless(grep { $_ eq $module } @modules) { # do not process one module more than once per commit
         CORE::push @modules, $module;
         my $module_id = $self->_add_module($module, $project_id);
