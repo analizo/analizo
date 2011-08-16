@@ -45,18 +45,12 @@ sub traverse_repository : Tests {
 
 use Analizo::LanguageFilter;
 sub filters : Tests {
-  my $job = new Test::MockObject();
   my $batch = __create();
   $batch->filters(new Analizo::LanguageFilter('c'));
 
-  $job->mock('changed_files', sub { ['test.c'] });
-  ok($batch->matches_filters($job), 'test.c');
-
-  $job->mock('changed_files', sub { ['test.h', 'README'] });
-  ok($batch->matches_filters($job), 'test.h');
-
-  $job->mock('changed_files', sub { ['README'] });
-  ok(!$batch->matches_filters($job), 'only README');
+  ok($batch->matches_filters('test.c'), 'test.c');
+  ok($batch->matches_filters('test.h'), 'test.h');
+  ok(!$batch->matches_filters('README'), 'only README');
 }
 
 sub default_filter : Tests {

@@ -60,7 +60,12 @@ sub cleanup {
 
 sub relevant {
   my ($self) = @_;
-  return $self->batch->matches_filters($self);
+  for my $file (@{$self->changed_files}) {
+    if ($self->batch->matches_filters($file)) {
+      return 1;
+    }
+  }
+  return 0;
 }
 
 sub previous_wanted {
@@ -133,6 +138,7 @@ sub data {
       author_date   => $header[1],
       author_name   => $header[2],
       author_email  => $header[3],
+      files         => $self->_files(),
     };
   }
   return $self->{data};
@@ -148,6 +154,7 @@ sub metadata {
     ['author_name', $data->{author_name}],
     ['author_email', $data->{author_email}],
     ['changed_files', $data->{changed_files}],
+    ['files', $data->{files}],
   ];
 }
 
@@ -168,6 +175,19 @@ sub git_current_branch {
   my $current = $current[0];
   $current =~ s/^\*\s*//;
   return $current;
+}
+
+sub _files {
+  my ($self) = @_;
+  my @files = `cd $self->{actual_directory} && git ls-tree -r $self->{id}`;
+  my %files = ();
+  foreach my $line (@files) {
+    my ($mode, $type, $sha1, $file) = split(/\s+/,$line);
+    if ($self->batch->matches_filters($file)) {
+      $files{$file} = $sha1;
+    }
+  }
+  return \%files;
 }
 
 1;

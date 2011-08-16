@@ -81,21 +81,13 @@ sub points_to_batch : Tests {
   is($job->batch, 42);
 }
 
-sub relevance : Tests {
-  my $batch = new Test::MockObject();
-  $batch->set_series('matches_filters', 1, 0, 1);
-  my $job = __create();
-  $job->batch($batch);
-  is($job->relevant, 1);
-  is($job->relevant, 0);
-  is($job->relevant, 1);
-}
-
 sub changed_files : Tests {
-  my $master = __create($TESTDIR, $MASTER);
+  my $repo = __create_repo($TESTDIR);
+
+  my $master = $repo->find($MASTER);
   is_deeply($master->changed_files, ['input.cc']);
 
-  my $some_commit = __create($TESTDIR, $SOME_COMMIT);
+  my $some_commit = $repo->find($SOME_COMMIT);
   is_deeply($some_commit->changed_files, ['prog.cc']);
 }
 
@@ -135,19 +127,30 @@ sub metadata : Tests {
   metadata_ok($metadata, 'previous_commit_id', '0a06a6fcc2e7b4fe56d134e89d74ad028bb122ed', 'previous commit');
   metadata_ok($metadata, 'changed_files', ['input.cc'], 'changed files');
 
+  my @files_entry = grep { $_->[0] eq 'files' } @$metadata;
+  my $files = $files_entry[0]->[1];
+
+  is($files->{'input.cc'},   '0e85dc55b30f5e257ce5615bfcb229d1ace13e01');
+  is($files->{'input.h'},    '44edccb29f8b8ba252f15988edacfad481606c45');
+  is($files->{'output.cc'},  'ed526e137858cb903730a1886db430c28d6bebcf');
+  is($files->{'output.h'},   'a67e1b0986b9cab18fbbb12d0f941982c74d724d');
+  is($files->{'prog.cc'},    '91745088e303c9440b6d58a5232b5d753d3c91f5');
+  ok(!defined($files->{Makefile}), 'must not include non-code files in tree');
+
   my $first = $repo->find($FIRST_COMMIT);
   metadata_ok($first->metadata, 'previous_commit_id', undef, 'unexisting commit id');
 }
 
 sub merge_and_first_commit_detection : Tests {
-  my $master = __create($TESTDIR, $MASTER);
+  my $repo = __create_repo($TESTDIR);
+  my $master = $repo->find($MASTER);
   ok(!$master->is_merge);
   ok(!$master->is_first_commit);
 
-  my $first = __create($TESTDIR, $FIRST_COMMIT);
+  my $first = $repo->find($FIRST_COMMIT);
   ok($first->is_first_commit);
 
-  my $merge = __create($TESTDIR, $MERGE_COMMIT);
+  my $merge = $repo->find($MERGE_COMMIT);
   ok($merge->is_merge);
 }
 
