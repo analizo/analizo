@@ -5,7 +5,7 @@ package Analizo::Batch::Job;
 
 use strict;
 use warnings;
-use base qw(Class::Accessor::Fast);
+use base qw(Class::Accessor::Fast Analizo::Filter::Client);
 use File::Basename;
 
 use Analizo::Extractor;
@@ -115,6 +115,7 @@ sub execute {
 
   # extract model from source
   my $extractor = Analizo::Extractor->load();
+  $extractor->filters($self->filters);
   $extractor->process('.');
   $self->model($extractor->model);
 
