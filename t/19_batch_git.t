@@ -56,8 +56,8 @@ sub filters : Tests {
 sub default_filter : Tests {
   my $batch = __create($TESTDIR);
   while (my $job = $batch->next()) {
-    my @files = grep { /\.(cc|h)$/ } @{$job->changed_files};
-    ok(scalar(@files) > 0, sprintf("must not analyze commit containing only (%s)", join(',', @{$job->changed_files})));
+    my @files = grep { /\.(cc|h)$/ } keys(%{$job->changed_files});
+    ok(scalar(@files) > 0, sprintf("must not analyze commit containing only (%s)", join(',', keys(%{$job->changed_files}))));
   }
 }
 

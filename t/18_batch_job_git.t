@@ -85,10 +85,13 @@ sub changed_files : Tests {
   my $repo = __create_repo($TESTDIR);
 
   my $master = $repo->find($MASTER);
-  is_deeply($master->changed_files, ['input.cc']);
+  is_deeply($master->changed_files, {'input.cc' => 'M'});
 
   my $some_commit = $repo->find($SOME_COMMIT);
-  is_deeply($some_commit->changed_files, ['prog.cc']);
+  is_deeply($some_commit->changed_files, {'prog.cc' => 'M'});
+
+  my $add_output_commit = $repo->find($ADD_OUTPUT_COMMIT);
+  is_deeply($add_output_commit->changed_files, { 'output.cc' => 'A', 'output.h' => 'A', 'prog.cc' => 'M', 'Makefile' => 'M' });
 }
 
 sub previous_relevant : Tests {
@@ -125,7 +128,7 @@ sub metadata : Tests {
   metadata_ok($metadata, 'author_email', 'terceiro@softwarelivre.org', 'author email');
   metadata_ok($metadata, 'author_date', 1297788040, 'author date'); # UNIX timestamp for [Tue Feb 15 13:40:40 2011 -0300]
   metadata_ok($metadata, 'previous_commit_id', '0a06a6fcc2e7b4fe56d134e89d74ad028bb122ed', 'previous commit');
-  metadata_ok($metadata, 'changed_files', ['input.cc'], 'changed files');
+  metadata_ok($metadata, 'changed_files', {'input.cc' => 'M'}, 'changed files');
 
   my @files_entry = grep { $_->[0] eq 'files' } @$metadata;
   my $files = $files_entry[0]->[1];

@@ -122,13 +122,29 @@ sub _add_modules($$$$) {
   }
 
   if ($metadata->{changed_files}) {
-    my %added_module_metrics = ();
-    for my $file (@{$metadata->{changed_files}}) {
+    my %already_added_module_metrics = ();
+    for my $file (keys(%{$metadata->{changed_files}})) {
       my $module = $job->model->module_by_file($file);
       next unless $module; # not all files correspond to modules!
-      unless ($added_module_metrics{$module}) {
-        $added_module_metrics{$module} = 1;
-        $self->_add_metrics($job, $module, $module_versions{$module});
+      next if $already_added_module_metrics{$module};
+      $already_added_module_metrics{$module} = 1;
+
+      my $module_version_id = $module_versions{$module};
+
+      my $module_files = $job->model->files($module);
+      my @statuses = map { $metadata->{changed_files}->{$_} || 'K' } @$module_files;
+      my $statuses = join('', @statuses);
+
+      my $deleted = 0;
+      if ($statuses =~ /^A+$/) {
+        $self->_mark_as_added($commit_id, $module_version_id);
+      } elsif ($statuses =~ /^D+$/) {
+        $deleted = 1;
+      } else {
+        $self->_mark_as_modified($commit_id, $module_version_id);
+      }
+      if (!$deleted) {
+        $self->_add_metrics($job, $module, $module_version_id);
       }
     }
   }
@@ -192,6 +208,18 @@ sub _add_metric($$$$) {
   my ($self, $module_version_id, $metric, $value) = @_;
   $self->{st_add_metric} ||= $self->{dbh}->prepare('INSERT INTO metrics (module_version_id, name, value) VALUES(?,?,?)');
   $self->{st_add_metric}->execute($module_version_id, $metric, $value);
+}
+
+sub _mark_as_added($$$) {
+  my ($self, $commit_id, $module_version_id) = @_;
+  $self->{st_mark_as_added} ||= $self->{dbh}->prepare('UPDATE commits_module_versions SET added = 1 WHERE commit_id = ? AND module_version_id = ?');
+  $self->{st_mark_as_added}->execute($commit_id, $module_version_id);
+}
+
+sub _mark_as_modified($$$) {
+  my ($self, $commit_id, $module_version_id) = @_;
+  $self->{st_mark_as_modified} ||= $self->{dbh}->prepare('UPDATE commits_module_versions SET modified = 1 WHERE commit_id = ? AND module_version_id = ?');
+  $self->{st_mark_as_modified}->execute($commit_id, $module_version_id);
 }
 
 # Initializes the database

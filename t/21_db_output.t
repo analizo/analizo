@@ -95,7 +95,10 @@ sub add_module_data_for_modules_changed_by_commit : Tests {
     'metadata_hashref',
     sub {
       {
-        'changed_files' => ['mammal.h', 'dog.cc'],
+        'changed_files' => {
+          'mammal.h'  => 'M',
+          'dog.cc'    => 'M',
+        },
         'files' => {
           'mammal.h'  => '1111111111111111111111111111111111111111',
           'dog.cc'    => '2222222222222222222222222222222222222222',
@@ -113,7 +116,7 @@ sub add_module_data_for_modules_changed_by_commit : Tests {
   for my $module ('Mammal', 'Dog') {
     # module
     select_one_ok($OUTFILE, "SELECT * FROM modules JOIN projects ON (projects.id = modules.project_id) WHERE projects.name = 'animals' AND modules.name = '$module'");
-    # module_versions and commmits_module_versions
+    # module_versions and commits_module_versions
     select_one_ok($OUTFILE, "SELECT * FROM modules JOIN module_versions ON (module_versions.module_id = modules.id) JOIN commits_module_versions ON (commits_module_versions.module_version_id = module_versions.id) JOIN commits ON (commits_module_versions.commit_id = commits.id) WHERE commits.id = 'foo' AND modules.name = '$module'");
     # metrics
     select_ok($OUTFILE, "SELECT * FROM modules JOIN module_versions ON (module_versions.module_id = modules.id) JOIN metrics ON (metrics.module_version_id = module_versions.id) WHERE modules.name = '$module' AND metrics.name IN ('lcom4','cbo')", 2);
@@ -125,6 +128,43 @@ sub add_module_data_for_modules_changed_by_commit : Tests {
   # one module with multiple files: concatenate SHA1 of files and calculate the SHA1 of that.
   select_one_ok($OUTFILE, "SELECT * FROM modules JOIN module_versions ON (module_versions.module_id = modules.id) WHERE modules.name = 'Dog' AND module_versions.id = '452219454519b29aae2e135c470d97d9e234976b'");
 
+}
+
+sub changed_added_module_versions : Tests {
+  my $output = __create($OUTFILE);
+  my $job = mock(new Analizo::Batch::Job::Directories($SAMPLE));
+  $job->id('foo');
+  $job->execute();
+  $job->mock(
+    'metadata_hashref',
+    sub {
+      {
+        'changed_files' => {
+          'mammal.h'  => 'M',
+          'dog.cc'    => 'A',
+          'dog.h'     => 'A',
+          'cat.cc'    => 'A',
+          'cat.h'     => 'M',
+        },
+        'files' => {
+          'mammal.h'  => '1111111111111111111111111111111111111111',
+          'dog.cc'    => '2222222222222222222222222222222222222222',
+          'dog.h'     => '3333333333333333333333333333333333333333',
+          'cat.cc'    => '4444444444444444444444444444444444444444',
+          'cat.h'     => '5555555555555555555555555555555555555555',
+        }
+      }
+    }
+  );
+  $job->mock('project_name', sub { 'animals'; });
+
+  $output->push($job);
+
+  select_one_ok($OUTFILE, "SELECT * FROM commits_module_versions WHERE commit_id = 'foo' AND module_version_id = '1111111111111111111111111111111111111111' AND modified AND NOT added");
+  # 452219454519b29aae2e135c470d97d9e234976b = sha1(22222222222222222222222222222222222222223333333333333333333333333333333333333333)
+  select_one_ok($OUTFILE, "SELECT * FROM commits_module_versions WHERE commit_id = 'foo' AND module_version_id = '452219454519b29aae2e135c470d97d9e234976b' AND added AND NOT modified");
+  # f676c6d81e63377edc2f9ec60b1bc2359b94606f = sha1(44444444444444444444444444444444444444445555555555555555555555555555555555555555)
+  select_one_ok($OUTFILE, "SELECT * FROM commits_module_versions WHERE commit_id = 'foo' AND module_version_id = 'f676c6d81e63377edc2f9ec60b1bc2359b94606f' AND modified AND NOT added");
 }
 
 sub __create {

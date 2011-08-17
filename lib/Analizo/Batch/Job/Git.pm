@@ -60,7 +60,7 @@ sub cleanup {
 
 sub relevant {
   my ($self) = @_;
-  for my $file (@{$self->changed_files}) {
+  for my $file (keys(%{$self->changed_files})) {
     if ($self->batch->matches_filters($file)) {
       return 1;
     }
@@ -127,13 +127,14 @@ sub changed_files {
 sub data {
   my ($self) = @_;
   unless (defined($self->{data})) {
-    my @output = `cd $self->{actual_directory} && git show --name-only --format=%P/%at/%aN/%aE $self->{id}`;
+    my @output = `cd $self->{actual_directory} && git show --name-status --format=%P/%at/%aN/%aE $self->{id}`;
     chomp @output;
     @output = grep { length($_) > 0 } @output;
     my @header = split('/', shift @output);
+    my %changed_files = map { my ($status, $file) = split(/\s+/, $_); $file => $status } @output;
     my @parents = split(/\s+/, $header[0]);
     $self->{data} = {
-      changed_files => \@output,
+      changed_files => \%changed_files,
       parents       => \@parents,
       author_date   => $header[1],
       author_name   => $header[2],
