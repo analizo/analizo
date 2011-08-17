@@ -42,7 +42,6 @@ sub setting_up_a_database : Tests {
   table_created_ok($OUTFILE, 'modules');
   table_created_ok($OUTFILE, 'module_versions');
   table_created_ok($OUTFILE, 'commits_module_versions'); # relationship table
-  table_created_ok($OUTFILE, 'metrics');
 
   # try to re-initialize an existing database - should not crash
   my $output2 = __create();
@@ -117,9 +116,7 @@ sub add_module_data_for_modules_changed_by_commit : Tests {
     # module
     select_one_ok($OUTFILE, "SELECT * FROM modules JOIN projects ON (projects.id = modules.project_id) WHERE projects.name = 'animals' AND modules.name = '$module'");
     # module_versions and commits_module_versions
-    select_one_ok($OUTFILE, "SELECT * FROM modules JOIN module_versions ON (module_versions.module_id = modules.id) JOIN commits_module_versions ON (commits_module_versions.module_version_id = module_versions.id) JOIN commits ON (commits_module_versions.commit_id = commits.id) WHERE commits.id = 'foo' AND modules.name = '$module'");
-    # metrics
-    select_ok($OUTFILE, "SELECT * FROM modules JOIN module_versions ON (module_versions.module_id = modules.id) JOIN metrics ON (metrics.module_version_id = module_versions.id) WHERE modules.name = '$module' AND metrics.name IN ('lcom4','cbo')", 2);
+    select_one_ok($OUTFILE, "SELECT * FROM modules JOIN module_versions ON (module_versions.module_id = modules.id) JOIN commits_module_versions ON (commits_module_versions.module_version_id = module_versions.id) JOIN commits ON (commits_module_versions.commit_id = commits.id) WHERE commits.id = 'foo' AND modules.name = '$module' AND module_versions.lcom4 >= 0 AND module_versions.cbo >= 0");
   }
 
   select_ok($OUTFILE, "SELECT * FROM module_versions JOIN commits_module_versions ON (module_versions.id = commits_module_versions.module_version_id) JOIN commits ON (commits.id = commits_module_versions.commit_id) WHERE commit_id = 'foo'", 3);

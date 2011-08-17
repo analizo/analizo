@@ -115,19 +115,23 @@ sub _add_modules($$$$) {
         my $module_files = $job->model->files($module);
         my @file_ids = map { $metadata->{files}->{$_} } sort(@$module_files);
 
-        my $module_version_id = $self->_add_module_version($commit_id, $module_id, @file_ids);
+        my $module_version_id = _module_version_id(@file_ids);
+
+        my $metrics = $job->metrics->metrics_for($module);
+
+        $self->_add_module_version($commit_id, $module_id, $module_version_id, %$metrics);
         $module_versions{$module} = $module_version_id;
       }
     }
   }
 
   if ($metadata->{changed_files}) {
-    my %already_added_module_metrics = ();
+    my %already_marked = ();
     for my $file (keys(%{$metadata->{changed_files}})) {
       my $module = $job->model->module_by_file($file);
       next unless $module; # not all files correspond to modules!
-      next if $already_added_module_metrics{$module};
-      $already_added_module_metrics{$module} = 1;
+      next if $already_marked{$module};
+      $already_marked{$module} = 1;
 
       my $module_version_id = $module_versions{$module};
 
@@ -135,16 +139,10 @@ sub _add_modules($$$$) {
       my @statuses = map { $metadata->{changed_files}->{$_} || 'K' } @$module_files;
       my $statuses = join('', @statuses);
 
-      my $deleted = 0;
       if ($statuses =~ /^A+$/) {
         $self->_mark_as_added($commit_id, $module_version_id);
-      } elsif ($statuses =~ /^D+$/) {
-        $deleted = 1;
-      } else {
+      } elsif ($statuses !~ /^D+$/) {
         $self->_mark_as_modified($commit_id, $module_version_id);
-      }
-      if (!$deleted) {
-        $self->_add_metrics($job, $module, $module_version_id);
       }
     }
   }
@@ -168,46 +166,36 @@ sub _find_module($$$) {
   return $self->_find_row_id('SELECT id FROM modules WHERE name = ? AND project_id = ?', $module, $project_id);
 }
 
-sub _add_module_version {
-  my ($self, $commit_id, $module_id, @file_ids) = @_;
+sub _module_version_id {
+  my @file_ids = @_;
   my $module_version_id;
   if (scalar(@file_ids) == 1) {
     $module_version_id = $file_ids[0];
   } else {
     $module_version_id = sha1_hex(join('', @file_ids));
   }
+  return $module_version_id;
+}
 
+sub _add_module_version {
+  my ($self, $commit_id, $module_id, $module_version_id, %metrics) = @_;
   my $module_version_already_exists = $self->_find_row_id('SELECT id from module_versions WHERE module_id = ? AND id = ?', $module_id, $module_version_id);
   unless ($module_version_already_exists) {
-    $self->{st_add_module_version} ||= $self->{dbh}->prepare('INSERT INTO module_versions (id,module_id) VALUES (?,?)');
-    $self->{st_add_module_version}->execute($module_version_id, $module_id);
+
+    my @metric_columns = _metric_columns();
+    my @metric_values = map { $metrics{$_} } @metric_columns;
+    my $metric_column_names = join(',', @metric_columns);
+    my $metric_placeholders = join(',', map { '?' } @metric_columns);
+
+    my $statement = "INSERT INTO module_versions (id,module_id,$metric_column_names) VALUES (?,?,$metric_placeholders)";
+    $self->{st_add_module_version} ||= $self->{dbh}->prepare($statement);
+    $self->{st_add_module_version}->execute($module_version_id, $module_id, @metric_values);
   }
 
   $self->{st_link_commit_and_module_version} ||= $self->{dbh}->prepare('INSERT INTO commits_module_versions (commit_id,module_version_id) VALUES (?,?)');
   $self->{st_link_commit_and_module_version}->execute($commit_id, $module_version_id);
 
   return $module_version_id;
-}
-
-sub _add_metrics($$$$) {
-  my ($self, $job, $module, $module_version_id) = @_;
-  my ($summary, $details) = $job->metrics->data();
-  # $details is an ARRAY reference containing one HASH reference for each module
-  # We need to find the one we are looking for
-  my @metrics = grep { $_->{_module} eq $module } @$details;
-  if (scalar(@metrics)) {
-    my %metrics = %{$metrics[0]};
-    for my $metric (keys(%metrics)) {
-      next if $metric =~ /^_/;
-      $self->_add_metric($module_version_id, $metric, $metrics{$metric});
-    }
-  }
-}
-
-sub _add_metric($$$$) {
-  my ($self, $module_version_id, $metric, $value) = @_;
-  $self->{st_add_metric} ||= $self->{dbh}->prepare('INSERT INTO metrics (module_version_id, name, value) VALUES(?,?,?)');
-  $self->{st_add_metric}->execute($module_version_id, $metric, $value);
 }
 
 sub _mark_as_added($$$) {
@@ -234,6 +222,7 @@ sub initialize($) {
   # assume that if there is a table called `analizo_metadata`, then the database was already initialized
   if (!grep { $_ =~ /analizo_metadata/ } $self->{dbh}->tables()) {
     for my $statement (ddl_statements()) {
+      $statement =~ s/\@\@METRICS\@\@/_metric_columns_ddl()/egm;
       $self->{dbh}->do($statement);
     }
   }
@@ -255,6 +244,24 @@ sub ddl_statements($) {
     $DDL_INITIALIZED = 1;
   }
   return @DDL_STATEMENTS;
+}
+
+use Analizo::Metrics;
+use Analizo::Model;
+my @__metric_columns = ();
+sub _metric_columns() {
+  if (!@__metric_columns) {
+    my $metrics = new Analizo::Metrics(model => new Analizo::Model);
+    my %metrics = $metrics->list_of_metrics();
+    @__metric_columns = keys(%metrics);
+  }
+  return @__metric_columns;
+}
+
+sub _metric_columns_ddl {
+  my @columns = _metric_columns();
+  my $ddl = join(', ', map { "$_ REAL"} @columns);
+  return $ddl;
 }
 
 1;
@@ -297,7 +304,8 @@ CREATE UNIQUE INDEX modules_project_id_name ON modules(project_id, name);
 
 CREATE TABLE module_versions (
   id CHAR(40) PRIMARY KEY,
-  module_id INTEGER
+  module_id INTEGER,
+  @@METRICS@@
 );
 
 CREATE TABLE commits_module_versions (
@@ -308,10 +316,3 @@ CREATE TABLE commits_module_versions (
   added INTEGER default 0
 );
 CREATE INDEX commits_module_versions_commit_id ON commits_module_versions (commit_id);
-
-CREATE TABLE metrics (
-  module_version_id INTEGER,
-  name CHAR(100),
-  value NUMERIC,
-  PRIMARY KEY (module_version_id, name)
-);
