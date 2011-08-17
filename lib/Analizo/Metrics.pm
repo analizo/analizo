@@ -450,5 +450,16 @@ sub list_of_metrics {
   return %list;
 }
 
+sub metrics_for {
+  my ($self, $module) = @_;
+  my ($summary, $details) = $self->data();
+  my @list = grep { $_->{_module} eq $module } @$details;
+  if (scalar(@list) == 1) {
+    return $list[0];
+  } else {
+    die("No such module $module");
+  }
+}
+
 1;
 

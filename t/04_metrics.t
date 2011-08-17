@@ -419,5 +419,12 @@ sub list_of_metrics : Tests {
   cmp_ok(scalar(keys(%metrics)), '>', 0, 'must list metrics');
 }
 
+sub metrics_for : Tests {
+  sample_modules_for_report();
+  my $data = $metrics->metrics_for('mod1');
+  is(ref($data), 'HASH');
+  is($data->{_module}, 'mod1');
+}
+
 MetricsTests->runtests;
 
