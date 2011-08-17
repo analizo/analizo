@@ -12,7 +12,7 @@ sub constructor : Tests {
 }
 
 sub exposed_interface : Tests {
-  can_ok('Analizo::Batch::Output', qw(requires_metrics push));
+  can_ok('Analizo::Batch::Output', qw(requires_metrics push initialize flush));
 }
 
 sub not_require_metrics_by_default : Tests {

@@ -3,15 +3,15 @@ Section: devel
 Priority: extra
 Maintainer: Antonio Terceiro <terceiro@softwarelivre.org>
 Build-Depends: debhelper (>= 7.0.50~)
-Build-Depends-Indep: doxyparse, git, libgraph-perl, liblist-compare-perl, libtest-class-perl, libtest-exception-perl, libyaml-perl, libclass-accessor-perl, libstatistics-descriptive-perl, libstatistics-online-perl, libdigest-sha1-perl, libzeromq-perl
+Build-Depends-Indep: doxyparse, git, libgraph-perl, liblist-compare-perl, libtest-class-perl, libtest-exception-perl, libyaml-perl, libclass-accessor-perl, libstatistics-descriptive-perl, libstatistics-online-perl, libdigest-sha1-perl, libzeromq-perl, libdbi-perl, libdbd-sqlite3-perl
 Standards-Version: 3.9.1
 Homepage: http://softwarelivre.org/mezuro/analizo
 DM-Upload-Allowed: yes
 
 Package: analizo
 Architecture: all
-Depends: ${misc:Depends}, ${perl:Depends}, doxyparse (>= 1.5.8-12~), sloccount, libgraph-perl, liblist-compare-perl, libtest-class-perl, libtest-exception-perl, libyaml-perl, libclass-accessor-perl, libstatistics-descriptive-perl, libstatistics-online-perl, ruby
-Recommends: graphviz
+Depends: ${misc:Depends}, ${perl:Depends}, doxyparse (>= 1.5.8-12~), sloccount, libgraph-perl, liblist-compare-perl, libtest-class-perl, libtest-exception-perl, libyaml-perl, libclass-accessor-perl, libstatistics-descriptive-perl, libstatistics-online-perl, libdbi-perl, libdbd-sqlite3-perl, ruby
+Recommends: graphviz, sqlite3
 Description: multi-language source code analysis toolkit
  Analizo parses source code in multiple languages and report useful information
  about it, such as module dependency, source code metrics and more.

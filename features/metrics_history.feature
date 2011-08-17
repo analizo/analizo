@@ -4,7 +4,8 @@ Feature: analizo metrics-history
   To understand its development process
 
   Scenario: listing what commits should be analyzed
-    When I explode t/samples/evolution.tar.gz and run "analizo metrics-history --list ."
+    When I explode t/samples/evolution.tar.gz
+    And I run "analizo metrics-history --list ."
     Then the output must match "0a06a6fcc2e7b4fe56d134e89d74ad028bb122ed"
     # merge commit with code change:
     And the output must match "eb67c27055293e835049b58d7d73ce3664d3f90e"
@@ -18,7 +19,8 @@ Feature: analizo metrics-history
     And the output must not match "0fdaaa7dcc8073332a957024fafc8c98f165e725"
 
   Scenario: actually processing
-    When I explode t/samples/evolution.tar.gz and run "(analizo metrics-history -o metrics.csv . && cat metrics.csv)"
+    When I explode t/samples/evolution.tar.gz
+    And I run "(analizo metrics-history -o metrics.csv . && cat metrics.csv)"
     Then the output must match "^id,previous_commit_id,author_date,author_name,author_email,.*,sc_average"
     And the output must match "0a06a6fcc2e7b4fe56d134e89d74ad028bb122ed,eb67c27055293e835049b58d7d73ce3664d3f90e"
     # merge commit:

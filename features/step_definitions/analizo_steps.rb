@@ -22,21 +22,22 @@ Given /^I am in (.+)$/ do |dir|
   FileUtils.cd(dir)
 end
 
-Given /^I explode (.+) and run "([^\"]*)"$/ do |tarball, command|
+def get_tmpdir
+  Dir.mktmpdir([Process.pid.to_s, '.analizo.tmpdir'])
+end
+
+Given /^I explode (.+)$/ do |tarball|
   tarball_full_path = File.expand_path(tarball)
   dirname = File.basename(tarball).sub('.tar.gz', '')
-  Dir.mktmpdir do |tmpdir|
-    Dir.chdir(tmpdir) do
-      system("tar xzf #{tarball_full_path}")
-      Dir.chdir(dirname) do
-        When("I run \"#{command}\"")
-      end
-    end
+  tmpdir = get_tmpdir
+  Dir.chdir(tmpdir) do
+    system("tar xzf #{tarball_full_path}")
   end
+  FileUtils.cd(File.join(tmpdir, dirname))
 end
 
 When /^I copy (.*) into a temporary directory$/ do |files|
-  tmpdir = Dir.mktmpdir([Process.pid.to_s, '.analizo.tmpdir'])
+  tmpdir = get_tmpdir
   FileUtils.cp_r(Dir.glob(files), tmpdir)
   FileUtils.cd(tmpdir)
 end

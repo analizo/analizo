@@ -6,11 +6,12 @@ package Analizo::Batch::Job;
 use strict;
 use warnings;
 use base qw(Class::Accessor::Fast);
+use File::Basename;
 
 use Analizo::Extractor;
 use Analizo::Metrics;
 
-__PACKAGE__->mk_accessors(qw(model metrics id));
+__PACKAGE__->mk_accessors(qw(model metrics id directory));
 
 sub new {
   my ($class, @options) = @_;
@@ -85,6 +86,28 @@ sub metadata {
   []
 }
 
+# Returns the same metadata as the B<metadata> method, but as a HASH reference
+# instead of an ARRAY reference. For example, assume that B<metadata> returns
+# the following:
+#
+#   [
+#     ['field1', 'value1'],
+#     ['field2', 10],
+#   ]
+#
+# In this case, B<metadata_hashref> must return the following:
+#
+#   {
+#     'field1' => 'value1',
+#     'field2' => 10,
+#   }
+#
+sub metadata_hashref($) {
+  my ($self) = @_;
+  my %hash = map { $_->[0] => $_->[1] } @{$self->metadata()};
+  return \%hash;
+}
+
 sub execute {
   my ($self) = @_;
 
@@ -100,6 +123,11 @@ sub execute {
   $self->metrics->data();
 
   $self->cleanup();
+}
+
+sub project_name($) {
+  my ($self) = @_;
+  return basename($self->directory);
 }
 
 

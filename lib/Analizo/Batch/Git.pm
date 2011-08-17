@@ -60,13 +60,12 @@ sub find {
 }
 
 sub matches_filters {
-  my ($self, $job) = @_;
-  for my $file (@{$job->changed_files}) {
-    if ($self->filename_matches_filters($file)) {
-      return 1;
-    }
+  my ($self, $filename) = @_;
+  if ($self->filename_matches_filters($filename)) {
+    return 1;
+  } else {
+    return 0;
   }
-  return 0;
 }
 
 1;

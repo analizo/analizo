@@ -24,12 +24,19 @@ sub requires_metrics {
 
 # Runners must use this method to push jobs into the output object.
 #
-# Subclasses must override this method.
+# Subclasses (output drives) must override this method. Output drives MAY NOT
+# ASSUME that the jobs will be pushed in any particular order.
 sub push {
 }
 
 # To which file the output must be written
 __PACKAGE__->mk_accessors(qw(file));
+
+# Makes any initialization needed for the given output driver.
+#
+# This method must be overriden by subclasses
+sub initialize {
+}
 
 # Opens a file for output, delegates the actual writing to subclasses, and
 # closes the file. If no file was given, write to standard output.

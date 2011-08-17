@@ -17,6 +17,8 @@ WriteMakefile(
   ABSTRACT => 'Source code analysis toolkit',
   PREREQ_PM => {
     'Class::Accessor::Fast' => 0,
+    'DBD::SQLite' => 0,
+    'DBI' => 0,
     'Digest::SHA1' => 0,
     'List::Compare' => 0,
     'Graph' => 0,

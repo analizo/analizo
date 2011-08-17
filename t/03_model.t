@@ -36,7 +36,14 @@ sub declaring_modules : Tests {
 sub declaring_modules_with_files : Tests {
   my $model = new Analizo::Model;
   $model->declare_module('Module1', 'src/module1.c');
-  is_deeply($model->file('Module1'), ['src/module1.c']);
+  is_deeply($model->files('Module1'), ['src/module1.c']);
+}
+
+sub retrieving_modules_by_file : Tests {
+  my $model = new Analizo::Model;
+  $model->declare_module('Module1', 'src/module1.c');
+  my $module = $model->module_by_file('src/module1.c');
+  is($module, 'Module1');
 }
 
 sub declaring_inheritance : Tests {

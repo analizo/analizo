@@ -7,6 +7,13 @@ sub new {
   return bless { @args }, $class;
 }
 
+sub run($$$) {
+  my ($self, $batch, $output) = @_;
+  $output->initialize();
+  $self->actually_run($batch, $output);
+  $output->flush();
+}
+
 # must be implemented by subclasses. Will receive as argument:
 #
 #   * the batch to be run
@@ -16,7 +23,7 @@ sub new {
 # employed by the subclass, call I<execute> on each job, and feed the job
 # object to the $output object by calling I<$output->push($job)>. In the end,
 # the runner must call flush() on the output object.
-sub run {
+sub actually_run {
 }
 
 __PACKAGE__->mk_accessors(qw( before_each_job ));

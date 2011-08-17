@@ -8,7 +8,7 @@ sub new {
   $class->SUPER::new(id => $directory, directory => $directory);
 }
 
-__PACKAGE__->mk_accessors(qw(directory oldcwd));
+__PACKAGE__->mk_accessors(qw(oldcwd));
 
 sub prepare {
   my ($self) = @_;

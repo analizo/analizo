@@ -12,19 +12,18 @@ __PACKAGE__->mk_accessors('batch');
 
 sub new {
   my ($class, $directory, $id) = @_;
-  $class->SUPER::new(directory => $directory, id => $id);
+  $class->SUPER::new(directory => $directory, actual_directory => $directory, id => $id);
 }
 
 sub parallel_prepare {
   my ($self) = @_;
-  $self->{original_directory} = $self->{directory};
-  $self->{directory} = _create_work_directory($self->{directory});
+  $self->{actual_directory} = _create_work_directory($self->directory);
 }
 
 sub parallel_cleanup {
   my ($self) = @_;
-  my $workdir = _create_work_directory($self->{original_directory});
-  remove_tree($workdir);
+  my $actual_directory = _create_work_directory($self->directory);
+  remove_tree($actual_directory);
 }
 
 sub _create_work_directory {
@@ -43,7 +42,7 @@ sub prepare {
   my ($self) = @_;
   # change directory
   $self->{oldcwd} = getcwd();
-  chdir($self->{directory});
+  chdir($self->{actual_directory});
   # checkout
   $self->{old_branch} = git_current_branch();
   $self->git_checkout($self->id);
@@ -61,7 +60,12 @@ sub cleanup {
 
 sub relevant {
   my ($self) = @_;
-  return $self->batch->matches_filters($self);
+  for my $file (keys(%{$self->changed_files})) {
+    if ($self->batch->matches_filters($file)) {
+      return 1;
+    }
+  }
+  return 0;
 }
 
 sub previous_wanted {
@@ -123,17 +127,19 @@ sub changed_files {
 sub data {
   my ($self) = @_;
   unless (defined($self->{data})) {
-    my @output = `cd $self->{directory} && git show --name-only --format=%P/%at/%aN/%aE $self->{id}`;
+    my @output = `cd $self->{actual_directory} && git show --name-status --format=%P/%at/%aN/%aE $self->{id}`;
     chomp @output;
     @output = grep { length($_) > 0 } @output;
     my @header = split('/', shift @output);
+    my %changed_files = map { my ($status, $file) = split(/\s+/, $_); $file => $status } @output;
     my @parents = split(/\s+/, $header[0]);
     $self->{data} = {
-      changed_files => \@output,
+      changed_files => \%changed_files,
       parents       => \@parents,
       author_date   => $header[1],
       author_name   => $header[2],
       author_email  => $header[3],
+      files         => $self->_files(),
     };
   }
   return $self->{data};
@@ -148,6 +154,8 @@ sub metadata {
     ['author_date', $data->{author_date}],
     ['author_name', $data->{author_name}],
     ['author_email', $data->{author_email}],
+    ['changed_files', $data->{changed_files}],
+    ['files', $data->{files}],
   ];
 }
 
@@ -168,6 +176,19 @@ sub git_current_branch {
   my $current = $current[0];
   $current =~ s/^\*\s*//;
   return $current;
+}
+
+sub _files {
+  my ($self) = @_;
+  my @files = `cd $self->{actual_directory} && git ls-tree -r $self->{id}`;
+  my %files = ();
+  foreach my $line (@files) {
+    my ($mode, $type, $sha1, $file) = split(/\s+/,$line);
+    if ($self->batch->matches_filters($file)) {
+      $files{$file} = $sha1;
+    }
+  }
+  return \%files;
 }
 
 1;

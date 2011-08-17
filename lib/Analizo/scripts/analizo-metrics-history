@@ -47,6 +47,16 @@ state.
 Use programming language and directory exclusion filters. See
 B<analizo-metrics(1)> for a description of these options.
 
+=item --output FILE, -o FILE
+
+Make the output be written to I<FILE>. The default value and valid values
+depend on the output format, see "Output formats" below.
+
+=item --format FORMAT, -f FORMAT
+
+Specifies with output driver, and consequently the output format, to use. See
+"Output Formats" below for a description of the available output drivers.
+
 =item --list | -l
 
 Instead of actually processing the history, just print out the ids of the
@@ -61,6 +71,51 @@ Displays help for B<analizo metrics-history>.
 Displays usage information for B<analizo metrics-history>.
 
 =back
+
+=head1 Output formats
+
+Using the I<--format> option, you can use the following output drivers:
+
+=head2 csv
+
+This is the default output driver. By default, the output will be written to
+the standard output. If can direct the output to a file using the I<--output>
+option.
+
+=head2 db
+
+Stores the extracted data in a relational database.
+
+When you use this driver, you can specify where exactly to store the data using
+the I<--output> option. If you do not specify an explicit target, analizo will
+write to a SQLite database in a file called I<output.sqlite3> in the current
+directory. If you pass a filename, and analizo will store the data in a SQLite
+database that will be created on that file. You can direct the output to any
+other database by using I<--output DSN>, where I<DSN> is a DBI Data Source
+Name.
+
+You can check B<DBI>(3pm) for details. Note that if you a database other than
+SQLite, you must make sure that you have the correponsing DBI driver installed.
+
+Examples:
+
+B<$ analizo metrics-history -f db -o history.db>
+
+Writes the output to a SQLite database called I<history.db>.
+
+B<$ analizo metrics-history -f db -o DBI:mysql:database=vcs_history;host=localhost;port=3306>
+
+Writes the data to a MySQL database called I<vcs_history> on localhost, port
+3306. Require having the I<DBI::mysql> Perl module installed.
+
+B<$ analizo metrics-history -f db -o dbi:Pg:dbname=pgdb>
+
+Writes te data to a PostgreSQL database called I<pgdb>. Requires having the
+I<DBI::Pg> Perl module installed.
+
+=back
+
+
 
 =head1 SEE ALSO
 
@@ -80,6 +135,7 @@ my $__language      = undef;
 my $__exclude       = undef;
 my $__output        = undef;
 my $__parallel      = undef;
+my $__format        = 'csv';
 
 GetOptions(
   'help'          => \$__help,
@@ -88,6 +144,7 @@ GetOptions(
   'o|output=s'    => \$__output,
   'exclude|x=s'   => \$__exclude,
   'p|parallel=i'  => \$__parallel,
+  'f|format=s'    => \$__format,
 ) or exit(1);
 
 if ($__help) {
@@ -95,7 +152,6 @@ if ($__help) {
 }
 
 use Analizo::Batch::Git;
-use Analizo::Batch::Output::CSV;
 
 my $batch = new Analizo::Batch::Git(@ARGV);
 if ($__list_only) {
@@ -115,7 +171,18 @@ if ($__exclude) {
   $batch->exclude(@excluded_directories);
 }
 
-my $output = new Analizo::Batch::Output::CSV;
+my %available_outputs = (
+  csv => 'Analizo::Batch::Output::CSV',
+  db  => 'Analizo::Batch::Output::DB',
+);
+my $output_driver = $available_outputs{$__format};
+if (!$output_driver) {
+  printf "E: Invalid output driver %s\n", $__format;
+  exit 2;
+}
+eval "require $output_driver";
+my $output = new $output_driver;
+
 if ($__output) {
   $output->file($__output);
 }

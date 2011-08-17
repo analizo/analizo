@@ -6,6 +6,7 @@ use base 'Test::Class';
 use Test::More;
 use Test::Analizo;
 use Cwd;
+use File::Basename;
 use Test::MockObject;
 use Test::Analizo::Git;
 
@@ -22,7 +23,8 @@ sub constructor : Tests {
 sub constructor_with_arguments : Tests {
   my $id = $MASTER;
   my $job = __create($TESTDIR, $id);
-  is($job->{directory}, $TESTDIR);
+  is($job->directory, $TESTDIR);
+  is($job->{actual_directory}, $TESTDIR);
   is($job->id, $id);
 }
 
@@ -30,12 +32,14 @@ sub parallelism_support : Tests {
   my $job = __create($TESTDIR, $MASTER);
   $job->parallel_prepare();
 
-  isnt($job->{directory}, $TESTDIR);
-  ok(-d $job->{directory}, "different work directory must be created");
-  ok(-d File::Spec->catfile($job->{directory}, '.git'), "content must be copied");
+  isnt($job->{actual_directory}, $TESTDIR);
+  ok(-d $job->{actual_directory}, "different work directory must be created");
+  ok(-d File::Spec->catfile($job->{actual_directory}, '.git'), "content must be copied");
 
   $job->parallel_cleanup();
-  ok(! -d $job->{directory}, "different work directory must be removed when parallel_cleanup is called.");
+  ok(! -d $job->{actual_directory}, "different work directory must be removed when parallel_cleanup is called.");
+
+  is($job->project_name, basename($TESTDIR), 'parallelism support must not mess with project name');
 }
 
 sub prepare_and_cleanup : Tests {
@@ -77,22 +81,17 @@ sub points_to_batch : Tests {
   is($job->batch, 42);
 }
 
-sub relevance : Tests {
-  my $batch = new Test::MockObject();
-  $batch->set_series('matches_filters', 1, 0, 1);
-  my $job = __create();
-  $job->batch($batch);
-  is($job->relevant, 1);
-  is($job->relevant, 0);
-  is($job->relevant, 1);
-}
-
 sub changed_files : Tests {
-  my $master = __create($TESTDIR, $MASTER);
-  is_deeply($master->changed_files, ['input.cc']);
+  my $repo = __create_repo($TESTDIR);
 
-  my $some_commit = __create($TESTDIR, $SOME_COMMIT);
-  is_deeply($some_commit->changed_files, ['prog.cc']);
+  my $master = $repo->find($MASTER);
+  is_deeply($master->changed_files, {'input.cc' => 'M'});
+
+  my $some_commit = $repo->find($SOME_COMMIT);
+  is_deeply($some_commit->changed_files, {'prog.cc' => 'M'});
+
+  my $add_output_commit = $repo->find($ADD_OUTPUT_COMMIT);
+  is_deeply($add_output_commit->changed_files, { 'output.cc' => 'A', 'output.h' => 'A', 'prog.cc' => 'M', 'Makefile' => 'M' });
 }
 
 sub previous_relevant : Tests {
@@ -129,20 +128,32 @@ sub metadata : Tests {
   metadata_ok($metadata, 'author_email', 'terceiro@softwarelivre.org', 'author email');
   metadata_ok($metadata, 'author_date', 1297788040, 'author date'); # UNIX timestamp for [Tue Feb 15 13:40:40 2011 -0300]
   metadata_ok($metadata, 'previous_commit_id', '0a06a6fcc2e7b4fe56d134e89d74ad028bb122ed', 'previous commit');
+  metadata_ok($metadata, 'changed_files', {'input.cc' => 'M'}, 'changed files');
+
+  my @files_entry = grep { $_->[0] eq 'files' } @$metadata;
+  my $files = $files_entry[0]->[1];
+
+  is($files->{'input.cc'},   '0e85dc55b30f5e257ce5615bfcb229d1ace13e01');
+  is($files->{'input.h'},    '44edccb29f8b8ba252f15988edacfad481606c45');
+  is($files->{'output.cc'},  'ed526e137858cb903730a1886db430c28d6bebcf');
+  is($files->{'output.h'},   'a67e1b0986b9cab18fbbb12d0f941982c74d724d');
+  is($files->{'prog.cc'},    '91745088e303c9440b6d58a5232b5d753d3c91f5');
+  ok(!defined($files->{Makefile}), 'must not include non-code files in tree');
 
   my $first = $repo->find($FIRST_COMMIT);
   metadata_ok($first->metadata, 'previous_commit_id', undef, 'unexisting commit id');
 }
 
 sub merge_and_first_commit_detection : Tests {
-  my $master = __create($TESTDIR, $MASTER);
+  my $repo = __create_repo($TESTDIR);
+  my $master = $repo->find($MASTER);
   ok(!$master->is_merge);
   ok(!$master->is_first_commit);
 
-  my $first = __create($TESTDIR, $FIRST_COMMIT);
+  my $first = $repo->find($FIRST_COMMIT);
   ok($first->is_first_commit);
 
-  my $merge = __create($TESTDIR, $MERGE_COMMIT);
+  my $merge = $repo->find($MERGE_COMMIT);
   ok($merge->is_merge);
 }
 
@@ -152,7 +163,7 @@ sub metadata_ok {
     my @entries = grep { $_->[0] eq $field } @$metadata;
     my $entry = $entries[0];
     if (is(ref($entry), 'ARRAY', $testname)) {
-      is($entry->[1], $value, $testname);
+      is_deeply($entry->[1], $value, $testname);
     }
   }
 }
