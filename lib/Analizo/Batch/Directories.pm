@@ -19,7 +19,7 @@ sub new {
   return $self;
 }
 
-sub next {
+sub fetch_next {
   my ($self) = @_;
   my $next_directory = $self->{directories}->[$self->{index}];
   if ($next_directory) {

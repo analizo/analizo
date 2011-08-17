@@ -91,7 +91,7 @@ sub changed_files : Tests {
   is_deeply($some_commit->changed_files, {'prog.cc' => 'M'});
 
   my $add_output_commit = $repo->find($ADD_OUTPUT_COMMIT);
-  is_deeply($add_output_commit->changed_files, { 'output.cc' => 'A', 'output.h' => 'A', 'prog.cc' => 'M', 'Makefile' => 'M' });
+  is_deeply($add_output_commit->changed_files, { 'output.cc' => 'A', 'output.h' => 'A', 'prog.cc' => 'M' });
 }
 
 sub previous_relevant : Tests {

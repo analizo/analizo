@@ -131,7 +131,7 @@ sub data {
     chomp @output;
     @output = grep { length($_) > 0 } @output;
     my @header = split('/', shift @output);
-    my %changed_files = map { my ($status, $file) = split(/\s+/, $_); $file => $status } @output;
+    my %changed_files = map { my ($status, $file) = split(/\s+/, $_); $file => $status } (grep { $self->batch->matches_filters($_) } @output);
     my @parents = split(/\s+/, $header[0]);
     $self->{data} = {
       changed_files => \%changed_files,

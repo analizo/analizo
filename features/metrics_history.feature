@@ -44,3 +44,9 @@ Feature: analizo metrics-history
     And I run "diff -u sequential-sorted.csv parallel-sorted.csv"
     Then the output must not match "---"
     Then the exit status must be 0
+
+  Scenario: language filters
+    Given I copy t/samples/mixed into a temporary directory
+    And I run "(cd mixed && git init && git add * && git commit -m 'initial commit')"
+    And I run "analizo metrics-history --language java mixed"
+    Then the output must not match "native_backend.c"
