@@ -37,7 +37,7 @@ sub write_data {
 my $__encoders = {
   _default => sub { $_[0] },
   ARRAY => sub { '"' . join(';', @{$_[0]}) . '"' },
-  HASH  => sub { 'HASH' }, # FIXME
+  HASH => sub { '"' . join(';', map { join(':', $_, $_[0]->{$_}) } sort(keys(%{$_[0]}))) . '"' },
 };
 
 sub _encode_value($) {
