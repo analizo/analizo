@@ -94,7 +94,16 @@ sub add_module_data_for_modules_changed_by_commit : Tests {
   $job->mock(
     'metadata_hashref',
     sub {
-      { 'changed_files' => ['mammal.h', 'dog.cc'] }
+      {
+        'changed_files' => ['mammal.h', 'dog.cc'],
+        'files' => {
+          'mammal.h'  => '1111111111111111111111111111111111111111',
+          'dog.cc'    => '2222222222222222222222222222222222222222',
+          'dog.h'     => '3333333333333333333333333333333333333333',
+          'cat.cc'    => '4444444444444444444444444444444444444444',
+          'cat.h'     => '5555555555555555555555555555555555555555',
+        }
+      }
     }
   );
   $job->mock('project_name', sub { 'animals'; });
@@ -108,8 +117,14 @@ sub add_module_data_for_modules_changed_by_commit : Tests {
     select_one_ok($OUTFILE, "SELECT * FROM modules JOIN module_versions ON (module_versions.module_id = modules.id) JOIN commits_module_versions ON (commits_module_versions.module_version_id = module_versions.id) JOIN commits ON (commits_module_versions.commit_id = commits.id) WHERE commits.id = 'foo' AND modules.name = '$module'");
     # metrics
     select_ok($OUTFILE, "SELECT * FROM modules JOIN module_versions ON (module_versions.module_id = modules.id) JOIN metrics ON (metrics.module_version_id = module_versions.id) WHERE modules.name = '$module' AND metrics.name IN ('lcom4','cbo')", 2);
-
   }
+
+  select_ok($OUTFILE, "SELECT * FROM module_versions JOIN commits_module_versions ON (module_versions.id = commits_module_versions.module_version_id) JOIN commits ON (commits.id = commits_module_versions.commit_id) WHERE commit_id = 'foo'", 3);
+  select_one_ok($OUTFILE, "SELECT * FROM modules JOIN module_versions ON (module_versions.module_id = modules.id) WHERE modules.name = 'Mammal' AND module_versions.id = '1111111111111111111111111111111111111111'");
+
+  # one module with multiple files: concatenate SHA1 of files and calculate the SHA1 of that.
+  select_one_ok($OUTFILE, "SELECT * FROM modules JOIN module_versions ON (module_versions.module_id = modules.id) WHERE modules.name = 'Dog' AND module_versions.id = '452219454519b29aae2e135c470d97d9e234976b'");
+
 }
 
 sub __create {

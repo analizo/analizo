@@ -104,16 +104,31 @@ sub _add_modules($$$$) {
   my ($self, $job, $commit_id, $project_id) = @_;
   my $metadata = $job->metadata_hashref();
 
+  my %module_versions = ();
+  if ($metadata->{files}) {
+    for my $file (keys(%{$metadata->{files}})) {
+      my $module = $job->model->module_by_file($file);
+      next unless $module;
+      unless($module_versions{$module}) {
+        my $module_id = $self->_add_module($module, $project_id);
+
+        my $module_files = $job->model->files($module);
+        my @file_ids = map { $metadata->{files}->{$_} } sort(@$module_files);
+
+        my $module_version_id = $self->_add_module_version($commit_id, $module_id, @file_ids);
+        $module_versions{$module} = $module_version_id;
+      }
+    }
+  }
+
   if ($metadata->{changed_files}) {
-    my @modules = ();
+    my %added_module_metrics = ();
     for my $file (@{$metadata->{changed_files}}) {
       my $module = $job->model->module_by_file($file);
       next unless $module; # not all files correspond to modules!
-      unless(grep { $_ eq $module } @modules) { # do not process one module more than once per commit
-        CORE::push @modules, $module;
-        my $module_id = $self->_add_module($module, $project_id);
-        my $module_version_id = $self->_add_module_version($module_id, $commit_id);
-        $self->_add_metrics($job, $module, $module_version_id);
+      unless ($added_module_metrics{$module}) {
+        $added_module_metrics{$module} = 1;
+        $self->_add_metrics($job, $module, $module_versions{$module});
       }
     }
   }
@@ -138,11 +153,19 @@ sub _find_module($$$) {
 }
 
 sub _add_module_version {
-  my ($self, $module_id, $commit_id) = @_;
-  $self->{st_add_module_version} ||= $self->{dbh}->prepare('INSERT INTO module_versions (module_id) VALUES (?)');
-  $self->{st_add_module_version}->execute($module_id);
+  my ($self, $commit_id, $module_id, @file_ids) = @_;
+  my $module_version_id;
+  if (scalar(@file_ids) == 1) {
+    $module_version_id = $file_ids[0];
+  } else {
+    $module_version_id = sha1_hex(join('', @file_ids));
+  }
 
-  my $module_version_id = $self->_find_row_id('SELECT max(id) from module_versions WHERE module_id = ?', $module_id);
+  my $module_version_already_exists = $self->_find_row_id('SELECT id from module_versions WHERE module_id = ? AND id = ?', $module_id, $module_version_id);
+  unless ($module_version_already_exists) {
+    $self->{st_add_module_version} ||= $self->{dbh}->prepare('INSERT INTO module_versions (id,module_id) VALUES (?,?)');
+    $self->{st_add_module_version}->execute($module_version_id, $module_id);
+  }
 
   $self->{st_link_commit_and_module_version} ||= $self->{dbh}->prepare('INSERT INTO commits_module_versions (commit_id,module_version_id) VALUES (?,?)');
   $self->{st_link_commit_and_module_version}->execute($commit_id, $module_version_id);
@@ -245,15 +268,16 @@ CREATE TABLE modules (
 CREATE UNIQUE INDEX modules_project_id_name ON modules(project_id, name);
 
 CREATE TABLE module_versions (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  id CHAR(40) PRIMARY KEY,
   module_id INTEGER
 );
 
 CREATE TABLE commits_module_versions (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   commit_id CHAR(40),
-  module_version_id INTEGER,
-  status CHAR(30)
+  module_version_id CHAR(40),
+  modified INTEGER default 0,
+  added INTEGER default 0
 );
 CREATE INDEX commits_module_versions_commit_id ON commits_module_versions (commit_id);
 
