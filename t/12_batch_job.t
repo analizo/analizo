@@ -88,4 +88,25 @@ sub project_name : Tests {
   is($job->project_name, 'project');
 }
 
+sub pass_filters_to_extractor : Tests {
+  my @filters = ();
+  my $extractor = mock(bless {}, 'Analizo::Extractor');
+  $extractor->mock(
+    'process',
+    sub { my $self = shift; push @filters, $self->filters; }
+  );
+
+  my $module = new Test::MockModule('Analizo::Extractor');
+  $module->mock(
+    'load',
+    sub { $extractor; }
+  );
+
+  my $job = new Analizo::Batch::Job;
+  my $cpp_filter = new Analizo::LanguageFilter('cpp');
+  $job->filters($cpp_filter);
+  $job->execute();
+  is_deeply(\@filters, [$cpp_filter], 'must pass filters to extractor object');
+}
+
 BatchJobTests->runtests;

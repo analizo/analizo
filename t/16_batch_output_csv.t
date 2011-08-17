@@ -83,6 +83,23 @@ sub must_write_list_data_as_string : Tests {
 
 }
 
+sub must_write_hash_data_as_string : Tests {
+  my $job = mock(new Analizo::Batch::Job::Directories('t/samples/animals/cpp'));
+  $job->execute();
+  $job->mock(
+    'metadata',
+    sub { [['data', { 'key1' => 'value1', 'key2' => 'value2'}]]}
+  );
+
+  my $output = __create();
+  $output->file($TMPFILE);
+  $output->push($job);
+  $output->flush();
+
+  my @lines = readfile($TMPFILE);
+  like($lines[1], qr/,"key1:value1;key2:value2",/);
+}
+
 sub __create {
   my @args = @_;
   return new Analizo::Batch::Output::CSV(@args);

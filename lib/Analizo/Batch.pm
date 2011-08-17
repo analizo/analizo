@@ -1,11 +1,21 @@
+package Analizo::Batch;
 use strict;
 use warnings;
 
-package Analizo::Batch;
+use base qw( Analizo::Filter::Client );
 
 sub new {
   my ($class, @options) = @_;
   return bless { @options }, $class;
+}
+
+sub next {
+  my ($self) = @_;
+  my $next_job = $self->fetch_next();
+  if ($next_job) {
+    $next_job->filters($self->filters());
+  }
+  return $next_job;
 }
 
 # This method must be overriden by subclasses, and must return a object that
@@ -16,7 +26,7 @@ sub new {
 #
 # All jobs returned here MUST have an B<id> set, and it must be unique inside
 # the current batch. This can be done with $job->id('SOMEJODIB').
-sub next {
+sub fetch_next {
   return undef;
 }
 

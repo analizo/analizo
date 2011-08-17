@@ -5,7 +5,6 @@ use warnings;
 use base qw(
   Analizo::Batch
   Class::Accessor::Fast
-  Analizo::Filter::Client
 );
 
 use Analizo::Batch::Job::Git;
@@ -20,7 +19,7 @@ sub new {
   $class->SUPER::new(directory => $directory);
 }
 
-sub next {
+sub fetch_next {
   my ($self) = @_;
   $self->initialize();
   my $nextcommit = $self->{relevant}->[$self->{index}];
