@@ -167,6 +167,31 @@ sub changed_added_module_versions : Tests {
   select_one_ok($OUTFILE, "SELECT * FROM commits_module_versions WHERE commit_id = 'foo' AND module_version_id = 'f676c6d81e63377edc2f9ec60b1bc2359b94606f' AND modified AND NOT added");
 }
 
+sub module_versions_with_the_same_id : Tests {
+  my $output = __create($OUTFILE);
+  my $job = mock(new Analizo::Batch::Job::Directories($SAMPLE));
+  $job->mock('project_name', sub { 'animals'; });
+  $job->id('foo');
+  $job->execute();
+  $job->mock(
+    'metadata_hashref',
+    sub {
+      {
+        'changed_files' => {
+          'animal.h'  => 'A',
+          'mammal.h'  => 'M',
+        },
+        'files' => {
+          'animal.h'  => '1111111111111111111111111111111111111111',
+          'mammal.h'  => '1111111111111111111111111111111111111111',
+        }
+      }
+    }
+  );
+  $output->push($job);
+  select_ok($OUTFILE, "SELECT * FROM module_versions WHERE id = '1111111111111111111111111111111111111111'", 2);
+}
+
 sub __create {
   my ($file) = @_;
   my $output = new Analizo::Batch::Output::DB();

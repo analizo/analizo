@@ -305,9 +305,10 @@ CREATE TABLE modules (
 CREATE UNIQUE INDEX modules_project_id_name ON modules(project_id, name);
 
 CREATE TABLE module_versions (
-  id CHAR(40) PRIMARY KEY,
+  id CHAR(40),
   module_id INTEGER,
-  @@METRICS@@
+  @@METRICS@@,
+  PRIMARY KEY (id, module_id)
 );
 
 CREATE TABLE commits_module_versions (
