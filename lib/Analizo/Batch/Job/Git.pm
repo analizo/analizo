@@ -78,7 +78,7 @@ sub previous_wanted {
 }
 
 sub previous_relevant {
-  my ($self, $repository) = @_;
+  my ($self) = @_;
   if (exists($self->{previous_relevant})) {
     return $self->{previous_relevant};
   }
