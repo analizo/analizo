@@ -109,6 +109,12 @@ sub previous_relevant : Tests {
   is($commit->previous_relevant->id, 'eb67c27055293e835049b58d7d73ce3664d3f90e');
 }
 
+sub previous_relevant_with_parent_without_previous_relevant : Tests {
+  my $repo = __create_repo('foo');
+  my $job = $repo->find('874073a5a36004cf26794a7ff2eacf496f29b786');
+  is($job->previous_relevant, undef, 'must return undef as previous_relevant when parent is a merge commit without any previous relevant commits');
+}
+
 sub previous_wanted : Tests {
   my $batch = __create_repo($TESTDIR);
 
@@ -186,5 +192,7 @@ unpack_sample_git_repository(
     chdir tmpdir();
     __PACKAGE__->runtests;
     chdir $cwd;
-  }
+  },
+  'evolution',
+  'foo'
 );

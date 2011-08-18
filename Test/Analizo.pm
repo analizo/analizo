@@ -44,11 +44,16 @@ sub tmpdir_for {
 }
 
 sub unpack_sample_git_repository {
-  my $code = shift;
+  my ($code, @repos) = @_;
+  if (!@repos) {
+    @repos = ('evolution');
+  }
   my ($package, $filename, $line) = caller;
   my $tmpdir = tmpdir_for($filename);
   system("mkdir -p $tmpdir");
-  system("tar xzf t/samples/evolution.tar.gz -C $tmpdir");
+  for my $repo (@repos) {
+    system("tar xzf t/samples/$repo.tar.gz -C $tmpdir");
+  }
   &$code();
   system("rm -rf $tmpdir");
 }

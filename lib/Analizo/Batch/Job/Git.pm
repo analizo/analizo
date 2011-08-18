@@ -92,7 +92,7 @@ sub _calculate_previous_relevant {
     return undef;
   } elsif ($self->is_merge) {
     my @possibilities = map { $self->batch->find($_)->previous_relevant } @{$self->data->{parents}};
-    my %ids = map { $_->id => 1 } @possibilities;
+    my %ids = map { $_->id => 1 } (grep { $_ } @possibilities);
     if (scalar(keys(%ids)) == 1) {
       return $possibilities[0];
     } else {
