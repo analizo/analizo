@@ -84,6 +84,7 @@ See B<analizo(1)>.
 use strict;
 use warnings;
 
+use Analizo::Command;
 use Pod::Usage;
 use Getopt::Long;
 

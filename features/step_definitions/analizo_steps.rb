@@ -42,6 +42,10 @@ When /^I copy (.*) into a temporary directory$/ do |files|
   FileUtils.cd(tmpdir)
 end
 
+When /^I change to an empty temporary directory$/ do
+  FileUtils.cd(get_tmpdir)
+end
+
 When /^I run "([^\"]*)"$/ do |command|
   system("(#{command}) >tmp.out 2>tmp.err")
   if $?.is_a?(Fixnum)
@@ -155,3 +159,8 @@ Then /^analizo must present a list of metrics$/ do
   end
 end
 
+Given /^I create a file called (.+) with the following content$/ do |filename, table|
+  File.open(filename, 'w') do |file|
+    file.write(table.raw.map { |s| s.to_s + "\n"}.join)
+  end
+end

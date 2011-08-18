@@ -127,6 +127,7 @@ See B<analizo(1)>
 
 =cut
 
+use Analizo::Command;
 use Getopt::Long;
 
 my $__help          = undef;
