@@ -1,15 +1,3 @@
-def cucumber(args)
-  options = "--format progress #{args}"
-  if system("which cucumber")
-    sh "cucumber #{options}"
-  elsif system("which bundle")
-    sh "bundle exec cucumber #{options}"
-  else
-    banner "cucumber not found in $PATH. Please install cucumber and rspec to run Analizo's acceptance tests.", :red
-    exit
-  end
-end
-
 def puts_with_color(msg, color = nil)
   color ||= :yellow
   colors = {
@@ -44,7 +32,7 @@ end
 
 desc 'Acceptance tests'
 test_task 'test:acceptance' do
-  cucumber '--tags ~@wip features/'
+  sh 'perl test.pl'
 end
 
 task :default do
