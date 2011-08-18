@@ -81,6 +81,9 @@ sub add_commit_and_developer_data : Tests {
   select_one_ok($OUTFILE, "SELECT * FROM commits JOIN projects on (projects.id = commits.project_id) WHERE commits.id = 'XPTO'");
   select_one_ok($OUTFILE, "SELECT * FROM developers JOIN commits on (commits.developer_id = developers.id) WHERE developers.name = 'Jonh Doe' AND developers.email = 'jdoe\@example.com' AND commits.id = 'XPTO'");
   select_one_ok($OUTFILE, "SELECT * FROM commits WHERE id = 'XPTO' AND previous_commit_id = 'PREVIOUS' AND date = '1313206352'");
+
+  # pushing the same data again should not crash
+  $output->push($job);
 }
 
 my $SAMPLE = ('t/samples/animals/cpp');

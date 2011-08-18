@@ -92,11 +92,13 @@ sub _find_developer($$$) {
 
 sub _add_commit($$$$) {
   my ($self, $job, $project_id, $developer_id) = @_;
-  my $metadata = $job->metadata_hashref;
-  my $previous_commit_id = $metadata->{previous_commit_id};
-  my $date = $metadata->{author_date};
-  $self->{st_insert_commit} ||= $self->{dbh}->prepare('INSERT INTO commits (id, project_id,developer_id,previous_commit_id,date) VALUES(?,?,?,?,?)');
-  $self->{st_insert_commit}->execute($job->id, $project_id, $developer_id, $previous_commit_id, $date);
+  unless ($self->_find_row_id('SELECT id FROM commits where id = ?', $job->id)) {
+    my $metadata = $job->metadata_hashref;
+    my $previous_commit_id = $metadata->{previous_commit_id};
+    my $date = $metadata->{author_date};
+    $self->{st_insert_commit} ||= $self->{dbh}->prepare('INSERT INTO commits (id, project_id,developer_id,previous_commit_id,date) VALUES(?,?,?,?,?)');
+    $self->{st_insert_commit}->execute($job->id, $project_id, $developer_id, $previous_commit_id, $date);
+  }
   return $job->id;
 }
 
