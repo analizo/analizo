@@ -20,10 +20,13 @@ WriteMakefile(
     'DBD::SQLite' => 0,
     'DBI' => 0,
     'Digest::SHA1' => 0,
+    'File::Copy::Recursive' => 0,
     'List::Compare' => 0,
+    'JSON' => 0,
     'Graph' => 0,
     'YAML' => 0,
     'Statistics::Descriptive' => 0,
+    'Statistics::OnLine' => 0,
     'ZeroMQ' => 0,
   },
   BUILD_REQUIRES => {
