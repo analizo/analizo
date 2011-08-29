@@ -96,8 +96,15 @@ sub _add_commit($$$$) {
     my $metadata = $job->metadata_hashref;
     my $previous_commit_id = $metadata->{previous_commit_id};
     my $date = $metadata->{author_date};
-    $self->{st_insert_commit} ||= $self->{dbh}->prepare('INSERT INTO commits (id, project_id,developer_id,previous_commit_id,date) VALUES(?,?,?,?,?)');
-    $self->{st_insert_commit}->execute($job->id, $project_id, $developer_id, $previous_commit_id, $date);
+
+    my ($summary, $details) = ({}, {});
+    if ($job->metrics) {
+      ($summary, $details) = $job->metrics->data();
+    }
+    my ($metric_placeholders_sql, $metric_column_names_sql, @metric_values) = _metrics_sql($summary, _project_metric_columns());
+
+    $self->{st_insert_commit} ||= $self->{dbh}->prepare("INSERT INTO commits (id, project_id,developer_id,previous_commit_id,date,$metric_column_names_sql) VALUES(?,?,?,?,?,$metric_placeholders_sql)");
+    $self->{st_insert_commit}->execute($job->id, $project_id, $developer_id, $previous_commit_id, $date, @metric_values);
   }
   return $job->id;
 }
@@ -184,12 +191,9 @@ sub _add_module_version {
   my $module_version_already_exists = $self->_find_row_id('SELECT id from module_versions WHERE module_id = ? AND id = ?', $module_id, $module_version_id);
   unless ($module_version_already_exists) {
 
-    my @metric_columns = _metric_columns();
-    my @metric_values = map { $metrics{$_} } @metric_columns;
-    my $metric_column_names = join(',', @metric_columns);
-    my $metric_placeholders = join(',', map { '?' } @metric_columns);
+    my ($metric_placeholders_sql, $metric_column_names_sql, @metric_values) = _metrics_sql(\%metrics, _module_metric_columns());
 
-    my $statement = "INSERT INTO module_versions (id,module_id,$metric_column_names) VALUES (?,?,$metric_placeholders)";
+    my $statement = "INSERT INTO module_versions (id,module_id,$metric_column_names_sql) VALUES (?,?,$metric_placeholders_sql)";
     $self->{st_add_module_version} ||= $self->{dbh}->prepare($statement);
     $self->{st_add_module_version}->execute($module_version_id, $module_id, @metric_values);
   }
@@ -212,6 +216,14 @@ sub _mark_as_modified($$$) {
   $self->{st_mark_as_modified}->execute($commit_id, $module_version_id);
 }
 
+sub _metrics_sql($@) {
+  my ($metrics_hash, @metric_columns) = @_;
+  my $metric_placeholders_sql = join(',', map { '?' } @metric_columns);
+  my $metric_column_names_sql = join(',', @metric_columns);
+  my @metric_values = map { $metrics_hash->{$_} } @metric_columns;
+  return ($metric_placeholders_sql, $metric_column_names_sql, @metric_values)
+}
+
 # Initializes the database
 #
 # TODO the current approach of feeding DDL SQL statements directly to the
@@ -224,7 +236,8 @@ sub initialize($) {
   # assume that if there is a table called `analizo_metadata`, then the database was already initialized
   if (!grep { $_ =~ /analizo_metadata/ } $self->{dbh}->tables()) {
     for my $statement (ddl_statements()) {
-      $statement =~ s/\@\@METRICS\@\@/_metric_columns_ddl()/egm;
+      $statement =~ s/\@\@MODULE_METRICS\@\@/_metric_columns_ddl(_module_metric_columns())/egm;
+      $statement =~ s/\@\@PROJECT_METRICS\@\@/_metric_columns_ddl(_project_metric_columns())/egm;
       $self->{dbh}->do($statement);
     }
   }
@@ -250,19 +263,36 @@ sub ddl_statements($) {
 
 use Analizo::Metrics;
 use Analizo::Model;
-my @__metric_columns = ();
+my $__metric_columns = undef;
 sub _metric_columns() {
-  if (!@__metric_columns) {
+  if (!$__metric_columns) {
     my $metrics = new Analizo::Metrics(model => new Analizo::Model);
-    my %metrics = $metrics->list_of_metrics();
-    @__metric_columns = keys(%metrics);
+
+    my %module_metrics = $metrics->list_of_metrics();
+    my @module_metrics= keys(%module_metrics);
+
+    my %project_metrics = $metrics->list_of_global_metrics();
+    my @project_metrics = keys(%project_metrics);
+
+    $__metric_columns = {
+      module => \@module_metrics,
+      project => \@project_metrics,
+    };
   }
-  return @__metric_columns;
+  return $__metric_columns;
+}
+
+sub _module_metric_columns() {
+  return @{ _metric_columns()->{module} };
+}
+
+sub _project_metric_columns() {
+  return @{ _metric_columns()->{project} };
 }
 
 sub _metric_columns_ddl {
-  my @columns = _metric_columns();
-  my $ddl = join(', ', map { "$_ REAL"} @columns);
+  my @columns = @_;
+  my $ddl = join(",\n  ", map { "$_ REAL"} @columns);
   return $ddl;
 }
 
@@ -293,7 +323,8 @@ CREATE TABLE commits (
   previous_commit_id CHAR(40),
   project_id INTEGER,
   date INTEGER,
-  developer_id CHAR(40)
+  developer_id CHAR(40),
+  @@PROJECT_METRICS@@
 );
 CREATE INDEX commits_project_id ON commits (project_id);
 
@@ -307,7 +338,7 @@ CREATE UNIQUE INDEX modules_project_id_name ON modules(project_id, name);
 CREATE TABLE module_versions (
   id CHAR(40),
   module_id INTEGER,
-  @@METRICS@@,
+  @@MODULE_METRICS@@,
   PRIMARY KEY (id, module_id)
 );
 

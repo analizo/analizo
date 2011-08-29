@@ -192,6 +192,16 @@ sub module_versions_with_the_same_id : Tests {
   select_ok($OUTFILE, "SELECT * FROM module_versions WHERE id = '1111111111111111111111111111111111111111'", 2);
 }
 
+sub global_metrics : Tests {
+  my $output = __create($OUTFILE);
+  my $job = mock(new Analizo::Batch::Job::Directories($SAMPLE));
+  $job->mock('project_name', sub { 'animals'; });
+  $job->id('foo');
+  $job->execute();
+  $output->push($job);
+  select_one_ok($OUTFILE, "SELECT * FROM commits where total_abstract_classes > 0");
+}
+
 sub __create {
   my ($file) = @_;
   my $output = new Analizo::Batch::Output::DB();
