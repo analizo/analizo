@@ -40,6 +40,7 @@ sub list_of_global_metrics {
     total_modules => "Total Number of Modules/Classes",
     total_nom => "Total Number of Methods",
     total_loc => "Total Lines of Code",
+    total_loc => "Total Effective Lines of Code",
     total_modules_with_defined_methods => "Total number of modules/classes with at least one defined method",
     total_modules_with_defined_attributes => "Total number of modules/classes with at least one defined attributes",
     total_methods_per_abstract_class => "Total number of methods per abstract class"
