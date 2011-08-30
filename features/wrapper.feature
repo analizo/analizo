@@ -17,7 +17,7 @@ Feature: analizo wrapper script
 
   Scenario: display version
     When I run "analizo --version"
-    Then the output must match "analizo version [0-9]+.[0-9]+.[0-9]+$"
+    Then the output must match "^analizo version [0-9]+.[0-9]+.[0-9]+"
     And the exit status must be 0
 
   Scenario: invalid option
