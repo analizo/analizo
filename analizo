@@ -118,13 +118,14 @@ use strict;
 use FindBin qw($RealBin $RealScript);
 
 if (-e "$RealBin/Makefile.PL") {
-  # Development mode:
-  #   * local library dir has precedence
-  #   * local analizo program has precedence
+  # Development mode
   my $local_lib = "$RealBin/lib";
   unshift @INC, $local_lib;
   $ENV{PERL5LIB} = $ENV{PERL5LIB} ? join(':', ($local_lib, $ENV{PERL5LIB})) : $local_lib;
   $ENV{PATH} = join(':', ($RealBin, $ENV{PATH}));
+  my $gitinfo = `cd $RealBin && git log HEAD^..HEAD --format='%cD %h'`;
+  chomp($gitinfo);
+  $VERSION = sprintf('%s (%s)', $VERSION, $gitinfo);
 }
 
 my @script_dir = grep { -d "$_/Analizo/scripts" } @INC;
