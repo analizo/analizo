@@ -5,6 +5,9 @@ use warnings;
 
 use base qw(Analizo::Extractor);
 
+use File::Path;
+use File::Spec;
+
 sub new {
   my $package = shift;
   return bless { @_ }, $package;
@@ -28,13 +31,16 @@ sub _strip_commas {
 sub actually_process {
   my $self = shift;
   my @files = ();
+  my $datadir = File::Spec->catfile(File::Spec->tmpdir(), 'analizo-sloccount-' . $$);
+  mkdir($datadir);
   eval {
-    open SLOCCOUNT, sprintf("sloccount %s |", join(' ', @_) ) or die $!;
+    open SLOCCOUNT, sprintf("sloccount --datadir $datadir %s |", join(' ', @_) ) or die $!;
     while (<SLOCCOUNT>) {
       $self->feed($_);
     }
     close SLOCCOUNT;
   };
+  File::Path->remove_tree($datadir);
 
   if($@) {
     warn($@);
