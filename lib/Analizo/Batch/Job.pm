@@ -8,7 +8,9 @@ use warnings;
 use base qw(Class::Accessor::Fast Analizo::Filter::Client);
 use File::Basename;
 
+use Analizo::Model;
 use Analizo::Extractor;
+use Analizo::Extractor::Sloccount;
 use Analizo::Metrics;
 
 __PACKAGE__->mk_accessors(qw(model metrics id directory));
@@ -114,10 +116,16 @@ sub execute {
   $self->prepare();
 
   # extract model from source
-  my $extractor = Analizo::Extractor->load();
-  $extractor->filters($self->filters);
-  $extractor->process('.');
-  $self->model($extractor->model);
+  my $model = new Analizo::Model;
+  my @extractors = (
+    Analizo::Extractor->load(undef, model => $model),
+    new Analizo::Extractor::Sloccount(model => $model),
+  );
+  for my $extractor (@extractors) {
+    $extractor->filters($self->filters);
+    $extractor->process('.');
+  }
+  $self->model($model);
 
   # calculate metrics
   $self->metrics(new Analizo::Metrics(model => $self->model));
