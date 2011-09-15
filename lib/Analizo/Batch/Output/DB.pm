@@ -116,20 +116,20 @@ sub _add_modules($$$$) {
   my %module_versions = ();
   if ($metadata->{files}) {
     for my $file (keys(%{$metadata->{files}})) {
-      my $module = $job->model->module_by_file($file);
-      next unless $module;
-      unless($module_versions{$module}) {
-        my $module_id = $self->_add_module($module, $project_id);
+      for my $module ($job->model->module_by_file($file)) {
+        unless($module_versions{$module}) {
+          my $module_id = $self->_add_module($module, $project_id);
 
-        my $module_files = $job->model->files($module);
-        my @file_ids = map { $metadata->{files}->{$_} } sort(@$module_files);
+          my $module_files = $job->model->files($module);
+          my @file_ids = map { $metadata->{files}->{$_} } sort(@$module_files);
 
-        my $module_version_id = _module_version_id(@file_ids);
+          my $module_version_id = _module_version_id(@file_ids);
 
-        my $metrics = $job->metrics->metrics_for($module);
+          my $metrics = $job->metrics->metrics_for($module);
 
-        $self->_add_module_version($commit_id, $module_id, $module_version_id, %$metrics);
-        $module_versions{$module} = $module_version_id;
+          $self->_add_module_version($commit_id, $module_id, $module_version_id, %$metrics);
+          $module_versions{$module} = $module_version_id;
+        }
       }
     }
   }
@@ -137,21 +137,21 @@ sub _add_modules($$$$) {
   if ($metadata->{changed_files}) {
     my %already_marked = ();
     for my $file (keys(%{$metadata->{changed_files}})) {
-      my $module = $job->model->module_by_file($file);
-      next unless $module; # not all files correspond to modules!
-      next if $already_marked{$module};
-      $already_marked{$module} = 1;
+      for my $module ($job->model->module_by_file($file)) {
+        next if $already_marked{$module};
+        $already_marked{$module} = 1;
 
-      my $module_version_id = $module_versions{$module};
+        my $module_version_id = $module_versions{$module};
 
-      my $module_files = $job->model->files($module);
-      my @statuses = map { $metadata->{changed_files}->{$_} || 'K' } @$module_files;
-      my $statuses = join('', @statuses);
+        my $module_files = $job->model->files($module);
+        my @statuses = map { $metadata->{changed_files}->{$_} || 'K' } @$module_files;
+        my $statuses = join('', @statuses);
 
-      if ($statuses =~ /^A+$/) {
-        $self->_mark_as_added($commit_id, $module_version_id);
-      } elsif ($statuses !~ /^D+$/) {
-        $self->_mark_as_modified($commit_id, $module_version_id);
+        if ($statuses =~ /^A+$/) {
+          $self->_mark_as_added($commit_id, $module_version_id);
+        } elsif ($statuses !~ /^D+$/) {
+          $self->_mark_as_modified($commit_id, $module_version_id);
+        }
       }
     }
   }

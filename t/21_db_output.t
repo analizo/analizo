@@ -203,6 +203,33 @@ sub global_metrics : Tests {
   select_one_ok($OUTFILE, "SELECT * FROM commits where total_eloc > 0");
 }
 
+sub files_with_multiple_modules : Tests {
+  my $output = __create($OUTFILE);
+  my $job = mock(new Analizo::Batch::Job::Directories('t/samples/file_with_two_modules/cpp'));
+  $job->mock('project_name', sub { 'multiple' });
+  $job->id("foo");
+  $job->execute;
+  $job->mock(
+    'metadata_hashref',
+    sub {
+      {
+        'changed_files' => {
+          'classes.cc'  => 'A',
+          'classes.h'   => 'A',
+          'main.cc'     => 'A',
+        },
+        'files' => {
+          'classes.cc'  => '1111111111111111111111111111111111111111',
+          'classes.h'   => '2222222222222222222222222222222222222222',
+          'main.cc'     => '3333333333333333333333333333333333333333',
+        }
+      }
+    }
+  );
+  $output->push($job);
+  select_ok($OUTFILE, 'SELECT * FROM modules', 3);
+}
+
 sub __create {
   my ($file) = @_;
   my $output = new Analizo::Batch::Output::DB();

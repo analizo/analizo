@@ -50,7 +50,8 @@ sub declare_module {
     $self->{files}->{$module} ||= [];
     push(@{$self->{files}->{$module}}, $file);
 
-    $self->{module_by_file}->{$file} = $module;
+    $self->{module_by_file}->{$file} ||= [];
+    push @{$self->{module_by_file}->{$file}}, $module;
   }
 }
 
@@ -61,7 +62,7 @@ sub files {
 
 sub module_by_file {
   my ($self, $file) = @_;
-  return $self->{module_by_file}->{$file};
+  return @{$self->{module_by_file}->{$file} || []};
 }
 
 sub inheritance {
