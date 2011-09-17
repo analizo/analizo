@@ -33,7 +33,7 @@ sub feed : Tests {
   is($extractor->model->total_eloc, 1291549, "project with 1291549 lines of code");
 }
 
-sub reading_from_one_output : Tests {
+sub reading_from_one_input_file : Tests {
   my $sample_dir = dirname(__FILE__) . '/samples/sample_basic';
   my $extractor = new_sloccount_extractor();
 
