@@ -75,10 +75,11 @@ sub git_checkout_should_actually_checkout : Tests {
   is($branch, 'master');
 }
 
-sub points_to_batch : Tests {
+sub must_NOT_keep_a_reference_to_batch : Tests {
+  my $batch = {};
   my $job = __create();
-  $job->batch(42);
-  is($job->batch, 42);
+  $job->batch($batch);
+  ok(!exists($job->{batch}));
 }
 
 sub changed_files : Tests {

@@ -50,21 +50,16 @@ sub initialize {
     $self->{jobs} = \%jobs;
     $self->{relevant} = \@relevant;
     $self->{index} = 0;
+    for my $job (@relevant) {
+      # force calculating previous relevant right now
+      $job->previous_relevant();
+    }
   }
 }
 
 sub find {
   my ($self, $id) = @_;
   return $self->{jobs}->{$id};
-}
-
-sub matches_filters {
-  my ($self, $filename) = @_;
-  if ($self->filename_matches_filters($filename)) {
-    return 1;
-  } else {
-    return 0;
-  }
 }
 
 1;

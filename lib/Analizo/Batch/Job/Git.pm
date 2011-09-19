@@ -8,11 +8,18 @@ use Digest::SHA1 qw/ sha1_hex /;
 use File::Copy::Recursive qw(dircopy);
 use File::Path qw(remove_tree);
 
-__PACKAGE__->mk_accessors('batch');
-
 sub new {
   my ($class, $directory, $id) = @_;
   $class->SUPER::new(directory => $directory, actual_directory => $directory, id => $id);
+}
+
+sub batch($$) {
+  my ($self, $batch) = @_;
+  if ($batch) {
+    $self->{finder} = sub { $batch->find($_[0]); };
+    $self->{filters} = $batch->{filters};
+  }
+  return undef;
 }
 
 sub parallel_prepare {
@@ -61,7 +68,7 @@ sub cleanup {
 sub relevant {
   my ($self) = @_;
   for my $file (keys(%{$self->changed_files})) {
-    if ($self->batch->matches_filters($file)) {
+    if ($self->filename_matches_filters($file)) {
       return 1;
     }
   }
@@ -88,10 +95,11 @@ sub previous_relevant {
 
 sub _calculate_previous_relevant {
   my ($self) = @_;
+  my $finder = $self->{finder};
   if ($self->is_first_commit) {
     return undef;
   } elsif ($self->is_merge) {
-    my @possibilities = map { $self->batch->find($_)->previous_relevant } @{$self->data->{parents}};
+    my @possibilities = map { &$finder($_)->previous_relevant } @{$self->data->{parents}};
     my %ids = map { $_->id => 1 } (grep { $_ } @possibilities);
     if (scalar(keys(%ids)) == 1) {
       return $possibilities[0];
@@ -99,7 +107,7 @@ sub _calculate_previous_relevant {
       return undef;
     }
   } else {
-    my $parent = $self->batch->find($self->data->{parents}->[0]);
+    my $parent = &$finder($self->data->{parents}->[0]);
     if ($parent->relevant) {
       return $parent;
     } else {
@@ -131,7 +139,7 @@ sub data {
     chomp @output;
     @output = grep { length($_) > 0 } @output;
     my @header = split('/', shift @output);
-    my %changed_files = map { my ($status, $file) = split(/\s+/, $_); $file => $status } (grep { $self->batch->matches_filters($_) } @output);
+    my %changed_files = map { my ($status, $file) = split(/\s+/, $_); $file => $status } (grep { $self->filename_matches_filters($_) } @output);
     my @parents = split(/\s+/, $header[0]);
     $self->{data} = {
       changed_files => \%changed_files,
@@ -184,7 +192,7 @@ sub _files {
   my %files = ();
   foreach my $line (@files) {
     my ($mode, $type, $sha1, $file) = split(/\s+/,$line);
-    if ($self->batch->matches_filters($file)) {
+    if ($self->filename_matches_filters($file)) {
       $files{$file} = $sha1;
     }
   }

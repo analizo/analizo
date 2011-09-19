@@ -43,16 +43,6 @@ sub traverse_repository : Tests {
   ok(!$jobs{$IRRELEVANT_COMMIT}, 'intermediate IRRELEVANT commit must not be listed');
 }
 
-use Analizo::LanguageFilter;
-sub filters : Tests {
-  my $batch = __create();
-  $batch->filters(new Analizo::LanguageFilter('c'));
-
-  ok($batch->matches_filters('test.c'), 'test.c');
-  ok($batch->matches_filters('test.h'), 'test.h');
-  ok(!$batch->matches_filters('README'), 'only README');
-}
-
 sub default_filter : Tests {
   my $batch = __create($TESTDIR);
   while (my $job = $batch->next()) {
