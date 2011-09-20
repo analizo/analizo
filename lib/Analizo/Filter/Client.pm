@@ -14,6 +14,11 @@ sub has_filters {
   return exists($self->{filters}) && exists($self->{filters}->[0]);
 }
 
+sub share_filters_with($$) {
+  my ($self, $other) = @_;
+  $other->{filters} = $self->{filters};
+}
+
 sub exclude {
   my ($self, @dirs) = @_;
   if (!$self->{excluding_dirs}) {

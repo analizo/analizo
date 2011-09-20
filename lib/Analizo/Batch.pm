@@ -13,7 +13,7 @@ sub next {
   my ($self) = @_;
   my $next_job = $self->fetch_next();
   if ($next_job) {
-    $next_job->filters(@{$self->filters()});
+    $self->share_filters_with($next_job);
   }
   return $next_job;
 }

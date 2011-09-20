@@ -76,7 +76,7 @@ sub git_checkout_should_actually_checkout : Tests {
 }
 
 sub must_NOT_keep_a_reference_to_batch : Tests {
-  my $batch = {};
+  my $batch = __create_repo($TESTDIR);
   my $job = __create();
   $job->batch($batch);
   ok(!exists($job->{batch}));

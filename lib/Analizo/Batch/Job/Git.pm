@@ -17,7 +17,7 @@ sub batch($$) {
   my ($self, $batch) = @_;
   if ($batch) {
     $self->{finder} = sub { $batch->find($_[0]); };
-    $self->{filters} = $batch->{filters};
+    $batch->share_filters_with($self);
   }
   return undef;
 }

@@ -122,7 +122,7 @@ sub execute {
     new Analizo::Extractor::Sloccount(model => $model),
   );
   for my $extractor (@extractors) {
-    $extractor->filters(@{$self->filters});
+    $self->share_filters_with($extractor);
     $extractor->process('.');
   }
   $self->model($model);
