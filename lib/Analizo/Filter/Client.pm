@@ -6,7 +6,12 @@ sub filters {
   if (@new_filters) {
     push @{$self->{filters}}, @new_filters;
   }
-  return @{$self->{filters}};
+  return $self->{filters};
+}
+
+sub has_filters {
+  my ($self) = @_;
+  return exists($self->{filters}) && exists($self->{filters}->[0]);
 }
 
 sub exclude {
@@ -20,7 +25,7 @@ sub exclude {
 
 sub filename_matches_filters {
   my ($self, $filename) = @_;
-  for my $filter ($self->filters) {
+  for my $filter (@{$self->filters}) {
     unless ($filter->matches($filename)) {
       return 0;
     }

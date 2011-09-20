@@ -93,12 +93,12 @@ sub dont_allow_code_injection: Tests {
 sub has_filters : Tests {
   my $extractor = new Analizo::Extractor;
   can_ok($extractor, 'filters');
-  my @filters = $extractor->filters;
-  is_deeply([], \@filters);
+  my $filters = $extractor->filters;
+  is_deeply([], $filters);
   my $language = {};
   $extractor->filters($language);
-  @filters = $extractor->filters;
-  is($language, $filters[0]);
+  $filters = $extractor->filters;
+  is($language, $filters->[0]);
 }
 
 sub must_consider_only__supported_languages : Tests {
@@ -150,17 +150,17 @@ sub must_filter_input_with_language_filter : Tests {
 
 sub must_create_filters_for_excluded_dirs : Tests {
   my $extractor = new Analizo::Extractor;
-  my @filters = $extractor->filters;
-  is(scalar @filters, 0);
+  my $filters = $extractor->filters;
+  is(scalar @$filters, 0);
 
   # addding the first excluded directory filter also adds a null language filter
   $extractor->exclude('test');
-  @filters = $extractor->filters;
-  is(scalar @filters, 2);
+  $filters = $extractor->filters;
+  is(scalar @$filters, 2);
 
   $extractor->exclude('uitest');
-  @filters = $extractor->filters;
-  is(scalar(@filters), 3);
+  $filters = $extractor->filters;
+  is(scalar(@$filters), 3);
 }
 
 sub must_not_process_files_in_excluded_dirs : Tests {

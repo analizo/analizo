@@ -40,7 +40,7 @@ sub initialize {
     close COMMITIDS;
     chomp @ids;
     # initialize filter: by default look only for files in known languages
-    unless ($self->filters) {
+    unless ($self->has_filters) {
       $self->filters(new Analizo::LanguageFilter('all'));
     }
     # construct job objects

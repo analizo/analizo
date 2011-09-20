@@ -25,7 +25,7 @@ sub pass_filters_forward : Tests {
   my $filter = new Analizo::LanguageFilter('c');
   $batch->filters($filter);
   $batch->next();
-  is_deeply([$job->filters], [$filter], 'must pass filters into job');
+  is_deeply($job->filters, [$filter], 'must pass filters into job');
 }
 
 __PACKAGE__->runtests;

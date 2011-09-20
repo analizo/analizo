@@ -85,7 +85,7 @@ sub process {
 
 sub _filter_input {
   my ($self, @input) = @_;
-  unless ($self->filters) {
+  unless ($self->has_filters) {
     # By default, only look at supported languages
     $self->filters(new Analizo::LanguageFilter('all'));
   }
