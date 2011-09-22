@@ -21,7 +21,7 @@ sub _add_file {
 sub _cpp_hack {
   my ($self, $module) = @_;
   my $current = $self->current_file;
-  if ($current =~ /^(.*)\.(h|hpp)$/) {
+  if (defined($current) && $current =~ /^(.*)\.(h|hpp)$/) {
     my $prefix = $1;
     # look for a previously added .cpp/.cc/etc
     my @implementations = grep { $_ =~ /^$prefix\.(cpp|cxx|cc)$/} @{$self->{files}};
