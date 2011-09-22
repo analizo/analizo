@@ -42,7 +42,7 @@ sub feed {
   }
 
   # current module declaration
-  if ($line =~ /^module (\S+)$/) {
+  if ($line =~ /^module (.+)$/) {
     my $modulename = _file_to_module($1);
     $self->current_module($modulename);
     $self->_cpp_hack($modulename);

@@ -220,5 +220,11 @@ sub use_full_filename_for_C_modules : Tests {
   ok(grep { /^src\/main$/ } @modules);
 }
 
+sub module_name_can_contain_spaces : Tests {
+  my $extractor = new Analizo::Extractor::Doxyparse;
+  $extractor->feed('module TemplatedClass< true >');
+  is($extractor->current_module, 'TemplatedClass< true >')
+}
+
 ExtractorDoxyparseTests->runtests;
 
