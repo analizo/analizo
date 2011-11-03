@@ -1,3 +1,5 @@
+# encoding: utf-8
+
 def puts_with_color(msg, color = nil)
   color ||= :yellow
   colors = {
