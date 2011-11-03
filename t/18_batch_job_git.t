@@ -17,19 +17,19 @@ my $TESTDIR = 'evolution';
 
 
 sub constructor : Tests {
-  isa_ok(__create(), 'Analizo::Batch::Job::Git');
+  isa_ok(new Analizo::Batch::Job::Git(), 'Analizo::Batch::Job::Git');
 }
 
 sub constructor_with_arguments : Tests {
   my $id = $MASTER;
-  my $job = __create($TESTDIR, $id);
+  my $job = new Analizo::Batch::Job::Git($TESTDIR, $id);
   is($job->directory, $TESTDIR);
   is($job->{actual_directory}, $TESTDIR);
   is($job->id, $id);
 }
 
 sub parallelism_support : Tests {
-  my $job = __create($TESTDIR, $MASTER);
+  my $job = __find($MASTER);
   $job->parallel_prepare();
 
   isnt($job->{actual_directory}, $TESTDIR);
@@ -43,7 +43,7 @@ sub parallelism_support : Tests {
 }
 
 sub prepare_and_cleanup : Tests {
-  my $job = mock(__create($TESTDIR, $SOME_COMMIT));
+  my $job = mock(__find($SOME_COMMIT));
 
   my @checkouts = ();
   $job->mock('git_checkout', sub { push @checkouts, $_[1]; } );
@@ -58,7 +58,7 @@ sub prepare_and_cleanup : Tests {
 }
 
 sub git_checkout_should_actually_checkout : Tests {
-  my $job = __create($TESTDIR, $SOME_COMMIT);
+  my $job = __find($SOME_COMMIT);
   my $getHEAD = sub {
     my $commit = `git log --format=%H | head -n 1`; chomp($commit);
     return $commit;
@@ -77,14 +77,14 @@ sub git_checkout_should_actually_checkout : Tests {
 }
 
 sub must_NOT_keep_a_reference_to_batch : Tests {
-  my $batch = __create_repo($TESTDIR);
-  my $job = __create();
+  my $batch = __get_repo();
+  my $job = __find();
   $job->batch($batch);
   ok(!exists($job->{batch}));
 }
 
 sub changed_files : Tests {
-  my $repo = __create_repo($TESTDIR);
+  my $repo = __get_repo();
 
   my $master = $repo->find($MASTER);
   is_deeply($master->changed_files, {'input.cc' => 'M'});
@@ -97,7 +97,7 @@ sub changed_files : Tests {
 }
 
 sub previous_relevant : Tests {
-  my $batch = __create_repo($TESTDIR);
+  my $batch = __get_repo();
 
   my $first = $batch->find($FIRST_COMMIT);
   is($first->previous_relevant, undef);
@@ -112,13 +112,13 @@ sub previous_relevant : Tests {
 }
 
 sub previous_relevant_with_parent_without_previous_relevant : Tests {
-  my $repo = __create_repo('foo');
+  my $repo = __get_repo('foo');
   my $job = $repo->find('874073a5a36004cf26794a7ff2eacf496f29b786');
   is($job->previous_relevant, undef, 'must return undef as previous_relevant when parent is a merge commit without any previous relevant commits');
 }
 
 sub previous_wanted : Tests {
-  my $batch = __create_repo($TESTDIR);
+  my $batch = __get_repo();
 
   my $master = $batch->find($MASTER);
   is($master->previous_wanted, $master->previous_relevant);
@@ -128,7 +128,7 @@ sub previous_wanted : Tests {
 }
 
 sub metadata : Tests {
-  my $repo = __create_repo($TESTDIR);
+  my $repo = __get_repo();
   my $master = $repo->find($MASTER);
 
   my $metadata = $master->metadata();
@@ -153,7 +153,7 @@ sub metadata : Tests {
 }
 
 sub merge_and_first_commit_detection : Tests {
-  my $repo = __create_repo($TESTDIR);
+  my $repo = __get_repo();
   my $master = $repo->find($MASTER);
   ok(!$master->is_merge);
   ok(!$master->is_first_commit);
@@ -176,15 +176,26 @@ sub metadata_ok {
   }
 }
 
-sub __create {
-  my @args = @_;
-  new Analizo::Batch::Job::Git(@args);
+sub __find {
+  my ($id) = @_;
+  if (defined($id)) {
+    my $repo = __get_repo();
+    return $repo->find($id);
+  } else {
+    return new Analizo::Batch::Job::Git;
+  }
 }
 
-sub __create_repo {
-  my @args = @_;
-  my $repo = new Analizo::Batch::Git(@args);
+my %REPOS = ();
+sub __get_repo {
+  my ($repoid) = @_;
+  $repoid ||= $TESTDIR;
+  if (defined($REPOS{$repoid})) {
+    return $REPOS{$repoid};
+  }
+  my $repo = new Analizo::Batch::Git($repoid);
   $repo->initialize();
+  $REPOS{$repoid} = $repo;
   return $repo;
 }
 
