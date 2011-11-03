@@ -167,11 +167,6 @@ sub metadata {
   ];
 }
 
-sub git_HEAD {
-  my $commit = `git log --format=%H | head -n 1`; chomp($commit);
-  return $commit;
-}
-
 sub git_checkout {
   my ($self, $commit) = @_;
   system("git checkout --quiet $commit");

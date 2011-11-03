@@ -60,11 +60,12 @@ sub prepare_and_cleanup : Tests {
 sub git_checkout_should_actually_checkout : Tests {
   my $job = __create($TESTDIR, $SOME_COMMIT);
   my $getHEAD = sub {
-    $job->git_HEAD();
+    my $commit = `git log --format=%H | head -n 1`; chomp($commit);
+    return $commit;
   };
   my $master1 = on_dir($TESTDIR, $getHEAD);
   $job->prepare();
-  my $commit = $job->git_HEAD;
+  my $commit = on_dir($TESTDIR, $getHEAD);
   $job->cleanup();
   my $master2 = on_dir($TESTDIR, $getHEAD);
   my $branch = on_dir($TESTDIR, sub { $job->git_current_branch() });
