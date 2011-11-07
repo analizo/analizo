@@ -94,6 +94,9 @@ sub changed_files : Tests {
 
   my $add_output_commit = $repo->find($ADD_OUTPUT_COMMIT);
   is_deeply($add_output_commit->changed_files, { 'output.cc' => 'A', 'output.h' => 'A', 'prog.cc' => 'M' });
+
+  my $relevant_merge_commit = $repo->find($RELEVANT_MERGE);
+  is_deeply($relevant_merge_commit->changed_files, { 'prog.cc' => 'MM' });
 }
 
 sub previous_relevant : Tests {
@@ -115,6 +118,12 @@ sub previous_relevant_with_parent_without_previous_relevant : Tests {
   my $repo = __get_repo('foo');
   my $job = $repo->find('874073a5a36004cf26794a7ff2eacf496f29b786');
   is($job->previous_relevant, undef, 'must return undef as previous_relevant when parent is a merge commit without any previous relevant commits');
+}
+
+sub relevant_merge : Tests {
+  my $batch = __get_repo();
+  my $relevant_merge = $batch->find($RELEVANT_MERGE);
+  ok($relevant_merge->relevant());
 }
 
 sub previous_wanted : Tests {

@@ -9,8 +9,8 @@ use File::Copy::Recursive qw(dircopy);
 use File::Path qw(remove_tree);
 
 sub new {
-  my ($class, $directory, $id) = @_;
-  $class->SUPER::new(directory => $directory, actual_directory => $directory, id => $id);
+  my ($class, $directory, $id, $data) = @_;
+  $class->SUPER::new(directory => $directory, actual_directory => $directory, id => $id, data => $data);
 }
 
 sub batch($$) {
@@ -134,22 +134,6 @@ sub changed_files {
 
 sub data {
   my ($self) = @_;
-  unless (defined($self->{data})) {
-    my @output = `cd $self->{actual_directory} && git show --name-status --format=%P/%at/%aN/%aE $self->{id}`;
-    chomp @output;
-    @output = grep { length($_) > 0 } @output;
-    my @header = split('/', shift @output);
-    my %changed_files = map { my ($status, $file) = split(/\s+/, $_); $file => $status } (grep { $self->filename_matches_filters($_) } @output);
-    my @parents = split(/\s+/, $header[0]);
-    $self->{data} = {
-      changed_files => \%changed_files,
-      parents       => \@parents,
-      author_date   => $header[1],
-      author_name   => $header[2],
-      author_email  => $header[3],
-      files         => $self->_files(),
-    };
-  }
   return $self->{data};
 }
 
@@ -163,7 +147,7 @@ sub metadata {
     ['author_name', $data->{author_name}],
     ['author_email', $data->{author_email}],
     ['changed_files', $data->{changed_files}],
-    ['files', $data->{files}],
+    ['files', $self->files()],
   ];
 }
 
@@ -181,9 +165,12 @@ sub git_current_branch {
   return $current;
 }
 
-sub _files {
+sub files {
   my ($self) = @_;
-  my @files = `cd $self->{actual_directory} && git ls-tree -r $self->{id}`;
+  if (defined($self->{files})) {
+    return $self->{files};
+  }
+  my @files = `cd $self->{directory} && git ls-tree -r $self->{id}`;
   my %files = ();
   foreach my $line (@files) {
     my ($mode, $type, $sha1, $file) = split(/\s+/,$line);
@@ -191,7 +178,8 @@ sub _files {
       $files{$file} = $sha1;
     }
   }
-  return \%files;
+  $self->{files} = \%files;
+  return $self->{files};
 }
 
 1;

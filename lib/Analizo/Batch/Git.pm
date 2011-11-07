@@ -9,6 +9,7 @@ use base qw(
 
 use Analizo::Batch::Job::Git;
 use Cwd 'abs_path';
+use YAML;
 
 __PACKAGE__->mk_ro_accessors(qw( directory ));
 
@@ -34,17 +35,45 @@ sub fetch_next {
 sub initialize {
   my ($self) = @_;
   unless(defined($self->{index})) {
-    # read in list of commits
-    open COMMITIDS, "(cd $self->{directory} && git log --format=%H)|";
-    my @ids = <COMMITIDS>;
-    close COMMITIDS;
-    chomp @ids;
     # initialize filter: by default look only for files in known languages
     unless ($self->has_filters) {
       $self->filters(new Analizo::LanguageFilter('all'));
     }
-    # construct job objects
-    my @jobs = map { my $job = new Analizo::Batch::Job::Git($self->directory, $_); $job->batch($self); $job } @ids;
+
+    # read in list of commits
+    my $data = `(cd $self->{directory} && git log  --name-status --format='---%nid: %H%nparents: %P%nauthor_date: %at%nauthor_name: %aN%nauthor_email: %aE%n--- |')`;
+    my @data = Load($data);
+    my @jobs = ();
+    while($#data > 0) {
+
+      my $commit_data = shift(@data);
+
+      my @parents = ();
+      @parents = split(/\s+/, $commit_data->{parents}) if defined($commit_data->{parents});
+      $commit_data->{parents} = \@parents;
+
+      my $changed_files = shift(@data);
+      if(scalar(@parents) > 1) {
+        # merge commits do not have their changed files listed in `git log`, no
+        # matter what. This way we *need* to do a `git show` here.
+        $changed_files = `(cd $self->{directory} && git show --name-status --format='%n' $commit_data->{id})`;
+      }
+      chomp($changed_files);
+      $changed_files =~ s/^\s*//; # remove leading whitespace
+      my %changed_files = map { my ($status, $file) = split(/\s+/, $_); $file => $status } (split("\n", $changed_files));
+      for my $file (keys(%changed_files)) {
+        if (!$self->filename_matches_filters($file)) {
+          delete $changed_files{$file};
+        }
+      }
+      $commit_data->{changed_files} = \%changed_files;
+
+      my $job = new Analizo::Batch::Job::Git($self->{directory}, $commit_data->{id}, $commit_data);
+      $job->batch($self);
+      push @jobs, $job;
+
+    }
+
     my %jobs = map { $_->id => $_ } @jobs;
     my @relevant = grep { $_->relevant } @jobs;
     $self->{jobs} = \%jobs;
