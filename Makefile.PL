@@ -40,7 +40,7 @@ WriteMakefile(
   EXE_FILES => ['analizo'],
   MAN1PODS => \%manpages,
   AUTHOR => 'Antonio Terceiro <terceiro@softwarelivre.org>',
-  LICENSE => 'perl',
+  LICENSE => 'GPLv3+',
   ABSTRACT => 'Source code analysis toolkit',
   PREREQ_PM => {
     'Class::Accessor::Fast' => 0,
