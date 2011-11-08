@@ -41,11 +41,16 @@ sub start_workers {
       push(@{$self->{workers}}, $pid);
     } else {
       # on child
-      my $source = _socket_spec('source', $ppid);
-      my $results = _socket_spec('results', $ppid);
-      worker($source, $results);
+      worker($ppid);
       exit();
     }
+  }
+  my $distributor_pid = fork();
+  if ($distributor_pid) {
+    push(@{$self->{workers}}, $distributor_pid);
+  } else {
+    distributor($ppid, $n);
+    exit();
   }
 }
 
@@ -61,62 +66,71 @@ sub coordinate_workers {
 
   my $context = ZeroMQ::Context->new();
 
-  my $workers = $context->socket(ZMQ_REP);
-  $workers->bind(_socket_spec('source', $$));
+  my $queue = $context->socket(ZMQ_PUSH);
+  $queue->bind(_socket_spec('queue', $$));
 
   my $results = $context->socket(ZMQ_PULL);
   $results->bind(_socket_spec('results', $$));
 
-  my $poller = ZeroMQ::Poller->new(
-    {
-      name      => 'job_request',
-      socket    => $workers,
-      events    => ZMQ_POLLIN,
-    },
-    {
-      name      => 'results',
-      socket    => $results,
-      events    => ZMQ_POLLIN,
-    },
-  );
-
   my $before_each_job = $self->before_each_job || sub {};
 
-  my $results_received = 0;
-  my $workers_finished = 0;
+  # push jobs to queue
   my $results_expected = 0;
-  my $number_of_workers = $self->parallelism;
-  while ($results_received < $results_expected || $workers_finished < $number_of_workers) {
-    $poller->poll();
-    if ($poller->has_event('job_request')) {
-      $workers->recv();
-      my $job = $batch->next();
-      if ($job) {
-        &$before_each_job($job);
-        $workers->send(Dump($job));
-        $results_expected++;
-      } else {
-        # no more jobs to process, tell workers to finish with an empty job
-        $workers->send(Dump({}));
-        $workers_finished++;
-      }
-    }
-    if ($poller->has_event('results')) {
-      my $msg = $results->recv();
-      my $job = Load($msg->data);
-      $output->push($job);
-      $results_received++;
+  while (my $job = $batch->next()) {
+    $queue->send(Dump($job));
+    $results_expected++;
+  }
+  $queue->send(Dump({}));
+
+  # collect results
+  my $results_received = 0;
+  while ($results_received < $results_expected) {
+    my $msg = $results->recv();
+    my $job = Load($msg->data);
+    $output->push($job);
+    $results_received++;
+  }
+}
+
+sub distributor {
+  my ($parent_pid, $number_of_workers) = @_;
+  my $context = ZeroMQ::Context->new();
+
+  my $queue = $context->socket(ZMQ_PULL);
+  $queue->connect(_socket_spec('queue', $parent_pid));
+
+  my $job_source = $context->socket(ZMQ_REP);
+  $job_source->bind(_socket_spec('job_source', $parent_pid));
+
+  my @queue;
+  my $job;
+  while(1) {
+    my $msg = $queue->recv();
+    $job = Load($msg->data);
+    last if !exists($job->{id});
+    push(@queue, $job);
+  }
+
+  my $workers_finished = 0;
+  while ($workers_finished < $number_of_workers) {
+    $job_source->recv();
+    if(scalar(@queue) > 0) {
+      $job = shift(@queue);
+      $job_source->send(Dump($job));
+    } else {
+      $job_source->send(Dump({}));
+      $workers_finished++;
     }
   }
 }
 
 sub worker {
-  my ($source_spec, $results_spec) = @_;
+  my ($parent_pid) = @_;
   my $context = ZeroMQ::Context->new();
   my $source = $context->socket(ZMQ_REQ);
-  $source->connect($source_spec);
+  $source->connect(_socket_spec('job_source', $parent_pid));
   my $results = $context->socket(ZMQ_PUSH);
-  $results->connect($results_spec);
+  $results->connect(_socket_spec('results', $parent_pid));
   my $run = 1;
   my $last_job = undef;
   while ($run) {
