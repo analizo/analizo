@@ -118,10 +118,6 @@ B<$ analizo metrics-history -f db -o 'dbi:Pg:dbname=pgdb'>
 Writes te data to a PostgreSQL database called I<pgdb>. This requires the
 I<DBI::Pg> Perl module.
 
-=back
-
-
-
 =head1 SEE ALSO
 
 B<analizo-metrics(1)>
