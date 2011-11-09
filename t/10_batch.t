@@ -18,6 +18,10 @@ sub next : Tests {
   is($batch->next, undef);
 }
 
+sub count : Tests {
+  can_ok("Analizo::Batch", 'count');
+}
+
 sub pass_filters_forward : Tests {
   my $batch = mock(new Analizo::Batch);
   my $job = new Analizo::Batch::Job;

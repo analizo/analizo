@@ -31,5 +31,20 @@ sub interaction_with_output : Tests {
   ok($flushed, 'must flush output object');
 }
 
+sub progress : Tests {
+  my $runner = new Analizo::Batch::Runner;
+  my $job = undef;
+  my $step = undef;
+  my $total = undef;
+  $runner->progress(sub { my ($j, $i, $n) = @_; $job = $j; $step = $i; $total = $n; });
+
+  my $_j = {};
+  $runner->report_progress($_j, 33, 99);
+
+  is($job, $_j);
+  is($step, 33);
+  is($total, 99);
+}
+
 
 BatchRunnerTests->runtests;

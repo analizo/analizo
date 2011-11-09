@@ -30,4 +30,10 @@ sub fetch_next {
   return undef;
 }
 
+# This method must be overriden by subclasses and return the total amount of
+# jobs in this batch.
+sub count {
+  return undef;
+}
+
 1;

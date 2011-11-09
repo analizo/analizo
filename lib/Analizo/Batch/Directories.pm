@@ -30,4 +30,9 @@ sub fetch_next {
   return undef;
 }
 
+sub count {
+  my ($self) = @_;
+  return scalar(@{$self->{directories}});
+}
+
 1;

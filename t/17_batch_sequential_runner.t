@@ -51,25 +51,6 @@ sub run : Tests {
   ok($output_flushed == 1, 'output must be flushed exactly once');
 }
 
-sub before_each_job : Tests {
-  my $batch = mock(new Analizo::Batch);
-  my $job1 = mock(new Analizo::Batch::Job);
-  my $job2 = mock(new Analizo::Batch::Job);
-  my $output = mock(new Analizo::Batch::Output);
-
-  $batch->set_series('next', $job1, $job2, undef);
-  $job1->mock('execute', sub { });
-  $job2->mock('execute', sub { });
-  $output->mock('flush', sub { });
-
-  my $runner = __create();
-  my @passed = ();
-  $runner->before_each_job(sub { my $job = $_[0]; push @passed, $job; });
-  $runner->run($batch, $output);
-
-  is_deeply(\@passed, [$job1, $job2]);
-}
-
 sub __create {
   new Analizo::Batch::Runner::Sequential;
 }

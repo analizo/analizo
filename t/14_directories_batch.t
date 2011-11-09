@@ -37,6 +37,11 @@ sub deliver_jobs : Tests {
   is(undef, $batch->next());
 }
 
+sub count : Tests {
+  my $batch = __create_batch(qw(c cpp));
+  is($batch->count, 2);
+}
+
 sub __create_batch {
   my @args = @_;
   on_dir('t/samples/hello_world', sub { new Analizo::Batch::Directories(@args) });

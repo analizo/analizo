@@ -77,6 +77,7 @@ sub initialize {
     my %jobs = map { $_->id => $_ } @jobs;
     my @relevant = grep { $_->relevant } @jobs;
     $self->{jobs} = \%jobs;
+    $self->{count} = scalar(keys(%{$self->{jobs}}));
     $self->{relevant} = \@relevant;
     $self->{index} = 0;
     for my $job (@relevant) {
@@ -84,6 +85,11 @@ sub initialize {
       $job->previous_relevant();
     }
   }
+}
+
+sub count {
+  my ($self) = @_;
+  return $self->{count};
 }
 
 sub find {

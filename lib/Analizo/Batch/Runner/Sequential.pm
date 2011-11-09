@@ -7,11 +7,12 @@ use base qw( Analizo::Batch::Runner );
 
 sub actually_run {
   my ($self, $batch, $output) = @_;
-  my $before_each_job = $self->before_each_job || (sub {});
+  my $i = 0;
   while (my $job = $batch->next()) {
-    &$before_each_job($job);
     $job->execute();
     $output->push($job);
+    $i++;
+    $self->report_progress($job, $i, $batch->count);
   }
 }
 

@@ -43,6 +43,12 @@ sub traverse_repository : Tests {
   ok(!$jobs{$IRRELEVANT_COMMIT}, 'intermediate IRRELEVANT commit must not be listed');
 }
 
+sub count : Tests {
+  my $batch = __create($TESTDIR);
+  $batch->initialize();
+  is($batch->count, 11);
+}
+
 sub default_filter : Tests {
   my $batch = __create($TESTDIR);
   while (my $job = $batch->next()) {

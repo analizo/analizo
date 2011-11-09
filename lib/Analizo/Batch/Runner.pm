@@ -26,6 +26,14 @@ sub run($$$) {
 sub actually_run {
 }
 
-__PACKAGE__->mk_accessors(qw( before_each_job ));
+__PACKAGE__->mk_accessors(qw( progress ));
+
+sub report_progress {
+  my ($self, $job, $i, $n) = @_;
+  my $progress = $self->progress;
+  if ($progress) {
+    &$progress($job, $i, $n);
+  }
+}
 
 1;

@@ -117,10 +117,10 @@ if ($__parallel) {
 }
 
 unless ($__quiet) {
-  $runner->before_each_job(
+  $runner->progress(
     sub {
-      my $job = shift;
-      printf("I: Processing %s ...\n", $job->id);
+      my ($job, $done, $total) = @_;
+      printf("I: Processed %s.\n", $job->id);
     }
   );
 }

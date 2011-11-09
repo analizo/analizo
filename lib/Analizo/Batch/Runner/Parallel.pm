@@ -74,8 +74,6 @@ sub coordinate_workers {
   my $results = $context->socket(ZMQ_PULL);
   $results->bind(_socket_spec('results', $$));
 
-  my $before_each_job = $self->before_each_job || sub {};
-
   # push jobs to queue
   my $results_expected = 0;
   while (my $job = $batch->next()) {
@@ -91,6 +89,7 @@ sub coordinate_workers {
     my $job = Load($msg->data);
     $output->push($job);
     $results_received++;
+    $self->report_progress($job, $results_received, $results_expected);
   }
 }
 
