@@ -106,12 +106,10 @@ sub previous_relevant : Tests {
   is($first->previous_relevant, undef);
 
   my $master = $batch->find($MASTER);
-  isa_ok($master->previous_relevant, 'Analizo::Batch::Job::Git');
-  is($master->previous_relevant->id, '0a06a6fcc2e7b4fe56d134e89d74ad028bb122ed');
+  is($master->previous_relevant, '0a06a6fcc2e7b4fe56d134e89d74ad028bb122ed');
 
   my $commit = $batch->find('0a06a6fcc2e7b4fe56d134e89d74ad028bb122ed');
-  isa_ok($commit->previous_relevant, 'Analizo::Batch::Job::Git');
-  is($commit->previous_relevant->id, 'eb67c27055293e835049b58d7d73ce3664d3f90e');
+  is($commit->previous_relevant, 'eb67c27055293e835049b58d7d73ce3664d3f90e');
 }
 
 sub previous_relevant_with_parent_without_previous_relevant : Tests {

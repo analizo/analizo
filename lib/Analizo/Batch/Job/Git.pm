@@ -89,7 +89,8 @@ sub previous_relevant {
   if (exists($self->{previous_relevant})) {
     return $self->{previous_relevant};
   }
-  $self->{previous_relevant} = $self->_calculate_previous_relevant();
+  my $previous_relevant = $self->_calculate_previous_relevant();
+  $self->{previous_relevant} = $previous_relevant;
   return $self->{previous_relevant};
 }
 
@@ -99,17 +100,18 @@ sub _calculate_previous_relevant {
   if ($self->is_first_commit) {
     return undef;
   } elsif ($self->is_merge) {
-    my @possibilities = map { &$finder($_)->previous_relevant } @{$self->data->{parents}};
-    my %ids = map { $_->id => 1 } (grep { $_ } @possibilities);
-    if (scalar(keys(%ids)) == 1) {
-      return $possibilities[0];
+    my @parents = map { &$finder($_) } @{$self->data->{parents}};
+    my %grandparents = map { $_ => 1 } (grep { $_} (map { $_->previous_relevant } @parents));
+    my @grandparents = keys(%grandparents);
+    if (scalar(@grandparents) == 1) {
+      return $grandparents[0];
     } else {
       return undef;
     }
   } else {
     my $parent = &$finder($self->data->{parents}->[0]);
     if ($parent->relevant) {
-      return $parent;
+      return $parent->id;
     } else {
       return $parent->previous_relevant();
     }
@@ -140,9 +142,8 @@ sub data {
 sub metadata {
   my ($self) = @_;
   my $data = $self->data;
-  my $previous_commit = $self->previous_wanted();
   return [
-    ['previous_commit_id', $previous_commit ? $previous_commit->id() : undef],
+    ['previous_commit_id', $self->previous_wanted()],
     ['author_date', $data->{author_date}],
     ['author_name', $data->{author_name}],
     ['author_email', $data->{author_email}],
