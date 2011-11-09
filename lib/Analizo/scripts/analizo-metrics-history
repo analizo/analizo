@@ -108,15 +108,15 @@ B<$ analizo metrics-history -f db -o history.db>
 
 Writes the output to a SQLite database called I<history.db>.
 
-B<$ analizo metrics-history -f db -o DBI:mysql:database=vcs_history;host=localhost;port=3306>
+B<$ analizo metrics-history -f db -o 'DBI:mysql:database=vcs_history;host=localhost;port=3306'>
 
 Writes the data to a MySQL database called I<vcs_history> on localhost, port
-3306. Require having the I<DBI::mysql> Perl module installed.
+3306. You will need to have the I<DBI::mysql> Perl module installed.
 
-B<$ analizo metrics-history -f db -o dbi:Pg:dbname=pgdb>
+B<$ analizo metrics-history -f db -o 'dbi:Pg:dbname=pgdb'>
 
-Writes te data to a PostgreSQL database called I<pgdb>. Requires having the
-I<DBI::Pg> Perl module installed.
+Writes te data to a PostgreSQL database called I<pgdb>. This requires the
+I<DBI::Pg> Perl module.
 
 =back
 
