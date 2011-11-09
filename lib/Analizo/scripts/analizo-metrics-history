@@ -62,6 +62,11 @@ Specifies with output driver, and consequently the output format, to use. See
 Instead of actually processing the history, just print out the ids of the
 commits that would be processed.
 
+=item --progressbar | -b
+
+Displays a progress bar during the execution, so that you know aproximately how
+long analizo is going to take to finish.
+
 =item --help
 
 Displays help for B<analizo metrics-history>.
@@ -137,6 +142,7 @@ my $__exclude       = undef;
 my $__output        = undef;
 my $__parallel      = undef;
 my $__format        = 'csv';
+my $__progressbar   = undef;
 
 GetOptions(
   'help'          => \$__help,
@@ -146,6 +152,7 @@ GetOptions(
   'exclude|x=s'   => \$__exclude,
   'p|parallel=i'  => \$__parallel,
   'f|format=s'    => \$__format,
+  'b|progressbar' => \$__progressbar,
 ) or exit(1);
 
 if ($__help) {
@@ -195,6 +202,17 @@ if ($__parallel) {
 } else {
   require Analizo::Batch::Runner::Sequential;
   $runner = new Analizo::Batch::Runner::Sequential;
+}
+
+if ($__progressbar) {
+  require Term::ProgressBar;
+  my $progressbar = Term::ProgressBar->new ({ count => 100, ETA => 'linear' });
+  $runner->progress(
+    sub {
+      my ($job, $done, $total) = @_;
+      $progressbar->update(100 * $done / $total);
+    }
+  );
 }
 
 $runner->run($batch, $output);

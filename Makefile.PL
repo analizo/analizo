@@ -54,6 +54,7 @@ WriteMakefile(
     'YAML' => 0,
     'Statistics::Descriptive' => 0,
     'Statistics::OnLine' => 0,
+    'Term::ProgressBar' => 0,
     'ZeroMQ' => 0,
   },
   BUILD_REQUIRES => {
