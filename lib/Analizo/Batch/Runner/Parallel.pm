@@ -41,6 +41,7 @@ sub start_workers {
       push(@{$self->{workers}}, $pid);
     } else {
       # on child
+      $0 = '[analizo worker]';
       worker($ppid);
       exit();
     }
@@ -49,6 +50,7 @@ sub start_workers {
   if ($distributor_pid) {
     push(@{$self->{workers}}, $distributor_pid);
   } else {
+    $0 = '[analizo queue]';
     distributor($ppid, $n);
     exit();
   }
