@@ -46,7 +46,7 @@ sub traverse_repository : Tests {
 sub count : Tests {
   my $batch = __create($TESTDIR);
   $batch->initialize();
-  is($batch->count, 11);
+  is($batch->count, 7);
 }
 
 sub default_filter : Tests {
