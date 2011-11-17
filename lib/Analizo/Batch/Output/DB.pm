@@ -317,11 +317,6 @@ __DATA__
 
 /* Analizo DB output schema definition */
 
-CREATE TABLE analizo_metadata (
-  key CHAR(100),
-  value CHAR(100)
-);
-
 CREATE TABLE projects (
   id @@NUMERIC_AUTOINC_PK@@,
   name CHAR(250)
@@ -365,3 +360,8 @@ CREATE TABLE commits_module_versions (
   added INTEGER default 0
 );
 CREATE INDEX commits_module_versions_commit_id ON commits_module_versions (commit_id);
+
+CREATE TABLE analizo_metadata (
+  key CHAR(100),
+  value CHAR(100)
+);
