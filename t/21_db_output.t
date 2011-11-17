@@ -230,6 +230,11 @@ sub files_with_multiple_modules : Tests {
   select_ok($OUTFILE, 'SELECT * FROM modules', 3);
 }
 
+sub numeric_autoincrement_pk : Tests {
+  ok(Analizo::Batch::Output::DB::_numeric_autoinc_pk('dbi:SQLite:file.sqlite3') =~ /AUTOINCREMENT/);
+  ok(Analizo::Batch::Output::DB::_numeric_autoinc_pk('dbi:Pg:dbname=analizo') =~ /SERIAL/);
+}
+
 sub __create {
   my ($file) = @_;
   my $output = new Analizo::Batch::Output::DB();

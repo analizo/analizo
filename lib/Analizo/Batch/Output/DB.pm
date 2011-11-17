@@ -238,6 +238,7 @@ sub initialize($) {
     for my $statement (ddl_statements()) {
       $statement =~ s/\@\@MODULE_METRICS\@\@/_metric_columns_ddl(_module_metric_columns())/egm;
       $statement =~ s/\@\@PROJECT_METRICS\@\@/_metric_columns_ddl(_project_metric_columns())/egm;
+      $statement =~ s/\@\@NUMERIC_AUTOINC_PK\@\@/_numeric_autoinc_pk($self->database)/egm;
       $self->{dbh}->do($statement);
     }
   }
@@ -296,6 +297,20 @@ sub _metric_columns_ddl {
   return $ddl;
 }
 
+my %NUMERIC_AUTOINC_PK = (
+  'sqlite'  => 'INTEGER PRIMARY KEY AUTOINCREMENT',
+  'pg'      => 'SERIAL PRIMARY KEY',
+);
+
+sub _numeric_autoinc_pk($) {
+  my ($database) = @_;
+  my $dbtype = lc($database);
+  $dbtype =~ s/^dbi:(.*):.*/$1/;
+  my $sql = $NUMERIC_AUTOINC_PK{$dbtype};
+  die("Database $dbtype is not supported!") if (!defined($sql));
+  return $sql;
+}
+
 1;
 
 __DATA__
@@ -308,12 +323,12 @@ CREATE TABLE analizo_metadata (
 );
 
 CREATE TABLE projects (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  id @@NUMERIC_AUTOINC_PK@@,
   name CHAR(250)
 );
 
 CREATE TABLE developers (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  id @@NUMERIC_AUTOINC_PK@@,
   name CHAR(250),
   email CHAR(250)
 );
@@ -329,7 +344,7 @@ CREATE TABLE commits (
 CREATE INDEX commits_project_id ON commits (project_id);
 
 CREATE TABLE modules (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  id @@NUMERIC_AUTOINC_PK@@,
   project_id INTEGER,
   name CHAR(250)
 );
@@ -343,7 +358,7 @@ CREATE TABLE module_versions (
 );
 
 CREATE TABLE commits_module_versions (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  id @@NUMERIC_AUTOINC_PK@@,
   commit_id CHAR(40),
   module_version_id CHAR(40),
   modified INTEGER default 0,
