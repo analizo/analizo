@@ -232,7 +232,7 @@ sub _metrics_sql($@) {
 # something similar to the rails migrations DSL here.
 sub initialize($) {
   my ($self) = @_;
-  $self->{dbh} = DBI->connect($self->database, undef, undef, { RaiseError => 1});
+  $self->{dbh} = DBI->connect($self->database, undef, undef, { RaiseError => 1, InactiveDestroy => 1});
   # assume that if there is a table called `analizo_metadata`, then the database was already initialized
   if (!grep { $_ =~ /analizo_metadata/ } $self->{dbh}->tables()) {
     for my $statement (ddl_statements()) {
