@@ -134,14 +134,27 @@ Then /^analizo must emit a warning matching "([^\"]*)"$/ do |pattern|
   @stderr.join.should match(pattern)
 end
 
+module AnalizoRuby18Compatibiliy
+  include Enumerable
+  def each(&block)
+    self.documents.each(&block)
+  end
+end
+
+def __load_yaml_stream(data)
+  stream = YAML.load_stream(data)
+  if RUBY_VERSION < '1.9'
+    stream.extend(AnalizoRuby18Compatibiliy)
+  end
+  stream
+end
+
 Then /^analizo must report that the project has (.+) = ([\d\.]+)$/ do |metric,n|
-  stream = YAML.load_stream(@stdout.join)
-  stream.documents.first[metric].should == n.to_f
+  __load_yaml_stream(@stdout.join).first[metric].should == n.to_f
 end
 
 Then /^analizo must report that module (.+) has (.+) = (.+)$/ do |mod, metric, value|
-  stream = YAML.load_stream(@stdout.join)
-  module_metrics = stream.documents.find { |doc| doc['_module'] == mod }
+  module_metrics = __load_yaml_stream(@stdout.join).find { |doc| doc['_module'] == mod }
   case value
   when /^\d+|\d+\.\d+$/
     value = value.to_f
@@ -161,6 +174,8 @@ end
 
 Given /^I create a file called (.+) with the following content$/ do |filename, table|
   File.open(filename, 'w') do |file|
-    file.write(table.raw.map { |s| s.to_s + "\n"}.join)
+    table.raw.each do |line|
+      file.puts(line)
+    end
   end
 end
