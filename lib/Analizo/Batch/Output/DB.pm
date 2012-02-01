@@ -333,7 +333,7 @@ CREATE TABLE commits (
   previous_commit_id CHAR(40),
   project_id INTEGER,
   date INTEGER,
-  developer_id CHAR(40),
+  developer_id INTEGER,
   @@PROJECT_METRICS@@
 );
 CREATE INDEX commits_project_id ON commits (project_id);
