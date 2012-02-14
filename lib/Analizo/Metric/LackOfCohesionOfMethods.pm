@@ -3,13 +3,14 @@ use strict;
 use base qw(Class::Accessor::Fast);
 use Graph;
 
-__PACKAGE__->mk_accessors(qw( model graph));
+__PACKAGE__->mk_accessors(qw( model graph value ));
 
 sub new {
   my ($package, %args) = @_;
    my @instance_variables = (
     model => $args{model},
-    graph => new Graph()
+    graph => new Graph(),
+    value => undef
   );
   return bless { @instance_variables }, $package;
 }
@@ -22,9 +23,11 @@ sub calculate {
   my ($self, $module) = @_;
 
   $self->_build_cohesion_graph_of_module($module);
-  my $number_of_components = scalar $self->graph->weakly_connected_components;
 
-  return $number_of_components;
+  my $number_of_components = scalar $self->graph->weakly_connected_components;
+  my $value = $self->value($number_of_components);
+
+  return $value;
 }
 
 sub _build_cohesion_graph_of_module {

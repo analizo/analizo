@@ -1,0 +1,57 @@
+#!/usr/bin/perl
+
+use strict;
+
+sub cpan2debian {
+  my (@pkgs) = @_;
+  map {
+    my $debian_pkg = 'lib' . lc($_) . '-perl';
+    $debian_pkg =~ s/::/-/g;
+    $debian_pkg =~ s/sqlite/sqlite3/;   # special case
+    $debian_pkg;
+  } @pkgs;
+}
+
+my @dependencies = ();
+my @build_dependencies = ();
+
+sub CheckExtraDependencies {
+  my ($type, %dependencies) = @_;
+  for my $pkg (sort(keys(%dependencies))) {
+    $pkg =~ s/rspec/ruby-rspec/; # special case
+    my $entry = $pkg . ($dependencies{$pkg} ? " $dependencies{$pkg}" : '');
+    if ($type eq 'runtime') {
+      push @dependencies, $entry;
+    } else {
+      push @build_dependencies, $entry;
+    }
+  }
+}
+
+sub WriteMakefile {
+  my %config = @_;
+  push @dependencies, cpan2debian(sort(keys(%{$config{PREREQ_PM}})));
+  push @build_dependencies, cpan2debian(sort(keys(%{$config{BUILD_REQUIRES}})));
+  push @build_dependencies, @dependencies;
+}
+
+my $code = `cat Makefile.PL`;
+$code =~ s/use ExtUtils::MakeMaker;//;
+$code =~ s/sub\s*CheckExtraDependencies/sub _CheckExtraDependencies/;
+eval $code;
+
+unshift @dependencies, '${misc:Depends}', '${perl:Depends}';
+
+my $dependencies = join(', ', @dependencies);
+my $build_dependencies = join(', ', @build_dependencies);
+
+open(OLDCONTROL, '<', 'debian/control');
+my @control = <OLDCONTROL>;
+close(OLDCONTROL);
+open(NEWCONTROL, '>', 'debian/control');
+for my $line (@control) {
+  $line =~ s/^Build-Depends-Indep:.*/Build-Depends-Indep: $build_dependencies/;
+  $line =~ s/^Depends:.*/Depends: $dependencies/;
+  print NEWCONTROL $line;
+}
+close(NEWCONTROL);

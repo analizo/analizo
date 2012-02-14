@@ -5,15 +5,48 @@ use warnings;
 
 use base qw(Analizo::Extractor);
 
-use File::Basename;
+use File::Temp qw/ tempfile /;
+use Cwd;
 
 sub new {
   my $package = shift;
-  return bless { @_ }, $package;
+  return bless { files => [], @_ }, $package;
+}
+
+sub _add_file {
+  my ($self, $file) = @_;
+  push(@{$self->{files}}, $file);
+}
+
+sub _cpp_hack {
+  my ($self, $module) = @_;
+  my $current = $self->current_file;
+  if (defined($current) && $current =~ /^(.*)\.(h|hpp)$/) {
+    my $prefix = $1;
+    # look for a previously added .cpp/.cc/etc
+    my @implementations = grep { $_ =~ /^$prefix\.(cpp|cxx|cc)$/} @{$self->{files}};
+    foreach my $impl (@implementations) {
+      $self->model->declare_module($module, $impl);
+    }
+  }
 }
 
 sub feed {
   my ($self, $line) = @_;
+
+  # current file declaration
+  if ($line =~ /^file (.*)$/) {
+    my $file = _strip_current_directory($1);
+    $self->current_file($file);
+    $self->_add_file($file);
+  }
+
+  # current module declaration
+  if ($line =~ /^module (.+)$/) {
+    my $modulename = _file_to_module($1);
+    $self->current_module($modulename);
+    $self->_cpp_hack($modulename);
+  }
 
   # function declarations
   if ($line =~ m/^\s{3}function (.*) in line \d+$/) {
@@ -22,7 +55,7 @@ sub feed {
     $self->{current_member} = $function;
   }
   # variable declarations
-  elsif ($line =~ m/^\s{3}variable (\S+) in line \d+$/) {
+  elsif ($line =~ m/^\s{3}variable (.+) in line \d+$/) {
     my $variable = _qualified_name($self->current_module, $1);
     $self->model->declare_variable($self->current_module, $variable);
     $self->{current_member} = $variable;
@@ -34,13 +67,13 @@ sub feed {
   }
 
   # function calls/uses
-  if ($line =~ m/^\s{6}uses function (.*) defined in (\S+)$/) {
+  if ($line =~ m/^\s{6}uses function (.*) defined in (.+)$/) {
     my $function = _qualified_name($2, $1);
     $self->model->add_call($self->current_member, $function, 'direct');
   }
 
   # variable references
-  elsif ($line =~ m/^\s{6}uses variable (\S+) defined in (\S+)$/) {
+  elsif ($line =~ m/^\s{6}uses variable (.+) defined in (.+)$/) {
     my $variable = _qualified_name($2, $1);
     $self->model->add_variable_use($self->current_member, $variable);
   }
@@ -79,25 +112,34 @@ sub _qualified_name {
 
 # discard file suffix (e.g. .c or .h)
 sub _file_to_module {
-  my $filename = shift;
-  $filename ? fileparse($filename, qr/\.[^.]*/) : 'unknown';
+  my ($filename) = @_;
+  $filename ||= 'unknown';
+  $filename =~ s/\.\w+$//;
+  return $filename;
 }
 
-sub process {
+sub _strip_current_directory {
+  my ($file) = @_;
+  my $pwd = getcwd();
+  $file =~ s#^$pwd/##;
+  return $file;
+}
+
+sub actually_process {
   my $self = shift;
-  my @files = ();
+  my ($temp_handle, $temp_filename) = tempfile();
+  foreach my $input_file (@_) {
+    print $temp_handle "$input_file\n"
+  }
+  close $temp_handle;
+
   eval {
-    open DOXYPARSE, sprintf("doxyparse %s |", join(' ', @_) ) or die $!;
+    open DOXYPARSE, "doxyparse - < $temp_filename |" or die $!;
     while (<DOXYPARSE>) {
-       if (/^module (\S+)$/) {
-         my $modulename = _file_to_module($1);
-         $self->current_module($modulename);
-       }
-       else {
-         $self->feed($_);
-       }
+      $self->feed($_);
     }
     close DOXYPARSE;
+    unlink $temp_filename;
   };
   if($@) {
     warn($@);

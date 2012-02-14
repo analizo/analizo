@@ -1,7 +1,6 @@
-* change metrics and graph scripts to call `analizo doc` on --help
 * provide short version for all command-line switches in all tools!
-* analizo-metrics-history: try to remove dependency on grit
 * remove all usage of shift when getting method arguments
   * use `my ($self, $arg1, $arg2) = @_;` instead
 * fix the evolution matrix to do some sorting; display modules that appear earlier in the top
 * do some marketing of the tool.
+* bash completion

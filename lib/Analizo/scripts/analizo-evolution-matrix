@@ -184,7 +184,7 @@ __END__
 
 =head1 NAME
 
-analizo evolution-matrix - generates an evolution matrix from analizo .yml
+analizo-evolution-matrix - generates an evolution matrix from analizo .yml
 metric files
 
 =head1 USAGE

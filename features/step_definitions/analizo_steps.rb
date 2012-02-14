@@ -1,13 +1,13 @@
 require 'fileutils'
+require 'tmpdir'
+require 'digest/sha1'
 
 top_dir = FileUtils.pwd
 saved_path = ENV["PATH"]
-saved_perl5lib = ENV["PERL5LIB"]
 ENV['LC_ALL'] = 'C'
 
 Before do
   ENV['PATH'] = top_dir + ':' + ENV['PATH']
-  ENV['PERL5LIB'] = top_dir + (ENV['PERL5LIB'] ? ':' + ENV['PERL5LIB'] : '')
 end
 
 After do
@@ -16,15 +16,38 @@ After do
   FileUtils.rm_f(Dir.glob('*.tmp'))
   FileUtils.cd(top_dir)
   ENV['PATH'] = saved_path
-  ENV['PERL5LIB'] = saved_perl5lib
 end
 
 Given /^I am in (.+)$/ do |dir|
   FileUtils.cd(dir)
 end
 
+def get_tmpdir
+  Dir.mktmpdir([Process.pid.to_s, '.analizo.tmpdir'])
+end
+
+Given /^I explode (.+)$/ do |tarball|
+  tarball_full_path = File.expand_path(tarball)
+  dirname = File.basename(tarball).sub('.tar.gz', '')
+  tmpdir = get_tmpdir
+  Dir.chdir(tmpdir) do
+    system("tar xzf #{tarball_full_path}")
+  end
+  FileUtils.cd(File.join(tmpdir, dirname))
+end
+
+When /^I copy (.*) into a temporary directory$/ do |files|
+  tmpdir = get_tmpdir
+  FileUtils.cp_r(Dir.glob(files), tmpdir)
+  FileUtils.cd(tmpdir)
+end
+
+When /^I change to an empty temporary directory$/ do
+  FileUtils.cd(get_tmpdir)
+end
+
 When /^I run "([^\"]*)"$/ do |command|
-  system("#{command} >tmp.out 2>tmp.err")
+  system("(#{command}) >tmp.out 2>tmp.err")
   if $?.is_a?(Fixnum)
     @exit_status = $?
   else
@@ -32,6 +55,24 @@ When /^I run "([^\"]*)"$/ do |command|
   end
   @stdout = File.readlines('tmp.out')
   @stderr = File.readlines('tmp.err')
+end
+
+at_exit do
+  FileUtils.rm_rf(Dir.glob(File.join(Dir.tmpdir, '*.analizo.{out,err,tmpdir}')))
+end
+
+When /^I run "([^\"]*)" only once$/ do |command|
+  run_marker = Digest::SHA1.hexdigest(Dir.pwd) + Digest::SHA1.hexdigest(command)
+  stdout = File.join(Dir.tmpdir, run_marker + '.analizo.out')
+  stderr = File.join(Dir.tmpdir, run_marker + '.analizo.err')
+  if File.exist?(stdout) && File.exist?(stderr)
+    @stdout = File.readlines(stdout)
+    @stderr = File.readlines(stderr)
+  else
+    Then("I run \"#{command}\"")
+    FileUtils.cp('tmp.out', stdout)
+    FileUtils.cp('tmp.err', stderr)
+  end
 end
 
 Then /^analizo must report that "([^\"]*)" depends on "([^\"]*)"$/ do |dependent, depended|
@@ -66,6 +107,12 @@ Then /^analizo must report that "([^\"]*)" is part of "([^\"]*)"$/ do |func,mod|
   found.should == true
 end
 
+Then /^the output lines must match "([^\"]*)"$/ do |pattern|
+  unless @stdout.join.match(pattern)
+    raise AnalizoException.new("Output does not match %s! (expected to match)!" % pattern.inspect, @stdout, @stderr)
+  end
+end
+
 Then /^the output must match "([^\"]*)"$/ do |pattern|
   unless @stdout.any? {|item| item.match(pattern) }
     raise AnalizoException.new("Output does not match %s! (expected to match)!" % pattern.inspect, @stdout, @stderr)
@@ -87,15 +134,34 @@ Then /^analizo must emit a warning matching "([^\"]*)"$/ do |pattern|
   @stderr.join.should match(pattern)
 end
 
-Then /^analizo must report that the project has (.+) = ([\d\.]+)$/ do |metric,n|
-  stream = YAML.load_stream(@stdout.join)
-  stream.documents.first[metric].should == n.to_f
+module AnalizoRuby18Compatibiliy
+  include Enumerable
+  def each(&block)
+    self.documents.each(&block)
+  end
 end
 
-Then /^analizo must report that module (.+) has (.+) = (\d+|\d+\.\d+)$/ do |mod, metric, n|
-  stream = YAML.load_stream(@stdout.join)
-  module_metrics = stream.documents.find { |doc| doc['_module'] == mod }
-  module_metrics[metric].should == n.to_f
+def __load_yaml_stream(data)
+  stream = YAML.load_stream(data)
+  if RUBY_VERSION < '1.9'
+    stream.extend(AnalizoRuby18Compatibiliy)
+  end
+  stream
+end
+
+Then /^analizo must report that the project has (.+) = ([\d\.]+)$/ do |metric,n|
+  __load_yaml_stream(@stdout.join).first[metric].should == n.to_f
+end
+
+Then /^analizo must report that module (.+) has (.+) = (.+)$/ do |mod, metric, value|
+  module_metrics = __load_yaml_stream(@stdout.join).find { |doc| doc['_module'] == mod }
+  case value
+  when /^\d+|\d+\.\d+$/
+    value = value.to_f
+  when /^\[(.*)\]$/
+    value = $1.split(/\s*,\s*/)
+  end
+  module_metrics[metric].should == value
 end
 
 Then /^analizo must present a list of metrics$/ do
@@ -106,3 +172,10 @@ Then /^analizo must present a list of metrics$/ do
   end
 end
 
+Given /^I create a file called (.+) with the following content$/ do |filename, table|
+  File.open(filename, 'w') do |file|
+    table.raw.each do |line|
+      file.puts(line)
+    end
+  end
+end

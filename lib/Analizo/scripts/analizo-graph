@@ -2,7 +2,7 @@
 
 =head1 NAME
 
-analizo graph - dependency graph generator
+analizo-graph - dependency graph generator
 
 =head1 USAGE
 
@@ -131,6 +131,7 @@ See B<analizo(1)>
 
 use strict;
 
+use Analizo::Command;
 use Analizo::Extractor;
 use Analizo::Output::DOT;
 

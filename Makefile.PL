@@ -5,7 +5,34 @@ my %manpages = ();
 for my $script (glob('lib/Analizo/scripts/*')) {
   $manpages{$script} = 'blib/man1/' . basename($script) . '.1';
 }
-$manpages{'analizo'} = 'blib/man1/analizo';
+$manpages{'analizo'} = 'blib/man1/analizo.1';
+
+sub CheckExtraDependencies {
+  my ($type, %dependencies) = @_;
+  my $missing = 0;
+  my $error_type = ($type eq 'runtime') ? 'E' : 'W';
+  for my $program (keys(%dependencies)) {
+    if (system("which $program > /dev/null") != 0) {
+      print STDERR "$error_type: Required $type dependency not found: $program\n";
+      $missing++;
+    }
+  }
+  exit(1) if ($missing && $type eq 'runtime');
+}
+
+CheckExtraDependencies(
+  'runtime',
+  'doxyparse' => '(>= 1.5.8-12~)',
+  'git' => 0,
+  'ruby' => 0,
+  'sloccount' => 0
+);
+CheckExtraDependencies(
+  'build',
+  'cucumber' => 0,
+  'rake' => 0,
+  'rspec' => 0,
+);
 
 WriteMakefile(
   NAME => 'analizo',
@@ -13,15 +40,27 @@ WriteMakefile(
   EXE_FILES => ['analizo'],
   MAN1PODS => \%manpages,
   AUTHOR => 'Antonio Terceiro <terceiro@softwarelivre.org>',
-  LICENSE => 'perl',
+  LICENSE => 'GPLv3+',
   ABSTRACT => 'Source code analysis toolkit',
   PREREQ_PM => {
-      'Class::Accessor::Fast' => 0,
-      'Test::Class' => 0,
-      'List::Compare' => 0,
-      'Graph' => 0,
-      'YAML' => 0,
-      'Test::Exception' => 0,
-      'Statistics::Descriptive' => 0,
+    'Class::Accessor::Fast' => 0,
+    'DBD::SQLite' => 0,
+    'DBI' => 0,
+    'Digest::SHA1' => 0,
+    'File::Copy::Recursive' => 0,
+    'List::Compare' => 0,
+    'JSON' => 0,
+    'Graph' => 0,
+    'YAML' => 0,
+    'Statistics::Descriptive' => 0,
+    'Statistics::OnLine' => 0,
+    'Term::ProgressBar' => 0,
+    'ZeroMQ' => 0,
+  },
+  BUILD_REQUIRES => {
+    'Test::Class' => 0,
+    'Test::Exception' => 0,
+    'Test::MockObject' => 0,
+    'Test::MockModule' => 0,
   },
 );

@@ -1,9 +1,8 @@
-#!/bin/sh
+#!/usr/bin/perl
 
-: <<=cut
 =head1 NAME
 
-analizo metrics-batch - processes several source code directories in batch,
+analizo-metrics-batch - processes several source code directories in batch,
 running B<analizo metrics> for each and optionally consolidating the results in
 a single data file.
 
@@ -41,18 +40,7 @@ Then you change to that directory, and then run B<analizo metrics-batch>:
 
 =item
 
-For each directory, B<analizo metrics-batch> will drop a YML data file, e.g.
-
-  $ ls -1 /tmp/analysis/*.yml
-  myproject-0.1.0.yml
-  myproject-0.2.0.yml
-  myproject-0.3.0.yml
-  myproject-0.4.0.yml
-  myproject-0.5.0.yml
-
-=item
-
-If you pass the I<-s> option, B<analizo metrics-batch> will collect the metrics
+B<analizo metrics-batch> will collect the metrics
 data in a single .csv file, that you can import in spreadsheet software or
 statistical packages.
 
@@ -62,23 +50,28 @@ statistical packages.
 
 =over
 
+=item -p N, --parallel N
+
+Activates support for parallel processing, using I<N> concurrent worker
+processes. Usually you will want N to be less than or equal to the number of
+CPUs in your machine.
+
+Note that analizo metrics extraction is a CPU-intensive process, so setting N
+as the exacty number of CPUs you have may bring your machine to an unusable
+state.
+
 =item --help
 
 Displays manual page (which you are currently reading).
 
-=item -g, --global-only
+=item -o FILE, --output FILE
 
-Outputs only project-wide metrics (e.g. no module metrics). By default, each
-YAML data file will contain both project-level metrics and module-level
-metrics. Using this option will disable the module-level metrics.
+Write output to FILE. Default is to write to I<metrics.csv>.  That file can
+then be opened in data analysis programs.
 
-=item -s FILE, --summary FILE
+=item -q, --quiet
 
-When this option is used, the metrics, B<analizo metrics-batch> will write a
-summary of each input directory in CSV format to I<FILE>. That file can then
-be opened in data analysis programs.
-
-Using I<--summary FILE> implies I<--global-only>.
+Supresses messages to standard output.
 
 =back
 
@@ -88,112 +81,53 @@ See B<analizo(1)>.
 
 =cut
 
-PROGRAM_NAME=$(basename $0)
-SCRIPT_PATH=$(readlink -f $0)
+use strict;
+use warnings;
 
-warn() {
-  msg="$1"
-  echo "W: $msg"
+use Analizo::Command;
+use Pod::Usage;
+use Getopt::Long;
+
+my $__help          = undef;
+my $__output        = 'metrics.csv';
+my $__quiet         = undef;
+my $__parallel      = undef;
+
+GetOptions(
+  'help'            => \$__help,
+  'o|output=s'      => \$__output,
+  'q|quiet'         => \$__quiet,
+  'p|parallel=i' => \$__parallel,
+) or exit(1);
+
+if ($__help) {
+  exec('analizo', 'doc', __FILE__)
 }
 
-info(){
-  msg="$1"
-  echo "I: $msg"
+use Analizo::Batch::Directories;
+use Analizo::Batch::Output::CSV;
+
+my $runner = undef;
+if ($__parallel) {
+  require Analizo::Batch::Runner::Parallel;
+  $runner = new Analizo::Batch::Runner::Parallel($__parallel);
+} else {
+  require Analizo::Batch::Runner::Sequential;
+  $runner = new Analizo::Batch::Runner::Sequential;
 }
 
-usage() {
-  echo "Usage: $0 [OPTIONS] [directory [directory ...]]"
-  echo
-  echo "Options:"
-  echo
-  echo "  --help                 Displays the help"
-  echo "  -s|--summary FILE      Outputs a total of all projects in CSV format to FILE. Implies --global-only."
-  echo "  -g|--global-only       Outputs only project-wide metrics (e.g. no module metrics)."
-  echo
-  echo "If you specify no directories to operate on, all directories"
-  echo "immediately below the current directory will be scanned."
+unless ($__quiet) {
+  $runner->progress(
+    sub {
+      my ($job, $done, $total) = @_;
+      printf("I: Processed %s.\n", $job->id);
+    }
+  );
 }
 
-# defaults
-input=""
-summary=false
-analizo_options=""
+my $batch = new Analizo::Batch::Directories(@ARGV);
 
-while [ $# -gt 0 ]; do
-  opt="$1"
-  shift
-  case "$opt" in
-    --help)
-      exec analizo doc $SCRIPT_PATH
-      ;;
-    -s|--summary)
-      summary=true
-      analizo_options="-g"
-      if [ $# -eq 0 ]; then
-        usage
-        exit 1
-      else
-        summary_file="$1"
-        shift
-      fi
-      ;;
-    -g|--global-only)
-      analizo_options="-g"
-      ;;
-    -*|--*)
-      echo "Invalid option: $opt"
-      usage
-      exit 1
-      ;;
-    *)
-      input="$input $opt"
-      ;;
-  esac
-done
+my $output = new Analizo::Batch::Output::CSV;
+$output->file($__output);
 
-if [ "$input" = "" ]; then
-  input=$(find . -mindepth 1 -maxdepth 1 -type d -not -name .git -and -not -name .svn  | sort)
-fi
-
-input_count=$(echo $input | wc -w)
-
-summary_header=""
-i=0
-for dir in $input; do
-
-  i=$(($i+1))
-  project=$(basename $dir)
-  output="$(dirname $dir)/$project.yml"
-
-  if [ -e "$output" ]; then
-    info "$project already processed, skipping (remove $output to force reprocessing)"
-    continue
-  else
-    info "Processing $project ..."
-  fi
-
-  analizo metrics $analizo_options "$dir" > "$output"
-
-  # directory did not contain source code, analizo produced nothing
-  if [ ! -s "$output" ]; then
-    warn "It looks like $dir does not contain source code to be analyzed."
-    warn "You'll probably want to check it out manually."
-    rm -f "$output"
-    continue
-  fi
-
-  # accumulate results
-  if [ $summary = true ]; then
-    # header
-    if [ "$summary_header" = "" ]; then
-      summary_header=$(awk -F ': ' 'BEGIN { line="" } {if ($1) line = line "," $1; end} END { print line }' $output)
-      echo "project$summary_header" > $summary_file
-    fi
-    # body
-    data=$(awk -F ': ' 'BEGIN { line="" } {if ($1) line = line "," $2; end} END { print line }' $output)
-    echo "$project$data" >> $summary_file
-  fi
-
-  info "Processed $project ($i/$input_count)"
-
-done
+$runner->run($batch, $output);

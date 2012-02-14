@@ -68,6 +68,5 @@ sub list_of_metrics : Tests {
   cmp_ok(scalar(keys(%metrics)), '>', 0, 'must list metrics');
 }
 
-
 MetricsTests->runtests;
 

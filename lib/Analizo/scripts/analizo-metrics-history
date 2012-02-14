@@ -1,145 +1,211 @@
-#!/usr/bin/ruby
-# metrics-history
-# Generates the metrics of the whole history of an application.
-# Antônio Terceiro (terceiro@dcc.ufba.br)
-# Luiz Romário Santana Rios (luizromario@gmail.com)
-# 
-# Usage: ./metrics-history directory
-#
-# WARNING NOTE: Do not run this script in a work folder, since it 
-# will checkout every commit in history, which may destroy your
-# ongoing work.
-#
-require 'rubygems'
-require 'grit'
-require 'yaml'
-require 'benchmark'
+#!/usr/bin/perl
 
-FILTER = /\.(c|h|cpp|cxx|cc|hpp|java)$/
+=head1 NAME
 
-class Grit::Commit
-  def merge?
-    self.parents.size > 1
-  end
-  def parentless
-    self.parents.size == 0
-  end
-  def wanted?
-    files = `git show --pretty=format: --name-only #{id}`.split
-    matches = (files.any? { |path| path =~ FILTER })
-    !merge? && matches 
-  end
-  def previous_wanted
-    if merge? || parentless
-      nil
-    else
-      previous = self.parents.first
-      if previous.wanted?
-        previous
-      else
-        previous.previous_wanted
-      end
-    end
-  end
-  def wanted_list
-    commit = self.wanted? ? self : self.previous_wanted
-    if commit
-      result = []
-      while commit
-        result << commit
-        commit = commit.previous_wanted
-      end
-      result
-    else
-      []
-    end
-  end
-end
+analizo-metrics-history - processes a Git repository collection metrics for
+every single revision.
 
-class AnalizoRunner
-  def self.metrics(commit)
-    system("git checkout #{commit} > /dev/null 2>> git.log")
-    if "" == yaml_metrics = `analizo metrics . 2> /dev/null` then
-      false
-    else
-      YAML.load_stream(yaml_metrics).documents
-    end
-  end
-  def self.metricsCSV(commit)
-    metr = metrics(commit)
-    if metr then
-      csv_string = ""
-      csv_string << commit.id; csv_string << ","
-      pa = commit.previous_wanted
-      if pa then
-        csv_string << commit.previous_wanted.id
-      end
-      csv_string << ","
-      csv_string << commit.author.name.inspect; csv_string << ","
-      csv_string << commit.author.email; csv_string << ","
+=head1 USAGE
 
-      csv_string << metr[0].keys.sort.map{|key| metr[0][key]}.join(','); csv_string << ","
-      csv_string << `git show --pretty=format: --name-only #{commit.id}`.split.join(',').inspect; csv_string << ","
-      csv_string << commit.authored_date.rfc2822.inspect
-    end
-  end
-end
+analizo metrics-history [OPTION] DIRECTORY
 
-if !ARGV[0] then
-  puts "Usage: #{$PROGRAM_NAME} directory"
-  exit
-end
-begin
-  tree = Grit::Repo.new(ARGV[0]).commits.first
-rescue Grit::InvalidGitRepositoryError
-  puts "Fatal: Not a git repository."
-  exit
-end
-previous_directory = Dir.pwd
-Dir.chdir(ARGV[0])
-system("echo \"Log opened at: #{Time.now}\" >> git.log")
-system("echo \"Log opened at: #{Time.now}\" >> analizo.log")
-system("echo \"Log opened at: #{Time.now}\" >> doxyparse.log")
-system("git checkout master > /dev/null 2>> git.log")
+=head1 DESCRIPTION
 
-File.open('metrics.csv', 'w') do |file|
-  file.puts "commit_id,nearest_chngend_ancestral_id,author,e-mail,average_coupiling,average_lcom4,number_of_functions,number_of_modules,number_of_public_functions,total_loc,changed_files,date\n"
-  wl = tree.wanted_list
-  if wl.size == 0 then
-    puts "No relevant commits to proccess"
-  else
-    print "Processing " 
-    if wl.size == 1 then
-      puts "one commit"
-    else
-      puts "#{wl.size} commits..."
-    end
-  end
-  error_counter = 0
-  wl.each do |commit|
-    if mcsv = AnalizoRunner.metricsCSV(commit) then
-      file.puts mcsv
-      print "."
-    else
-      print "E"
-      system("analizo metrics . >> analizo.log 2>> analizo.log")
-      system("doxyparse . >> doxyparse.log 2>> doxyparse.log")
-      error_counter +=1
-    end
-  end
-  if error_counter == 0 then
-    puts "\nDone.\n"
-  else
-    if error_counter == 1 then
-      print "\nOne error"
-    else
-      print "\n#{error_counter} errors"
-    end
-    puts " ocurred. Check analizo.log and git.log for more details.\n"
-  end
-  system("git checkout master > /dev/null 2>> git.log")
-end
+B<analizo metrics-history> will process I<DIRECTORY>, a Git repository with a
+working copy of the source code (i.e. not a bare git repository), checkout
+every relevant commit and run B<analizo metrics> on it. The metrics for all of
+the revisions will be accumulated in a file called I<metrics.csv> inside
+I<DIRECTORY>.
 
-system("echo \"Log closed at: #{Time.now}\" >> git.log")
-system("echo \"Log closed at: #{Time.now}\" >> analizo.log")
-system("echo \"Log closed at: #{Time.now}\" >> doxyparse.log")
+=head1 RELEVANT COMMITS
+
+B<analizo metrics-history> considers as relevant the commits that changed at
+least one source code file. Consequently, it skips all the commits where no
+source code file was changed, such as documentation, translations, build system
+changes, etc.
+
+Currently we support C, C++ and Java projects, and therefore files considered
+source code are the ones terminated in I<.c>, I<.h>, I<.cpp>, I<.cxx>, I<.cc>,
+I<.hpp>, and I<.java>.
+
+=head1 OPTIONS
+
+=over
+
+=item -p N, --parallel N
+
+Activates support for parallel processing, using I<N> concurrent worker
+processes. Usually you will want N to be less than or equal to the number of
+CPUs in your machine.
+
+Note that analizo metrics extraction is a CPU-intensive process, so setting N
+as the exacty number of CPUs you have may bring your machine to an unusable
+state.
+
+=item --language LANGUAGE, --exclude DIRECTORY
+
+Use programming language and directory exclusion filters. See
+B<analizo-metrics(1)> for a description of these options.
+
+=item --output FILE, -o FILE
+
+Make the output be written to I<FILE>. The default value and valid values
+depend on the output format, see "Output formats" below.
+
+=item --format FORMAT, -f FORMAT
+
+Specifies with output driver, and consequently the output format, to use. See
+"Output Formats" below for a description of the available output drivers.
+
+=item --list | -l
+
+Instead of actually processing the history, just print out the ids of the
+commits that would be processed.
+
+=item --progressbar | -b
+
+Displays a progress bar during the execution, so that you know aproximately how
+long analizo is going to take to finish.
+
+=item --help
+
+Displays help for B<analizo metrics-history>.
+
+=item --usage
+
+Displays usage information for B<analizo metrics-history>.
+
+=back
+
+=head1 Output formats
+
+Using the I<--format> option, you can use the following output drivers:
+
+=head2 csv
+
+This is the default output driver. By default, the output will be written to
+the standard output. If can direct the output to a file using the I<--output>
+option.
+
+=head2 db
+
+Stores the extracted data in a relational database.
+
+When you use this driver, you can specify where exactly to store the data using
+the I<--output> option. If you do not specify an explicit target, analizo will
+write to a SQLite database in a file called I<output.sqlite3> in the current
+directory. If you pass a filename, and analizo will store the data in a SQLite
+database that will be created on that file. You can direct the output to any
+other database by using I<--output DSN>, where I<DSN> is a DBI Data Source
+Name.
+
+You can check B<DBI>(3pm) for details. Note that if you a database other than
+SQLite, you must make sure that you have the correponsing DBI driver installed.
+
+Examples:
+
+B<$ analizo metrics-history -f db -o history.db>
+
+Writes the output to a SQLite database called I<history.db>.
+
+B<$ analizo metrics-history -f db -o 'dbi:Pg:dbname=pgdb'>
+
+Writes the data to a PostgreSQL database called I<pgdb>. This requires the
+I<DBI::Pg> Perl module.
+
+analizo was not tested with MySQL yet.
+
+=head1 SEE ALSO
+
+B<analizo-metrics(1)>
+
+=head1 COPYRIGHT AND AUTHORS
+
+See B<analizo(1)>
+
+=cut
+
+use Analizo::Command;
+use Getopt::Long;
+
+my $__help          = undef;
+my $__list_only     = undef;
+my $__language      = undef;
+my $__exclude       = undef;
+my $__output        = undef;
+my $__parallel      = undef;
+my $__format        = 'csv';
+my $__progressbar   = undef;
+
+GetOptions(
+  'help'          => \$__help,
+  'l|list'        => \$__list_only,
+  'language=s'    => \$__language,
+  'o|output=s'    => \$__output,
+  'exclude|x=s'   => \$__exclude,
+  'p|parallel=i'  => \$__parallel,
+  'f|format=s'    => \$__format,
+  'b|progressbar' => \$__progressbar,
+) or exit(1);
+
+if ($__help) {
+  exec('analizo', 'doc', __FILE__)
+}
+
+use Analizo::Batch::Git;
+
+my $batch = new Analizo::Batch::Git(@ARGV);
+if ($__list_only) {
+  while (my $job = $batch->next()) {
+    print $job->id, "\n";
+  }
+  exit 0;
+}
+
+if ($__language) {
+  require Analizo::LanguageFilter;
+  my $language_filter = Analizo::LanguageFilter->new($__language);
+  $batch->filters($language_filter);
+}
+if ($__exclude) {
+  my @excluded_directories = split(':', $__exclude);
+  $batch->exclude(@excluded_directories);
+}
+
+my %available_outputs = (
+  csv => 'Analizo::Batch::Output::CSV',
+  db  => 'Analizo::Batch::Output::DB',
+);
+my $output_driver = $available_outputs{$__format};
+if (!$output_driver) {
+  printf "E: Invalid output driver %s\n", $__format;
+  exit 2;
+}
+eval "require $output_driver";
+my $output = new $output_driver;
+
+if ($__output) {
+  $output->file($__output);
+}
+
+my $runner = undef;
+if ($__parallel) {
+  require Analizo::Batch::Runner::Parallel;
+  $runner = new Analizo::Batch::Runner::Parallel($__parallel);
+} else {
+  require Analizo::Batch::Runner::Sequential;
+  $runner = new Analizo::Batch::Runner::Sequential;
+}
+
+if ($__progressbar) {
+  require Term::ProgressBar;
+  my $progressbar = Term::ProgressBar->new ({ count => 100, ETA => 'linear' });
+  $runner->progress(
+    sub {
+      my ($job, $done, $total) = @_;
+      $progressbar->update(100 * $done / $total);
+    }
+  );
+}
+
+$runner->run($batch, $output);

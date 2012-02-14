@@ -1,66 +1,61 @@
-def cucumber(args)
-  options = "--format progress #{args}"
-  if system("which cucumber")
-    sh "cucumber #{options}"
+# encoding: utf-8
+
+def puts_with_color(msg, color = nil)
+  color ||= :yellow
+  colors = {
+    :yellow => 33,
+    :green => 32,
+    :red => 31,
+  }
+  color_code = colors[color] || colors[:yellow]
+  if $stdout.isatty
+    puts("\033[%s;40m%s\033[m" % [color_code, msg])
   else
-    sh "bundle exec cucumber #{options}"
+    puts(msg)
   end
 end
 
-def banner_format
-  $stdout.isatty ? "\033[33;01m%s\033[m" : "%s"
+def banner(msg, color = nil)
+  puts_with_color('=' * 72, color)
+  puts_with_color(msg, color)
+  puts_with_color('=' * 72, color)
 end
 
-def banner(msg)
-  puts banner_format % ('=' * 72)
-  puts banner_format % msg
-  puts banner_format % ('=' * 72)
+$TEST_TASKS = []
+def test_task(name, &block)
+  $TEST_TASKS << name
+  task(name, &block)
 end
 
-desc 'Run Perl unit tests'
-task 'test:perl' do
-  banner 'Perl unit tests'
+desc 'Perl unit tests'
+test_task 'test:unit' do
   sh('prove -Ilib t/')
 end
 
-require 'rake/testtask'
-Rake::TestTask.new('test:ruby:run') do |t|
-  t.libs << "test"
-  t.test_files = FileList['test/*_test.rb']
-  t.verbose = true
-end
-
-task 'test:ruby' do
-  banner 'Ruby unit tests'
-  Rake::Task['test:ruby:run'].invoke
-end
-
-desc 'Run acceptance tests'
-task 'cucumber' do
-  banner 'Acceptance tests'
-  cucumber '--tags ~@wip features/'
+desc 'Acceptance tests'
+test_task 'test:acceptance' do
+  sh 'perl test.pl'
 end
 
 task :default do
-  errors = ['test:perl', 'test:ruby', 'cucumber'].map do |task|
+  unless system('which doxyparse > /dev/null')
+    banner("doxyparse program not found, bailing out.\nYou have to install doxyparse to run analizo tests", :red)
+    fail
+  end
+  failed_test_suites = $TEST_TASKS.map { |t| Rake::Task[t] }.map do |task|
     begin
-      Rake::Task[task].invoke
+      puts_with_color(task.comment)
+      task.invoke
+      banner("#{task.comment} passed \\o/", :green)
       nil
     rescue => e
-      task
+      task.comment
     end
   end.compact
-  abort "Errors running #{errors.inspect}!" if errors.any?
-end
-
-desc "Run all acceptance tests (even those marked as WIP)"
-task 'cucumber:all' do
-  cucumber 'features/'
-end
-
-desc "Run acceptance tests marked as WIP"
-task 'cucumber:wip' do
-  cucumber '--tags @wip features/'
+  if !failed_test_suites.empty?
+    banner("Failed test suites: #{failed_test_suites.join(', ')}", :red)
+    fail
+  end
 end
 
 desc 'updates MANIFEST from contents of git repository'
@@ -70,12 +65,14 @@ end
 
 version = File.readlines('analizo').find { |item| item =~ /VERSION =/ }.strip.gsub(/.*VERSION = '(.*)'.*/, '\1')
 
-desc 'prepares a release tarball'
-task :release => [:authors, :manifest, :check_repo, :check_tag, :default] do
+desc 'prepares a release tarball and a debian package'
+task :release => [:authors, :manifest, :check_repo, :check_tag, :check_debian_version, :default] do
   sh "perl Makefile.PL"
   sh "make"
   sh "make test"
   sh "make dist"
+  sh "mv analizo-#{version}.tar.gz ../analizo_#{version}.tar.gz"
+  sh 'git buildpackage'
   sh "git tag #{version}"
 end
 
@@ -113,4 +110,12 @@ task :check_tag do
     end
   end
   puts "Not found tag for version #{version}, we can go on."
+end
+
+desc 'checks if debian version is in sync with "upstream" version'
+task :check_debian_version do
+  debian_version = `dpkg-parsechangelog | grep Version | awk '{print $2}'`.strip
+  if debian_version != version
+    raise "******** Upstream version is #{version}, but Debian version is #{debian_version}."
+  end
 end

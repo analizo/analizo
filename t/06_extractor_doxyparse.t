@@ -188,5 +188,43 @@ sub invalid_doxyparse_input : Tests {
   is(scalar($extractor->model->functions('module1.c')), 1); # with 1 function
 }
 
+sub current_file : Tests {
+  my $extractor = new Analizo::Extractor::Doxyparse;
+  my $current_file_called_correctly = undef;
+  no warnings;
+  local *Analizo::Extractor::Doxyparse::current_file = sub {
+    my ($self, $current_file) = @_;
+    if (defined($current_file) && $current_file eq 'src/person.h') {
+      $current_file_called_correctly = 1;
+    }
+  };
+  use warnings;
+
+  $extractor->feed('file src/person.h');
+  ok($current_file_called_correctly);
+}
+
+sub current_file_strip_pwd : Tests {
+  use Cwd;
+  my $pwd = getcwd();
+  my $extractor = new Analizo::Extractor::Doxyparse;
+  $extractor->feed("file $pwd/src/test.c");
+  is($extractor->current_file(), 'src/test.c')
+}
+
+sub use_full_filename_for_C_modules : Tests {
+  my $extractor = new Analizo::Extractor::Doxyparse;
+  $extractor->process('t/samples/multidir/c');
+  my @modules = $extractor->model->module_names();
+  ok(grep { /^lib\/main$/ } @modules);
+  ok(grep { /^src\/main$/ } @modules);
+}
+
+sub module_name_can_contain_spaces : Tests {
+  my $extractor = new Analizo::Extractor::Doxyparse;
+  $extractor->feed('module TemplatedClass< true >');
+  is($extractor->current_module, 'TemplatedClass< true >')
+}
+
 ExtractorDoxyparseTests->runtests;
 
