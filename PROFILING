@@ -3,7 +3,7 @@ Profiling analizo
 
 Run the desired command under the profiler:
 
-  $ analizolib=/path/to/analizo
+  $ analizo=/path/to/analizo
   $ perl -d:DProf -I$analizo/lib $analizo/lib/Analizo/scripts/analizo-COMMAND
 
 Process the profiler output (this has to be run from the same directory where
