@@ -138,7 +138,7 @@ class AnalizoRunner
     if analizo_metrics_output.nil? || analizo_metrics_output.empty?
       nil
     else
-      metrics = YAML.load_stream(analizo_metrics_output).documents.first
+      metrics = YAML.load_stream(analizo_metrics_output).first
       header(metrics) + [commit_data(commit), metrics_data(metrics)].join(',')
     end
   end
@@ -175,28 +175,27 @@ def usage(status)
 end
 
 require 'getoptlong'
-require 'rdoc/usage'
-
-opts = GetoptLong.new(
-  [ '--list', '-l', GetoptLong::NO_ARGUMENT ],
-  [ '--analizo-metrics-options', '-o', GetoptLong::REQUIRED_ARGUMENT ],
-  [ '--help', '-h', GetoptLong::NO_ARGUMENT ],
-  [ '--usage', GetoptLong::NO_ARGUMENT ]
-)
+require 'optparse'
 
 list_only = false
-opts.each do |opt,value|
-  case opt
-  when '--analizo-metrics-options'
+opts = OptionParser.new do |opts|
+  # Note: the word OPTIONS in the second argument is mandatory!
+  opts.on('-o', '--analizo-metrics-options OPTIONS', '') do |value|
     $ANALIZO_METRICS_OPTIONS = value
-  when '--help'
+  end
+  opts.on_tail('-h', '--help', '') do
     exec 'analizo', 'doc', __FILE__
-  when '--usage'
+    exit
+  end
+  opts.on_tail('', '--usage', '') do
     usage(0)
-  when '--list'
+    exit
+  end
+  opts.on_tail('-l', '--list', '') do
     list_only = true
   end
 end
+opts.parse!(ARGV)
 
 if !ARGV[0] then
   usage(1)

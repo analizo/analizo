@@ -106,12 +106,12 @@ end
 
 Then /^analizo must report that the project has (.+) = ([\d\.]+)$/ do |metric,n|
   stream = YAML.load_stream(@stdout.join)
-  stream.documents.first[metric].should == n.to_f
+  stream.first[metric].should == n.to_f
 end
 
 Then /^analizo must report that module (.+) has (.+) = (.+)$/ do |mod, metric, value|
   stream = YAML.load_stream(@stdout.join)
-  module_metrics = stream.documents.find { |doc| doc['_module'] == mod }
+  module_metrics = stream.find { |doc| doc['_module'] == mod }
   case value
   when /^\d+|\d+\.\d+$/
     value = value.to_f
