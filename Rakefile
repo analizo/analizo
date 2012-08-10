@@ -1,3 +1,5 @@
+# encoding: UTF-8
+
 def cucumber(args)
   options = "--format progress #{args}"
   if system("which cucumber")
