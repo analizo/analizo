@@ -28,7 +28,7 @@ Given /^I explode (.+) and run "([^\"]*)"$/ do |tarball, command|
     Dir.chdir(tmpdir) do
       system("tar xzf #{tarball_full_path}")
       Dir.chdir(dirname) do
-        When("I run \"#{command}\"")
+        step("I run \"#{command}\"")
       end
     end
   end
