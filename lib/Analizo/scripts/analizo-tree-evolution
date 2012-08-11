@@ -1,104 +1,4 @@
-#!/usr/bin/env ruby
-
-class LanguageFilter
-  FILTERS = {
-    :null =>  /./,
-    :java =>  /\.java$/,
-    :c    =>  /\.(c|h)$/,
-    :cpp  =>  /\.(c|h|cpp|cxx|cc|hpp)$/
-  }
-  def initialize(filter_name)
-    @regex = FILTERS[filter_name]
-    if !@regex
-      raise "E: Unknown filter \"#{filter_name}\"."
-    end
-  end
-  def match(filename)
-    if filename =~ @regex
-      true
-    else
-      false
-    end
-  end
-end
-
-class Tree
-  attr_accessor :contents
-  attr_accessor :introduced_by
-  def initialize(contents, introduced_by)
-    @contents = contents
-    @introduced_by = introduced_by
-  end
-  def sha1
-    @sha1 ||= Digest::SHA1.hexdigest(contents.inspect)
-  end
-end
-
-require 'digest/sha1'
-class TreeTracker
-
-  def all
-    @all ||= {}
-  end
-
-  def add(tree)
-    unless all.has_key?(tree.sha1)
-      all[tree.sha1] = tree
-      yield(tree)
-    end
-  end
-
-end
-
-class Runner
-  attr_accessor :language_filter, :tracker
-  def run
-    `git log --pretty=format:%H --reverse`.each_line do |commit|
-      commit.strip!
-      process_commit(commit)
-    end
-  end
-  def process_commit(commit)
-    seen_directories = []
-    `git ls-tree -r --name-only #{commit}`.each_line do |filename|
-      filename.strip!
-      if language_filter.match(filename)
-        directory = File.dirname(filename)
-        unless directory == '.' || seen_directories.include?(directory)
-          seen_directories << directory
-        end
-      end
-    end
-    seen_directories.sort!
-    tracker.add(Tree.new(seen_directories, commit)) do |tree|
-      puts "# #{tree.introduced_by}"
-      puts tree.contents
-    end
-  end
-end
-
-if $PROGRAM_NAME == __FILE__
-  options = {
-    :language => :null,
-  }
-  require 'optparse'
-  option_parser = OptionParser.new do |opts|
-    opts.on('-l', '--language LANGUAGE', 'Filters files by language') do |language|
-      options[:language] = language.to_sym
-    end
-    opts.on('-h', '--help', 'Displays the manual') do
-      exec 'analizo', 'doc', __FILE__
-    end
-  end
-  option_parser.parse!(ARGV)
-
-  runner = Runner.new
-  runner.tracker = TreeTracker.new
-  runner.language_filter = LanguageFilter.new(options[:language])
-  runner.run
-end
-
-__END__
+#!/usr/bin/perl
 
 =head1 NAME
 
@@ -174,3 +74,54 @@ Displays the manual page (which you are currently reading).
 See B<analizo(1)>
 
 =cut
+
+use strict;
+use warnings;
+use Analizo::Command;
+use Getopt::Long;
+use Digest::SHA1  qw(sha1_hex);
+use File::Basename;
+use Analizo::LanguageFilter;
+
+my $__help = undef;
+my $__language = undef;
+
+GetOptions(
+  'h|help'          => \$__help,
+  'l|language=s'    => \$__language,
+) or exit(1);
+
+if ($__help) {
+  exec('analizo', 'doc', __FILE__);
+}
+
+$__language ||= 'all';
+my $filter = new Analizo::LanguageFilter($__language);
+
+$ENV{PATH} = '/usr/local/bin:/usr/bin:/bin';
+
+open COMMITS, "git log --reverse --format=%H|";
+my @commits = <COMMITS>;
+chomp @commits;
+close COMMITS;
+
+my %trees = ();
+
+for my $commit (@commits) {
+  my @tree = `git ls-tree -r --name-only $commit`;
+  chomp(@tree);
+  my %dirs = map { dirname($_) => 1 } (grep { $filter->matches($_) } @tree);
+  @tree = sort(grep { $_ ne '.' } keys(%dirs));
+  next unless (@tree);
+
+  my $tree = join("\n", @tree);
+
+  my $sha1 = sha1_hex($tree);
+
+  if (!exists($trees{$sha1})) {
+    print "# $commit\n";
+    print $tree, "\n";
+    $trees{$sha1} = 1;
+  }
+
+}

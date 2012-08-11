@@ -1,5 +1,6 @@
 require 'fileutils'
 require 'tmpdir'
+require 'digest/sha1'
 
 top_dir = FileUtils.pwd
 saved_path = ENV["PATH"]
@@ -21,21 +22,32 @@ Given /^I am in (.+)$/ do |dir|
   FileUtils.cd(dir)
 end
 
-Given /^I explode (.+) and run "([^\"]*)"$/ do |tarball, command|
+def get_tmpdir
+  Dir.mktmpdir([Process.pid.to_s, '.analizo.tmpdir'])
+end
+
+Given /^I explode (.+)$/ do |tarball|
   tarball_full_path = File.expand_path(tarball)
   dirname = File.basename(tarball).sub('.tar.gz', '')
-  Dir.mktmpdir do |tmpdir|
-    Dir.chdir(tmpdir) do
-      system("tar xzf #{tarball_full_path}")
-      Dir.chdir(dirname) do
-        step("I run \"#{command}\"")
-      end
-    end
+  tmpdir = get_tmpdir
+  Dir.chdir(tmpdir) do
+    system("tar xzf #{tarball_full_path}")
   end
+  FileUtils.cd(File.join(tmpdir, dirname))
+end
+
+When /^I copy (.*) into a temporary directory$/ do |files|
+  tmpdir = get_tmpdir
+  FileUtils.cp_r(Dir.glob(files), tmpdir)
+  FileUtils.cd(tmpdir)
+end
+
+When /^I change to an empty temporary directory$/ do
+  FileUtils.cd(get_tmpdir)
 end
 
 When /^I run "([^\"]*)"$/ do |command|
-  system("#{command} >tmp.out 2>tmp.err")
+  system("(#{command}) >tmp.out 2>tmp.err")
   if $?.is_a?(Fixnum)
     @exit_status = $?
   else
@@ -43,6 +55,24 @@ When /^I run "([^\"]*)"$/ do |command|
   end
   @stdout = File.readlines('tmp.out')
   @stderr = File.readlines('tmp.err')
+end
+
+at_exit do
+  FileUtils.rm_rf(Dir.glob(File.join(Dir.tmpdir, '*.analizo.{out,err,tmpdir}')))
+end
+
+When /^I run "([^\"]*)" only once$/ do |command|
+  run_marker = Digest::SHA1.hexdigest(Dir.pwd) + Digest::SHA1.hexdigest(command)
+  stdout = File.join(Dir.tmpdir, run_marker + '.analizo.out')
+  stderr = File.join(Dir.tmpdir, run_marker + '.analizo.err')
+  if File.exist?(stdout) && File.exist?(stderr)
+    @stdout = File.readlines(stdout)
+    @stderr = File.readlines(stderr)
+  else
+    step("I run \"#{command}\"")
+    FileUtils.cp('tmp.out', stdout)
+    FileUtils.cp('tmp.err', stderr)
+  end
 end
 
 Then /^analizo must report that "([^\"]*)" depends on "([^\"]*)"$/ do |dependent, depended|
@@ -104,14 +134,27 @@ Then /^analizo must emit a warning matching "([^\"]*)"$/ do |pattern|
   @stderr.join.should match(pattern)
 end
 
+module AnalizoRuby18Compatibiliy
+  include Enumerable
+  def each(&block)
+    self.documents.each(&block)
+  end
+end
+
+def __load_yaml_stream(data)
+  stream = YAML.load_stream(data)
+  if RUBY_VERSION < '1.9'
+    stream.extend(AnalizoRuby18Compatibiliy)
+  end
+  stream
+end
+
 Then /^analizo must report that the project has (.+) = ([\d\.]+)$/ do |metric,n|
-  stream = YAML.load_stream(@stdout.join)
-  stream.documents.first[metric].should == n.to_f
+  __load_yaml_stream(@stdout.join).first[metric].should == n.to_f
 end
 
 Then /^analizo must report that module (.+) has (.+) = (.+)$/ do |mod, metric, value|
-  stream = YAML.load_stream(@stdout.join)
-  module_metrics = stream.documents.find { |doc| doc['_module'] == mod }
+  module_metrics = __load_yaml_stream(@stdout.join).find { |doc| doc['_module'] == mod }
   case value
   when /^\d+|\d+\.\d+$/
     value = value.to_f
@@ -129,3 +172,10 @@ Then /^analizo must present a list of metrics$/ do
   end
 end
 
+Given /^I create a file called (.+) with the following content$/ do |filename, table|
+  File.open(filename, 'w') do |file|
+    table.raw.each do |line|
+      file.puts(line)
+    end
+  end
+end

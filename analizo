@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 use Pod::Usage;
-our $VERSION = '1.16.0';
+our $VERSION = '1.17.0';
 
 =head1 NAME
 
@@ -54,6 +54,30 @@ Displays help for the 'analizo' command.
 
 =back
 
+=head1 CONFIGURATION FILE
+
+Analizo can be configured in a per-project way by means of a file called
+I<.analizo> in the current directory. The syntax for this file is: one line per
+tool, each line has the tool name, a colon and one or more command line
+options:
+
+  <tool-name>: OPTIONS
+
+When you run an analizo tool from inside that directory, it will load
+I<.analizo> and act as if the options specified there were actually passed to
+it in the command line. Note that options in the command line will override any
+options in configuration files, though.
+
+Example:
+
+  metrics: --language cpp
+  graph: --modules
+
+You can store a file like that in the root directory of your project. Every
+time you run B<analizo metrics> from that directory, it will only consider C++
+code. When you run B<analizo graph> from that directory  it will use the
+I<--modules> option.
+
 =head1 HISTORY
 
 Analizo started as a modified version of egypt, by Andreas Gustafsson
@@ -94,13 +118,14 @@ use strict;
 use FindBin qw($RealBin $RealScript);
 
 if (-e "$RealBin/Makefile.PL") {
-  # Development mode:
-  #   * local library dir has precedence
-  #   * local analizo program has precedence
+  # Development mode
   my $local_lib = "$RealBin/lib";
   unshift @INC, $local_lib;
   $ENV{PERL5LIB} = $ENV{PERL5LIB} ? join(':', ($local_lib, $ENV{PERL5LIB})) : $local_lib;
   $ENV{PATH} = join(':', ($RealBin, $ENV{PATH}));
+  my $gitinfo = `cd $RealBin && git log HEAD^..HEAD --format='%cD %h'`;
+  chomp($gitinfo);
+  $VERSION = sprintf('%s (%s)', $VERSION, $gitinfo);
 }
 
 my @script_dir = grep { -d "$_/Analizo/scripts" } @INC;

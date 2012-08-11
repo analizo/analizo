@@ -4,7 +4,8 @@ Feature: analizo metrics-history
   To understand its development process
 
   Scenario: listing what commits should be analyzed
-    When I explode t/samples/evolution.tar.gz and run "analizo metrics-history --list ."
+    When I explode t/samples/evolution.tar.gz
+    And I run "analizo metrics-history --list ."
     Then the output must match "0a06a6fcc2e7b4fe56d134e89d74ad028bb122ed"
     # merge commit with code change:
     And the output must match "eb67c27055293e835049b58d7d73ce3664d3f90e"
@@ -18,8 +19,9 @@ Feature: analizo metrics-history
     And the output must not match "0fdaaa7dcc8073332a957024fafc8c98f165e725"
 
   Scenario: actually processing
-    When I explode t/samples/evolution.tar.gz and run "(analizo metrics-history . && cat metrics.csv)"
-    Then the output must match "^commit_id,previous_commit_id,date,author,email,.*,sc_average"
+    When I explode t/samples/evolution.tar.gz
+    And I run "(analizo metrics-history -o metrics.csv . && cat metrics.csv)"
+    Then the output must match "^id,previous_commit_id,author_date,author_name,author_email,.*,sc_average"
     And the output must match "0a06a6fcc2e7b4fe56d134e89d74ad028bb122ed,eb67c27055293e835049b58d7d73ce3664d3f90e"
     # merge commit:
     And the output must match "eb67c27055293e835049b58d7d73ce3664d3f90e,,"
@@ -31,8 +33,20 @@ Feature: analizo metrics-history
     # first commit after a non-relevant merge:
     And the output must match "8183eafad3a0f3eff6e8869f1bdbfd255e86825a,0a06a6fcc2e7b4fe56d134e89d74ad028bb122ed"
 
-  Scenario: passing analizo metrics options along
-    When I explode t/samples/evolution.tar.gz and run "(analizo metrics-history -o '--language cpp' . && cat metrics.csv)"
-    Then the output must match "^commit_id,previous_commit_id,date,author,email,.*,sc_average"
-    # There must be enough commas (i.e. all the needed metrics are there)
-    And the output must match "0a06a6fcc2e7b4fe56d134e89d74ad028bb122ed(,[^,]+){20}"
+  Scenario: support for parallel processing
+    Given I copy t/samples/evolution.tar.gz into a temporary directory
+    And I run "tar xzf evolution.tar.gz"
+    And I run "cd evolution && analizo metrics-history -o ../sequential.csv"
+    And I run "cd evolution && analizo metrics-history -p 2 -o ../parallel.csv"
+    Then the exit status must be 0
+    When I run "sort sequential.csv > sequential-sorted.csv"
+    And I run "sort parallel.csv > parallel-sorted.csv"
+    And I run "diff -u sequential-sorted.csv parallel-sorted.csv"
+    Then the output must not match "---"
+    Then the exit status must be 0
+
+  Scenario: language filters
+    Given I copy t/samples/mixed into a temporary directory
+    And I run "(cd mixed && git init && git add * && git commit -m 'initial commit')"
+    And I run "analizo metrics-history --language java mixed"
+    Then the output must not match "native_backend.c"

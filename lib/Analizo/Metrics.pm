@@ -40,6 +40,7 @@ sub list_of_global_metrics {
     total_modules => "Total Number of Modules/Classes",
     total_nom => "Total Number of Methods",
     total_loc => "Total Lines of Code",
+    total_eloc => "Total Effective Lines of Code",
     total_modules_with_defined_methods => "Total number of modules/classes with at least one defined method",
     total_modules_with_defined_attributes => "Total number of modules/classes with at least one defined attributes",
     total_methods_per_abstract_class => "Total number of methods per abstract class"
@@ -301,7 +302,7 @@ sub _report_module {
 
   my %data = (
     _module              => $module,
-    _filename            => $self->model->file($module),
+    _filename            => $self->model->files($module),
     acc                  => $acc,
     accm                 => $accm,
     amloc                => $amloc,
@@ -324,8 +325,24 @@ sub _report_module {
 }
 
 sub report {
+  my ($self) = @_;
+  my ($summary, $details) = $self->data();
+  return Dump($summary) . join('', map { Dump($_)} @$details);
+}
+
+sub data {
+  my ($self) = @_;
+  if (!exists($self->{metrics_summary}) && !exists($self->{metrics_details})) {
+    my ($summary, $details) = $self->_actually_calculate_data();
+    $self->{metrics_summary} = $summary;
+    $self->{metrics_details} = $details;
+  }
+  return ($self->{metrics_summary}, $self->{metrics_details});
+}
+
+sub _actually_calculate_data {
   my $self = shift;
-  my $details = '';
+  my @details = ();
   my $total_modules = 0;
   my $total_modules_with_defined_methods = 0;
   my $total_modules_with_defined_attributes = 0;
@@ -362,7 +379,7 @@ sub report {
     my %data = $self->_report_module($module);
 
     unless ($self->report_global_metrics_only()) {
-      $details .= Dump(\%data);
+      push @details, \%data;
     }
 
     $total_modules += 1;
@@ -420,7 +437,7 @@ sub report {
     $summary{"total_cof"} = 1;
   }
 
-  return Dump(\%summary) . $details;
+  return (\%summary, \@details);
 }
 
 sub list_of_metrics {
@@ -432,6 +449,17 @@ sub list_of_metrics {
     $list{$name} = $DESCRIPTIONS{$name};
   }
   return %list;
+}
+
+sub metrics_for {
+  my ($self, $module) = @_;
+  my ($summary, $details) = $self->data();
+  my @list = grep { $_->{_module} eq $module } @$details;
+  if (scalar(@list) == 1) {
+    return $list[0];
+  } else {
+    die("No such module $module");
+  }
 }
 
 1;
