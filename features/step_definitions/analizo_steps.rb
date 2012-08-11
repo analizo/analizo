@@ -69,7 +69,7 @@ When /^I run "([^\"]*)" only once$/ do |command|
     @stdout = File.readlines(stdout)
     @stderr = File.readlines(stderr)
   else
-    Then("I run \"#{command}\"")
+    step("I run \"#{command}\"")
     FileUtils.cp('tmp.out', stdout)
     FileUtils.cp('tmp.err', stderr)
   end
