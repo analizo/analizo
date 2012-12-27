@@ -130,7 +130,7 @@ if (@unreadable) {
 }
 
 if(!@ARGV){
-    pod2usage(-verbose => 1, -exitval => 0)
+  exec('analizo', 'doc', '--usage', __FILE__);
 }
 
 my $extractor = Analizo::Extractor->load($__extractor);
