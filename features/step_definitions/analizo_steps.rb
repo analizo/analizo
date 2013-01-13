@@ -125,7 +125,7 @@ Then /^the output must not match "([^\"]*)"$/ do |pattern|
   end
 end
 
-Then /^the output from "(.+)" must match "([^\"]*)"$/ do |file, pattern|
+Then /^the contents of "(.+)" must match "([^\"]*)"$/ do |file, pattern|
   @out = File.readlines(file).join
   @out.should match(pattern)
 end
