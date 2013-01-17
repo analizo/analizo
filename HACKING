@@ -20,8 +20,7 @@ All of the steps must be performed as root user:
 
   $ wget -O - http://analizo.org/download/signing-key.asc | apt-key add -
   $ sudo apt-get update
-  $ sudo apt-get install doxyparse sloccount libgraph-perl liblist-compare-perl libtest-class-perl libtest-exception-perl libyaml-perl libclass-accessor-perl libstatistics-descriptive-perl libstatistics-online-perl ruby graphviz libzeromq-perl libdbd-sqlite3-perl libdigest-sha1-perl
-
+  $ sudo apt-get install doxyparse sloccount libgraph-perl liblist-compare-perl libtest-class-perl libtest-exception-perl libyaml-perl libclass-accessor-perl libstatistics-descriptive-perl libstatistics-online-perl ruby graphviz libdbd-sqlite3-perl libdigest-sha1-perl libterm-progressbar-perl
 
 # If you don't plan to develop Analizo (i.e. you only want to use it), you can
 stop here.
