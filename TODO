@@ -9,8 +9,3 @@
   "Please note that this module has been DEPRECATED in favor of ZMQ::LibZMQ2,
   ZMQ::LibZMQ3, and ZMQ. see https://github.com/lestrrat/p5-ZMQ and other CPAN
   pages."
-
-* use Digest::SHA instead of Digest::SHA1
-
-  "Its functionality is also provided by Digest::SHA (which is in core)."
-  ref.: http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=594273

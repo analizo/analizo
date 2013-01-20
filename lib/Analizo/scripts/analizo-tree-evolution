@@ -79,7 +79,7 @@ use strict;
 use warnings;
 use Analizo::Command;
 use Getopt::Long;
-use Digest::SHA1  qw(sha1_hex);
+use Digest::SHA  qw(sha1_hex);
 use File::Basename;
 use Analizo::LanguageFilter;
 

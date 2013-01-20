@@ -3,7 +3,7 @@ use strict;
 use warnings;
 use base qw( Analizo::Batch::Output );
 use DBI;
-use Digest::SHA1 qw(sha1_hex);
+use Digest::SHA qw(sha1_hex);
 
 sub database($) {
   my ($self) = @_;
