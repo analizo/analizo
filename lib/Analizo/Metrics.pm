@@ -412,12 +412,12 @@ sub _actually_calculate_data {
     $summary{$metric . "..standard_deviation"} = $statistics->standard_deviation();
     $summary{$metric . "..sum"}   = $statistics->sum();
     $summary{$metric . "..variance"}    = $variance;
-    $summary{$metric . ".quartile_0"}   = $statistics->min(); #minimum
-    $summary{$metric . ".quartile_25"}   = $statistics->quantile(1); #lower quartile
-    $summary{$metric . ".quartile_50"}   = $statistics->median(); #median
-    $summary{$metric . ".quartile_75"}   = $statistics->quantile(3); #upper quartile
-    $summary{$metric . ".quartile_95"}  = $statistics->percentile(95); #95th percentile
-    $summary{$metric . ".quartile_max"} = $statistics->max(); #maximum
+    $summary{$metric . ".quantile_0.00"}   = $statistics->min(); #minimum
+    $summary{$metric . ".quantile_0.25"}   = $statistics->quantile(1); #lower quartile
+    $summary{$metric . ".quantile_0.50"}   = $statistics->median(); #median
+    $summary{$metric . ".quantile_0.75"}   = $statistics->quantile(3); #upper quartile
+    $summary{$metric . ".quantile_0.95"}  = $statistics->percentile(95); #95th percentile
+    $summary{$metric . ".quantile_1.00"} = $statistics->max(); #maximum
 
     if (($variance > 0) && ($statistics->count >= 4)) {
       $summary{$metric . "_kurtosis"} = $statistics->kurtosis();
