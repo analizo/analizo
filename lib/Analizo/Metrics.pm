@@ -9,7 +9,7 @@ use Statistics::Descriptive;
 __PACKAGE__->mk_accessors(qw(model report_global_metrics_only));
 
 my %DESCRIPTIONS = (
-  acc       => "Afferent Connections per Class (used to calculate COF - Coupling Factor)",
+  acc       => "Afferent Connections per Class",
   accm      => "Average Cyclomatic Complexity per Method",
   amloc     => "Average Method LOC",
   anpm      => "Average Number of Parameters per Method",
