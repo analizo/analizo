@@ -407,17 +407,17 @@ sub _actually_calculate_data {
 
     my $variance = $statistics->variance();
 
-    $summary{$metric . "...mean"} = $statistics->mean();
-    $summary{$metric . "..mode"}  = $statistics->mode();
-    $summary{$metric . "..standard_deviation"} = $statistics->standard_deviation();
-    $summary{$metric . "..sum"}   = $statistics->sum();
-    $summary{$metric . "..variance"}    = $variance;
-    $summary{$metric . ".quantile_0.00"}   = $statistics->min(); #minimum
-    $summary{$metric . ".quantile_0.25"}   = $statistics->quantile(1); #lower quartile
-    $summary{$metric . ".quantile_0.50"}   = $statistics->median(); #median
-    $summary{$metric . ".quantile_0.75"}   = $statistics->quantile(3); #upper quartile
-    $summary{$metric . ".quantile_0.95"}  = $statistics->percentile(95); #95th percentile
-    $summary{$metric . ".quantile_1.00"} = $statistics->max(); #maximum
+    $summary{$metric . "_mean"} = $statistics->mean();
+    $summary{$metric . "_mode"}  = $statistics->mode();
+    $summary{$metric . "_standard_deviation"} = $statistics->standard_deviation();
+    $summary{$metric . "_sum"}   = $statistics->sum();
+    $summary{$metric . "_variance"}    = $variance;
+    $summary{$metric . "_quantile_min"}   = $statistics->min(); #minimum
+    $summary{$metric . "_quantile_lower"}   = $statistics->quantile(1); #lower quartile
+    $summary{$metric . "_quantile_median"}   = $statistics->median(); #median
+    $summary{$metric . "_quantile_upper"}   = $statistics->quantile(3); #upper quartile
+    $summary{$metric . "_quantile_ninety_five"}  = $statistics->percentile(95); #95th percentile
+    $summary{$metric . "_quantile_max"} = $statistics->max(); #maximum
 
     if (($variance > 0) && ($statistics->count >= 4)) {
       $summary{$metric . "_kurtosis"} = $statistics->kurtosis();
