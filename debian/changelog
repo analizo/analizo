@@ -1,9 +1,13 @@
-analizo (1.17.0) UNRELEASED; urgency=low
+analizo (1.17.0) unstable; urgency=low
 
-  * New release
+  [ Antonio Terceiro ]
   * Depend on doxyparse >= 1.5.8-12~ for module-to-filename mapping support
 
- -- Antonio Terceiro <terceiro@softwarelivre.org>  Mon, 20 Jun 2011 15:03:06 -0700
+  [ Joenio Costa ]
+  * Removing dependency libclass-accessor-fast-perl in favor of libclass-accessor-perl
+  * sqlite3 is required for building/release process
+
+ -- Joenio Costa <joenio@colivre.coop.br>  Thu, 31 Jan 2013 13:52:08 +0000
 
 analizo (1.16.0) unstable; urgency=low
 
