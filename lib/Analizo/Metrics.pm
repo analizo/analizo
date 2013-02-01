@@ -5,7 +5,6 @@ use List::Compare;
 use Graph;
 use YAML;
 use Statistics::Descriptive;
-use Statistics::OnLine;
 
 __PACKAGE__->mk_accessors(qw(model report_global_metrics_only));
 
@@ -404,10 +403,8 @@ sub _actually_calculate_data {
 
   for my $metric (keys %totals){
     my $statistics = Statistics::Descriptive::Full->new();
-    my $distributions = Statistics::OnLine->new();
 
     $statistics->add_data(@{$list_values{$metric}});
-    $distributions->add_data(@{$list_values{$metric}});
     my $variance = $statistics->variance();
 
     $summary{$metric . "_average"} = $statistics->mean();
@@ -420,9 +417,9 @@ sub _actually_calculate_data {
     $summary{$metric . "_variance"}= $variance;
 
 
-    if (($variance > 0) && ($distributions->count >= 4)) {
-      $summary{$metric . "_kurtosis"} = $distributions->kurtosis;
-      $summary{$metric . "_skewness"} = $distributions->skewness;
+    if (($variance > 0) && ($statistics->count >= 4)) {
+      $summary{$metric . "_kurtosis"} = $statistics->kurtosis();
+      $summary{$metric . "_skewness"} = $statistics->skewness();
     }
     else {
       $summary{$metric . "_kurtosis"} = 0;
