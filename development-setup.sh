@@ -23,8 +23,8 @@ debian_squeeze_hack() {
     return
   fi
 
-  (gem list | grep cucumber) || sudo gem install cucumber
-  (gem list | grep rspec) || sudo gem install rspec
+  (gem list | grep cucumber) || sudo gem --no-ri --no-rdoc install cucumber
+  (gem list | grep rspec) || sudo gem install --no-ri --no-rdoc rspec
   ln -s $(ruby -rubygems -e 'puts Gem.bindir')/* /usr/local/bin
 
   for fakepkg in cucumber ruby-rspec; do
