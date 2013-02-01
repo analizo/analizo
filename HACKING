@@ -4,7 +4,7 @@
 
 Run this command:
 
-  $ ./development-setup.sh
+  $ sudo ./development-setup.sh
 
 If you are using Debian, the script will do everything you need.
 
