@@ -26,11 +26,10 @@ Build-Depends-Indep:
  libjson-perl,
  liblist-compare-perl,
  libstatistics-descriptive-perl,
- libstatistics-online-perl,
  libyaml-perl,
  libzeromq-perl
 Standards-Version: 3.9.1
-Homepage: http://softwarelivre.org/mezuro/analizo
+Homepage: http://analizo.org
 DM-Upload-Allowed: yes
 
 Package: analizo
@@ -51,7 +50,6 @@ Depends:
  libjson-perl,
  liblist-compare-perl,
  libstatistics-descriptive-perl,
- libstatistics-online-perl,
  libyaml-perl,
  libzeromq-perl
 Recommends: graphviz, sqlite3
