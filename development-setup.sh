@@ -38,6 +38,9 @@ debian_squeeze_hack() {
     ) > /tmp/${fakepkg}.equivs
     (cd /tmp/ && equivs-build ${fakepkg}.equivs && dpkg -i ${fakepkg}_1.0_all.deb)
   done
+
+  echo 'deb http://backports.debian.org/debian-backports squeeze-backports main' > /etc/apt/sources.list.d/squeeze-backports.list
+  apt-get update
 }
 
 # FIXME share data with Makefile.PL
