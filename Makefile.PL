@@ -25,7 +25,9 @@ CheckExtraDependencies(
   'doxyparse' => '(>= 1.5.8-12~)',
   'git' => 0,
   'ruby' => 0,
-  'sloccount' => 0
+  'sloccount' => 0,
+  'sqlite3' => 0,
+  'man' => 0,
 );
 CheckExtraDependencies(
   'build',
