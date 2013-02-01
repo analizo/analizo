@@ -3,13 +3,40 @@
 set -e
 
 setup_debian() {
-  apt-get install devscripts equivs wget
+  debian_squeeze_hack
+
+  apt-get -q -y install devscripts equivs wget
   if [ ! -f /etc/apt/sources.list.d/analizo.list ]; then
     echo 'deb http://analizo.org/download/ ./' > /etc/apt/sources.list.d/analizo.list
     wget -O - http://analizo.org/download/signing-key.asc | apt-key add -
     apt-get update
   fi
-  mk-build-deps -i -r -s sudo
+  rm -f analizo-build-deps*.deb
+  mk-build-deps
+  sudo dpkg --unpack analizo-build-deps*.deb
+  sudo apt-get -q -y -f install
+}
+
+debian_squeeze_hack() {
+  which lsb_release || apt-get -q -y install lsb-release
+  if ! lsb_release -c | grep -i squeeze; then
+    return
+  fi
+
+  (gem list | grep cucumber) || sudo gem install cucumber
+  (gem list | grep rspec) || sudo gem install rspec
+  ln -s $(ruby -rubygems -e 'puts Gem.bindir')/* /usr/local/bin
+
+  for fakepkg in cucumber ruby-rspec; do
+    (
+      echo "Section: misc"
+      echo "Priority: optional"
+      echo "Standards-Version: 3.6.2"
+      echo
+      echo "Package: ${fakepkg}"
+    ) > /tmp/${fakepkg}.equivs
+    (cd /tmp/ && equivs-build ${fakepkg}.equivs && dpkg -i ${fakepkg}_1.0_all.deb)
+  done
 }
 
 # FIXME share data with Makefile.PL
