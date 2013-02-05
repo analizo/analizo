@@ -25,7 +25,9 @@ CheckExtraDependencies(
   'doxyparse' => '(>= 1.5.8-12~)',
   'git' => 0,
   'ruby' => 0,
-  'sloccount' => 0
+  'sloccount' => 0,
+  'sqlite3' => 0,
+  'man' => 0,
 );
 CheckExtraDependencies(
   'build',
@@ -46,14 +48,13 @@ WriteMakefile(
     'Class::Accessor::Fast' => 0,
     'DBD::SQLite' => 0,
     'DBI' => 0,
-    'Digest::SHA1' => 0,
+    'Digest::SHA' => 0,
     'File::Copy::Recursive' => 0,
     'List::Compare' => 0,
     'JSON' => 0,
     'Graph' => 0,
     'YAML' => 0,
     'Statistics::Descriptive' => 0,
-    'Statistics::OnLine' => 0,
     'Term::ProgressBar' => 0,
     'ZeroMQ' => 0,
   },

@@ -5,12 +5,11 @@ use List::Compare;
 use Graph;
 use YAML;
 use Statistics::Descriptive;
-use Statistics::OnLine;
 
 __PACKAGE__->mk_accessors(qw(model report_global_metrics_only));
 
 my %DESCRIPTIONS = (
-  acc       => "Afferent Connections per Class (used to calculate COF - Coupling Factor)",
+  acc       => "Afferent Connections per Class",
   accm      => "Average Cyclomatic Complexity per Method",
   amloc     => "Average Method LOC",
   anpm      => "Average Number of Parameters per Method",
@@ -404,25 +403,25 @@ sub _actually_calculate_data {
 
   for my $metric (keys %totals){
     my $statistics = Statistics::Descriptive::Full->new();
-    my $distributions = Statistics::OnLine->new();
-
     $statistics->add_data(@{$list_values{$metric}});
-    $distributions->add_data(@{$list_values{$metric}});
+
     my $variance = $statistics->variance();
 
-    $summary{$metric . "_average"} = $statistics->mean();
-    $summary{$metric . "_maximum"} = $statistics->max();
-    $summary{$metric . "_mininum"} = $statistics->min();
-    $summary{$metric . "_mode"} = $statistics->mode();
-    $summary{$metric . "_median"}= $statistics->median();
-    $summary{$metric . "_standard_deviation"}= $statistics->standard_deviation();
-    $summary{$metric . "_sum"} = $statistics->sum();
-    $summary{$metric . "_variance"}= $variance;
+    $summary{$metric . "_mean"} = $statistics->mean();
+    $summary{$metric . "_mode"}  = $statistics->mode();
+    $summary{$metric . "_standard_deviation"} = $statistics->standard_deviation();
+    $summary{$metric . "_sum"}   = $statistics->sum();
+    $summary{$metric . "_variance"}    = $variance;
+    $summary{$metric . "_quantile_min"}   = $statistics->min(); #minimum
+    $summary{$metric . "_quantile_lower"}   = $statistics->quantile(1); #lower quartile
+    $summary{$metric . "_quantile_median"}   = $statistics->median(); #median
+    $summary{$metric . "_quantile_upper"}   = $statistics->quantile(3); #upper quartile
+    $summary{$metric . "_quantile_ninety_five"}  = $statistics->percentile(95); #95th percentile
+    $summary{$metric . "_quantile_max"} = $statistics->max(); #maximum
 
-
-    if (($variance > 0) && ($distributions->count >= 4)) {
-      $summary{$metric . "_kurtosis"} = $distributions->kurtosis;
-      $summary{$metric . "_skewness"} = $distributions->skewness;
+    if (($variance > 0) && ($statistics->count >= 4)) {
+      $summary{$metric . "_kurtosis"} = $statistics->kurtosis();
+      $summary{$metric . "_skewness"} = $statistics->skewness();
     }
     else {
       $summary{$metric . "_kurtosis"} = 0;

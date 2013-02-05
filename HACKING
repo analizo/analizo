@@ -2,82 +2,14 @@
 = Installing Dependencies
 =========================
 
-This section will help you to install two different sets of packages:
+Run this command:
 
-  1) Analizo dependencies
-  2) extra programs needed to run Analizo test suite (if needed)
+  $ sudo ./development-setup.sh
 
-Short version (for Debian users):
----------------------------------
+If you are using Debian, the script will do everything you need.
 
-All of the steps must be performed as root user:
-
-1) Add the following line to your /etc/apt/sources.list:
-
-  deb http://analizo.org/download/ ./
-
-2) Install the needed Debian packages:
-
-  $ wget -O - http://analizo.org/download/signing-key.asc | apt-key add -
-  $ sudo apt-get update
-  $ sudo apt-get install doxyparse sloccount libgraph-perl liblist-compare-perl libtest-class-perl libtest-exception-perl libyaml-perl libclass-accessor-perl libstatistics-descriptive-perl libstatistics-online-perl ruby graphviz libdbd-sqlite3-perl libdigest-sha1-perl libterm-progressbar-perl
-
-# If you don't plan to develop Analizo (i.e. you only want to use it), you can
-stop here.
-
-3) Install extra software to run the acceptance tests:
-
-  $ sudo apt-get install rake rubygems libtest-mockmodule-perl libtest-mockobject-perl
-  $ gem install cucumber rspec
-
-
-Long version (general instructions):
-------------------------------------
-
-All of the steps must be performed as root user:
-
-1) Install the following Perl modules, using CPAN or your native package manager:
-
-  * Class::Accessor
-  * Getopt::Euclid
-  * Graph
-  * List::Compare
-  * Statistics::Descriptive
-  * Statistics::OnLine
-  * Test::Class
-  * Test::Exception
-  * YAML
-
-2) Install Doxyparse build dependencies: flex, bison, libqt4-dev, gcc, gcc-c++,
-and git (your operating system probably already has packages for these)
-
-3) Install Doxyparse
-
-  $ git clone git://gitorious.org/analizo/doxyparse.git
-  $ cd doxyparse
-  $ ./configure --with-doxyparse
-  $ make
-  $ sudo install bin/doxyparse /usr/local/bin/
-
-4) Install sloccount - http://www.dwheeler.com/sloccount/sloccount.html
-
-
-# If you don't plan to develop Analizo (i.e. you only want to use it), you can
-stop here.
-
-5) Install Rake - http://rake.rubyforge.org/
-
-  * your operating system probably already has a pre-built package for it
-  * otherwise follow the installation instructions on the website
-
-6) Install rubygems - http://docs.rubygems.org/
-
-  * your operating system will probably already have a pre-build package for it.
-If you have Ruby installed, you may already have rubygems installed as well.
-
-7) Install cucumber and rspec using rubygems
-
-  $ gem install cucumber rspec
+If you are using another system, you will have to install some dependencies
+first. Check the "Installing dependencies on non-Debian systems" below.
 
 ========================
 = Running the test suite
@@ -167,4 +99,44 @@ named like 0001-..., 0002-..., just send them all.
 You are encouraged to learn how to use git since it's a powerful version
 control system and it can make it easy for you to keep in sync with Analizo
 development.
+
+=================================================
+= Installing dependencies on non-Debian systems =
+=================================================
+
+1) Install Doxyparse build dependencies: flex, bison, libqt4-dev, gcc, gcc-c++,
+and git (your operating system probably already has packages for these)
+
+2) Install Doxyparse
+
+  $ git clone git://gitorious.org/analizo/doxyparse.git
+  $ cd doxyparse
+  $ ./configure --with-doxyparse
+  $ make
+  $ sudo install bin/doxyparse /usr/local/bin/
+
+3) Install sloccount - http://www.dwheeler.com/sloccount/sloccount.html
+
+4) Install Ruby packages required
+
+  - Make sure you have Rubygems installed. If you have a recent enough version
+    of Ruby, you should already have Rubygems.
+
+  $ gem install rake rspec cucumber
+
+5) Install Rake - http://rake.rubyforge.org/
+
+  * your operating system probably already has a pre-built package for it
+  * otherwise follow the installation instructions on the website
+
+6) Install rubygems - http://docs.rubygems.org/
+
+  * your operating system will probably already have a pre-build package for it.
+If you have Ruby installed, you may already have rubygems installed as well.
+
+7) Install cucumber and rspec using rubygems
+
+  $ gem install cucumber rspec
+
+8) Make sure you also have `man` and `sqlite3` installed.
 
