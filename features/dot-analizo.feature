@@ -25,6 +25,6 @@ Feature: loading command line options from .analizo
     | metrics-batch    |
     | metrics-history  |
     | tree-evolution   |
+    | evolution-matrix |
   # | doc              |
-  # | evolution-matrix |
-  # these two are nor Perl, so for now they do not support this.
+  # this is not Perl, so for now they do not support this.

@@ -1,0 +1,41 @@
+% my ($matrix) = @_;
+<!DOCTYPE html>
+<html>
+  <body>
+    <head>
+      <style type="text/css">
+      body { font-size: 12px; }
+      table { border-collapse: collapse; }
+      th, td { width: 40px; height: 40px; }
+      th, td { text-align: center; vertical-align: center; border: 1px solid #d3d7cf;}
+      .evolution-matrix-cell { border: 1px solid black; margin: auto; }
+      </style>
+    </head>
+    <h1>Evolution Matrix for <%= $matrix->name %></h1>
+    <ul>
+      <li><strong>Width metric:</strong> <%= $matrix->cell_width %></li>
+      <li><strong>Height metric:</strong> <%= $matrix->cell_height %></li>
+    </ul>
+    <table>
+      <tr>
+        <th>Module</th>
+        % foreach my $version (@{ $matrix->versions }) {
+          <th><%= $version %></th>
+        % }
+      </tr>
+    % foreach my $mod (@{ $matrix->modules }) {
+      <tr>
+        <th><%= $mod %></th>
+      % foreach my $version (@{ $matrix->versions }) {
+        % my $cell = $matrix->get($mod, $version);
+        % if ($cell) {
+          <td><div class='evolution-matrix-cell' style='width: <%= int (40 * $cell->normalized_width) %>px; height: <%= int (40 * $cell->normalized_height) %>px'></div></td>
+        % } else {
+          <td></td>
+        % }
+      % }
+      </tr>
+    % }
+    </table>
+  </body>
+</html>
