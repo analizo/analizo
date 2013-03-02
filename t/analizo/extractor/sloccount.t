@@ -1,4 +1,4 @@
-package ExtractorSloccountTests;
+package t::Analizo::Extractor::Sloccount;
 use base qw(Test::Class);
 use Test::More 'no_plan'; # REMOVE THE 'no_plan'
 
@@ -34,15 +34,14 @@ sub feed : Tests {
 }
 
 sub reading_from_one_input_file : Tests {
-  my $sample_dir = dirname(__FILE__) . '/samples/sample_basic';
   my $extractor = new_sloccount_extractor();
 
-  $extractor->process($sample_dir . '/module1.c');
+  $extractor->process('t/samples/sample_basic/module1.c');
   is($extractor->model->total_eloc, 16, 'reading from one input file');
 }
 
 sub reading_from_many_inputs_files : Tests {
-  my $sample_dir = dirname(__FILE__) . '/samples/sample_basic';
+  my $sample_dir = 't/samples/sample_basic';
   my $extractor = new_sloccount_extractor();
 
   $extractor->process($sample_dir . '/module1.c', $sample_dir . '/module2.c');
@@ -50,11 +49,10 @@ sub reading_from_many_inputs_files : Tests {
 }
 
 sub reading_from_directory : Tests {
-  my $sample_dir = dirname(__FILE__) . '/samples/sample_basic';
   my $extractor = new_sloccount_extractor();
 
-  $extractor->process($sample_dir);
+  $extractor->process('t/samples/sample_basic');
   is($extractor->model->total_eloc, 40, 'reading from an input directory');
 }
 
-ExtractorSloccountTests->runtests;
+__PACKAGE__->runtests;
