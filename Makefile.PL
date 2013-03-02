@@ -57,6 +57,7 @@ WriteMakefile(
     'Statistics::Descriptive' => 0,
     'Term::ProgressBar' => 0,
     'ZeroMQ' => 0,
+    'Mojolicious' => 0,
   },
   BUILD_REQUIRES => {
     'Test::Class' => 0,
