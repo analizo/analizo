@@ -37,7 +37,9 @@ test_task 'test:acceptance' do
   sh 'perl test.pl'
 end
 
-task :default do
+task :default => ['test:unit', 'test:acceptance']
+
+task 'test:all' do
   unless system('which doxyparse > /dev/null')
     banner("doxyparse program not found, bailing out.\nYou have to install doxyparse to run analizo tests", :red)
     fail
