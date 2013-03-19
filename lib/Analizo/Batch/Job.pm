@@ -116,20 +116,30 @@ sub execute {
   $self->prepare();
 
   # extract model from source
-  my $model = new Analizo::Model;
-  my @extractors = (
-    Analizo::Extractor->load(undef, model => $model),
-    new Analizo::Extractor::Sloccount(model => $model),
-  );
-  for my $extractor (@extractors) {
-    $self->share_filters_with($extractor);
-    $extractor->process('.');
+  my $model = $self->get_cache($self->model_cache_key());
+  if (!$model) {
+    $model = new Analizo::Model;
+    my @extractors = (
+      Analizo::Extractor->load(undef, model => $model),
+      new Analizo::Extractor::Sloccount(model => $model),
+    );
+    for my $extractor (@extractors) {
+      $self->share_filters_with($extractor);
+      $extractor->process('.');
+    }
+    $self->set_cache($self->model_cache_key(), $model);
   }
+
   $self->model($model);
 
   # calculate metrics
-  $self->metrics(new Analizo::Metrics(model => $self->model));
-  $self->metrics->data();
+  my $metrics = $self->get_cache($self->metrics_cache_key());
+  if (!$metrics) {
+    $metrics = new Analizo::Metrics(model => $self->model);
+    $self->metrics($metrics);
+    $self->metrics->data();
+    $self->set_cache($self->metrics_cache_key(), $metrics);
+  }
 
   $self->cleanup();
 }
@@ -139,5 +149,20 @@ sub project_name($) {
   return basename($self->directory);
 }
 
+sub get_cache($) {
+  return undef;
+}
+
+sub set_cache($$) {
+  return undef;
+}
+
+sub model_cache_key($) {
+  return undef;
+}
+
+sub metrics_cache_key($) {
+  return undef;
+}
 
 1;
