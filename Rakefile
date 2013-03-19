@@ -37,7 +37,26 @@ test_task 'test:acceptance' do
   sh 'perl test.pl'
 end
 
-task :default => ['test:unit', 'test:acceptance']
+task :default do
+  unless system('which doxyparse > /dev/null')
+    banner("doxyparse program not found, bailing out.\nYou have to install doxyparse to run analizo tests", :red)
+    fail
+  end
+  failed_test_suites = $TEST_TASKS.map { |t| Rake::Task[t] }.map do |task|
+    begin
+      puts_with_color(task.comment)
+      task.invoke
+      banner("#{task.comment} passed \\o/", :green)
+      nil
+    rescue => e
+      task.comment
+    end
+  end.compact
+  if !failed_test_suites.empty?
+    banner("Failed test suites: #{failed_test_suites.join(', ')}", :red)
+    fail
+  end
+end
 
 desc 'updates MANIFEST from contents of git repository'
 task 'manifest' do
