@@ -7,6 +7,9 @@ use strict;
 use warnings;
 use base qw(Class::Accessor::Fast Analizo::Filter::Client);
 use File::Basename;
+use File::Temp qw/ tempfile /;
+
+use CHI;
 
 use Analizo::Model;
 use Analizo::Extractor;
@@ -115,9 +118,12 @@ sub execute {
 
   $self->prepare();
 
+  my $tree_id = $self->tree_id();
+
   # extract model from source
-  my $model = $self->get_cache($self->model_cache_key());
-  if (!$model) {
+  my $model_cache_key = "model://$tree_id";
+  my $model = $self->cache->get($model_cache_key);
+  if (!defined $model) {
     $model = new Analizo::Model;
     my @extractors = (
       Analizo::Extractor->load(undef, model => $model),
@@ -127,18 +133,19 @@ sub execute {
       $self->share_filters_with($extractor);
       $extractor->process('.');
     }
-    $self->set_cache($self->model_cache_key(), $model);
+    $self->cache->set($model_cache_key, $model);
   }
 
   $self->model($model);
 
   # calculate metrics
-  my $metrics = $self->get_cache($self->metrics_cache_key());
-  if (!$metrics) {
+  my $metrics_cache_key = "metrics://$tree_id";
+  my $metrics = $self->cache->get($metrics_cache_key);
+  if (!defined $metrics) {
     $metrics = new Analizo::Metrics(model => $self->model);
     $self->metrics($metrics);
     $self->metrics->data();
-    $self->set_cache($self->metrics_cache_key(), $metrics);
+    $self->cache->set($metrics_cache_key, $metrics);
   }
 
   $self->cleanup();
@@ -149,20 +156,32 @@ sub project_name($) {
   return basename($self->directory);
 }
 
-sub get_cache($) {
-  return undef;
+sub cache($) {
+  my ($self) = @_;
+  $self->{cache} ||= CHI->new( driver => 'File', root_dir => $ENV{'ANALIZO_CACHE'} || File::Spec->catfile(File::HomeDir->my_home, '.cache', 'analizo'));
 }
 
-sub set_cache($$) {
-  return undef;
-}
+use Cwd;
+sub tree_id($) {
 
-sub model_cache_key($) {
-  return undef;
-}
+  my ($self) = @_;
+  my @input = $self->apply_filters('.');
 
-sub metrics_cache_key($) {
-  return undef;
+  my ($temp_handle, $temp_filename) = tempfile();
+  foreach my $input_file (@input) {
+    print $temp_handle "$input_file\n"
+  }
+  close $temp_handle;
+
+  open(SHA1SUM, "cat $temp_filename | xargs sha1sum | sha1sum - |");
+  my $id = <SHA1SUM>;
+  chomp($id);
+  $id =~ s/\s.*//;
+
+  close SHA1SUM;
+  unlink $temp_filename;
+
+  return $id;
 }
 
 1;

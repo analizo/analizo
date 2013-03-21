@@ -4,7 +4,6 @@ use strict;
 use warnings;
 
 use base qw(Class::Accessor::Fast Analizo::Filter::Client);
-use File::Find;
 
 use Analizo::Model;
 use Analizo::FilenameFilter;
@@ -96,19 +95,7 @@ sub _filter_input {
     # By default, only look at supported languages
     $self->filters(new Analizo::LanguageFilter('all'));
   }
-  return $self->_apply_filters(@input);
-}
-
-sub _apply_filters {
-  my ($self, @input) = @_;
-  my @result = ();
-  for my $input (@input) {
-    find(
-      { wanted => sub { push @result, $_ if !-d $_ && $self->filename_matches_filters($_); }, no_chdir => 1 },
-      $input
-    );
-  }
-  return @result;
+  return $self->apply_filters(@input);
 }
 
 sub info {

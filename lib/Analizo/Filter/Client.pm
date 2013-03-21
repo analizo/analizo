@@ -1,5 +1,7 @@
 package Analizo::Filter::Client;
 
+use File::Find;
+
 sub filters {
   my ($self, @new_filters) = @_;
   $self->{filters} ||= [];
@@ -36,6 +38,18 @@ sub filename_matches_filters {
     }
   }
   return 1;
+}
+
+sub apply_filters {
+  my ($self, @input) = @_;
+  my @result = ();
+  for my $input (@input) {
+    find(
+      { wanted => sub { push @result, $_ if !-d $_ && $self->filename_matches_filters($_); }, no_chdir => 1 },
+      $input
+    );
+  }
+  return @result;
 }
 
 1;
