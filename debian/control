@@ -27,7 +27,10 @@ Build-Depends-Indep:
  liblist-compare-perl,
  libstatistics-descriptive-perl,
  libyaml-perl,
- libzeromq-perl
+ libzeromq-perl,
+ libfile-sharedir-install-perl,
+ libfile-sharedir-perl,
+ libfile-share-perl
 Standards-Version: 3.9.1
 Homepage: http://analizo.org
 DM-Upload-Allowed: yes
@@ -51,7 +54,9 @@ Depends:
  liblist-compare-perl,
  libstatistics-descriptive-perl,
  libyaml-perl,
- libzeromq-perl
+ libzeromq-perl,
+ libfile-sharedir-perl,
+ libfile-share-perl
 Recommends: graphviz, sqlite3
 Description: multi-language source code analysis toolkit
  Analizo parses source code in multiple languages and report useful information
