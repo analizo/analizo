@@ -173,6 +173,10 @@ sub _get_cache_dir {
     return tempdir(CLEANUP => 1);
   }
 
+  if ($ENV{ANALIZO_CACHE}) {
+    return $ENV{ANALIZO_CACHE};
+  }
+
   return File::Spec->catfile(File::HomeDir->my_home, '.cache', 'analizo')
 }
 

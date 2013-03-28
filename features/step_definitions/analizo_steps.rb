@@ -8,6 +8,7 @@ ENV['LC_ALL'] = 'C'
 
 Before do
   ENV['PATH'] = top_dir + ':' + ENV['PATH']
+  ENV["ANALIZO_CACHE"] = Dir.mktmpdir
 end
 
 After do
@@ -16,6 +17,7 @@ After do
   FileUtils.rm_f(Dir.glob('*.tmp'))
   FileUtils.cd(top_dir)
   ENV['PATH'] = saved_path
+  FileUtils.rm_rf(ENV["ANALIZO_CACHE"])
 end
 
 Given /^I am in (.+)$/ do |dir|
