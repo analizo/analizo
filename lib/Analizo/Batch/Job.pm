@@ -8,6 +8,7 @@ use warnings;
 use base qw(Class::Accessor::Fast Analizo::Filter::Client);
 use File::Basename;
 use File::Temp qw/ tempfile /;
+use File::HomeDir;
 
 use CHI;
 
@@ -135,7 +136,6 @@ sub execute {
     }
     $self->cache->set($model_cache_key, $model);
   }
-
   $self->model($model);
 
   # calculate metrics
@@ -143,10 +143,10 @@ sub execute {
   my $metrics = $self->cache->get($metrics_cache_key);
   if (!defined $metrics) {
     $metrics = new Analizo::Metrics(model => $self->model);
-    $self->metrics($metrics);
-    $self->metrics->data();
+    $metrics->data();
     $self->cache->set($metrics_cache_key, $metrics);
   }
+  $self->metrics($metrics);
 
   $self->cleanup();
 }
@@ -161,11 +161,10 @@ sub cache($) {
   $self->{cache} ||= CHI->new( driver => 'File', root_dir => $ENV{'ANALIZO_CACHE'} || File::Spec->catfile(File::HomeDir->my_home, '.cache', 'analizo'));
 }
 
-use Cwd;
 sub tree_id($) {
 
   my ($self) = @_;
-  my @input = $self->apply_filters('.');
+  my @input = sort($self->apply_filters('.'));
 
   my ($temp_handle, $temp_filename) = tempfile();
   foreach my $input_file (@input) {

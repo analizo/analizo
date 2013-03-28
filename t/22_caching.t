@@ -7,25 +7,31 @@ use Test::More;
 use Test::Analizo;
 use Test::MockModule;
 
-$ENV{'ANALIZO_CACHE'} = tmpdir(); # FIXME is not being removed after
-
 use Analizo::Batch::Job::Directories;
 
-sub model_cache : Tests {
-  my $job = new_job();
-  $job->execute(); # run first time
+local $ENV{'ANALIZO_CACHE'} = tmpdir();
 
-  my $result = 'cache used';
-  my $AnalizoExtractor = new Test::MockModule('Analizo::Extractor');
-  $AnalizoExtractor->mock('process', sub { $result = 'cache not used!' });
-
-  $job->execute();
-  is($result, 'cache used');
+sub teardown : Test(teardown) {
+  system('rm', '-rf', $ENV{ANALIZO_CACHE});
 }
 
-#sub metrics_cache : Tests {
-  #ok(0);
-#}
+sub cache_of_model_and_metrics : Tests {
+  # first time
+  my $job1 = new_job();
+  $job1->execute();
+
+  my $model_result = 'cache used';
+  my $AnalizoExtractor = new Test::MockModule('Analizo::Extractor');
+  $AnalizoExtractor->mock('process', sub { $model_result = 'cache not used!' });
+  my $metrics_result = 'cache used';
+  my $AnalizoMetrics = new Test::MockModule('Analizo::Metrics');
+  $AnalizoMetrics->mock('data', sub { $metrics_result = 'cache not used!'});
+
+  $job1->execute();
+
+  is($model_result, 'cache used');
+  is($metrics_result, 'cache used');
+}
 
 sub tree_id : Tests {
   my $job = new_job();
@@ -33,14 +39,14 @@ sub tree_id : Tests {
   on_dir(
     't/samples/tree_id',
     sub {
-      $id = $job->tree_id('1', '2');
+      $id = $job->tree_id('.');
     }
   );
-  is($id, 'a17cdf6900c252734b6828385d06787ba64f9620'); # calculated by hand
+  is($id, '82df8dce26abfcf4e489a6d0201d2ef481591831'); # calculated by hand
 }
 
 sub new_job {
-  my $job = new Analizo::Batch::Job::Directories(id => 'foo', directory => 't/samples/animals/cpp');
+  my $job = new Analizo::Batch::Job::Directories('t/samples/animals/cpp');
   return $job;
 }
 
