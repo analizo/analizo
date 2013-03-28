@@ -9,12 +9,6 @@ use Test::MockModule;
 
 use Analizo::Batch::Job::Directories;
 
-local $ENV{'ANALIZO_CACHE'} = tmpdir();
-
-sub teardown : Test(teardown) {
-  system('rm', '-rf', $ENV{ANALIZO_CACHE});
-}
-
 sub cache_of_model_and_metrics : Tests {
   # first time
   my $job1 = new_job();

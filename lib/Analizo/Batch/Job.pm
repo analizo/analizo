@@ -9,6 +9,8 @@ use base qw(Class::Accessor::Fast Analizo::Filter::Client);
 use File::Basename;
 use File::Temp qw/ tempfile /;
 use File::HomeDir;
+use File::Spec;
+use File::Temp qw/ tempdir /;
 
 use CHI;
 
@@ -158,8 +160,22 @@ sub project_name($) {
 
 sub cache($) {
   my ($self) = @_;
-  $self->{cache} ||= CHI->new( driver => 'File', root_dir => $ENV{'ANALIZO_CACHE'} || File::Spec->catfile(File::HomeDir->my_home, '.cache', 'analizo'));
+  $self->{cache} ||= CHI->new(driver => 'File', root_dir => _get_cache_dir());
 }
+
+sub _get_cache_dir {
+  # automated test environment should not mess with the real cache
+  my @program_path = File::Spec->splitdir($0);
+  if ($program_path[0] eq '.') {
+    shift @program_path;
+  }
+  if ($program_path[0] eq 't') {
+    return tempdir(CLEANUP => 1);
+  }
+
+  return File::Spec->catfile(File::HomeDir->my_home, '.cache', 'analizo')
+}
+
 
 sub tree_id($) {
 
