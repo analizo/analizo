@@ -42,6 +42,12 @@ sub filename_matches_filters {
 
 sub apply_filters {
   my ($self, @input) = @_;
+
+  unless ($self->has_filters) {
+    # By default, only look at supported languages
+    $self->filters(new Analizo::LanguageFilter('all'));
+  }
+
   my @result = ();
   for my $input (@input) {
     find(
