@@ -38,8 +38,10 @@ sub tmpdir {
   return tmpdir_for($filename);
 }
 
+use Cwd 'abs_path';
 sub tmpdir_for {
   my ($filename) = @_;
+  $filename = abs_path($filename);
   return $filename . '.tmpdir';
 }
 
