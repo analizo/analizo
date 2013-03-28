@@ -6,13 +6,18 @@ use base qw( Test::Class );
 use Test::More;
 use Test::Analizo;
 use Test::MockModule;
+use File::Temp qw/ tempdir /;
 
 use Analizo::Batch::Job::Directories;
+
+$ENV{ANALIZO_CACHE} = tempdir(CLEANUP => 1);
 
 sub cache_of_model_and_metrics : Tests {
   # first time
   my $job1 = new_job();
   $job1->execute();
+  my $model1 = $job1->model;
+  my $metrics1 = $job1->metrics;
 
   my $model_result = 'cache used';
   my $AnalizoExtractor = new Test::MockModule('Analizo::Extractor');
@@ -21,10 +26,21 @@ sub cache_of_model_and_metrics : Tests {
   my $AnalizoMetrics = new Test::MockModule('Analizo::Metrics');
   $AnalizoMetrics->mock('data', sub { $metrics_result = 'cache not used!'});
 
-  $job1->execute();
+  my $job2 = new_job();
+  $job2->execute();
+  my $model2 = $job2->model;
+  my $metrics2 = $job2->metrics;
 
-  is($model_result, 'cache used');
-  is($metrics_result, 'cache used');
+  # FIXME these are needed because empty hashes are not coming back from the
+  # cache. Maybe this is a bug in the CHI cache driver
+  $model2->{calls}->{'Animal::name()'} = {};
+  $model2->{modules}->{'Mammal'} = {};
+
+  is($model_result, 'cache used', 'use cache for model');
+  is($metrics_result, 'cache used', 'use cache for metrics');
+
+  is_deeply($model2, $model1, 'cached model is the same');
+  is_deeply($metrics2, $metrics1, 'cached metrics is the same ');
 }
 
 sub tree_id : Tests {

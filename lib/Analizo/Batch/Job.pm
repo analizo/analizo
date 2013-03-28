@@ -164,6 +164,10 @@ sub cache($) {
 }
 
 sub _get_cache_dir {
+  if ($ENV{ANALIZO_CACHE}) {
+    return $ENV{ANALIZO_CACHE};
+  }
+
   # automated test environment should not mess with the real cache
   my @program_path = File::Spec->splitdir($0);
   if ($program_path[0] eq '.') {
@@ -171,10 +175,6 @@ sub _get_cache_dir {
   }
   if ($program_path[0] eq 't') {
     return tempdir(CLEANUP => 1);
-  }
-
-  if ($ENV{ANALIZO_CACHE}) {
-    return $ENV{ANALIZO_CACHE};
   }
 
   return File::Spec->catfile(File::HomeDir->my_home, '.cache', 'analizo')
