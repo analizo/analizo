@@ -198,8 +198,8 @@ sub must_not_exclude_everything_in_the_case_of_unexisting_excluded_dir : Tests {
 
 sub must_not_ignore_filter_by_default : Tests {
   no warnings;
-  local *Analizo::Extractor::_filter_input = sub {
-    die "_filter_input() was called"
+  local *Analizo::Extractor::apply_filters = sub {
+    die "apply_filters() was called"
   };
   use warnings;
 
@@ -212,8 +212,8 @@ sub force_ignore_filter : Tests {
   local *Analizo::Extractor::use_filters = sub {
     0;
   };
-  local *Analizo::Extractor::_filter_input = sub {
-    die "_filter_input() was called"
+  local *Analizo::Extractor::apply_filters = sub {
+    die "apply_filters() was called"
   };
   use warnings;
 
