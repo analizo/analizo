@@ -4,7 +4,7 @@ use base 'Analizo::Batch::Job';
 use Cwd;
 use Cwd 'abs_path';
 use File::Spec;
-use Digest::SHA1 qw/ sha1_hex /;
+use Digest::SHA qw/ sha1_hex /;
 use File::Copy::Recursive qw(dircopy);
 use File::Path qw(remove_tree);
 

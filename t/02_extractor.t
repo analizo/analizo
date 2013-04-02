@@ -196,6 +196,31 @@ sub must_not_exclude_everything_in_the_case_of_unexisting_excluded_dir : Tests {
   isnt(0, scalar @processed);
 }
 
+sub must_not_ignore_filter_by_default : Tests {
+  no warnings;
+  local *Analizo::Extractor::_filter_input = sub {
+    die "_filter_input() was called"
+  };
+  use warnings;
+
+  my $extractor = Analizo::Extractor->new;
+  dies_ok { $extractor->process('t/samples/mixed') };
+}
+
+sub force_ignore_filter : Tests {
+  no warnings;
+  local *Analizo::Extractor::use_filters = sub {
+    0;
+  };
+  local *Analizo::Extractor::_filter_input = sub {
+    die "_filter_input() was called"
+  };
+  use warnings;
+
+  my $extractor = Analizo::Extractor->new;
+  lives_ok { $extractor->process('t/samples/mixed') };
+}
+
 package LanguageFilterStub;
 sub new {
   return bless {}, __PACKAGE__;

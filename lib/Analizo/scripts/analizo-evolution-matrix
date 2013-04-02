@@ -1,186 +1,72 @@
-#!/usr/bin/env ruby
+#!/usr/bin/perl
+use strict;
+use Analizo::Command;
+use Analizo::EvolutionMatrix;
+use Analizo::EvolutionMatrix::Cell;
+use YAML::Tiny;
+use Mojo::Template;
+use Getopt::Long;
 
-class EvolutionMatrix
-  class Cell
-    attr_reader :matrix
-    def initialize(matrix, data)
-      @matrix = matrix
-      @data = data
-    end
-    def width
-      @data[matrix.cell_width].to_f
-    end
-    def height
-      @data[matrix.cell_height].to_f
-    end
-    def normalized_width
-      width.to_f / matrix.max_width.to_f
-    end
-    def normalized_height
-      height.to_f / matrix.max_height.to_f
-    end
-  end
-  def versions
-    @cells.values.map(&:keys).flatten.uniq.sort do |a,b|
-      compare_versions(a,b)
-    end
-  end
-  def compare_versions(a,b)
-    if (a == b)
-      0
-    else
-      a_array = a.split(/[^0-9]+/).map(&:to_i)
-      b_array = b.split(/[^0-9]+/).map(&:to_i)
-      while (a_array.first == b_array.first)
-        a_array.shift
-        b_array.shift
-      end
-      a_array.first <=> b_array.first
-    end
-  end
-  def modules
-    @cells.keys
-  end
-  def put(mod, version, data)
-    raise Exception, "Cannot use empty version (mod = #{mod.inspect}, version = #{version.inspect}, data = #{data.inspect})" if version.nil? || version == ""
-    cell                    = Cell.new(self, data)
-    if cell.width > max_width
-      self.max_width = cell.width
-    end
-    if cell.height > max_height
-      self.max_height = cell.height
-    end
-    @cells                ||= {}
-    @cells[mod]           ||= {}
-    @cells[mod][version]    = cell
-  end
-  def get(mod, version)
-    @cells[mod] && @cells[mod][version]
-  end
-  def empty?
-    @cells.nil?
-  end
-  def cell_width
-    @cell_width || 'nom'
-  end
-  def cell_height
-    @cell_height || 'loc'
-  end
-  def max_width
-    @max_width || 0
-  end
-  def max_height
-    @max_height || 0
-  end
-  def name
-    @name || 'Unamed project'
-  end
-  attr_writer :cell_width, :cell_height, :max_width, :max_height, :name
-end
+my $__height = undef;
+my $__width  = undef;
+my $__name   = undef;
+my $__output = undef;
+my $__help   = undef;
 
-if $PROGRAM_NAME == __FILE__
-  require 'erb'
-  require 'yaml'
-  require 'getoptlong'
+GetOptions(
+  'height|h=s' => \$__height,
+  'width|w=s'  => \$__width,
+  'name|n=s'   => \$__name,
+  'output|o=s' => \$__output,
+  'help'       => \$__help,
+) or exit(1);
 
-  matrix = EvolutionMatrix.new
-  my_binding = binding
+if ($__help) {
+  exec('analizo', 'doc', __FILE__);
+}
 
-  output = $stdout
-  opts = GetoptLong.new(
-    ['--height', '-h', GetoptLong::REQUIRED_ARGUMENT],
-    ['--width', '-w', GetoptLong::REQUIRED_ARGUMENT],
-    ['--name', '-n', GetoptLong::REQUIRED_ARGUMENT],
-    ['--output', '-o', GetoptLong::REQUIRED_ARGUMENT],
-    ['--help', GetoptLong::NO_ARGUMENT]
-  )
-  opts.each do |opt, arg|
-    case opt
-    when '--help'
-      exec 'analizo', 'doc', __FILE__
-    when '--name'
-      matrix.name = arg
-    when '--width'
-      matrix.cell_width = arg
-    when '--height'
-      matrix.cell_height = arg
-    when '--output'
-      output = File.open(arg, 'w')
-    end
-  end
+my $matrix = Analizo::EvolutionMatrix->new;
 
-  data_files = ARGV
-  if data_files.empty?
-    $stderr.puts "E: No input files!"
-    exit 1
-  end
+$matrix->{name} = $__name if $__name;
+$matrix->{cell_width} = $__width if $__width;
+$matrix->{cell_height} = $__height if $__height;
 
-  data_files.each do |yml|
-    version = yml.sub(/^.*-(.*)\.yml$/, '\1')
-    File.open(yml) do |f|
-      $stderr.puts "I: Processing #{yml} ..."
-      stream = YAML.load_stream(f)
-      if stream
-        stream.documents.each do |doc|
-          if doc['_module']
-            matrix.put(doc['_module'], version, doc)
-          end
-        end
-      else
-        $stderr.puts "W: #{yml} seems to be empty"
-      end
-    end
-  end
-  if matrix.empty?
-    $stderr.puts "E: no data found! Do the input files contain module data?"
-  else
-    template = ERB.new <<-EOF
-<!DOCTYPE html>
-<html>
-  <body>
-    <head>
-      <style type="text/css">
-      body { font-size: 12px; }
-      table { border-collapse: collapse; }
-      th, td { width: 40px; height: 40px; }
-      th, td { text-align: center; vertical-align: center; border: 1px solid #d3d7cf;}
-      .evolution-matrix-cell { border: 1px solid black; margin: auto; }
-      </style>
-    </head>
-    <h1>Evolution Matrix for <%= matrix.name %></h1>
-    <ul>
-      <li><strong>Width metric:</strong> <%= matrix.cell_width %></li>
-      <li><strong>Height metric:</strong> <%= matrix.cell_height %></li>
-    </ul>
-    <table>
-      <tr>
-        <th>Module</th>
-        <% matrix.versions.each do |version| %>
-          <th><%= version %></th>
-        <% end %>
-      </tr>
-    <% matrix.modules.each do |mod| %>
-      <tr>
-        <th><%= mod %></th>
-      <% matrix.versions.each do |version| %>
-        <% cell = matrix.get(mod, version) %>
-        <% if cell %>
-          <td><div class='evolution-matrix-cell' style='width: <%= (40 * cell.normalized_width).to_i %>px; height: <%= (40 * cell.normalized_height).to_i %>px'></div></td>
-        <% else %>
-          <td></td>
-        <% end %>
-      <% end %>
-      </tr>
-    <% end %>
-    </table>
-  </body>
-</html>
-    EOF
-    output.print(template.result(my_binding))
-  end
-end
+if ($__output) {
+  open STDOUT, '>', $__output
+    or die "$!: $__output\n";
+}
 
-__END__
+unless (@ARGV) {
+  print STDERR "E: No input files!\n";
+  exit 1
+}
+
+foreach my $yml (@ARGV) {
+  (my $version = $yml) =~ s/^.*-(.*)\.yml$/$1/;
+  my $stream = YAML::Tiny->read($yml)
+    or die YAML::Tiny->errstr;
+  print STDERR "I: Processing $yml ...\n";
+  if (@{ $stream } > 0) {
+    foreach my $doc (@{ $stream }) {
+      if ($doc->{_module}) {
+        $matrix->put($doc->{_module}, $version, $doc);
+      }
+    }
+  } else {
+    print STDERR "W: $yml seems to be empty\n";
+  }
+}
+
+if ($matrix->is_empty) {
+  print STDERR "E: no data found! Do the input files contain module data?\n";
+}
+else {
+  my $template = Mojo::Template->new;
+  print $template->render_file('templates/analizo-evolution-matrix.html.ep', $matrix);
+}
+
+close STDOUT;
+exit 0;
 
 =head1 NAME
 

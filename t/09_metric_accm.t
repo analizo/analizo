@@ -30,8 +30,10 @@ sub description : Tests {
   is($accm->description, "Average Cyclomatic Complexity per Method");
 }
 
+use Data::Dumper;
 sub calculate : Tests {
   $model->declare_module('module');
+  print(Dumper($accm));
   is($accm->calculate('module'), 0, 'no function');
 
   $model->declare_function('module', 'module::function');

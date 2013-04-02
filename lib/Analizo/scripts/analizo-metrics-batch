@@ -13,9 +13,13 @@ analizo metrics-batch [OPTIONS] [directory [directory ...]]
 =head1 DESCRIPTION
 
 B<analizo metrics-batch> is useful when you want to analyze several projects at
-once, or several different versions of the same project. For example, suppose
-you want to process 5 consecutive releases of I<myproject>, from version 0.1.0
-to 0.5.0.
+once, or several different versions of the same project. You pass a list of
+directories in the command line and each one will be analyzed as a separate
+project. If no directories are passed in the command line, all of the
+subdirectories of the current directory will be analized.
+
+For example, suppose you want to process 5 consecutive releases of
+I<myproject>, from version 0.1.0 to 0.5.0.
 
 =over
 

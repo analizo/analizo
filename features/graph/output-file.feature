@@ -3,7 +3,7 @@ Feature: output file for graph tool
   Scenario: passing output file in the command line
     Given I am in .
     When I run "analizo graph --output output.dot.tmp t/samples/sample_basic/"
-    Then the output from "output.dot.tmp" must match "module1"
+    Then the contents of "output.dot.tmp" must match "module1"
     And the exit status must be 0
 
   Scenario: passing output file in an unexisting directory

@@ -7,15 +7,16 @@ every single revision.
 
 =head1 USAGE
 
-analizo metrics-history [OPTION] DIRECTORY
+analizo metrics-history [OPTION] [I<directory>]
 
 =head1 DESCRIPTION
 
-B<analizo metrics-history> will process I<DIRECTORY>, a Git repository with a
+B<analizo metrics-history> will process I<directory>, a Git repository with a
 working copy of the source code (i.e. not a bare git repository), checkout
 every relevant commit and run B<analizo metrics> on it. The metrics for all of
 the revisions will be accumulated in a file called I<metrics.csv> inside
-I<DIRECTORY>.
+I<directory>. If I<directory> is ommitted, the current directory (.) s
+assumed.
 
 =head1 RELEVANT COMMITS
 

@@ -46,7 +46,7 @@ When /^I change to an empty temporary directory$/ do
   FileUtils.cd(get_tmpdir)
 end
 
-When /^I run "([^\"]*)"$/ do |command|
+def run(command)
   system("(#{command}) >tmp.out 2>tmp.err")
   if $?.is_a?(Fixnum)
     @exit_status = $?
@@ -55,6 +55,10 @@ When /^I run "([^\"]*)"$/ do |command|
   end
   @stdout = File.readlines('tmp.out')
   @stderr = File.readlines('tmp.err')
+end
+
+When /^I run "([^\"]*)"$/ do |command|
+  run command
 end
 
 at_exit do
@@ -69,7 +73,7 @@ When /^I run "([^\"]*)" only once$/ do |command|
     @stdout = File.readlines(stdout)
     @stderr = File.readlines(stderr)
   else
-    Then("I run \"#{command}\"")
+    run command
     FileUtils.cp('tmp.out', stdout)
     FileUtils.cp('tmp.err', stderr)
   end
@@ -125,7 +129,7 @@ Then /^the output must not match "([^\"]*)"$/ do |pattern|
   end
 end
 
-Then /^the output from "(.+)" must match "([^\"]*)"$/ do |file, pattern|
+Then /^the contents of "(.+)" must match "([^\"]*)"$/ do |file, pattern|
   @out = File.readlines(file).join
   @out.should match(pattern)
 end

@@ -7,7 +7,6 @@ use Analizo::GlobalMetric::MethodsPerAbstractClass;
 use Analizo::GlobalMetric::TotalEloc;
 
 use Statistics::Descriptive;
-use Statistics::OnLine;
 
 
 __PACKAGE__->mk_accessors(qw(
@@ -119,33 +118,36 @@ sub _add_statistics {
   my $self = shift;
 
   for my $metric (keys %{$self->values_lists}) {
-    $self->_add_descriptive_statistics($metric);
-    $self->_add_distributions_statistics($metric);
+    my $statistics = Statistics::Descriptive::Full->new();
+    $statistics->add_data(@{$self->values_lists->{$metric}});
+
+    $self->_add_descriptive_statistics($metric, $statistics);
+    $self->_add_distributions_statistics($metric, $statistics);
   }
 }
 
 sub _add_descriptive_statistics {
-  my ($self, $metric) = @_;
-  my $statistics = Statistics::Descriptive::Full->new();
-  $statistics->add_data(@{$self->values_lists->{$metric}});
-  $self->metric_report->{$metric . "_average"} = $statistics->mean;
-  $self->metric_report->{$metric . "_maximum"} = $statistics->max;
-  $self->metric_report->{$metric . "_mininum"} = $statistics->min;
-  $self->metric_report->{$metric . "_median"} = $statistics->median if $statistics->count > 0;
-  $self->metric_report->{$metric . "_mode"} = $statistics->mode;
-  $self->metric_report->{$metric . "_standard_deviation"} = $statistics->standard_deviation;
-  $self->metric_report->{$metric . "_sum"} = $statistics->sum;
-  $self->metric_report->{$metric . "_variance"} = $statistics->variance;
+  my ($self, $metric, $statistics) = @_;
+  $self->metric_report->{$metric . "_mean"} = $statistics->mean();
+  $self->metric_report->{$metric . "_mode"} = $statistics->mode();
+  $self->metric_report->{$metric . "_standard_deviation"} = $statistics->standard_deviation();
+  $self->metric_report->{$metric . "_sum"} = $statistics->sum();
+  $self->metric_report->{$metric . "_variance"} = $statistics->variance();
+
+  $self->metric_report->{$metric . "_quantile_min"}   = $statistics->min(); #minimum
+  $self->metric_report->{$metric . "_quantile_lower"}   = $statistics->quantile(1); #lower quartile
+  $self->metric_report->{$metric . "_quantile_median"}   = $statistics->median(); #median
+  $self->metric_report->{$metric . "_quantile_upper"}   = $statistics->quantile(3); #upper quartile
+  $self->metric_report->{$metric . "_quantile_ninety_five"}  = $statistics->percentile(95); #95th percentile
+  $self->metric_report->{$metric . "_quantile_max"} = $statistics->max(); #maximum
 }
 
 sub _add_distributions_statistics {
-  my ($self, $metric) = @_;
-  my $distributions = Statistics::OnLine->new();
-  $distributions->add_data(@{$self->values_lists->{$metric}});
+  my ($self, $metric, $statistics) = @_;
 
-  if (($distributions->count >= 4) && ($distributions->variance > 0)) {
-    $self->metric_report->{$metric . "_kurtosis"} = $distributions->kurtosis;
-    $self->metric_report->{$metric . "_skewness"} = $distributions->skewness;
+  if (($statistics->count >= 4) && ($statistics->variance() > 0)) {
+    $self->metric_report->{$metric . "_kurtosis"} = $statistics->kurtosis();
+    $self->metric_report->{$metric . "_skewness"} = $statistics->skewness();
   }
   else {
     $self->metric_report->{$metric . "_kurtosis"} = 0;

@@ -36,14 +36,13 @@ See B<analizo(1)>
 display_analizo_doc(){
   file="$1"
   if [ "$usage" = 'true' ]; then
-    pod2usage --verbose 1 "$1"
+    pod2usage --verbose 0 "$1"
   else
     pod2man --name="$(basename $file)" --release="$(analizo --version)" --center="Analizo documentation" "$1" | man -l -
   fi
 }
 
 usage() {
-  echo -n "Usage: "
   usage=true
   display_analizo_doc $0
 }

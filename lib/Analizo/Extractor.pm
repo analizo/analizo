@@ -77,9 +77,16 @@ sub actually_process {
   # This method must be overriden by subclasses
 }
 
+# To disable filtering override this method returning false
+sub use_filters {
+  1;
+}
+
 sub process {
   my ($self, @input) = @_;
-  @input = $self->_filter_input(@input);
+  if ($self->use_filters) {
+    @input = $self->_filter_input(@input);
+  }
   $self->actually_process(@input);
 }
 

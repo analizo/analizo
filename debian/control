@@ -3,14 +3,55 @@ Section: devel
 Priority: extra
 Maintainer: Antonio Terceiro <terceiro@softwarelivre.org>
 Build-Depends: debhelper (>= 7.0.50~)
-Build-Depends-Indep: cucumber, rake, ruby-rspec, libtest-class-perl, libtest-exception-perl, libtest-mockmodule-perl, libtest-mockobject-perl, doxyparse (>= 1.5.8-12~), git, ruby, sloccount, libclass-accessor-fast-perl, libdbd-sqlite3-perl, libdbi-perl, libdigest-sha1-perl, libfile-copy-recursive-perl, libgraph-perl, libjson-perl, liblist-compare-perl, libstatistics-descriptive-perl, libstatistics-online-perl, libyaml-perl, libzeromq-perl
+Build-Depends-Indep:
+ cucumber,
+ rake,
+ ruby-rspec,
+ libtest-class-perl,
+ libtest-exception-perl,
+ libtest-mockmodule-perl,
+ libtest-mockobject-perl,
+ doxyparse (>= 1.5.8-12~),
+ git,
+ ruby,
+ sloccount,
+ man,
+ libclass-accessor-perl,
+ libdbd-sqlite3-perl,
+ sqlite3,
+ libdbi-perl,
+ libdigest-sha-perl,
+ libfile-copy-recursive-perl,
+ libgraph-perl,
+ libjson-perl,
+ liblist-compare-perl,
+ libstatistics-descriptive-perl,
+ libyaml-perl,
+ libzeromq-perl
 Standards-Version: 3.9.1
-Homepage: http://softwarelivre.org/mezuro/analizo
+Homepage: http://analizo.org
 DM-Upload-Allowed: yes
 
 Package: analizo
 Architecture: all
-Depends: ${misc:Depends}, ${perl:Depends}, doxyparse (>= 1.5.8-12~), git, ruby, sloccount, libclass-accessor-fast-perl, libdbd-sqlite3-perl, libdbi-perl, libdigest-sha1-perl, libfile-copy-recursive-perl, libgraph-perl, libjson-perl, liblist-compare-perl, libstatistics-descriptive-perl, libstatistics-online-perl, libyaml-perl, libzeromq-perl
+Depends:
+ ${misc:Depends},
+ ${perl:Depends},
+ doxyparse (>= 1.5.8-12~),
+ git,
+ ruby,
+ sloccount,
+ libclass-accessor-perl,
+ libdbd-sqlite3-perl,
+ libdbi-perl,
+ libdigest-sha-perl,
+ libfile-copy-recursive-perl,
+ libgraph-perl,
+ libjson-perl,
+ liblist-compare-perl,
+ libstatistics-descriptive-perl,
+ libyaml-perl,
+ libzeromq-perl
 Recommends: graphviz, sqlite3
 Description: multi-language source code analysis toolkit
  Analizo parses source code in multiple languages and report useful information

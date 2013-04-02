@@ -8,9 +8,10 @@ use Analizo::GlobalMetrics;
 
 __PACKAGE__->mk_accessors(qw(
     model
-    modules_report
     module_metrics
     global_metrics
+    module_data
+    by_module
 ));
 
 sub new {
@@ -19,7 +20,8 @@ sub new {
     model => $args{model},
     global_metrics => new Analizo::GlobalMetrics(model => $args{model}),
     module_metrics => new Analizo::ModuleMetrics(model => $args{model}),
-    modules_report => ''
+    module_data => [],
+    by_module => {},
   );
   return bless { @instance_variables }, $package;
 }
@@ -36,34 +38,38 @@ sub list_of_metrics {
 
 sub report {
   my $self = shift;
-  $self->_collect_and_combine_module_metrics;
-  return $self->global_report . $self->modules_report;
+  return $self->report_global_metrics_only() . $self->report_module_metrics();
 }
 
 sub report_global_metrics_only {
   my $self = shift;
+  my ($global_metrics, $module_metrics) = $self->data();
+  return Dump($global_metrics);
+}
+
+sub report_module_metrics {
+  my $self = shift;
+  return join('', map { Dump($_) } @{$self->module_data()});
+}
+
+sub data {
+  my $self = shift;
   $self->_collect_and_combine_module_metrics;
-  return $self->global_report;
-}
-
-sub global_report {
-  my $self = shift;
-  return '' if $self->_there_are_no_modules;
-  return Dump($self->global_metrics->report);
-}
-
-sub _there_are_no_modules {
-  my $self = shift;
-  return scalar $self->model->module_names == 0;
+  return ($self->global_metrics->report, $self->module_data());
 }
 
 sub _collect_and_combine_module_metrics {
   my $self = shift;
+  if (defined $self->{_collect_and_combine_module_metrics}) {
+    return;
+  }
 
   for my $module ($self->model->module_names) {
-    my $values = $self->_collect($module);
-    $self->_combine($values);
+    my $module_metrics = $self->_collect($module);
+    $self->_combine($module_metrics);
   }
+
+  $self->{_collect_and_combine_module_metrics} = 1;
 }
 
 sub _collect {
@@ -72,9 +78,22 @@ sub _collect {
 }
 
 sub _combine {
-  my ($self, $values) = @_;
-  $self->global_metrics->add_module_values($values);
-  $self->modules_report($self->modules_report . Dump($values));
+  my ($self, $module_metrics) = @_;
+  my $module = $module_metrics->{_module};
+
+  $module_metrics->{_filename} = $self->model->files($module);
+  push(@{$self->module_data()}, $module_metrics);
+  $self->{by_module}->{$module} = $module_metrics;
+
+
+  $self->global_metrics->add_module_values($module_metrics);
+}
+
+sub metrics_for {
+  my $self = shift;
+  my $module = shift;
+  $self->data(); # FIXME shouldn't be needed
+  return $self->{by_module}->{$module};
 }
 
 1;

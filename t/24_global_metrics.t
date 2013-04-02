@@ -128,19 +128,19 @@ sub sum_the_values_of_loc_found : Tests {
 }
 
 
-sub add_loc_average_when_there_was_no_added_values : Tests {
+sub add_loc_mean_when_there_was_no_added_values : Tests {
   my $report = $global_metrics->report;
-  is($report->{'loc_average'}, undef);
+  is($report->{'loc_mean'}, undef);
 }
 
-sub add_loc_average_when_there_was_one_added_values : Tests {
+sub add_loc_mean_when_there_was_one_added_values : Tests {
   my %module_values = (loc => 1);
   $global_metrics->add_module_values(\%module_values);
   my $report = $global_metrics->report;
-  is($report->{'loc_average'}, 1);
+  is($report->{'loc_mean'}, 1);
 }
 
-sub add_loc_average_when_there_were_two_added_values : Tests {
+sub add_loc_mean_when_there_were_two_added_values : Tests {
   my %module_values = (loc => 1);
   $global_metrics->add_module_values(\%module_values);
 
@@ -148,10 +148,10 @@ sub add_loc_average_when_there_were_two_added_values : Tests {
   $global_metrics->add_module_values(\%other_values);
 
   my $report = $global_metrics->report;
-  is($report->{'loc_average'}, 2);
+  is($report->{'loc_mean'}, 2);
 }
 
-sub add_lcom4_average_when_there_were_two_added_values : Tests {
+sub add_lcom4_mean_when_there_were_two_added_values : Tests {
   my %module_values = (lcom4 => 1);
   $global_metrics->add_module_values(\%module_values);
 
@@ -159,7 +159,7 @@ sub add_lcom4_average_when_there_were_two_added_values : Tests {
   $global_metrics->add_module_values(\%other_values);
 
   my $report = $global_metrics->report;
-  is($report->{'lcom4_average'}, 2);
+  is($report->{'lcom4_mean'}, 2);
 }
 
 
@@ -179,8 +179,8 @@ sub should_have_other_descriptive_statistics : Tests {
   $global_metrics->add_module_values(\%module_values);
 
   my $report = $global_metrics->report;
-  isnt($report->{'rfc_average'}, undef);
-  isnt($report->{'rfc_maximum'}, undef);
+  isnt($report->{'rfc_mean'}, undef);
+  isnt($report->{'rfc_quantile_max'}, undef);
   isnt($report->{'rfc_standard_deviation'}, undef);
   isnt($report->{'rfc_sum'}, undef);
   isnt($report->{'rfc_variance'}, undef);

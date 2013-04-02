@@ -20,8 +20,13 @@ sub description {
 sub calculate {
   my ($self, $module) = @_;
 
+  my @functions = $self->model->functions($module);
+  if (scalar(@functions) == 0) {
+    return 0;
+  }
+
   my $statisticalCalculator = Statistics::Descriptive::Full->new();
-  for my $function ($self->model->functions($module)) {
+  for my $function (@functions) {
     $statisticalCalculator->add_data($self->model->{lines}->{$function} || 0);
   }
   return $statisticalCalculator->mean();
