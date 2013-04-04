@@ -91,7 +91,7 @@ sub _add_values_to_values_lists {
 
 sub _add_metric_value_to_values_list {
   my ($self, $metric, $metric_value) = @_;
-  if( $metric ne '_module') {
+  if( $metric ne '_module' && $metric ne '_filename' ) {
     $self->values_lists->{$metric} = [] unless ($self->values_lists->{$metric});
     push @{$self->values_lists->{$metric}}, $metric_value;
   }

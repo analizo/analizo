@@ -222,5 +222,12 @@ sub list_of_metrics : Tests {
   cmp_ok(scalar(keys(%metrics)), '>', 0, 'must list metrics');
 }
 
+sub should_ignore_filename : Tests {
+  my %values = (_filename => 'main.c');
+  $global_metrics->add_module_values(\%values);
+  my $report = $global_metrics->report;
+  ok(! grep(/^_filename/, keys %$report), "Should ignore _filename metrics");
+}
+
 GlobalMetricsTests->runtests;
 
