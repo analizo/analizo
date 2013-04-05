@@ -78,7 +78,6 @@ See analizo(1)
 use strict;
 
 use Analizo::Command;
-use Analizo::Extractor;
 use Analizo::Metrics;
 use Analizo::Batch::Job::Directories;
 
