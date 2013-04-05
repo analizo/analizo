@@ -6,13 +6,15 @@ analizo-metrics - analizo's metric reporting tool
 
 =head1 SYNOPSIS
 
-  analizo metrics [options] <input> [<input> ...]
+  analizo metrics [options] [<source-tree>]
 
 =head1 DESCRIPTION
 
-analizo metrics analyzes source code in the directories passed as arguments and
-procudes a matrics report. Such report is written to the standard output in the
-YAML format (see I<http://www.yaml.org/>)
+analizo metrics analyzes source code in I<source-tree> and produces a metrics
+report. If I<source-tree> is ommitted, the current directory (I<.>) is assumed.
+
+The produced report is written to the standard output, or to a file using the
+I<--output> option, using the YAML format (see I<http://www.yaml.org/>)
 
 analizo metrics is part of the analizo suite.
 
@@ -78,12 +80,12 @@ use strict;
 use Analizo::Command;
 use Analizo::Extractor;
 use Analizo::Metrics;
-use Analizo::Extractor::Sloccount;
+use Analizo::Batch::Job::Directories;
 
 use Pod::Usage;
 use Getopt::Long;
 my $__list        = undef;
-my $__extractor   = 'Doxyparse';
+my $__extractor   = undef;
 my $__global_only = undef;
 my $__output      = undef;
 my $__help        = undef;
@@ -129,28 +131,25 @@ if (@unreadable) {
   exit(2);
 }
 
-if(!@ARGV){
+if(scalar(@ARGV) > 1){
   exec('analizo', 'doc', '--usage', __FILE__);
 }
+my $tree = $ARGV[0] || '.';
 
-my $extractor = Analizo::Extractor->load($__extractor);
-my $eloc_extractor = Analizo::Extractor::Sloccount->new(model => $extractor->model);
+my $job = new Analizo::Batch::Job::Directories($tree);
+$job->extractor($__extractor);
 if ($__language) {
   require Analizo::LanguageFilter;
   my $language_filter = Analizo::LanguageFilter->new($__language);
-  $extractor->filters($language_filter);
-  $eloc_extractor->filters($language_filter);
+  $job->filters($language_filter);
 }
 if ($__exclude) {
   my @excluded_directories = split(':', $__exclude);
-  $extractor->exclude(@excluded_directories);
-  $eloc_extractor->exclude(@excluded_directories);
+  $job->exclude(@excluded_directories);
 }
-my $metrics = Analizo::Metrics->new(model => $extractor->model);
 
-
-$extractor->process(@ARGV);
-$eloc_extractor->process(@ARGV);
+$job->execute();
+my $metrics = $job->metrics;
 
 if ($__output) {
   open STDOUT, '>', $__output or die($!);

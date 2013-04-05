@@ -19,7 +19,7 @@ use Analizo::Extractor;
 use Analizo::Extractor::Sloccount;
 use Analizo::Metrics;
 
-__PACKAGE__->mk_accessors(qw(model metrics id directory));
+__PACKAGE__->mk_accessors(qw(model metrics id directory extractor));
 
 sub new {
   my ($class, @options) = @_;
@@ -129,7 +129,7 @@ sub execute {
   if (!defined $model) {
     $model = new Analizo::Model;
     my @extractors = (
-      Analizo::Extractor->load(undef, model => $model),
+      Analizo::Extractor->load($self->extractor, model => $model),
       new Analizo::Extractor::Sloccount(model => $model),
     );
     for my $extractor (@extractors) {

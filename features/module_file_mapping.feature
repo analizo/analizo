@@ -5,8 +5,8 @@ Feature: mapping modules to filenames
 
   Scenario: C++, runing against some directory
     When I run "analizo metrics t/samples/animals/cpp"
-    Then analizo must report that module Animal has _filename = [t/samples/animals/cpp/animal.h]
-    And analizo must report that module Cat has _filename = [t/samples/animals/cpp/cat.h,t/samples/animals/cpp/cat.cc]
+    Then analizo must report that module Animal has _filename = [animal.h]
+    And analizo must report that module Cat has _filename = [cat.h,cat.cc]
 
   Scenario: C++, running against current directory
     Given I am in t/samples/animals/cpp
@@ -16,7 +16,7 @@ Feature: mapping modules to filenames
 
   Scenario: Java
     When I run "analizo metrics t/samples/animals/java"
-    Then analizo must report that module Animal has _filename = [t/samples/animals/java/Animal.java]
+    Then analizo must report that module Animal has _filename = [Animal.java]
 
   Scenario: C
     Given I am in t/samples/hello_world/c

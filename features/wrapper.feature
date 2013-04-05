@@ -1,7 +1,7 @@
 Feature: analizo wrapper script
 
   Scenario: invoking a tool
-    When I run "analizo metrics 2>&1"
+    When I run "analizo metrics lib t 2>&1"
     Then the output must match "Usage:"
     And the output must match "analizo.metrics"
 
