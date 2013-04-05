@@ -7,3 +7,6 @@ override_dh_auto_install:
 	dh_auto_install
 	# fix manpage sections by hand
 	sed -i -e 's/^\(\.TH\s*\S\+\s*1\)p/\1/' debian/analizo/usr/share/man/man1/*
+
+override_dh_auto_test:
+	prove

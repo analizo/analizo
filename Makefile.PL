@@ -1,4 +1,5 @@
 use ExtUtils::MakeMaker;
+use File::ShareDir::Install;
 use File::Basename;
 
 my %manpages = ();
@@ -36,8 +37,10 @@ CheckExtraDependencies(
   'rspec' => 0,
 );
 
+install_share 'share';
+
 WriteMakefile(
-  NAME => 'analizo',
+  NAME => 'Analizo',
   VERSION_FROM => 'analizo',
   EXE_FILES => ['analizo'],
   MAN1PODS => \%manpages,
@@ -58,6 +61,8 @@ WriteMakefile(
     'Term::ProgressBar' => 0,
     'ZeroMQ' => 0,
     'Mojolicious' => 0,
+    'File::ShareDir' => 0,
+    'File::Share' => 0,
   },
   BUILD_REQUIRES => {
     'Test::Class' => 0,
@@ -66,3 +71,6 @@ WriteMakefile(
     'Test::MockModule' => 0,
   },
 );
+
+package MY;
+use File::ShareDir::Install qw(postamble);

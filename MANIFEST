@@ -1,5 +1,6 @@
 .gitignore
 .mailmap
+.proverc
 AUTHORS
 Gemfile
 HACKING
@@ -11,9 +12,6 @@ PROFILING
 README
 Rakefile
 TODO
-Test/Analizo.pm
-Test/Analizo/Class.pm
-Test/Analizo/Git.pm
 analizo
 debian/changelog
 debian/compat
@@ -22,6 +20,7 @@ debian/copyright
 debian/refresh
 debian/rules
 debian/source/format
+development-setup.sh
 features/dot-analizo.feature
 features/graph/cluster.feature
 features/graph/help.feature
@@ -55,6 +54,7 @@ features/step_definitions/analizo_steps.rb
 features/support/analizo_exception.rb
 features/tree_evolution.feature
 features/wrapper.feature
+lib/Analizo.pm
 lib/Analizo/Batch.pm
 lib/Analizo/Batch/Directories.pm
 lib/Analizo/Batch/Git.pm
@@ -68,8 +68,11 @@ lib/Analizo/Batch/Runner.pm
 lib/Analizo/Batch/Runner/Parallel.pm
 lib/Analizo/Batch/Runner/Sequential.pm
 lib/Analizo/Command.pm
+lib/Analizo/EvolutionMatrix.pm
+lib/Analizo/EvolutionMatrix/Cell.pm
 lib/Analizo/Extractor.pm
 lib/Analizo/Extractor/Doxyparse.pm
+lib/Analizo/Extractor/DoxyparseFile.pm
 lib/Analizo/Extractor/Sloccount.pm
 lib/Analizo/FilenameFilter.pm
 lib/Analizo/Filter/Client.pm
@@ -84,12 +87,12 @@ lib/Analizo/scripts/analizo-metrics
 lib/Analizo/scripts/analizo-metrics-batch
 lib/Analizo/scripts/analizo-metrics-history
 lib/Analizo/scripts/analizo-tree-evolution
+share
+templates/analizo-evolution-matrix.html.ep
 t/01_dot_output.t
 t/02_extractor.t
 t/03_model.t
 t/04_metrics.t
-t/06_extractor_doxyparse.t
-t/07_extractor_sloccount.t
 t/08_language_filter.t
 t/09_filename_filter.t
 t/10_batch.t
@@ -104,6 +107,12 @@ t/18_batch_job_git.t
 t/19_batch_git.t
 t/20_parallel_runner.t
 t/21_db_output.t
+t/analizo/extractor/doxyparse.t
+t/analizo/extractor/doxyparse_file.t
+t/analizo/extractor/sloccount.t
+t/lib/Test/Analizo.pm
+t/lib/Test/Analizo/Class.pm
+t/lib/Test/Analizo/Git.pm
 t/samples/animals/cpp/Makefile
 t/samples/animals/cpp/animal.h
 t/samples/animals/cpp/cat.cc
@@ -164,6 +173,7 @@ t/samples/printer/cpp/Makefile
 t/samples/printer/cpp/printer.cc
 t/samples/printer/java/Printer1.java
 t/samples/printer/java/Printer2.java
+t/samples/sample_basic.doxyparse
 t/samples/sample_basic/Makefile
 t/samples/sample_basic/config.sh
 t/samples/sample_basic/module1.c

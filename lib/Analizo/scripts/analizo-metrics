@@ -148,10 +148,6 @@ if ($__exclude) {
 }
 my $metrics = Analizo::Metrics->new(model => $extractor->model);
 
-if ($__global_only) {
-  $metrics->report_global_metrics_only(1);
-}
-
 
 $extractor->process(@ARGV);
 $eloc_extractor->process(@ARGV);
@@ -160,7 +156,12 @@ if ($__output) {
   open STDOUT, '>', $__output or die($!);
 }
 
-print $metrics->report;
+if ($__global_only) {
+  print $metrics->report_global_metrics_only;
+}
+else {
+  print $metrics->report;
+}
 close STDOUT;
 
 exit(0);
