@@ -24,11 +24,10 @@ sub description {
 
 sub calculate {
   my ($self, $module) = @_;
-  
-  #FIXME: we are re-calculating cbo and lcom4
-  #How to call 'value' variable from the instances of cbo and lcom4?
-  my $cbo   = $self->cbo->calculate($module);
-  my $lcom4 = $self->lcom4->calculate($module);
+
+  my $cbo   = $self->cbo->value($module);
+  my $lcom4 = $self->lcom4->value($module);
+
   return ($cbo * $lcom4);
 }
 
