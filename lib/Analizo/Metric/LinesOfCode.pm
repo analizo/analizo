@@ -1,6 +1,6 @@
 package Analizo::Metric::LinesOfCode;
 use strict;
-use base qw(Class::Accessor::Fast);
+use base qw(Class::Accessor::Fast Analizo::ModuleMetric);
 use Statistics::Descriptive;
 
 __PACKAGE__->mk_accessors(qw( model ));

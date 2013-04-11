@@ -1,6 +1,6 @@
 package Analizo::Metric::ResponseForClass;
 use strict;
-use base qw(Class::Accessor::Fast);
+use base qw(Class::Accessor::Fast Analizo::ModuleMetric);
 
 __PACKAGE__->mk_accessors(qw( model ));
 

@@ -72,7 +72,8 @@ sub report {
   my %values = ();
   $values{'_module'} = $module;
   for my $metric (keys %{$self->metric_calculators}) {
-      $values{$metric} = $self->metric_calculators->{$metric}->calculate($module);
+    my $value = $self->metric_calculators->{$metric}->value($module);
+    $values{$metric} = $value;
   }
 
   #FIXME: move to another function

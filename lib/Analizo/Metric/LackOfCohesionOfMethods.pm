@@ -1,16 +1,15 @@
 package Analizo::Metric::LackOfCohesionOfMethods;
 use strict;
-use base qw(Class::Accessor::Fast);
+use base qw(Class::Accessor::Fast Analizo::ModuleMetric);
 use Graph;
 
-__PACKAGE__->mk_accessors(qw( model graph value ));
+__PACKAGE__->mk_accessors(qw( model graph ));
 
 sub new {
   my ($package, %args) = @_;
    my @instance_variables = (
     model => $args{model},
     graph => new Graph(),
-    value => undef
   );
   return bless { @instance_variables }, $package;
 }

@@ -1,8 +1,8 @@
 package Analizo::Metric::CouplingBetweenObjects;
 use strict;
-use base qw(Class::Accessor::Fast);
+use base qw(Class::Accessor::Fast Analizo::ModuleMetric);
 
-__PACKAGE__->mk_accessors(qw( model analized_module calls_to value ));
+__PACKAGE__->mk_accessors(qw( model analized_module calls_to ));
 
 sub new {
   my ($package, %args) = @_;
@@ -10,7 +10,6 @@ sub new {
     model => $args{model},
     analized_module => undef,
     calls_to => {},
-    value => undef
   );
   return bless { @instance_variables }, $package;
 }
@@ -24,9 +23,7 @@ sub calculate {
   $self->analized_module($module);
 
   my $number_of_calls_to_other_modules = $self->_number_of_calls_to_other_modules();
-  my $value = $self->value($number_of_calls_to_other_modules);
-
-  return $value;
+  return $number_of_calls_to_other_modules;
 }
 
 sub _number_of_calls_to_other_modules {
