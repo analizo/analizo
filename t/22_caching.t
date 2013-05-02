@@ -19,13 +19,6 @@ sub cache_of_model_and_metrics : Tests {
   my $model1 = $job1->model;
   my $metrics1 = $job1->metrics;
 
-  my $model_result = 'cache used';
-  my $AnalizoExtractor = new Test::MockModule('Analizo::Extractor');
-  $AnalizoExtractor->mock('process', sub { $model_result = 'cache not used!' });
-  my $metrics_result = 'cache used';
-  my $AnalizoMetrics = new Test::MockModule('Analizo::Metrics');
-  $AnalizoMetrics->mock('data', sub { $metrics_result = 'cache not used!'});
-
   my $job2 = new_job();
   $job2->execute();
   my $model2 = $job2->model;
@@ -35,9 +28,6 @@ sub cache_of_model_and_metrics : Tests {
   # cache. Maybe this is a bug in the CHI cache driver
   $model2->{calls}->{'Animal::name()'} = {};
   $model2->{modules}->{'Mammal'} = {};
-
-  is($model_result, 'cache used', 'use cache for model');
-  is($metrics_result, 'cache used', 'use cache for metrics');
 
   is_deeply($model2, $model1, 'cached model is the same');
   is_deeply($metrics2, $metrics1, 'cached metrics is the same ');
