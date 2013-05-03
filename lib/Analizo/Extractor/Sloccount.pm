@@ -9,8 +9,8 @@ use File::Path;
 use File::Spec;
 
 sub new {
-  my $package = shift;
-  return bless { @_ }, $package;
+  my ($package, @options) = @_;
+  return bless { @options }, $package;
 }
 
 sub feed {
@@ -23,18 +23,18 @@ sub feed {
 }
 
 sub _strip_commas {
-  my $number = shift;
+  my ($number) = @_;
   $number =~ s/,//g;
   return $number;
 }
 
 sub actually_process {
-  my $self = shift;
+  my ($self, @input_files) = @_;
   my @files = ();
   my $datadir = File::Spec->catfile(File::Spec->tmpdir(), 'analizo-sloccount-' . $$);
   mkdir($datadir);
   eval {
-    open SLOCCOUNT, sprintf("sloccount --datadir $datadir %s |", join(' ', @_) ) or die $!;
+    open SLOCCOUNT, sprintf("sloccount --datadir $datadir %s |", join(' ', @input_files) ) or die $!;
     while (<SLOCCOUNT>) {
       $self->feed($_);
     }

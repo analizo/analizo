@@ -32,7 +32,7 @@ sub new {
 }
 
 sub _initialize_metric_calculators {
-  my $model = shift;
+  my ($model) = @_;
   my $cbo                = new Analizo::Metric::CouplingBetweenObjects(model => $model);
   my $lcom4              = new Analizo::Metric::LackOfCohesionOfMethods(model => $model);
 
@@ -58,7 +58,7 @@ sub _initialize_metric_calculators {
 }
 
 sub list {
-  my $self = shift;
+  my ($self) = @_;
   my %list = ();
   for my $metric (keys %{$self->metric_calculators}) {
     $list{$metric} = $self->metric_calculators->{$metric}->description;
