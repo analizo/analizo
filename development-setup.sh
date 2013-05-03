@@ -4,8 +4,11 @@ set -e
 
 setup_debian() {
   which lsb_release || apt-get -q -y install lsb-release
-  debian_squeeze_hack
-  debian_wheezy_hack
+  codename=$(lsb_release -c | awk '{print($2)}')
+  type prepare_$codename >/dev/null 2>&1
+  if [ $? -eq  0 ]; then
+    prepare_$codename
+  fi
 
   apt-get -q -y install devscripts equivs wget
   if [ ! -f /etc/apt/sources.list.d/analizo.list ]; then
@@ -19,10 +22,7 @@ setup_debian() {
   sudo apt-get -q -y -f install
 }
 
-debian_squeeze_hack() {
-  if ! lsb_release -c | grep -i squeeze; then
-    return
-  fi
+prepare_squeeze() {
 
   if ! test -f  /etc/apt/sources.list.d/squeeze-backports.list; then
     echo 'deb http://backports.debian.org/debian-backports squeeze-backports main' > /etc/apt/sources.list.d/squeeze-backports.list
@@ -47,10 +47,7 @@ debian_squeeze_hack() {
 
 }
 
-debian_wheezy_hack() {
-  if ! lsb_release -c | grep -i wheezy; then
-    return
-  fi
+prepare_wheezy() {
   if ! grep -q ZeroMQ Makefile.PL; then
     # only needed while we depend on ZeroMQ
     return
@@ -60,6 +57,21 @@ debian_wheezy_hack() {
   wget -O "/tmp/$libzeromq" "http://analizo.org/wheezy/$libzeromq"
   dpkg --unpack "/tmp/$libzeromq"
   apt-get -q -y -f install
+}
+
+prepare_precise() {
+  if ! grep -q ZeroMQ Makefile.PL; then
+    # only needed while we depend on ZeroMQ
+    return
+  fi
+  apt-get install -q -y libzeromq-perl
+}
+prepare_quantal() {
+  if ! grep -q ZeroMQ Makefile.PL; then
+    # only needed while we depend on ZeroMQ
+    return
+  fi
+  apt-get install -q -y libzeromq-perl
 }
 
 # FIXME share data with Makefile.PL
