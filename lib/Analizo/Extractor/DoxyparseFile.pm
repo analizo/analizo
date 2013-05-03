@@ -9,8 +9,7 @@ sub use_filters {
 }
 
 sub actually_process {
-  my $self = shift;
-  my $doxyparse_filename = shift;
+  my ($self, $doxyparse_filename) = @_;
   open DOXYPARSE_FILE, '<', $doxyparse_filename or die $!;
   while (<DOXYPARSE_FILE>) {
     $self->feed($_);

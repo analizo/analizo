@@ -17,7 +17,7 @@ sub description {
 }
 
 sub calculate {
-  my $self = shift;
+  my ($self) = @_;
   my $total_number_of_methods = 0;
   my @abstract_classes = $self->model->abstract_classes;
 

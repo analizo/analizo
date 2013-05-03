@@ -17,7 +17,7 @@ sub description {
 }
 
 sub calculate {
-  my $self = shift;
+  my ($self) = @_;
   return $self->model->total_eloc;
 }
 
