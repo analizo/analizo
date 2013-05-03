@@ -23,9 +23,14 @@ debian_squeeze_hack() {
     return
   fi
 
-  (gem list | grep cucumber) || sudo gem --no-ri --no-rdoc install cucumber
+  if ! test -f  /etc/apt/sources.list.d/squeeze-backports.list; then
+    echo 'deb http://backports.debian.org/debian-backports squeeze-backports main' > /etc/apt/sources.list.d/squeeze-backports.list
+    apt-get update
+  fi
+  apt-get install -q -y -t squeeze-backports rubygems
+
+  (gem list | grep cucumber) || sudo gem install --no-ri --no-rdoc cucumber
   (gem list | grep rspec) || sudo gem install --no-ri --no-rdoc rspec
-  ln -sf $(ruby -rubygems -e 'puts Gem.bindir')/* /usr/local/bin
 
   apt-get install -q -y equivs
   for fakepkg in cucumber ruby-rspec; do
@@ -39,8 +44,6 @@ debian_squeeze_hack() {
     (cd /tmp/ && equivs-build ${fakepkg}.equivs && dpkg -i ${fakepkg}_1.0_all.deb)
   done
 
-  echo 'deb http://backports.debian.org/debian-backports squeeze-backports main' > /etc/apt/sources.list.d/squeeze-backports.list
-  apt-get update
 }
 
 # FIXME share data with Makefile.PL
