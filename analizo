@@ -169,7 +169,7 @@ sub run_tool {
 }
 
 sub usage {
-  my $status = shift;
+  my ($status) = @_;
   pod2usage(-verbose => 1, -exitval => "NOEXIT");
   list_tools();
   exit($status);

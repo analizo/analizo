@@ -23,12 +23,12 @@ sub new {
 }
 
 sub modules {
-  my $self = shift;
+  my ($self) = @_;
   return $self->{modules};
 }
 
 sub module_names {
-  my $self = shift;
+  my ($self) = @_;
   return @{$self->{module_names}};
 }
 
@@ -38,7 +38,7 @@ sub declare_total_eloc {
 }
 
 sub total_eloc {
-  my ($self) = shift;
+  my ($self) = @_;
   return $self->{total_eloc};
 }
 
@@ -79,7 +79,7 @@ sub add_inheritance {
 }
 
 sub members {
-  my $self = shift;
+  my ($self) = @_;
   return $self->{members};
 }
 
@@ -126,8 +126,7 @@ sub declare_variable {
 }
 
 sub demangle {
-  my $self = shift;
-  my $function = shift;
+  my ($self, $function) = @_;
   return $self->{demangle}->{$function} || $function;
 }
 
@@ -139,12 +138,12 @@ sub add_call {
 }
 
 sub calls {
-  my $self = shift;
+  my ($self) = @_;
   return $self->{calls};
 }
 
 sub abstract_classes {
-  my $self = shift;
+  my ($self) = @_;
   my $list = $self->{abstract_classes};
   return $list ? @$list : ();
 }

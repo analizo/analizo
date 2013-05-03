@@ -29,7 +29,7 @@ sub on_dir {
 }
 
 sub mock {
-  my $object = shift;
+  my ($object) = @_;
   new Test::MockObject::Extends($object);
 }
 
@@ -61,7 +61,7 @@ sub unpack_sample_git_repository {
 }
 
 sub readfile {
-  my $filename = shift;
+  my ($filename) = @_;
   open INPUT, $filename;
   my @lines = <INPUT>;
   close INPUT;
