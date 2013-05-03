@@ -54,6 +54,7 @@ prepare_wheezy() {
     return
   fi
   dpkg-query --show libzeromq-perl && return
+  apt-get install -q -y libzeromq-perl && return # on we can `apt-get install`
   arch=$(dpkg-architecture -qDEB_HOST_ARCH)
   libzeromq=libzeromq-perl_0.23-1_$arch.deb
   wget -O "/tmp/$libzeromq" "http://analizo.org/wheezy/$libzeromq"
