@@ -63,6 +63,8 @@ WriteMakefile(
     'Mojolicious' => 0,
     'File::ShareDir' => 0,
     'File::Share' => 0,
+    'File::HomeDir' => 0,
+    'YAML::Tiny' => 0,
   },
   BUILD_REQUIRES => {
     'Test::Class' => 0,

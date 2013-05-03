@@ -30,7 +30,10 @@ Build-Depends-Indep:
  libzeromq-perl,
  libfile-sharedir-install-perl,
  libfile-sharedir-perl,
- libfile-share-perl
+ libfile-share-perl,
+ libfile-homedir-perl,
+ libmojolicious-perl,
+ libyaml-tiny-perl,
 Standards-Version: 3.9.1
 Homepage: http://analizo.org
 DM-Upload-Allowed: yes
