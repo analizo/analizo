@@ -3,7 +3,9 @@
 set -e
 
 setup_debian() {
+  which lsb_release || apt-get -q -y install lsb-release
   debian_squeeze_hack
+  debian_wheezy_hack
 
   apt-get -q -y install devscripts equivs wget
   if [ ! -f /etc/apt/sources.list.d/analizo.list ]; then
@@ -18,7 +20,6 @@ setup_debian() {
 }
 
 debian_squeeze_hack() {
-  which lsb_release || apt-get -q -y install lsb-release
   if ! lsb_release -c | grep -i squeeze; then
     return
   fi
@@ -44,6 +45,21 @@ debian_squeeze_hack() {
     (cd /tmp/ && equivs-build ${fakepkg}.equivs && dpkg -i ${fakepkg}_1.0_all.deb)
   done
 
+}
+
+debian_wheezy_hack() {
+  if ! lsb_release -c | grep -i wheezy; then
+    return
+  fi
+  if ! grep -q ZeroMQ Makefile.PL; then
+    # only needed while we depend on ZeroMQ
+    return
+  fi
+  arch=$(dpkg-architecture -qDEB_HOST_ARCH)
+  libzeromq=libzeromq-perl_0.23-1_$arch.deb
+  wget -O "/tmp/$libzeromq" "http://analizo.org/wheezy/$libzeromq"
+  dpkg --unpack "/tmp/$libzeromq"
+  apt-get -q -y -f install
 }
 
 # FIXME share data with Makefile.PL
