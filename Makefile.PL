@@ -51,6 +51,7 @@ WriteMakefile(
     'Class::Accessor::Fast' => 0,
     'DBD::SQLite' => 0,
     'DBI' => 0,
+    'CHI' => 0,
     'Digest::SHA' => 0,
     'File::Copy::Recursive' => 0,
     'List::Compare' => 0,

@@ -21,6 +21,7 @@ Build-Depends-Indep:
  sqlite3,
  libdbi-perl,
  libdigest-sha-perl,
+ libchi-perl,
  libfile-copy-recursive-perl,
  libgraph-perl,
  libjson-perl,
