@@ -53,6 +53,7 @@ prepare_wheezy() {
     # only needed while we depend on ZeroMQ
     return
   fi
+  dpkg-query --show libzeromq-perl && return
   arch=$(dpkg-architecture -qDEB_HOST_ARCH)
   libzeromq=libzeromq-perl_0.23-1_$arch.deb
   wget -O "/tmp/$libzeromq" "http://analizo.org/wheezy/$libzeromq"
