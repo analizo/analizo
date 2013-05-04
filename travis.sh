@@ -6,5 +6,5 @@ apt-get install doxyparse
 rm -rf /etc/apt/sources.list.d/analizo.list
 apt-get update
 
-# rest of non-perl deps - ruby, rake and cucumber assumed to be already installed
-apt-get install git sloccount sqlite3 man pkg-config uuid-dev
+# rest of non-perl deps
+apt-get install git sloccount sqlite3 man pkg-config uuid-dev rake cucumber ruby-rspec
