@@ -73,6 +73,9 @@ WriteMakefile(
     'Test::MockObject' => 0,
     'Test::MockModule' => 0,
   },
+  test => {
+    TESTS => 't/*.t t/*/*.t t/*/*/*.t t/*/*/*/*.t',
+  },
 );
 
 package MY;
