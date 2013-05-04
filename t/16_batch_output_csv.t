@@ -1,9 +1,9 @@
 package Analizo::Batch::Output::CSV::Test;
 use strict;
 use warnings;
-use base qw(Test::Analizo::Class);
+use base qw(t::Analizo::Class);
 use Test::More 'no_plan';
-use Test::Analizo;
+use t::Analizo;
 
 use Analizo::Batch::Output::CSV;
 use Analizo::Batch::Job::Directories;

@@ -1,4 +1,4 @@
-package Test::Analizo::Class;
+package t::Analizo::Class;
 use strict;
 use warnings;
 

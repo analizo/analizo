@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use base qw( Test::Class );
 use Test::More;
-use Test::Analizo;
+use t::Analizo;
 use Test::MockModule;
 use File::Temp qw/ tempdir /;
 

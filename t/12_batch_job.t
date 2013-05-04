@@ -6,7 +6,7 @@ use Test::More 'no_plan';
 use Test::MockObject::Extends;
 use Test::MockModule;
 
-use Test::Analizo;
+use t::Analizo;
 
 use Analizo::Batch::Job;
 
