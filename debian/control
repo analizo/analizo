@@ -28,7 +28,7 @@ Build-Depends-Indep:
  liblist-compare-perl,
  libstatistics-descriptive-perl,
  libyaml-perl,
- libzeromq-perl,
+ libzmq-libzmq2-perl,
  libfile-sharedir-install-perl,
  libfile-sharedir-perl,
  libfile-share-perl,
