@@ -7,4 +7,4 @@ rm -rf /etc/apt/sources.list.d/analizo.list
 apt-get update
 
 # rest of non-perl deps - ruby, rake and cucumber assumed to be already installed
-apt-get install git sloccount sqlite3 man pkg-config uuid-dev libzmq-dev
+apt-get install git sloccount sqlite3 man pkg-config uuid-dev
