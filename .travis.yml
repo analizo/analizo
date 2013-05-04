@@ -4,4 +4,4 @@ perl:
   - "5.12"
   - "5.14"
   - "5.16"
-install: sudo sh travis.sh && cpanm --installdeps --notest .
+install: sudo sh travis.sh && cpanm --installdeps --notest --verbose .
