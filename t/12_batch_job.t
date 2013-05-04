@@ -110,7 +110,13 @@ sub pass_filters_to_extractor : Tests {
   my $job = new Analizo::Batch::Job;
   my $cpp_filter = new Analizo::LanguageFilter('cpp');
   $job->filters($cpp_filter);
-  $job->execute();
+
+  on_dir(
+    't/samples/hello_world/cpp/',
+    sub {
+      $job->execute();
+    }
+  );
   is_deeply(\@filters, [$cpp_filter], 'must pass filters to extractor object');
 }
 
