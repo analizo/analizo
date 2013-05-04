@@ -1,4 +1,4 @@
-package Test::Analizo;
+package Analizo::Test;
 use strict;
 use warnings;
 

@@ -1,9 +1,9 @@
 package BatchOutputTests;
 use strict;
 use warnings;
-use base qw(Test::Analizo::Class);
+use base qw(Analizo::Test::Class);
 use Test::More 'no_plan';
-use Test::Analizo;
+use Analizo::Test;
 
 use Analizo::Batch::Output;
 
