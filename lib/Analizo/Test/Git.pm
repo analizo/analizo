@@ -1,4 +1,4 @@
-package Test::Analizo::Git;
+package Analizo::Test::Git;
 
 use base 'Exporter';
 @EXPORT = qw(
