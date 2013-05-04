@@ -48,19 +48,6 @@ Depends:
  git,
  ruby,
  sloccount,
- libclass-accessor-perl,
- libdbd-sqlite3-perl,
- libdbi-perl,
- libdigest-sha-perl,
- libfile-copy-recursive-perl,
- libgraph-perl,
- libjson-perl,
- liblist-compare-perl,
- libstatistics-descriptive-perl,
- libyaml-perl,
- libzeromq-perl,
- libfile-sharedir-perl,
- libfile-share-perl
 Recommends: graphviz, sqlite3
 Description: multi-language source code analysis toolkit
  Analizo parses source code in multiple languages and report useful information
