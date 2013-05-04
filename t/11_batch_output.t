@@ -25,9 +25,9 @@ sub should_write_to_output_file : Tests {
   my $delegated = undef;
   $output->mock('write_data', sub { my ($that, $fh) = @_; $delegated = (ref($fh) eq 'GLOB'); });
 
-  $output->file('t/tmp/output.tmp');
+  $output->file('output.tmp');
   $output->flush();
-  ok(-e 't/tmp/output.tmp', 'output must be written to file');
+  ok(-e 'output.tmp', 'output must be written to file');
   ok($delegated, 'must delegate actualy writing to subclasses');
 }
 

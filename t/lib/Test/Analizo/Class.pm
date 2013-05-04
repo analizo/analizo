@@ -7,9 +7,11 @@ use File::Path qw(remove_tree);
 
 sub create_tmpdir : Test(setup) {
   mkdir 't/tmp';
+  chdir 't/tmp';
 }
 
 sub cleanup_tmpdir : Test(teardown) {
+  chdir '../../';
   remove_tree 't/tmp';
 }
 
