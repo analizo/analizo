@@ -175,4 +175,4 @@ sub tree_id : Tests {
   is($id, '82df8dce26abfcf4e489a6d0201d2ef481591831'); # calculated by hand
 }
 
-BatchJobTests->runtests;
+__PACKAGE__->runtests;

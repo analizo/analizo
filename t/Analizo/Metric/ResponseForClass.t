@@ -49,5 +49,5 @@ sub calculate : Tests {
   is($rfc->calculate('module'), 4, "two functions and two calls declared on the module");
 }
 
-MetricRfcTests->runtests;
+__PACKAGE__->runtests;
 

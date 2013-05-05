@@ -42,5 +42,5 @@ sub calculate : Tests {
   is($loc->calculate('mod1'), 30, 'adding another module with 20 loc makes the total equal 30');
 }
 
-MetricLocTests->runtests;
+__PACKAGE__->runtests;
 

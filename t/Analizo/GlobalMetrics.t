@@ -229,5 +229,5 @@ sub should_ignore_filename : Tests {
   ok(! grep(/^_filename/, keys %$report), "Should ignore _filename metrics");
 }
 
-GlobalMetricsTests->runtests;
+__PACKAGE__->runtests;
 

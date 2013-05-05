@@ -41,5 +41,5 @@ sub calculate : Tests {
 }
 
 
-MetricNoaTests->runtests;
+__PACKAGE__->runtests;
 

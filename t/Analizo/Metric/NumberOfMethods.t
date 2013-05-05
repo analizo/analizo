@@ -40,5 +40,5 @@ sub calculate : Tests {
   is($nom->calculate('mod1'), 2, 'module with just two functions has number of functions = 2');
 }
 
-MetricNomTests->runtests;
+__PACKAGE__->runtests;
 

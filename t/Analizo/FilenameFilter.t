@@ -35,4 +35,4 @@ sub must_match_filenames_with_or_without_leading_dot : Tests {
 }
 
 
-FilenameFilterTests->runtests;
+__PACKAGE__->runtests;

@@ -53,4 +53,4 @@ sub must_be_case_insensitive : Tests {
   ok($filter->matches('Test.JAVA'));
 }
 
-LanguageFilterTests->runtests;
+__PACKAGE__->runtests;

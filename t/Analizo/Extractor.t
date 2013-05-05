@@ -7,6 +7,8 @@ use strict;
 use warnings;
 
 use Analizo::Extractor;
+use Analizo::LanguageFilter;
+use Analizo::Model;
 
 # Redefine constructor so that this test class can instantiate
 # Analizo::Extractor directly
@@ -45,20 +47,13 @@ sub current_file : Tests {
 sub current_file_plus_current_module : Tests {
   my $extractor = new Analizo::Extractor;
 
-  $extractor->{model} = new ModelStub;
-  my $mapped_module_to_filename = undef;
-  no warnings;
-  *ModelStub::declare_module = sub {
-    my ($self, $_module, $_filename) = @_;
-    if ($_module eq 'Person' && defined($_filename) && $_filename eq 'person.cpp') {
-      $mapped_module_to_filename = 1;
-    }
-  };
-  use warnings;
+  my $model = new Analizo::Model;
+  $extractor->{model} = $model;
 
   $extractor->current_file('person.cpp');
   $extractor->current_module('Person');
-  ok($mapped_module_to_filename);
+
+  is_deeply($model->{module_by_file}->{'person.cpp'}, ['Person']);
 }
 
 sub process_must_delegate_to_actually_process : Tests {
@@ -129,18 +124,9 @@ sub must_filter_input_with_language_filter : Tests {
     my $self = shift;
     @processed = @_;
   };
-  local *LanguageFilterStub::matches = sub {
-    my ($self, $filename) = @_;
-    if ($filename =~ /\.java$/) {
-      return 1;
-    } else {
-      return 0;
-    }
-  };
-  use warnings;
 
   my $extractor = new Analizo::Extractor;
-  $extractor->filters(new LanguageFilterStub);
+  $extractor->filters(new Analizo::LanguageFilter('java'));
   $extractor->process('t/samples/mixed');
 
   my @expected = ('t/samples/mixed/Backend.java', 't/samples/mixed/UI.java');
@@ -221,14 +207,4 @@ sub force_ignore_filter : Tests {
   lives_ok { $extractor->process('t/samples/mixed') };
 }
 
-package LanguageFilterStub;
-sub new {
-  return bless {}, __PACKAGE__;
-}
-
-package ModelStub;
-sub new {
-  return bless {}, __PACKAGE__;
-}
-
-ExtractorTests->runtests;
+__PACKAGE__->runtests;

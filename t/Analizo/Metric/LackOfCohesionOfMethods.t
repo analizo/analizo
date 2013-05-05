@@ -74,5 +74,5 @@ sub calculate_3 : Tests {
 }
 
 
-MetricLcom4Tests->runtests;
+__PACKAGE__->runtests;
 

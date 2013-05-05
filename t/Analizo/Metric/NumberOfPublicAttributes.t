@@ -45,5 +45,5 @@ sub calculate : Tests {
   is($npa->calculate('mod1'), 2, 'not public attribute added');
 }
 
-MetricNpaTests->runtests;
+__PACKAGE__->runtests;
 

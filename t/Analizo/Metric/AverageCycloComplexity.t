@@ -47,5 +47,5 @@ sub calculate : Tests {
   is($accm->calculate('module'), 3, 'two function with three average cyclomatic complexity per method');
 }
 
-MetricAccmTests->runtests;
+__PACKAGE__->runtests;
 

@@ -45,5 +45,5 @@ sub calculate : Tests {
   is($mac->calculate, 1, 'one methods on one abstract classes');
 }
 
-MetricMacTests->runtests;
+__PACKAGE__->runtests;
 

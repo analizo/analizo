@@ -343,5 +343,5 @@ sub use_of_variables : Tests {
     'must use variable information for inter-module dependencies');
 }
 
-DOTOutputTests->runtests;
+__PACKAGE__->runtests;
 

@@ -47,4 +47,4 @@ sub progress : Tests {
 }
 
 
-BatchRunnerTests->runtests;
+__PACKAGE__->runtests;

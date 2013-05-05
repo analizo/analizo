@@ -59,5 +59,5 @@ sub discard_external_symbols_for_calculate : Tests {
   is($cbo->calculate('mod1'), 1, 'calling a external function');
 }
 
-MetricCboTests->runtests;
+__PACKAGE__->runtests;
 

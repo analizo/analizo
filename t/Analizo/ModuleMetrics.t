@@ -38,5 +38,5 @@ sub metrics_of_module : Tests {
   is($report->{'amloc'}, 10);
 }
 
-ModuleMetricsTests->runtests;
+__PACKAGE__->runtests;
 

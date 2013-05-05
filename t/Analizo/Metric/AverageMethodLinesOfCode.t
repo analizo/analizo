@@ -42,5 +42,5 @@ sub calculate : Tests {
   is($amloc->calculate('mod1'), 8, 'adding module with 5 loc makes the avg continue 10');
 }
 
-MetricMmlocTests->runtests;
+__PACKAGE__->runtests;
 

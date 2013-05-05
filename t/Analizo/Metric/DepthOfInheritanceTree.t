@@ -46,5 +46,5 @@ sub calculate_with_multiple_inheritance : Tests {
 }
 
 
-MetricDitTests->runtests;
+__PACKAGE__->runtests;
 

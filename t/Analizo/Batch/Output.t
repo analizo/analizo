@@ -43,4 +43,4 @@ sub __create {
   new Analizo::Batch::Output;
 }
 
-BatchOutputTests->runtests;
+__PACKAGE__->runtests;

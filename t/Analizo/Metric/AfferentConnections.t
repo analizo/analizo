@@ -92,5 +92,5 @@ sub calculate_with_inheritance : Tests {
   is($acc->calculate('Mother'), 4, 'the deeper the tree, the biggest acc');
 }
 
-MetricAccTests->runtests;
+__PACKAGE__->runtests;
 

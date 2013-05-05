@@ -56,5 +56,5 @@ sub calculate : Tests {
 }
 
 
-MetricNocTests->runtests;
+__PACKAGE__->runtests;
 

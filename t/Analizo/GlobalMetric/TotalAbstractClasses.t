@@ -40,5 +40,5 @@ sub calculate : Tests {
   is($tac->calculate('mod'), 2, 'two abstract classes declared');
 }
 
-MetricTacTests->runtests;
+__PACKAGE__->runtests;
 

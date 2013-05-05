@@ -45,5 +45,5 @@ sub calculate : Tests {
   is($npm->calculate('mod1'), 2, 'not public function added');
 }
 
-MetricNpmTests->runtests;
+__PACKAGE__->runtests;
 

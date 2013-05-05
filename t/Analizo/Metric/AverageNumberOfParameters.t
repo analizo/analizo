@@ -40,5 +40,5 @@ sub calculate : Tests {
 }
 
 
-MetricAnpmTests->runtests;
+__PACKAGE__->runtests;
 

@@ -36,5 +36,5 @@ sub calculate : Tests {
   is($eloc->calculate, 10, 'eloc declared as 10');
 }
 
-MetricElocTests->runtests;
+__PACKAGE__->runtests;
 

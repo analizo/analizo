@@ -62,4 +62,4 @@ sub sc_implementation : Tests {
 	is($sc_value, 10);
 }
 
-MetricScTests->runtests;
+__PACKAGE__->runtests;

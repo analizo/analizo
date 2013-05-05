@@ -47,6 +47,6 @@ sub __create_batch {
   on_dir('t/samples/hello_world', sub { new Analizo::Batch::Directories(@args) });
 }
 
-DirectoriesBatchTests->runtests;
+__PACKAGE__->runtests;
 
 1;

@@ -178,5 +178,5 @@ sub adding_abstract_class : Tests {
   is($model->abstract_classes, 1, 'model detects an abstract class');
 }
 
-ModelTests->runtests;
+__PACKAGE__->runtests;
 

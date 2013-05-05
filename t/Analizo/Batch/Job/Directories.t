@@ -37,5 +37,5 @@ sub __create_job {
   on_dir('t/samples/hello_world', sub { new Analizo::Batch::Job::Directories(@args) });
 }
 
-DirectoriesJobTests->runtests;
+__PACKAGE__->runtests;
 

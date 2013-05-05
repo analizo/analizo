@@ -42,5 +42,5 @@ sub calculate : Tests {
   is($mmloc->calculate('mod1'), 10, 'adding module with 5 loc makes the max continue 10');
 }
 
-MetricMmlocTests->runtests;
+__PACKAGE__->runtests;
 

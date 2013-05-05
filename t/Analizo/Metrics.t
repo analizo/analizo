@@ -77,5 +77,5 @@ sub metrics_for : Tests {
   is($data->{_module}, 'mod1');
 }
 
-MetricsTests->runtests;
+__PACKAGE__->runtests;
 
