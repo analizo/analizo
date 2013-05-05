@@ -120,4 +120,59 @@ sub pass_filters_to_extractor : Tests {
   is_deeply(\@filters, [$cpp_filter], 'must pass filters to extractor object');
 }
 
+use File::Temp qw/ tempdir /;
+
+$ENV{ANALIZO_CACHE} = tempdir(CLEANUP => 1);
+
+sub cache_of_model_and_metrics : Tests {
+  # first time
+  my $job1 = new Analizo::Batch::Job;
+  on_dir(
+    't/samples/animals/cpp',
+    sub {
+      $job1->execute();
+    });
+  my $model1 = $job1->model;
+  my $metrics1 = $job1->metrics;
+
+  my $model_result = 'cache used';
+  my $AnalizoExtractor = new Test::MockModule('Analizo::Extractor');
+  $AnalizoExtractor->mock('process', sub { $model_result = 'cache not used!' });
+  my $metrics_result = 'cache used';
+  my $AnalizoMetrics = new Test::MockModule('Analizo::Metrics');
+  $AnalizoMetrics->mock('data', sub { $metrics_result = 'cache not used!'});
+
+  my $job2 = new Analizo::Batch::Job;
+  on_dir(
+    't/samples/animals/cpp',
+    sub {
+      $job2->execute();
+    });
+  my $model2 = $job2->model;
+  my $metrics2 = $job2->metrics;
+
+  # FIXME these are needed because empty hashes are not coming back from the
+  # cache. Maybe this is a bug in the CHI cache driver
+  $model2->{calls}->{'Animal::name()'} = {};
+  $model2->{modules}->{'Mammal'} = {};
+
+  is($model_result, 'cache used', 'use cache for model');
+  is($metrics_result, 'cache used', 'use cache for metrics');
+
+  is_deeply($model2, $model1, 'cached model is the same');
+  is_deeply($metrics2, $metrics1, 'cached metrics is the same ');
+}
+
+sub tree_id : Tests {
+  my $job = new Analizo::Batch::Job;
+  my $id;
+  on_dir(
+    't/samples/tree_id',
+    sub {
+      $id = $job->tree_id('.');
+    }
+  );
+  is($id, '82df8dce26abfcf4e489a6d0201d2ef481591831'); # calculated by hand
+}
+
 BatchJobTests->runtests;
