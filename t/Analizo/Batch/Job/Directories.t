@@ -1,4 +1,4 @@
-package DirectoriesJobTests;
+package t::Analizo::Batch::Job::Directories;
 use strict;
 use warnings;
 use base qw(Test::Class);

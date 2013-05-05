@@ -1,4 +1,4 @@
-package Analizo::Batch::Runner::Parallel::Test;
+package t::Analizo::Batch::Runner::Parallel;
 use strict;
 use warnings;
 use base qw( Test::Class );

@@ -1,4 +1,4 @@
-package MetricMmlocTests;
+package t::Analizo::Metric::AverageMethodLinesOfCode;
 use base qw(Test::Class);
 use Test::More 'no_plan'; # REMOVE THE 'no_plan'
 

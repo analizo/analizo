@@ -1,4 +1,4 @@
-package DirectoriesBatchTests;
+package t::Analizo::Batch::Directories;
 use strict;
 use warnings;
 use base qw(Test::Class);

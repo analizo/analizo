@@ -1,4 +1,4 @@
-package BatchOutputTests;
+package t::Analizo::Batch::Output;
 use strict;
 use warnings;
 use base qw(t::Analizo::Class);

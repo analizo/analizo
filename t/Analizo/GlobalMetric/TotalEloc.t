@@ -1,4 +1,4 @@
-package MetricElocTests;
+package t::Analizo::GlobalMetric::TotalEloc;
 use base qw(Test::Class);
 use Test::More 'no_plan'; # REMOVE THE 'no_plan'
 

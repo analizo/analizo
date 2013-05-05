@@ -1,4 +1,4 @@
-package MetricNpaTests;
+package t::Analizo::Metric::NumberOfPublicAttributes;
 use base qw(Test::Class);
 use Test::More 'no_plan'; # REMOVE THE 'no_plan'
 

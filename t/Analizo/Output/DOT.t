@@ -1,4 +1,4 @@
-package DOTOutputTests;
+package t::Analizo::Output::DOT;
 use base qw(Test::Class);
 
 use strict;

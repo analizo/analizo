@@ -1,4 +1,4 @@
-package ModelTests;
+package t::Analizo::Model;
 use base qw(Test::Class);
 use Test::More;
 use strict;

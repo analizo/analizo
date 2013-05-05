@@ -1,4 +1,4 @@
-package MetricAccmTests;
+package t::Analizo::Metric::AverageCycloComplexity;
 use base qw(Test::Class);
 use Test::More 'no_plan'; # REMOVE THE 'no_plan'
 

@@ -1,4 +1,4 @@
-package GlobalMetricsTests;
+package t::Analizo::GlobalMetrics;
 use strict;
 use base qw(Test::Class);
 use Test::More;

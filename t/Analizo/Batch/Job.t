@@ -1,4 +1,4 @@
-package BatchJobTests;
+package t::Analizo::Batch::Job;
 use strict;
 use warnings;
 use base qw(Test::Class);

@@ -1,4 +1,4 @@
-package MetricsTests;
+package t::Analizo::Metrics;
 use strict;
 use base qw(Test::Class);
 use Test::More;

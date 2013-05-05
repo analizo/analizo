@@ -1,4 +1,4 @@
-package ModuleMetricsTests;
+package t::Analizo::ModuleMetrics;
 use strict;
 use base qw(Test::Class);
 use Test::More;

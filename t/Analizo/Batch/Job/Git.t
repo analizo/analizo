@@ -1,4 +1,4 @@
-package Analizo::Batch::Job::Git::Test;
+package t::Analizo::Batch::Job::Git;
 use strict;
 use warnings;
 

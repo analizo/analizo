@@ -1,4 +1,4 @@
-package MetricLocTests;
+package t::Analizo::Metric::LinesOfCode;
 use base qw(Test::Class);
 use Test::More 'no_plan'; # REMOVE THE 'no_plan'
 

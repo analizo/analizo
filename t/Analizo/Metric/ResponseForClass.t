@@ -1,4 +1,4 @@
-package MetricRfcTests;
+package t::Analizo::Metric::ResponseForClass;
 use base qw(Test::Class);
 use Test::More 'no_plan'; # REMOVE THE 'no_plan'
 

@@ -1,4 +1,4 @@
-package Analizo::Batch::Tests;
+package t::Analizo::Batch;
 use strict;
 use warnings;
 use base qw(Test::Class);

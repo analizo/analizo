@@ -1,4 +1,4 @@
-package Analizo::Batch::Output::CSV::Test;
+package t::Analizo::Batch::Output::CSV;
 use strict;
 use warnings;
 use base qw(t::Analizo::Class);

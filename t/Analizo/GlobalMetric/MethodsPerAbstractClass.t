@@ -1,4 +1,4 @@
-package MetricMacTests;
+package t::Analizo::GlobalMetric::MethodsPerAbstractClass;
 use base qw(Test::Class);
 use Test::More 'no_plan'; # REMOVE THE 'no_plan'
 

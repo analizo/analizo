@@ -1,4 +1,4 @@
-package ModuleMetricSuperClassTests;
+package t::Analizo::ModuleMetric;
 use base qw(Test::Class);
 use Test::More 'no_plan'; # REMOVE THE 'no_plan'
 use Test::MockModule;

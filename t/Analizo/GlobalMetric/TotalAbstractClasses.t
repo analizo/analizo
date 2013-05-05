@@ -1,4 +1,4 @@
-package MetricTacTests;
+package t::Analizo::GlobalMetric::TotalAbstractClasses;
 use base qw(Test::Class);
 use Test::More 'no_plan'; # REMOVE THE 'no_plan'
 

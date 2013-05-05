@@ -1,4 +1,4 @@
-package BatchRunnerTests;
+package t::Analizo::Batch::Runner;
 
 use strict;
 use warnings;

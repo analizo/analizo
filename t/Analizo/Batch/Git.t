@@ -1,4 +1,4 @@
-package Analizo::Batch::Git::Test;
+package t::Analizo::Batch::Git;
 use strict;
 use warnings;
 use base qw( Test::Class );

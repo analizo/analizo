@@ -1,4 +1,4 @@
-package MetricDitTests;
+package t::Analizo::Metric::DepthOfInheritanceTree;
 use base qw(Test::Class);
 use Test::More 'no_plan'; # REMOVE THE 'no_plan'
 

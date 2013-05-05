@@ -1,4 +1,4 @@
-package Analizo::Batch::Output::DB::Tests;
+package t::Analizo::Batch::Output::DB;
 use strict;
 use warnings;
 use base qw( Test::Class );

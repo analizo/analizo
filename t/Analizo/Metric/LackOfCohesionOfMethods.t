@@ -1,4 +1,4 @@
-package MetricLcom4Tests;
+package t::Analizo::Metric::LackOfCohesionOfMethods;
 use base qw(Test::Class);
 use Test::More 'no_plan'; # REMOVE THE 'no_plan'
 

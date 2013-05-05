@@ -1,4 +1,4 @@
-package Analizo::Batch::Runner::Sequential::Test;
+package t::Analizo::Batch::Runner::Sequential;
 
 use strict;
 use warnings;

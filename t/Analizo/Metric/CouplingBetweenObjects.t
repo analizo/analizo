@@ -1,4 +1,4 @@
-package MetricCboTests;
+package t::Analizo::Metric::CouplingBetweenObjects;
 use base qw(Test::Class);
 use Test::More 'no_plan'; # REMOVE THE 'no_plan'
 

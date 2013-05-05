@@ -1,4 +1,4 @@
-package MetricAnpmTests;
+package t::Analizo::Metric::AverageNumberOfParameters;
 use base qw(Test::Class);
 use Test::More 'no_plan'; # REMOVE THE 'no_plan'
 

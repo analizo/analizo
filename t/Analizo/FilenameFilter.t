@@ -1,4 +1,4 @@
-package FilenameFilterTests;
+package t::Analizo::FilenameFilter;
 use base qw(Test::Class);
 use Test::More 'no_plan';
 use strict;

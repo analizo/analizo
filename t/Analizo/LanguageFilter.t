@@ -1,4 +1,4 @@
-package LanguageFilterTests;
+package t::Analizo::LanguageFilter;
 use base qw(Test::Class);
 use Test::More 'no_plan';
 
