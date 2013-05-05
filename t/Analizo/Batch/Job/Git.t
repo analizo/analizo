@@ -4,11 +4,11 @@ use warnings;
 
 use base 'Test::Class';
 use Test::More;
-use t::Analizo;
+use t::Analizo::Test;
 use Cwd;
 use File::Basename;
 use Test::MockObject;
-use t::Analizo::Git;
+use t::Analizo::Test::Git;
 
 use Analizo::Batch::Job::Git;
 use Analizo::Batch::Git;

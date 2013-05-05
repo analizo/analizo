@@ -3,8 +3,8 @@ use strict;
 use warnings;
 use base qw( Test::Class );
 use Test::More;
-use t::Analizo;
-use t::Analizo::Git;
+use t::Analizo::Test;
+use t::Analizo::Test::Git;
 use Cwd 'abs_path';
 use Test::MockObject;
 

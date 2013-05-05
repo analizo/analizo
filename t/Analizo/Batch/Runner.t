@@ -5,7 +5,7 @@ use warnings;
 
 use base qw(Test::Class);
 use Test::More qw(no_plan);
-use t::Analizo;
+use t::Analizo::Test;
 
 use Analizo::Batch::Runner;
 use Analizo::Batch::Output;

@@ -3,7 +3,7 @@ use strict;
 use warnings;
 use base qw( Test::Class );
 use Test::More;
-use t::Analizo;
+use t::Analizo::Test;
 my $TMPDIR = tmpdir();
 my $OUTFILE = $TMPDIR . '/out.sqlite3';
 

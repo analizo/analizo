@@ -3,7 +3,7 @@ use strict;
 use warnings;
 use base qw(Test::Class);
 use Test::More 'no_plan';
-use t::Analizo;
+use t::Analizo::Test;
 use Analizo::Batch;
 use Analizo::Batch::Job;
 
