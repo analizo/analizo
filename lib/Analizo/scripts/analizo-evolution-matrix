@@ -14,11 +14,11 @@ my $__output = undef;
 my $__help   = undef;
 
 GetOptions(
-  'height|h=s' => \$__height,
-  'width|w=s'  => \$__width,
+  'height|y=s' => \$__height,
+  'width|x=s'  => \$__width,
   'name|n=s'   => \$__name,
   'output|o=s' => \$__output,
-  'help'       => \$__help,
+  'help|h'   => \$__help,
 ) or exit(1);
 
 if ($__help) {
@@ -105,21 +105,21 @@ the B<-o> option.
 
 =over
 
-=item --help
+=item --help, -h
 
 Displays help for B<analizo evolution-matrix>.
 
-=item --width <metric>, -w <metric>
+=item --width <metric>, -x <metric>
 
 Uses <metric> as width of the matrix cells. Available metrics can be
 checked with `analizo metrics --list`, in the "Module metrics" section.
 
-=item --height <metric>, -h <metric>
+=item --height <metric>, -y <metric>
 
 Uses <metric> as height of the matrix cells. Available metrics can be
 checked with `analizo metrics --list`, in the "Module metrics" section.
 
-=item --name <name>
+=item --name <name>, -n <name>
 
 Sets the name of the project being analysed. Used in the generated report.
 

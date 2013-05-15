@@ -17,11 +17,11 @@ B<analizo doc> will display the documentation corresponding to the script  whose
 
 =over
 
-=item --usage
+=item --usage | -u
 
 Displays the only usage of the named script, instead of display its full manpage.
 
-=item --help
+=item --help | -h
 
 Displays the help of B<analizo doc> itself.
 
@@ -61,7 +61,14 @@ while [ $# -gt 0 ]; do
     --usage)
       usage=true
       ;;
+    -u)
+      usage=true
+      ;;
     --help)
+      help
+      exit 0
+      ;;
+    -h)
       help
       exit 0
       ;;

@@ -22,18 +22,18 @@ analizo metrics is part of the analizo suite.
 
 =over
 
-=item --extractor <extractor>
+=item --extractor <extractor>, -e <extractor>
 
 Define wich extractor method use to analise source code. Default is Doxyparse.
 
 When using the Doxyparse extractor (default), all files matching the languages
 supported by doxyparse are processed, unless I<--language> is used.
 
-=item --help
+=item --help, -h
 
 Displays the manual page.
 
-=item --list | -l
+=item --list, -l
 
 Displays metric list
 
@@ -41,20 +41,20 @@ Displays metric list
 
 Tells analizo which source code directory(ies) you want to parse.
 
-=item --output <file> | -o <file>
+=item --output <file>, -o <file>
 
 Writes the output to <file> instead of standard output.
 
-=item --global-only | -g
+=item --global-only, -g
 
 Don't output the details about modules: only output global (project-wide) metrics.
 
-=item --language <lang>
+=item --language <lang>, -n <lang>
 
 Process only filenames matching known extensions for the <I<lang>> programming
 language. To see which languages are supported, pass B<--language list>.
 
-=item --exclude <dirs> | -x <dirs>
+=item --exclude <dirs>, -d <dirs>
 
 Exclude <I<dirs>> (a colon-separated list of directories) from the analysis.
 This is useful, for example, when you want to focus on production code and
@@ -93,12 +93,12 @@ my $__exclude     = undef;
 
 GetOptions(
   'list|l'        => \$__list,
-  'extractor=s' => \$__extractor,
-  'global-only' => \$__global_only,
-  'output=s'    => \$__output,
-  'language=s'  => \$__language,
-  'help'        => \$__help,
-  'exclude|x=s' => \$__exclude,
+  'extractor|e=s' => \$__extractor,
+  'global-only|g' => \$__global_only,
+  'output|o=s'    => \$__output,
+  'language|n=s'  => \$__language,
+  'help|h'        => \$__help,
+  'exclude|d=s' => \$__exclude,
 ) or exit(1);
 
 if ($__help) {

@@ -35,17 +35,17 @@ files will not be calculated.
 
 =over
 
-=item --omit <functions>
+=item --omit <functions>, -t <functions>
 
 Omit the given functions from the call graph.  Multiple function names
 may be given separated by commas.
 
-=item --cluster
+=item --cluster, -c
 
 Cluster the functions into files, so you can see in which files are the calling
 and called functions.
 
-=item --modules
+=item --modules, -m
 
 Group the functions by modules(files), and only represent calls between
 modules. This is useful to see the dependencies between the modules of the
@@ -56,16 +56,16 @@ how many times module A calls module B).
 
 It doesn't make much sense to use --modules together with --cluster.
 
-=item --extractor <extractor>
+=item --extractor <extractor>, -e <extractor>
 
 Define wich extractor method use to analise source code. Currenly "Doxyparse"
 is the only extractor available.  Default is Doxyparse.
 
-=item --output <file> | -o <file>
+=item --output <file>, -o <file>
 
 Use a file as output
 
-=item --help
+=item --help, -h
 
 Displays help on command line syntax and options.
 
@@ -145,12 +145,12 @@ my $__modules = undef;
 my $__output = undef;
 my $__help = undef;
 GetOptions(
-  'extractor=s' => \$__extractor,
-  'omit=s'      => \$__omit,
-  'cluster'     => \$__cluster,
-  'modules'     => \$__modules,
-  'output=s'    => \$__output,
-  'help'        => \$__help,
+  'extractor|e=s' => \$__extractor,
+  'omit|t=s'      => \$__omit,
+  'cluster|c'     => \$__cluster,
+  'modules|m'     => \$__modules,
+  'output|o=s'    => \$__output,
+  'help|h'        => \$__help,
 ) or exit(1);
 
 if ($__help) {
