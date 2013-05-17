@@ -98,7 +98,7 @@ sub pass_filters_to_extractor : Tests {
   my $extractor = mock(bless {}, 'Analizo::Extractor');
   $extractor->mock(
     'process',
-    sub { my $self = shift; push @filters, @{$self->filters}; }
+    sub { my ($self) = @_; push @filters, @{$self->filters}; }
   );
 
   my $module = new Test::MockModule('Analizo::Extractor');

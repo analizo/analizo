@@ -27,7 +27,7 @@ sub calculate {
 }
 
 sub _number_of_calls_to_other_modules {
-  my $self = shift;
+  my ($self) = @_;
 
   for my $caller_function ($self->model->functions($self->analized_module)) {
     $self->_add_number_of_calls_to_other_modules($caller_function);

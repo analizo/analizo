@@ -27,39 +27,39 @@ sub new {
 }
 
 sub list_of_global_metrics {
-  my $self = shift;
+  my ($self) = @_;
   return $self->global_metrics->list;
 }
 
 sub list_of_metrics {
-  my $self = shift;
+  my ($self) = @_;
   return $self->module_metrics->list;
 }
 
 sub report {
-  my $self = shift;
+  my ($self) = @_;
   return $self->report_global_metrics_only() . $self->report_module_metrics();
 }
 
 sub report_global_metrics_only {
-  my $self = shift;
+  my ($self) = @_;
   my ($global_metrics, $module_metrics) = $self->data();
   return Dump($global_metrics);
 }
 
 sub report_module_metrics {
-  my $self = shift;
+  my ($self) = @_;
   return join('', map { Dump($_) } @{$self->module_data()});
 }
 
 sub data {
-  my $self = shift;
+  my ($self) = @_;
   $self->_collect_and_combine_module_metrics;
   return ($self->global_metrics->report, $self->module_data());
 }
 
 sub _collect_and_combine_module_metrics {
-  my $self = shift;
+  my ($self) = @_;
   if (defined $self->{_collect_and_combine_module_metrics}) {
     return;
   }
@@ -90,8 +90,7 @@ sub _combine {
 }
 
 sub metrics_for {
-  my $self = shift;
-  my $module = shift;
+  my ($self, $module) = @_;
   $self->data(); # FIXME shouldn't be needed
   return $self->{by_module}->{$module};
 }

@@ -10,12 +10,12 @@ __PACKAGE__->mk_accessors(qw(filename cluster group_by_module include_externals)
 __PACKAGE__->mk_ro_accessors(qw(model));
 
 sub new {
-  my $package = shift;
+  my ($package, @options) = @_;
   my @defaults = (
     filename => 'output.dot',
     omitted => {},
   );
-  my $self = { @defaults, @_ };
+  my $self = { @defaults, @options };
   if (!$self->{model}) {
     $self->{model} = new Analizo::Model;
   }
@@ -33,7 +33,7 @@ sub _add_dependency {
 }
 
 sub string {
-  my $self = shift;
+  my ($self) = @_;
   my $result = "digraph callgraph {\n";
 
   if ($self->cluster) {
@@ -94,7 +94,7 @@ sub _include_callee {
 }
 
 sub _calculate_clusters {
-  my $self = shift;
+  my ($self) = @_;
   my $result = "";
   foreach my $module (sort(keys(%{$self->model->modules}))) {
     $result .= "subgraph \"cluster_$module\" {\n";
@@ -115,13 +115,14 @@ sub _function_to_module {
 }
 
 sub _file_to_module {
-  my $filename = shift;
+  my ($filename) = @_;
   $filename =~ s/\.r\d+\.expand$//;
   return basename($filename);
 }
 
 sub _reftype_to_style {
-  my $reftype = shift || 'direct';
+  my ($reftype) = @_;
+  $reftype = $reftype || 'direct';
   my %styles = (
     'direct' => 'solid',
     'indirect' => 'dotted',

@@ -54,7 +54,7 @@ statistical packages.
 
 =over
 
-=item -p N, --parallel N
+=item --parallel N, -p N
 
 Activates support for parallel processing, using I<N> concurrent worker
 processes. Usually you will want N to be less than or equal to the number of
@@ -64,16 +64,16 @@ Note that analizo metrics extraction is a CPU-intensive process, so setting N
 as the exacty number of CPUs you have may bring your machine to an unusable
 state.
 
-=item --help
+=item --help, -h
 
 Displays manual page (which you are currently reading).
 
-=item -o FILE, --output FILE
+=item --output FILE, -o FILE
 
 Write output to FILE. Default is to write to I<metrics.csv>.  That file can
 then be opened in data analysis programs.
 
-=item -q, --quiet
+=item --quiet, -q
 
 Supresses messages to standard output.
 
@@ -98,10 +98,10 @@ my $__quiet         = undef;
 my $__parallel      = undef;
 
 GetOptions(
-  'help'            => \$__help,
-  'o|output=s'      => \$__output,
-  'q|quiet'         => \$__quiet,
-  'p|parallel=i' => \$__parallel,
+  'help|h'            => \$__help,
+  'output|o=s'      => \$__output,
+  'quiet|q'         => \$__quiet,
+  'parallel|p=i' => \$__parallel,
 ) or exit(1);
 
 if ($__help) {

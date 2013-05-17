@@ -54,7 +54,7 @@ directory called src/output.
 
 =over
 
-=item -l LANGUAGE | --language LANGUAGE
+=item --language LANGUAGE, -l LANGUAGE
 
 Filters the source tree by language. When determining the contents of the
 source tree, only consider directories that contain files that match the
@@ -63,7 +63,7 @@ expected file extensions for LANGUAGE.
 LANGUAGE can be one of I<c>, I<cpp> and I<java>. The default behaviour is to
 condider all files in the repository.
 
-=item -h | --help
+=item --help, -h
 
 Displays the manual page (which you are currently reading).
 
@@ -87,8 +87,8 @@ my $__help = undef;
 my $__language = undef;
 
 GetOptions(
-  'h|help'          => \$__help,
-  'l|language=s'    => \$__language,
+  'help|h'          => \$__help,
+  'language|l=s'    => \$__language,
 ) or exit(1);
 
 if ($__help) {

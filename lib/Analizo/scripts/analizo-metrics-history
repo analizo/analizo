@@ -33,7 +33,7 @@ I<.hpp>, and I<.java>.
 
 =over
 
-=item -p N, --parallel N
+=item --parallel N, -p N
 
 Activates support for parallel processing, using I<N> concurrent worker
 processes. Usually you will want N to be less than or equal to the number of
@@ -43,7 +43,7 @@ Note that analizo metrics extraction is a CPU-intensive process, so setting N
 as the exacty number of CPUs you have may bring your machine to an unusable
 state.
 
-=item --language LANGUAGE, --exclude DIRECTORY
+=item --language LANGUAGE, --exclude DIRECTORY | -n LANGUAGE, -d DIRECTORY
 
 Use programming language and directory exclusion filters. See
 B<analizo-metrics(1)> for a description of these options.
@@ -58,21 +58,21 @@ depend on the output format, see "Output formats" below.
 Specifies with output driver, and consequently the output format, to use. See
 "Output Formats" below for a description of the available output drivers.
 
-=item --list | -l
+=item --list, -l
 
 Instead of actually processing the history, just print out the ids of the
 commits that would be processed.
 
-=item --progressbar | -b
+=item --progressbar, -b
 
 Displays a progress bar during the execution, so that you know aproximately how
 long analizo is going to take to finish.
 
-=item --help
+=item --help, -h
 
 Displays help for B<analizo metrics-history>.
 
-=item --usage
+=item --usage, -u
 
 Displays usage information for B<analizo metrics-history>.
 
@@ -139,14 +139,14 @@ my $__format        = 'csv';
 my $__progressbar   = undef;
 
 GetOptions(
-  'help'          => \$__help,
-  'l|list'        => \$__list_only,
-  'language=s'    => \$__language,
-  'o|output=s'    => \$__output,
-  'exclude|x=s'   => \$__exclude,
-  'p|parallel=i'  => \$__parallel,
-  'f|format=s'    => \$__format,
-  'b|progressbar' => \$__progressbar,
+  'help|h'        => \$__help,
+  'list|l'        => \$__list_only,
+  'language|n=s'  => \$__language,
+  'output|o=s'    => \$__output,
+  'exclude|d=s'   => \$__exclude,
+  'parallel|p=i'  => \$__parallel,
+  'format|f=s'    => \$__format,
+  'progressbar|b' => \$__progressbar,
 ) or exit(1);
 
 if ($__help) {

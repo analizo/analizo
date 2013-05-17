@@ -19,7 +19,7 @@ sub new {
 }
 
 sub alias {
-  my $alias = shift;
+  my ($alias) = @_;
   my %aliases = (
     doxy => 'Doxyparse',
     excluding_dirs => 0,
@@ -51,7 +51,7 @@ sub load {
 }
 
 sub model {
-  my $self = shift;
+  my ($self) = @_;
   if (!exists($self->{model})) {
     $self->{model} = new Analizo::Model;
   }
@@ -59,11 +59,11 @@ sub model {
 }
 
 sub current_module {
-  my $self = shift;
+  my ($self, @options) = @_;
 
   # set the new value
-  if (scalar @_) {
-    $self->{current_module} = shift;
+  if (scalar @options) {
+    ($self->{current_module}) = @options;
 
     #declare
     $self->model->declare_module($self->{current_module}, $self->current_file);
@@ -90,23 +90,20 @@ sub process {
 }
 
 sub info {
-  shift; #discard self ref
   return if $QUIET;
-  my $msg = shift;
+  my ($self,$msg) = @_;
   print STDERR "I: $msg\n";
 }
 
 sub warning {
-  shift; #discard self ref
   return if $QUIET;
-  my $msg = shift;
+  my ($self,$msg) = @_;
   print STDERR "W: $msg\n";
 }
 
 sub error {
-  shift; #discard self ref
   return if $QUIET;
-  my $msg = shift;
+  my ($self,$msg) = @_;
   print STDERR "E: $msg\n";
 }
 

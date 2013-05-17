@@ -44,11 +44,11 @@ each tools are documented in the respective tool's manual page.
 
 =over
 
-=item --version
+=item --version, -v
 
 Displays version information and exits.
 
-=item --help
+=item --help, -h
 
 Displays help for the 'analizo' command.
 
@@ -169,7 +169,7 @@ sub run_tool {
 }
 
 sub usage {
-  my $status = shift;
+  my ($status) = @_;
   pod2usage(-verbose => 1, -exitval => "NOEXIT");
   list_tools();
   exit($status);
@@ -186,9 +186,9 @@ if (scalar(@ARGV) == 0) {
 
 my $tool = shift(@ARGV);
 if ($tool !~ /^[a-z][a-z-]+$/) {
-  if ($tool eq '--version') {
+  if ($tool eq '--version' || $tool eq '-v') {
     show_version();
-  } elsif($tool eq '--help') {
+  } elsif($tool eq '--help' || $tool eq '-h') {
     run_tool 'doc', __FILE__;
   } else {
     printf("Invalid option: %s\n", $tool);
