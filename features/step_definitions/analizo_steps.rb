@@ -185,3 +185,8 @@ Given /^I create a file called (.+) with the following content$/ do |filename, t
     end
   end
 end
+
+When /^the file "([^\"]*)" should exists$/ do |file|
+  File.exist?(file).should == true
+  FileUtils.rm_f(file)
+end

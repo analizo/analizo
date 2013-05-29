@@ -9,6 +9,7 @@ use vars qw($model $metrics);
 
 sub setup : Test(setup) {
   $model = new Analizo::Model;
+  $model->build_graph;
   $metrics = new Analizo::Metrics(model => $model);
 }
 
@@ -34,6 +35,8 @@ sub sample_modules_for_report {
   $model->declare_function('mod2', 'f2');
   $model->add_call('f2', 'f1a');
   $model->add_call('f2', 'f1b');
+
+  $model->build_graph;
 }
 
 sub report : Tests {
