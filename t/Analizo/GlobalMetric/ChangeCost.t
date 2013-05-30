@@ -12,7 +12,6 @@ BEGIN {
 
 sub setup : Test(setup) {
   $model = Analizo::Model->new;
-  $model->build_graph;
   $metric = Analizo::GlobalMetric::ChangeCost->new(model => $model);
 }
 
@@ -46,7 +45,6 @@ sub calculate : Tests {
   $model->add_call('b::name()', 'd::name()');
   $model->add_call('c::name()', 'e::name()');
   $model->add_call('e::name()', 'f::name()');
-  $model->build_graph;
   is($metric->calculate, 0.42);
 }
 

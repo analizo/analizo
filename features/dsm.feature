@@ -7,10 +7,10 @@ Feature: design structure matrix
     Given I am in t/samples/sample_basic/
     When I run "analizo dsm ."
     Then the exit status must be 0
-    And the file "dsm.png" should exists
+    And the file "dsm.png" should exist
 
   Scenario: write to "sample_basic.png"
     Given I am in t/samples/sample_basic/
     When I run "analizo dsm --output sample_basic.png ."
     Then the exit status must be 0
-    And the file "sample_basic.png" should exists
+    And the file "sample_basic.png" should exist

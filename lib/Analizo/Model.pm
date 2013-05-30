@@ -4,7 +4,6 @@ use Graph;
 
 sub new {
   my @defaults = (
-    graph => undef,
     members => {},
     modules => {},
     files => {},
@@ -198,50 +197,46 @@ sub all_members {
   return @functions, @variables;
 }
 
-sub graph {
-  my $self = shift;
-  $self->{graph};
-}
-
 sub _group_files {
   my @files = @_;
   (my $file = $files[0]) =~ s/\.[^.]+$//;
   $file;
 }
 
-sub build_graph {
+sub graph {
   my $self = shift;
-  $self->{graph} = Graph->new;
-  $self->{graph}->set_graph_attribute('name', 'callgraph');
+  my $graph = Graph->new;
+  $graph->set_graph_attribute('name', 'callgraph');
   foreach (keys %{ $self->{files}}) {
     my $file = _group_files(@{ $self->files($_) });
-    $self->{graph}->add_vertices($file);
+    $graph->add_vertices($file);
   }
   foreach my $caller (keys %{$self->calls}) {
     my $calling_file = $self->_function_to_file($caller);
     next unless $calling_file;
     $calling_file = _group_files(@{$calling_file});
-    $self->{graph}->add_vertex($calling_file);
+    $graph->add_vertex($calling_file);
     foreach my $callee (keys %{$self->calls->{$caller}}) {
       my $called_file = $self->_function_to_file($callee);
       next unless ($calling_file && $called_file);
       next if ($calling_file eq $called_file);
       $called_file = _group_files(@{$called_file});
-      $self->{graph}->add_edge($calling_file, $called_file);
+      $graph->add_edge($calling_file, $called_file);
     }
   }
   foreach my $subclass (keys(%{$self->{inheritance}})) {
     my $subclass_file = $self->files($subclass);
     next unless $subclass_file;
     $subclass_file = _group_files(@{$subclass_file});
-    $self->{graph}->add_vertex($subclass_file);
+    $graph->add_vertex($subclass_file);
     foreach my $superclass ($self->inheritance($subclass)) {
       my $superclass_file = $self->files($superclass);
       next unless $superclass_file;
       $superclass_file = _group_files(@{$superclass_file});
-      $self->{graph}->add_edge($subclass_file, $superclass_file);
+      $graph->add_edge($subclass_file, $superclass_file);
     }
   }
+  $graph;
 }
 
 sub _function_to_file {

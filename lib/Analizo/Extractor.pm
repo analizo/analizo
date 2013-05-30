@@ -87,7 +87,6 @@ sub process {
     @input = $self->apply_filters(@input);
   }
   $self->actually_process(@input);
-  $self->model->build_graph;
 }
 
 sub info {

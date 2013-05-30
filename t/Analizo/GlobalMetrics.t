@@ -11,7 +11,6 @@ use vars qw($model $global_metrics);
 
 sub setup : Test(setup) {
   $model = new Analizo::Model;
-  $model->build_graph;
   $global_metrics = new Analizo::GlobalMetrics(model => $model);
 }
 
