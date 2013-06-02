@@ -204,12 +204,12 @@ sub _group_files {
 }
 
 sub graph {
-  my $self = shift;
+  my ($self) = @_;
   my $graph = Graph->new;
   $graph->set_graph_attribute('name', 'callgraph');
-  foreach (keys %{ $self->{files}}) {
-    my $file = _group_files(@{ $self->files($_) });
-    $graph->add_vertices($file);
+  foreach my $module (keys %{ $self->{files}}) {
+    my $file = _group_files(@{ $self->files($module) });
+    $graph->add_vertex($file);
   }
   foreach my $caller (keys %{$self->calls}) {
     my $calling_file = $self->_function_to_file($caller);
