@@ -1,0 +1,118 @@
+_doc() {
+	local options
+	options="-u -h"
+	if [[ ${cur} == -* ]] ; then
+		COMPREPLY=( $(compgen -W "${options}" -- ${cur}))
+	else
+		COMPREPLY=( $(compgen -f ${cur}) )
+	fi
+
+	return 0
+}
+
+_evolution_matrix() {
+	local options
+	options="-h -x -y -n -o"
+	if [[ ${cur} == -* ]] ; then
+		COMPREPLY=( $(compgen -W "${options}" -- ${cur}))
+	fi
+	return 0
+}
+
+_graph() {
+	local options
+	options="-t -m -c -e -o -h"
+	if [[ ${cur} == -* ]] ; then
+		COMPREPLY=( $(compgen -W "${options}" -- ${cur}))
+	fi
+	return 0
+}
+
+_metrics() {
+	local options
+	options="-e -h -l -o -g -n -d"
+	if [[ ${cur} == -* ]] ; then
+		COMPREPLY=( $(compgen -W "${options}" -- ${cur}))
+	fi
+	return 0
+}
+
+_metrics_batch() {
+	local options
+	options="-p -h -o -q"
+	if [[ ${cur} == -* ]] ; then
+		COMPREPLY=( $(compgen -W "${options}" -- ${cur}))
+	fi
+	return 0
+}
+
+_metrics_history() {
+	local options
+	options="-p -n -o -f -l -b -h -u"
+	if [[ ${cur} == -* ]] ; then
+		COMPREPLY=( $(compgen -W "${options}" -- ${cur}))
+	fi
+	return 0
+}
+
+_tree_evolution() {
+	local options
+	options="-l -h"
+	if [[ ${cur} == -* ]] ; then
+		COMPREPLY=( $(compgen -W "${options}" -- ${cur}))
+	fi
+	return 0
+}
+
+_analizo() {
+	local cur prev opts tools
+	COMPREPLY=()
+	_get_comp_words_by_ref cur prev
+	opts="-v -h"
+	tools="doc evolution-matrix graph metrics metrics-batch metrics-history tree-evolution"
+
+	case "${prev}" in
+		analizo)
+			if [[ ${cur} == -* ]] ; then
+				COMPREPLY=( $(compgen -W "${opts}" -- ${cur}))
+				return 0
+			else
+				COMPREPLY=( $(compgen -W "${tools}" -- ${cur}) )
+				return 0
+			fi
+			;;
+		doc)
+			_doc
+			return 0
+			;;
+		evolution-matrix)
+			_evolution_matrix
+			return 0
+			;;
+		graph)
+			_graph
+			return 0
+			;;
+		metrics)
+			_metrics
+			return 0
+			;;
+		metrics-batch)
+			_metrics_batch
+			return 0
+			;;
+		metrics-history)
+			_metrics_history
+			return 0
+			;;
+		tree-evolution)
+			_tree_evolution
+			return 0
+			;;
+		*)
+		;;
+	esac
+	
+	return 0
+}
+complete -F _analizo analizo
