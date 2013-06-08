@@ -42,16 +42,18 @@ eval $code;
 
 unshift @dependencies, '${misc:Depends}', '${perl:Depends}';
 
-my $dependencies = join(', ', @dependencies);
-my $build_dependencies = join(', ', @build_dependencies);
+my $dependencies = join(",\n ", @dependencies);
+my $build_dependencies = join(",\n ", @build_dependencies);
 
 open(OLDCONTROL, '<', 'debian/control');
 my @control = <OLDCONTROL>;
 close(OLDCONTROL);
+my $control = join('', @control);
 open(NEWCONTROL, '>', 'debian/control');
-for my $line (@control) {
-  $line =~ s/^Build-Depends-Indep:.*/Build-Depends-Indep: $build_dependencies/;
-  $line =~ s/^Depends:.*/Depends: $dependencies/;
-  print NEWCONTROL $line;
-}
+
+$control =~ s/Depends:(\n .*)+/Depends:\n $dependencies/;
+$control =~ s/Build-Depends-Indep:(\n .*)+/Build-Depends-Indep:\n $build_dependencies/;
+
+print NEWCONTROL $control;
+
 close(NEWCONTROL);
