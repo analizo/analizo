@@ -28,9 +28,14 @@ Displays help for B<analizo dsm>.
 
 Define wich extractor method use to analise source code. Default is Doxyparse.
 
+=item --format <format>, -f <format>
+
+Choice of output format to use. Supported formats are B<png> (the default; good
+for very large code bases), and B<html> (good for small-medium code bases).
+
 =item --output <file>, -o <file>
 
-Writes output to <file>. Default is "dsm.png".
+Writes output to <file>. Default is "dsm.<format>".
 
 =item --exclude <dirs> | -x <dirs>
 
@@ -46,16 +51,22 @@ like pass B<--exclude test>.
 use strict;
 use Analizo::Command;
 use Analizo::Extractor;
+
+use File::Basename;
+use Cwd 'abs_path';
 use Graph::Writer::DSM;
+use Graph::Writer::DSM::HTML;
 use Pod::Usage;
 use Getopt::Long;
 
 my $__extractor = 'Doxyparse';
-my $__output = 'dsm.png';
+my $__format = 'png';
+my $__output = undef;
 my $__exclude = undef;
 my $__help = undef;
 GetOptions(
   'extractor=s' => \$__extractor,
+  'format=s'    => \$__format,
   'output=s'    => \$__output,
   'exclude|x=s' => \$__exclude,
   'help'        => \$__help,
@@ -68,6 +79,20 @@ if ($__help) {
 if(!@ARGV){
   exec('analizo', 'doc', '--usage', __FILE__);
 }
+
+my $graph_writer;
+if ($__format eq 'png') {
+  $graph_writer = Graph::Writer::DSM->new();
+} elsif ($__format eq 'html') {
+  my $name = join(', ', map { basename(abs_path($_)) } @ARGV);
+  $graph_writer = Graph::Writer::DSM::HTML->new(
+    title => 'Design Structure matrix for ' . $name
+  );
+} else {
+  printf STDERR "%s is not a valid output format.\n", $__format;
+  exit(1);
+}
+$__output ||= 'dsm.' . $__format;
 
 my $extractor = Analizo::Extractor->load($__extractor);
 
@@ -89,8 +114,7 @@ if (@unreadable) {
 $extractor->process(@ARGV);
 my $graph = $model->graph();
 
-my $wr = Graph::Writer::DSM->new();
-$wr->write_graph($graph, $__output);
+$graph_writer->write_graph($graph, $__output);
 
 exit 0;
 
