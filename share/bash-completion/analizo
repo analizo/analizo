@@ -1,6 +1,6 @@
-_doc() {
+_analizo_doc() {
 	local options
-	options="-u -h"
+	options="-u -h --usage --help"
 	if [[ ${cur} == -* ]] ; then
 		COMPREPLY=( $(compgen -W "${options}" -- ${cur}))
 	else
@@ -10,54 +10,54 @@ _doc() {
 	return 0
 }
 
-_evolution_matrix() {
+_analizo_evolution-matrix() {
 	local options
-	options="-h -x -y -n -o"
+	options="-h -x -y -n -o --help --width --height --name --output"
 	if [[ ${cur} == -* ]] ; then
 		COMPREPLY=( $(compgen -W "${options}" -- ${cur}))
 	fi
 	return 0
 }
 
-_graph() {
+_analizo_graph() {
 	local options
-	options="-t -m -c -e -o -h"
+	options="-t -m -c -e -o -h --omit --cluster --modules --extractor --output --help"
 	if [[ ${cur} == -* ]] ; then
 		COMPREPLY=( $(compgen -W "${options}" -- ${cur}))
 	fi
 	return 0
 }
 
-_metrics() {
+_analizo_metrics() {
 	local options
-	options="-e -h -l -o -g -n -d"
+	options="-e -h -l -o -g -n -d --extractor --help --list --output --global-only --language --exclude"
 	if [[ ${cur} == -* ]] ; then
 		COMPREPLY=( $(compgen -W "${options}" -- ${cur}))
 	fi
 	return 0
 }
 
-_metrics_batch() {
+_analizo_metrics-batch() {
 	local options
-	options="-p -h -o -q"
+	options="-p -h -o -q --parallel --help --output --quiet"
 	if [[ ${cur} == -* ]] ; then
 		COMPREPLY=( $(compgen -W "${options}" -- ${cur}))
 	fi
 	return 0
 }
 
-_metrics_history() {
+_analizo_metrics-history() {
 	local options
-	options="-p -n -o -f -l -b -h -u"
+	options="-p -n -o -f -l -b -h -u --parallel --language --output --format --list --progressbar --help --usage"
 	if [[ ${cur} == -* ]] ; then
 		COMPREPLY=( $(compgen -W "${options}" -- ${cur}))
 	fi
 	return 0
 }
 
-_tree_evolution() {
+_analizo_tree-evolution() {
 	local options
-	options="-l -h"
+	options="-l -h --language --help"
 	if [[ ${cur} == -* ]] ; then
 		COMPREPLY=( $(compgen -W "${options}" -- ${cur}))
 	fi
@@ -68,7 +68,7 @@ _analizo() {
 	local cur prev opts tools
 	COMPREPLY=()
 	_get_comp_words_by_ref cur prev
-	opts="-v -h"
+	opts="-v -h --version --help"
 	tools="doc evolution-matrix graph metrics metrics-batch metrics-history tree-evolution"
 
 	case "${prev}" in
@@ -82,31 +82,31 @@ _analizo() {
 			fi
 			;;
 		doc)
-			_doc
+			_analizo_doc
 			return 0
 			;;
 		evolution-matrix)
-			_evolution_matrix
+			_analizo_evolution-matrix
 			return 0
 			;;
 		graph)
-			_graph
+			_analizo_graph
 			return 0
 			;;
 		metrics)
-			_metrics
+			_analizo_metrics
 			return 0
 			;;
 		metrics-batch)
-			_metrics_batch
+			_analizo_metrics-batch
 			return 0
 			;;
 		metrics-history)
-			_metrics_history
+			_analizo_metrics-history
 			return 0
 			;;
 		tree-evolution)
-			_tree_evolution
+			_analizo_tree-evolution
 			return 0
 			;;
 		*)
