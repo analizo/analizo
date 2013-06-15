@@ -34,6 +34,8 @@ Build-Depends-Indep:
  libterm-progressbar-perl,
  libyaml-perl,
  libyaml-tiny-perl,
+ libapp-cmd-perl,
+ libclass-inspector-perl,
  libzmq-libzmq2-perl
 Standards-Version: 3.9.1
 Homepage: http://analizo.org

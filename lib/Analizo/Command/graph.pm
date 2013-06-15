@@ -1,12 +1,68 @@
-#!/usr/bin/perl -w
+package Analizo::Command::graph;
+use Analizo -command;
+use base qw(Analizo::Command);
+use strict;
+use warnings;
+use Analizo::Extractor;
+use Analizo::Output::DOT;
+use File::Basename;
 
 =head1 NAME
 
-analizo-graph - dependency graph generator
+Analizo::Command::graph - dependency graph generator
 
 =head1 USAGE
 
-  analizo graph [options] <input>...
+  analizo graph [OPTIONS] <input> [<input> [<input> ...]]
+
+=cut
+
+sub usage_desc { "%c graph %o <input> [<input> [<input> ...]]" }
+
+sub opt_spec {
+  return (
+    [ 'extractor=s', 'wich extractor method use to analise source code' ],
+    [ 'output|o=s',  'output file name' ],
+    [ 'omit=s',      'omit the given functions from the call graph', { default => '' } ],
+    [ 'cluster',     'cluster the functions into files' ],
+    [ 'modules',     'group the functions by modules(files)' ],
+  );
+}
+
+sub validate {
+  my ($self, $opt, $args) = @_;
+  $self->usage_error("No input files!") unless @$args;
+  my @unreadable = grep { ! -r $_ || ! -e $_ } @$args;
+  if (@unreadable) {
+    foreach my $file (@unreadable) {
+      $self->usage_error("$file is not readable");
+    }
+  }
+  if ($opt->output && ! -w dirname($opt->output)) {
+    $self->usage_error("No such file or directory");
+  }
+}
+
+sub execute {
+  my ($self, $opt, $args) = @_;
+  my $extractor = Analizo::Extractor->load($opt->extractor);
+  my $model = $extractor->model;
+  my $output = new Analizo::Output::DOT(model => $model);
+  # functions to omit
+  for my $omited (split(/,/, $opt->omit)) {
+    $output->omit($omited);
+  }
+  # whether to cluster functions by file or not
+  $output->cluster($opt->cluster);
+  # wheter to group by module or not
+  $output->group_by_module($opt->modules);
+  $extractor->process(@$args);
+  if ($opt->output) {
+    open STDOUT, '>', $opt->output or die "$!";
+  }
+  print $output->string;
+  close STDOUT;
+}
 
 =head1 DESCRIPTION
 
@@ -37,7 +93,7 @@ files will not be calculated.
 
 =item --omit <functions>
 
-Omit the given functions from the call graph.  Multiple function names
+Omit the given functions from the call graph. Multiple function names
 may be given separated by commas.
 
 =item --cluster
@@ -61,13 +117,9 @@ It doesn't make much sense to use --modules together with --cluster.
 Define wich extractor method use to analise source code. Currenly "Doxyparse"
 is the only extractor available.  Default is Doxyparse.
 
-=item --output <file> | -o <file>
+=item --output <file>, -o <file>
 
 Use a file as output
-
-=item --help
-
-Displays help on command line syntax and options.
 
 =back
 
@@ -77,7 +129,7 @@ To view the generated graph, pipe analizo's output to one of the
 Graphiz tools. You can use B<dotty(1)> to display the graph in a
 X11 window:
 
-    $ analizo graph src/ | dotty -
+  $ analizo graph src/ | dotty -
 
 You can also generate a file to print or include in a document
 by using the B<dot(1)>.
@@ -105,7 +157,7 @@ to comfortably read.  If that happens, try N-up printing:
 
 You can also try playing with other B<dot> options such as B<-Gratio>,
 or for a different style of graph, try using B<neato> instead of
-B<dot>.  See the Graphwiz documentation for more information about the
+B<dot>. See the Graphwiz documentation for more information about the
 various options available for customizing the style of the graph.
 
 =head1 READING THE GRAPH
@@ -125,71 +177,8 @@ B<dotty(1)>, B<dot(1)>, B<neato(1)>, B<analizo(1)>
 
 =head1 COPYRIGHT AND AUTHORS
 
-See B<analizo(1)>
+See B<analizo(1)>.
 
 =cut
 
-use strict;
-
-use Analizo::Command;
-use Analizo::Extractor;
-use Analizo::Output::DOT;
-
-use Pod::Usage;
-use Getopt::Long;
-
-my $__extractor = 'Doxyparse';
-my $__omit = '';
-my $__cluster = undef;
-my $__modules = undef;
-my $__output = undef;
-my $__help = undef;
-GetOptions(
-  'extractor=s' => \$__extractor,
-  'omit=s'      => \$__omit,
-  'cluster'     => \$__cluster,
-  'modules'     => \$__modules,
-  'output=s'    => \$__output,
-  'help'        => \$__help,
-) or exit(1);
-
-if ($__help) {
-  exec('analizo', 'doc', __FILE__)
-}
-
-if(!@ARGV){
-  exec('analizo', 'doc', '--usage', __FILE__);
-}
-
-my $extractor = Analizo::Extractor->load($__extractor);
-my $model = $extractor->model;
-my $output = new Analizo::Output::DOT(model => $model);
-
-# functions to omit
-for my $omited (split(/,/, $__omit)) {
-  $output->omit($omited);
-}
-
-# whether to cluster functions by file or not
-$output->cluster($__cluster);
-
-# wheter to group by module or not
-$output->group_by_module($__modules);
-
-my @unreadable = grep { ! -r $_ || ! -e $_ } @ARGV;
-if (@unreadable) {
-  foreach my $file (@unreadable) {
-    printf STDERR "%s: %s is not readable\n", 'analizo metrics', $file;
-  }
-  exit(2);
-}
-
-$extractor->process(@ARGV);
-
-if ($__output) {
-  open STDOUT, '>', $__output or die($!);
-}
-print $output->string;
-close STDOUT;
-
-exit(0);
+1;
