@@ -67,7 +67,7 @@ WriteMakefile(
     'File::Share' => 0,
     'File::HomeDir' => 0,
     'YAML::Tiny' => 0,
-    'Graph::Writer::DSM' => 0,
+    'Graph::Writer::DSM' => 0.005,
   },
   BUILD_REQUIRES => {
     'Test::Class' => 0,

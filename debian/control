@@ -62,7 +62,7 @@ Depends:
  libfile-share-perl,
  libfile-sharedir-perl,
  libgraph-perl,
- libgraph-writer-dsm-perl,
+ libgraph-writer-dsm-perl (>= 0.005),
  libjson-perl,
  liblist-compare-perl,
  libmojolicious-perl,
