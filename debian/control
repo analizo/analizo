@@ -5,6 +5,7 @@ Maintainer: Antonio Terceiro <terceiro@softwarelivre.org>
 Build-Depends: debhelper (>= 7.0.50~)
 Build-Depends-Indep:
  cucumber,
+ file,
  rake,
  ruby-rspec,
  libtest-class-perl,
@@ -27,7 +28,7 @@ Build-Depends-Indep:
  libfile-share-perl,
  libfile-sharedir-perl,
  libgraph-perl,
- libgraph-writer-dsm-perl,
+ libgraph-writer-dsm-perl (>= 0.005),
  libjson-perl,
  liblist-compare-perl,
  libmojolicious-perl,
