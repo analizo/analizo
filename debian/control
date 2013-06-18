@@ -3,6 +3,8 @@ Section: devel
 Priority: extra
 Maintainer: Antonio Terceiro <terceiro@softwarelivre.org>
 Build-Depends: debhelper (>= 7.0.50~)
+# Please do not update the Build-Depends-Indep field directly. Update
+# Makefile.PL first, then run debian/refresh script
 Build-Depends-Indep:
  cucumber,
  file,
@@ -39,10 +41,11 @@ Build-Depends-Indep:
  libzmq-libzmq2-perl
 Standards-Version: 3.9.1
 Homepage: http://analizo.org
-DM-Upload-Allowed: yes
 
 Package: analizo
 Architecture: all
+# Please do not update the Depends: field directly. Update Makefile.PL first,
+# then run debian/refresh script
 Depends:
  ${misc:Depends},
  ${perl:Depends},
