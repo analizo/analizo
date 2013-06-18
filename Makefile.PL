@@ -33,6 +33,7 @@ CheckExtraDependencies(
 CheckExtraDependencies(
   'build',
   'cucumber' => 0,
+  'file' => 0,
   'rake' => 0,
   'rspec' => 0,
 );

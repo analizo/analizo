@@ -188,5 +188,8 @@ end
 
 Then /^the file "([^\"]*)" should exist$/ do |file|
   File.exist?(file).should == true
-  FileUtils.rm_f(file)
+end
+
+Then /^the file "(.*?)" should have type (.*)$/ do |file, type|
+  `file --brief --mime-type #{file}`.strip.should == type
 end
