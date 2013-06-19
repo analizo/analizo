@@ -16,3 +16,7 @@ Feature: language filters
     Then the output must match "UI"
     And the output must match "Backend"
     And the output must not match "native_backend"
+
+  Scenario: listing languages
+    When I run "analizo metrics --language list"
+    Then analizo must present a list of languages

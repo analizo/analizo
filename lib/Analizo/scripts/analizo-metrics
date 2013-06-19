@@ -139,6 +139,13 @@ my $job = new Analizo::Batch::Job::Directories($tree);
 $job->extractor($__extractor);
 if ($__language) {
   require Analizo::LanguageFilter;
+  if ($__language eq 'list') {
+    my @language_list = Analizo::LanguageFilter->list;
+    print "Languages:\n";
+    $" = "\n";
+    print "@language_list\n";
+    exit 0;
+  }
   my $language_filter = Analizo::LanguageFilter->new($__language);
   $job->filters($language_filter);
 }

@@ -26,4 +26,9 @@ sub new {
   return bless $self, $package;
 }
 
+sub list {
+  my ($self) = @_;
+  sort keys %$FILTERS;
+}
+
 1;
