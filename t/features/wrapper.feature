@@ -8,7 +8,7 @@ Feature: analizo wrapper script
   Scenario: must not pass --version ahead
     When I run "analizo metrics --version"
     Then the output must match "Invalid option: --version"
-    And the exit status must be 1
+    And the exit status must not be 0
 
   Scenario: display help
     When I run "analizo --help"
@@ -23,4 +23,4 @@ Feature: analizo wrapper script
   Scenario: invalid option
     When I run "analizo --invalid-option"
     Then the output must match "Invalid option"
-    And the exit status must be 1
+    And the exit status must not be 0
