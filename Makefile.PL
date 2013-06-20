@@ -81,6 +81,7 @@ WriteMakefile(
     'Test::BDD::Cucumber' => 0,
     'Method::Signatures' => 0,
     'File::Slurp' => 0,
+    'File::Copy::Recursive' => 0,
   },
   test => {
     TESTS => 't/*.t t/*/*.t t/*/*/*.t t/*/*/*/*.t',
