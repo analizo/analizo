@@ -86,3 +86,7 @@ Given qr/^I change to an empty temporary directory$/, func($c) {
 Given qr/^I am in (.+)$/, func($c) {
   chdir $1;
 };
+
+Then qr/^analizo must emit a warning matching "([^\"]*)"$/, func($c) {
+  like($stderr, qr/$1|\Q$1\E/);
+};
