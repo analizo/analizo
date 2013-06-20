@@ -6,25 +6,29 @@ Feature: loading command line options from .analizo
   Scenario: analizo metrics
     Given I copy t/samples/mixed into a temporary directory
     And I create a file called .analizo with the following content
-      | metrics: --language java |
+      """
+      metrics: --language java
+      """
     When I run "analizo metrics ."
     Then the output must not match "native_backend.c"
     And the output must match "UI.java"
     And the exit status must be 0
 
-  Scenario Outline: all others
+  Scenario: all others
     Given I change to an empty temporary directory
     And I create a file called .analizo with the following content
-      | <command>: --help |
+      """
+      <command>: --help
+      """
     When I run "analizo <command>"
-    Then the output must match "analizo-<command>\(1\)"
-  Examples:
-    | command          |
-    | graph            |
-    | metrics          |
-    | metrics-batch    |
-    | metrics-history  |
-    | tree-evolution   |
-    | evolution-matrix |
-  # | doc              |
-  # this is not Perl, so for now they do not support this.
+    Then the output must match "analizo-<command>(1)"
+    Examples:
+      | command          |
+      | graph            |
+      | metrics          |
+      | metrics-batch    |
+      | metrics-history  |
+      | tree-evolution   |
+      | evolution-matrix |
+    # | doc              |
+    # this is not Perl, so for now they do not support this.
