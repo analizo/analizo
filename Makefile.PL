@@ -78,6 +78,9 @@ WriteMakefile(
     'Test::Exception' => 0,
     'Test::MockObject' => 0,
     'Test::MockModule' => 0,
+    'Test::BDD::Cucumber' => 0,
+    'Method::Signatures' => 0,
+    'File::Slurp' => 0,
   },
   test => {
     TESTS => 't/*.t t/*/*.t t/*/*/*.t t/*/*/*/*.t',
