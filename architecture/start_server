@@ -1,7 +1,7 @@
-Ferramentas:
+Tools:
 - Jinja2
 - Flask
 
-Para iniciar o servidor:
+To start application:
 
 $ python myapp.py
