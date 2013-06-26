@@ -1,3 +1,5 @@
+#!/bin/bash
+
 _analizo_doc() {
 	local options
 	options="-u -h --usage --help"
@@ -15,6 +17,8 @@ _analizo_evolution-matrix() {
 	options="-h -x -y -n -o --help --width --height --name --output"
 	if [[ ${cur} == -* ]] ; then
 		COMPREPLY=( $(compgen -W "${options}" -- ${cur}))
+	else
+		COMPREPLY=( $(compgen -f ${cur}) )
 	fi
 	return 0
 }
@@ -24,6 +28,8 @@ _analizo_graph() {
 	options="-t -m -c -e -o -h --omit --cluster --modules --extractor --output --help"
 	if [[ ${cur} == -* ]] ; then
 		COMPREPLY=( $(compgen -W "${options}" -- ${cur}))
+	else
+		COMPREPLY=( $(compgen -f ${cur}) )
 	fi
 	return 0
 }
@@ -81,36 +87,17 @@ _analizo() {
 				return 0
 			fi
 			;;
-		doc)
-			_analizo_doc
+
+			*)
+			for tool in $tools
+				do
+					if [ $prev == $tool ]; then
+						_analizo_${tool}
+						return 0
+					fi
+				done
 			return 0
 			;;
-		evolution-matrix)
-			_analizo_evolution-matrix
-			return 0
-			;;
-		graph)
-			_analizo_graph
-			return 0
-			;;
-		metrics)
-			_analizo_metrics
-			return 0
-			;;
-		metrics-batch)
-			_analizo_metrics-batch
-			return 0
-			;;
-		metrics-history)
-			_analizo_metrics-history
-			return 0
-			;;
-		tree-evolution)
-			_analizo_tree-evolution
-			return 0
-			;;
-		*)
-		;;
 	esac
 	
 	return 0
