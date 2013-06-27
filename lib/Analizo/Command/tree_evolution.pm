@@ -1,4 +1,4 @@
-package Analizo::Command::treeevolution;
+package Analizo::Command::tree_evolution;
 use Analizo -command;
 use base qw(Analizo::Command);
 use strict;
@@ -9,15 +9,15 @@ use Analizo::LanguageFilter;
 
 =head1 NAME
 
-Analizo::Command::treeevolution - watch the evolution of the source code
+Analizo::Command::tree_evolution - watch the evolution of the source code
 
 =head1 USAGE
 
-  analizo treeevolution [OPTIONS]
+  analizo tree-evolution [OPTIONS]
 
 =cut
 
-sub command_names { qw/treeevolution tree-evolution/ }
+sub command_names { qw/tree-evolution/ }
 
 sub opt_spec {
   return (
@@ -58,15 +58,15 @@ sub execute {
 
 Watch the evolution of the source code tree in a Git repository.
 
-When run inside a Git repository, B<analizo treeevolution> will output all
+When run inside a Git repository, B<analizo tree-evolution> will output all
 different sets of directories found in the project's history. For each commit
 in which a new directory was added or removed, you will have the commit hash
 and a snapshot of the source code tree at that commit.
 
 For example, consider the following sample execution of B<analizo
-treeevolution> against a sample Git repository:
+tree-evolution> against a sample Git repository:
 
-  $ analizo treeevolution
+  $ analizo tree-evolution
   # 073290fbad0254793bd3ecfb97654c04368d0039
   src
   # 85f7db08f7b7b0b62e3c0023b2743d529b0d5b4b

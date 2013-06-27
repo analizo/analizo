@@ -1,4 +1,4 @@
-package Analizo::Command::metricshistory;
+package Analizo::Command::metrics_history;
 use Analizo -command;
 use base qw(Analizo::Command);
 use strict;
@@ -7,17 +7,17 @@ use Analizo::Batch::Git;
 
 =head1 NAME
 
-Analizo::Command::metricshistory - processes a Git repository collection metrics
+Analizo::Command::metrics_history - processes a Git repository collection metrics
 
 =head1 USAGE
 
-  analizo metricshistory [OPTIONS] [<input>]
+  analizo metrics-history [OPTIONS] [<input>]
 
 =cut
 
-sub usage_desc { "%c metricshistory %o [<input>]" }
+sub usage_desc { "%c metrics-history %o [<input>]" }
 
-sub command_names { qw/metricshistory metrics-history/ }
+sub command_names { qw/metrics-history/ }
 
 sub opt_spec {
   return (
@@ -103,7 +103,7 @@ sub execute {
 
 Processes a Git repository collection metrics for every single revision.
 
-B<analizo metricshistory> will process I<input>, a Git repository with a
+B<analizo metrics-history> will process I<input>, a Git repository with a
 working copy of the source code (i.e. not a bare git repository), checkout
 every relevant commit and run B<analizo metrics> on it. The metrics for all of
 the revisions will be accumulated in a file called I<metrics.csv> inside
@@ -112,7 +112,7 @@ assumed.
 
 =head1 RELEVANT COMMITS
 
-B<analizo metricshistory> considers as relevant the commits that changed at
+B<analizo metrics-history> considers as relevant the commits that changed at
 least one source code file. Consequently, it skips all the commits where no
 source code file was changed, such as documentation, translations, build system
 changes, etc.
@@ -189,11 +189,11 @@ SQLite, you must make sure that you have the correponsing DBI driver installed.
 
 Examples:
 
-B<$ analizo metricshistory -f db -o history.db>
+B<$ analizo metrics-history -f db -o history.db>
 
 Writes the output to a SQLite database called I<history.db>.
 
-B<$ analizo metricshistory -f db -o 'dbi:Pg:dbname=pgdb'>
+B<$ analizo metrics-history -f db -o 'dbi:Pg:dbname=pgdb'>
 
 Writes the data to a PostgreSQL database called I<pgdb>. This requires the
 I<DBI::Pg> Perl module.

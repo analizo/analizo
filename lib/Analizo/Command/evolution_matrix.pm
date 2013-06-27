@@ -1,4 +1,4 @@
-package Analizo::Command::evolutionmatrix;
+package Analizo::Command::evolution_matrix;
 use Analizo -command;
 use base qw(Analizo::Command);
 use strict;
@@ -11,17 +11,17 @@ use File::Basename;
 
 =head1 NAME
 
-Analizo::Command::evolutionmatrix - generates an evolution matrix from analizo .yml metric files
+Analizo::Command::evolution_matrix - generates an evolution matrix from analizo .yml metric files
 
 =head1 USAGE
 
-  analizo evolutionmatrix [OPTIONS] <ymlfile> [<ymlfile> [<ymlfile>...]]
+  analizo evolution-matrix [OPTIONS] <ymlfile> [<ymlfile> [<ymlfile>...]]
 
 =cut
 
-sub usage_desc { "%c evolutionmatrix %o <ymlfile> [<ymlfile> [<ymlfile>...]]" }
+sub usage_desc { "%c evolution-matrix %o <ymlfile> [<ymlfile> [<ymlfile>...]]" }
 
-sub command_names { qw/evolutionmatrix evolution-matrix/ }
+sub command_names { qw/evolution-matrix/ }
 
 sub opt_spec {
   return (
@@ -77,7 +77,7 @@ sub execute {
 
 =head1 DESCRIPTION
 
-B<analizo evolutionmatrix> generates evolution matrices from project metrics
+B<analizo evolution-matrix> generates evolution matrices from project metrics
 data.
 
 The evolution matrix is a techinique for software evolution analysis
@@ -89,7 +89,7 @@ Workshop on Principles of Software Evolution (Vienna, Austria, September 10 -
 http://doi.acm.org/10.1145/602461.602467>. Please refer to that paper for a
 very nice explanation of the uses for an evolution matrix.
 
-B<analizo evolutionmatrix> will process the YML files passed in the command
+B<analizo evolution-matrix> will process the YML files passed in the command
 line and generate an evolution matrix. To do that we assume that the YML
 files are name as project-name-I<X.Y.X>.yml, where I<X.Y.Z> represents the
 version numbers of different versions of the same project.

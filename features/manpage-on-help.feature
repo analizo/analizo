@@ -5,13 +5,13 @@ Feature: give manpage on --help
 
   Scenario Outline: display manpage for `analizo <tool>`
     When I run "analizo <tool> --help"
-    Then the output must match "Analizo::Command::<tool>\(1\)"
+    Then the output must match "Analizo::Command::<filename>\(1\)"
   Examples:
-    | tool            |
-    | evolutionmatrix |
-    | graph           |
-    | metrics         |
-    | metricsbatch    |
-    | metricshistory  |
-    | treeevolution   |
+    | tool             | filename         |
+    | evolution-matrix | evolution_matrix |
+    | graph            | graph            |
+    | metrics          | metrics          |
+    | metrics-batch    | metrics_batch    |
+    | metrics-history  | metrics_history  |
+    | tree-evolution   | tree_evolution   |
 

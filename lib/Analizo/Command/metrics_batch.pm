@@ -1,4 +1,4 @@
-package Analizo::Command::metricsbatch;
+package Analizo::Command::metrics_batch;
 use Analizo -command;
 use base qw(Analizo::Command);
 use strict;
@@ -9,17 +9,17 @@ use File::Basename;
 
 =head1 NAME
 
-Analizo::Command::metricsbatch - processes several source code directories in batch
+Analizo::Command::metrics_batch - processes several source code directories in batch
 
 =head1 USAGE
 
-  analizo metricsbatch [OPTIONS] [<input> [<input> ...]]
+  analizo metrics-batch [OPTIONS] [<input> [<input> ...]]
 
 =cut
 
-sub usage_desc { "%c metricsbatch %o [<input> [<input> ...]]" }
+sub usage_desc { "%c metrics-batch %o [<input> [<input> ...]]" }
 
-sub command_names { qw/metricsbatch metrics-batch/ }
+sub command_names { qw/metrics-batch/ }
 
 sub opt_spec {
   return (
@@ -65,7 +65,7 @@ sub execute {
 Processes several source code directories in batch running B<analizo metrics>
 for each and optionally consolidating the results in a single data file.
 
-B<analizo metricsbatch> is useful when you want to analyze several projects at
+B<analizo metrics-batch> is useful when you want to analyze several projects at
 once, or several different versions of the same project. You pass a list of
 directories in the command line and each one will be analyzed as a separate
 project. If no directories are passed in the command line, all of the
@@ -90,14 +90,14 @@ First you unpack the release tarballs for those versions in a directory, say
 
 =item
 
-Then you change to that directory, and then run B<analizo metricsbatch>:
+Then you change to that directory, and then run B<analizo metrics-batch>:
 
   $ cd /tmp/analysis
-  $ analizo metricsbatch
+  $ analizo metrics-batch
 
 =item
 
-B<analizo metricsbatch> will collect the metrics
+B<analizo metrics-batch> will collect the metrics
 data in a single .csv file, that you can import in spreadsheet software or
 statistical packages.
 
