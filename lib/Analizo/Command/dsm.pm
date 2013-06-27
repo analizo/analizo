@@ -5,7 +5,9 @@ use strict;
 use warnings;
 use Analizo::Extractor;
 use Graph::Writer::DSM;
+use Graph::Writer::DSM::HTML;
 use File::Basename;
+use Cwd 'abs_path';
 
 =head1 NAME
 
@@ -22,7 +24,8 @@ sub usage_desc { "%c dsm %o <input> [<input> [<input> ...]]" }
 sub opt_spec {
   return (
     [ 'extractor=s', 'wich extractor method use to analise source code' ],
-    [ 'output|o=s',  'output file name', { default => 'dsm.png' } ],
+    [ 'format|f=s',  'choice of output format to use', { default => 'png' } ],
+    [ 'output|o=s',  'output file name' ],
     [ 'exclude|x=s', 'exclude <dirs> (a colon-separated list of directories) from the analysis' ],
   );
 }
@@ -39,6 +42,9 @@ sub validate {
   if ($opt->output && ! -w dirname($opt->output)) {
     $self->usage_error("Output is not writable!");
   }
+  if ($opt->format ne 'png' && $opt->format ne 'html') {
+    $self->usage_error(sprintf("%s is not a valid output format.", $opt->format));
+  }
 }
 
 sub execute {
@@ -51,8 +57,18 @@ sub execute {
   my $model = $extractor->model;
   $extractor->process(@$args);
   my $graph = $model->graph();
-  my $wr = Graph::Writer::DSM->new();
-  $wr->write_graph($graph, $opt->output);
+  my $graph_writer = undef;
+  if ($opt->format eq 'png') {
+    $graph_writer = Graph::Writer::DSM->new();
+  }
+  elsif ($opt->format eq 'html') {
+    my $name = join(', ', map { basename(abs_path($_)) } @$args);
+    $graph_writer = Graph::Writer::DSM::HTML->new(
+      title => 'Design Structure matrix for ' . $name
+    );
+  }
+  my $output = $opt->output || sprintf("dsm.%s", $opt->format);
+  $graph_writer->write_graph($graph, $output);
 }
 
 =head1 DESCRIPTION
@@ -71,9 +87,14 @@ analizo dsm is part of the analizo suite.
 
 Define wich extractor method use to analise source code. Default is Doxyparse.
 
+=item --format <format>, -f <format>
+
+Choice of output format to use. Supported formats are B<png> (the default; good
+for very large code bases), and B<html> (good for small-medium code bases).
+
 =item --output <file>, -o <file>
 
-Writes output to <file>. Default is "dsm.png".
+Writes output to <file>. Default is "dsm.<format>".
 
 =item --exclude <dirs>, -x <dirs>
 

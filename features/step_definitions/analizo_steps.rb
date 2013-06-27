@@ -188,5 +188,16 @@ end
 
 Then /^the file "([^\"]*)" should exist$/ do |file|
   File.exist?(file).should == true
-  FileUtils.rm_f(file)
+end
+
+Then /^the file "(.*?)" should have type (.*)$/ do |file, type|
+  `file --brief --mime-type #{file}`.strip.should == type
+end
+
+Then /^analizo must present a list of languages$/ do
+  @stdout.size.should > 0
+
+  @stdout.each do |line|
+    line.should match(/(^Languages:\n$)|(^\w+\n$)/)
+  end
 end

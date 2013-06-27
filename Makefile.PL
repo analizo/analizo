@@ -33,6 +33,7 @@ CheckExtraDependencies(
 CheckExtraDependencies(
   'build',
   'cucumber' => 0,
+  'file' => 0,
   'rake' => 0,
   'rspec' => 0,
 );
@@ -48,7 +49,7 @@ WriteMakefile(
   LICENSE => 'GPLv3+',
   ABSTRACT => 'Source code analysis toolkit',
   PREREQ_PM => {
-    'Class::Accessor::Fast' => 0,
+    'Class::Accessor' => 0,
     'DBD::SQLite' => 0,
     'DBI' => 0,
     'CHI' => 0,
@@ -68,7 +69,7 @@ WriteMakefile(
     'YAML::Tiny' => 0,
     'App::Cmd' => 0,
     'Class::Inspector' => 0,
-    'Graph::Writer::DSM' => 0,
+    'Graph::Writer::DSM' => 0.005,
   },
   BUILD_REQUIRES => {
     'Test::Class' => 0,

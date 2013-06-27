@@ -3,13 +3,17 @@
 use strict;
 
 sub cpan2debian {
-  my (@pkgs) = @_;
+  my (%pkgs) = @_;
   map {
+    my $version = $pkgs{$_};
     my $debian_pkg = 'lib' . lc($_) . '-perl';
     $debian_pkg =~ s/::/-/g;
     $debian_pkg =~ s/sqlite/sqlite3/;   # special case
+    if ($version) {
+      $debian_pkg .= " (>= $version)";
+    }
     $debian_pkg;
-  } @pkgs;
+  } sort(keys(%pkgs));
 }
 
 my @dependencies = ();
@@ -30,8 +34,8 @@ sub CheckExtraDependencies {
 
 sub WriteMakefile {
   my %config = @_;
-  push @dependencies, cpan2debian(sort(keys(%{$config{PREREQ_PM}})));
-  push @build_dependencies, cpan2debian(sort(keys(%{$config{BUILD_REQUIRES}})));
+  push @dependencies, cpan2debian(%{$config{PREREQ_PM}});
+  push @build_dependencies, cpan2debian(%{$config{BUILD_REQUIRES}});
   push @build_dependencies, @dependencies;
 }
 

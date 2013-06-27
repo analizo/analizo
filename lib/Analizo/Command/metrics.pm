@@ -68,6 +68,13 @@ sub execute {
   $job->extractor($opt->extractor);
   if ($opt->language) {
     require Analizo::LanguageFilter;
+    if ($opt->language eq 'list') {
+      my @language_list = Analizo::LanguageFilter->list;
+      print "Languages:\n";
+      $" = "\n";
+      print "@language_list\n";
+      exit 0;
+    }
     my $language_filter = Analizo::LanguageFilter->new($opt->language);
     $job->filters($language_filter);
   }

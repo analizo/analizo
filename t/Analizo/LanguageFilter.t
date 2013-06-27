@@ -53,4 +53,10 @@ sub must_be_case_insensitive : Tests {
   ok($filter->matches('Test.JAVA'));
 }
 
+sub list_languages : Tests {
+  my @language_list = Analizo::LanguageFilter->list;
+  ok(grep { /^java$/ } @language_list);
+  ok(grep { /^cpp$/ } @language_list);
+}
+
 __PACKAGE__->runtests;

@@ -3,8 +3,11 @@ Section: devel
 Priority: extra
 Maintainer: Antonio Terceiro <terceiro@softwarelivre.org>
 Build-Depends: debhelper (>= 7.0.50~)
+# Please do not update the Build-Depends-Indep field directly. Update
+# Makefile.PL first, then run debian/refresh script
 Build-Depends-Indep:
  cucumber,
+ file,
  rake,
  ruby-rspec,
  libtest-class-perl,
@@ -18,7 +21,7 @@ Build-Depends-Indep:
  sloccount,
  sqlite3,
  libchi-perl,
- libclass-accessor-fast-perl,
+ libclass-accessor-perl,
  libdbd-sqlite3-perl,
  libdbi-perl,
  libdigest-sha-perl,
@@ -27,6 +30,7 @@ Build-Depends-Indep:
  libfile-share-perl,
  libfile-sharedir-perl,
  libgraph-perl,
+ libgraph-writer-dsm-perl (>= 0.005),
  libjson-perl,
  liblist-compare-perl,
  libmojolicious-perl,
@@ -39,10 +43,11 @@ Build-Depends-Indep:
  libzmq-libzmq2-perl
 Standards-Version: 3.9.1
 Homepage: http://analizo.org
-DM-Upload-Allowed: yes
 
 Package: analizo
 Architecture: all
+# Please do not update the Depends: field directly. Update Makefile.PL first,
+# then run debian/refresh script
 Depends:
  ${misc:Depends},
  ${perl:Depends},
@@ -53,7 +58,7 @@ Depends:
  sloccount,
  sqlite3,
  libchi-perl,
- libclass-accessor-fast-perl,
+ libclass-accessor-perl,
  libdbd-sqlite3-perl,
  libdbi-perl,
  libdigest-sha-perl,
@@ -62,6 +67,7 @@ Depends:
  libfile-share-perl,
  libfile-sharedir-perl,
  libgraph-perl,
+ libgraph-writer-dsm-perl (>= 0.005),
  libjson-perl,
  liblist-compare-perl,
  libmojolicious-perl,
