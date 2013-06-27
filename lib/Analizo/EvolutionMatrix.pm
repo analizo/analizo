@@ -57,11 +57,11 @@ sub is_empty {
 }
 
 sub cell_width {
-  shift->{cell_width} || 'nom';
+  shift->{cell_width};
 }
 
 sub cell_height {
-  shift->{cell_height} || 'loc';
+  shift->{cell_height};
 }
 
 sub max_width {
@@ -73,7 +73,7 @@ sub max_height {
 }
 
 sub name {
-  shift->{name} || 'Unamed project';
+  shift->{name};
 }
 
 1;

@@ -1,14 +1,62 @@
-#!/usr/bin/perl
+package Analizo::Command::tree_evolution;
+use Analizo -command;
+use base qw(Analizo::Command);
+use strict;
+use warnings;
+use Digest::SHA qw(sha1_hex);
+use File::Basename;
+use Analizo::LanguageFilter;
 
 =head1 NAME
 
-analizo-tree-evolution - watch the evolution of the source code tree in a Git repository
+Analizo::Command::tree_evolution - watch the evolution of the source code
 
 =head1 USAGE
 
-analizo evolution-matrix [OPTIONS]
+  analizo tree-evolution [OPTIONS]
+
+=cut
+
+sub command_names { qw/tree-evolution/ }
+
+sub opt_spec {
+  return (
+    [ 'language|l=s', 'filters the source tree by language', { default => 'all' } ],
+  );
+}
+
+sub validate {}
+
+sub execute {
+  my ($self, $opt, $args) = @_;
+  my $filter = new Analizo::LanguageFilter($opt->language);
+  local $ENV{PATH} = '/usr/local/bin:/usr/bin:/bin';
+  open COMMITS, "git log --reverse --format=%H|";
+  my @commits = <COMMITS>;
+  chomp @commits;
+  close COMMITS;
+  my %trees = ();
+  for my $commit (@commits) {
+    my @tree = `git ls-tree -r --name-only $commit`;
+    chomp(@tree);
+    my %dirs = map { dirname($_) => 1 } (grep { $filter->matches($_) } @tree);
+    @tree = sort(grep { $_ ne '.' } keys(%dirs));
+    next unless (@tree);
+    my $tree = join("\n", @tree);
+    my $sha1 = sha1_hex($tree);
+    if (!exists($trees{$sha1})) {
+      print "# $commit\n";
+      print $tree, "\n";
+      $trees{$sha1} = 1;
+    }
+  }
+}
+
+1;
 
 =head1 DESCRIPTION
+
+Watch the evolution of the source code tree in a Git repository.
 
 When run inside a Git repository, B<analizo tree-evolution> will output all
 different sets of directories found in the project's history. For each commit
@@ -54,7 +102,7 @@ directory called src/output.
 
 =over
 
-=item -l LANGUAGE | --language LANGUAGE
+=item --language LANGUAGE, -l LANGUAGE
 
 Filters the source tree by language. When determining the contents of the
 source tree, only consider directories that contain files that match the
@@ -63,65 +111,10 @@ expected file extensions for LANGUAGE.
 LANGUAGE can be one of I<c>, I<cpp> and I<java>. The default behaviour is to
 condider all files in the repository.
 
-=item -h | --help
-
-Displays the manual page (which you are currently reading).
-
 =back
 
 =head1 COPYRIGHT AND AUTHORS
 
-See B<analizo(1)>
+See B<analizo(1)>.
 
 =cut
-
-use strict;
-use warnings;
-use Analizo::Command;
-use Getopt::Long;
-use Digest::SHA  qw(sha1_hex);
-use File::Basename;
-use Analizo::LanguageFilter;
-
-my $__help = undef;
-my $__language = undef;
-
-GetOptions(
-  'h|help'          => \$__help,
-  'l|language=s'    => \$__language,
-) or exit(1);
-
-if ($__help) {
-  exec('analizo', 'doc', __FILE__);
-}
-
-$__language ||= 'all';
-my $filter = new Analizo::LanguageFilter($__language);
-
-$ENV{PATH} = '/usr/local/bin:/usr/bin:/bin';
-
-open COMMITS, "git log --reverse --format=%H|";
-my @commits = <COMMITS>;
-chomp @commits;
-close COMMITS;
-
-my %trees = ();
-
-for my $commit (@commits) {
-  my @tree = `git ls-tree -r --name-only $commit`;
-  chomp(@tree);
-  my %dirs = map { dirname($_) => 1 } (grep { $filter->matches($_) } @tree);
-  @tree = sort(grep { $_ ne '.' } keys(%dirs));
-  next unless (@tree);
-
-  my $tree = join("\n", @tree);
-
-  my $sha1 = sha1_hex($tree);
-
-  if (!exists($trees{$sha1})) {
-    print "# $commit\n";
-    print $tree, "\n";
-    $trees{$sha1} = 1;
-  }
-
-}

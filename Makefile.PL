@@ -3,10 +3,10 @@ use File::ShareDir::Install;
 use File::Basename;
 
 my %manpages = ();
-for my $script (glob('lib/Analizo/scripts/*')) {
-  $manpages{$script} = 'blib/man1/' . basename($script) . '.1';
+for my $script (glob('lib/Analizo/Command/*')) {
+  $manpages{$script} = 'blib/man1/analizo-' . basename($script, '.pm') . '.1';
 }
-$manpages{'analizo'} = 'blib/man1/analizo.1';
+$manpages{'lib/Analizo.pm'} = 'blib/man1/analizo.1';
 
 sub CheckExtraDependencies {
   my ($type, %dependencies) = @_;
@@ -42,7 +42,7 @@ install_share 'share';
 
 WriteMakefile(
   NAME => 'Analizo',
-  VERSION_FROM => 'analizo',
+  VERSION_FROM => 'lib/Analizo.pm',
   EXE_FILES => ['analizo'],
   MAN1PODS => \%manpages,
   AUTHOR => 'Antonio Terceiro <terceiro@softwarelivre.org>',
@@ -67,7 +67,10 @@ WriteMakefile(
     'File::Share' => 0,
     'File::HomeDir' => 0,
     'YAML::Tiny' => 0,
+    'App::Cmd' => 0,
+    'Class::Inspector' => 0,
     'Graph::Writer::DSM' => 0.005,
+    'FindBin::libs' => 0,
   },
   BUILD_REQUIRES => {
     'Test::Class' => 0,
