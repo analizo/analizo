@@ -90,3 +90,13 @@ Given qr/^I am in (.+)$/, func($c) {
 Then qr/^analizo must emit a warning matching "([^\"]*)"$/, func($c) {
   like($stderr, qr/$1|\Q$1\E/);
 };
+
+Then qr/^analizo must report that "([^\"]*)" is part of "([^\"]*)"$/, func($c) {
+  my ($func, $mod) = ($1, $2);
+  like($stdout, qr/subgraph "cluster_$mod" \{[^}]*node[^}]*"\Q$func\E";/);
+};
+
+Then qr/^analizo must report that "([^\"]*)" depends on "([^\"]*)"$/, func($c) {
+  my ($dependent, $depended) = ($1, $2);
+  like($stdout, qr/"\Q$dependent\E" -> "\Q$depended\E"/);
+};
