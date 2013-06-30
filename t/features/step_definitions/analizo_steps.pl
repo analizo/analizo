@@ -7,6 +7,8 @@ use Cwd;
 use File::Slurp;
 use File::Temp qw( tempdir );
 use File::Copy::Recursive qw( rcopy );
+use YAML::Tiny;
+use feature "switch";
 
 our $top_dir = cwd();
 our $saved_path = $ENV{PATH};
@@ -99,4 +101,35 @@ Then qr/^analizo must report that "([^\"]*)" is part of "([^\"]*)"$/, func($c) {
 Then qr/^analizo must report that "([^\"]*)" depends on "([^\"]*)"$/, func($c) {
   my ($dependent, $depended) = ($1, $2);
   like($stdout, qr/"\Q$dependent\E" -> "\Q$depended\E"/);
+};
+
+Then qr/^the contents of "(.+)" must match "([^\"]*)"$/, func($c) {
+  my ($file, $pattern) = ($1, $2);
+  like(read_file($file), qr/$pattern/);
+};
+
+Then qr/^analizo must emit a warning matching "([^\"]*)"$/, func($c) {
+  my $pattern = $1;
+  like($stderr, qr/$pattern/);
+};
+
+Then qr/^analizo must report that the project has (.+) = ([\d\.]+)$/, func($c) {
+  my ($metric, $n) = ($1, $2);
+  my $stream = YAML::Tiny->read_string($stdout);
+  cmp_ok($stream->[0]->{$metric}, '==', $n);
+};
+
+Then qr/^analizo must report that module (.+) has (.+) = (.+)$/, func($c) {
+  my ($module, $metric, $value) = ($1, $2, $3);
+  my $stream = YAML::Tiny->read_string($stdout);
+  my ($module_metrics) = grep { $_->{_module} && $_->{_module} eq $module } @$stream;
+  for ($value) {
+    when (/^\d+|\d+\.\d+$/) {
+      cmp_ok($module_metrics->{$metric}, '==', $value);
+    }
+    when (/^\[(.*)\]$/) {
+      my @values = split(/\s*,\s*/, $1);
+      is_deeply($module_metrics->{$metric}, \@values);
+    }
+  }
 };
