@@ -3,7 +3,7 @@ use strict;
 use warnings;
 use Moose;
  
-extends 'Test::BDD::Cucumber::Harness::TermColor';
+extends 'Test::BDD::Cucumber::Harness::TestBuilder';
 
 use Cwd;
 our $top_dir = cwd();

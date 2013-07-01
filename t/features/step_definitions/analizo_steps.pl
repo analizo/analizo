@@ -1,6 +1,6 @@
 use strict;
 use warnings;
-use Test::More;
+use Test::More 'no_plan';
 use Test::BDD::Cucumber::StepFile;
 use Method::Signatures;
 use Cwd;
@@ -133,3 +133,12 @@ Then qr/^analizo must report that module (.+) has (.+) = (.+)$/, func($c) {
     }
   }
 };
+
+Then qr/^analizo must present a list of metrics$/, func($c) {
+  like($stdout, qr/Global Metrics:/);
+  like($stdout, qr/Module Metrics:/);
+};
+
+Then qr/^analizo must present a list of languages$/, func($c) {
+  like($stdout, qr/Languages:/);
+}

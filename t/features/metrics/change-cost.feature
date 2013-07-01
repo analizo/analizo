@@ -3,23 +3,23 @@ Feature: change cost degree
   I want analizo to report the degree of change cost in my code
   So that I can evaluate it
 
-  Scenario Outline: "Hello, world" project
+  Scenario: "Hello, world" project
     Given I am in t/samples/hello_world/<language>
     When I run "analizo metrics ."
     Then analizo must report that the project has change_cost = 0.75
-  Examples:
-    | language |
-    | cpp      |
-    | java     |
+    Examples:
+      | language |
+      | cpp      |
+      | java     |
 
-  Scenario Outline: "Animals" project
+  Scenario: "Animals" project
     Given I am in t/samples/animals/<language>
     When I run "analizo metrics ."
     Then analizo must report that the project has change_cost = 0.44
-  Examples:
-    | language |
-    | cpp      |
-    | java     |
+    Examples:
+      | language |
+      | cpp      |
+      | java     |
 
   Scenario: "Hieracchical Graph" project
     Given I am in t/samples/hierarchical_graph
