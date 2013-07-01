@@ -10,6 +10,7 @@ use File::Copy::Recursive qw( rcopy );
 use YAML::Tiny;
 use feature "switch";
 use File::LibMagic;
+use Archive::Extract;
 
 our $top_dir = cwd();
 our $saved_path = $ENV{PATH};
@@ -154,4 +155,16 @@ Then qr/^the file "(.*?)" should have type (.*)$/, func($c) {
   my $magic = File::LibMagic->new;
   my $mime = $magic->checktype_filename($file);
   like($mime, qr/$type;/);
+};
+
+When qr/^I explode (.+)$/, func($c) {
+  my $tarball = $1;
+  my $archive = Archive::Extract->new(archive => $tarball);
+  $archive->extract(to => tempdir(CLEANUP => 1));
+  chdir $archive->extract_path;
+};
+
+Then qr/^the output lines must match "([^\"]*)"$/, func($c) {
+  my $pattern = $1;
+  like($stdout, qr/$pattern/);
 };
