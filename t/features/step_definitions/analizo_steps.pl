@@ -9,6 +9,7 @@ use File::Temp qw( tempdir );
 use File::Copy::Recursive qw( rcopy );
 use YAML::Tiny;
 use feature "switch";
+use File::LibMagic;
 
 our $top_dir = cwd();
 our $saved_path = $ENV{PATH};
@@ -141,4 +142,16 @@ Then qr/^analizo must present a list of metrics$/, func($c) {
 
 Then qr/^analizo must present a list of languages$/, func($c) {
   like($stdout, qr/Languages:/);
-}
+};
+
+Then qr/^the file "([^\"]*)" should exist$/, func($c) {
+  my $file = $1;
+  ok(-e $file);
+};
+
+Then qr/^the file "(.*?)" should have type (.*)$/, func($c) {
+  my ($file, $type) = ($1, $2);
+  my $magic = File::LibMagic->new;
+  my $mime = $magic->checktype_filename($file);
+  like($mime, qr/$type;/);
+};
