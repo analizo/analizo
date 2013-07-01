@@ -32,7 +32,6 @@ CheckExtraDependencies(
 CheckExtraDependencies(
   'build',
   'cucumber' => 0,
-  'file' => 0,
   'rake' => 0,
   'rspec' => 0,
 );
@@ -82,6 +81,7 @@ WriteMakefile(
     'Method::Signatures' => 0,
     'File::Slurp' => 0,
     'File::Copy::Recursive' => 0,
+    'File::LibMagic' => 0,
   },
   test => {
     TESTS => 't/*.t t/*/*.t t/*/*/*.t t/*/*/*/*.t',
