@@ -2,7 +2,7 @@ package t::Analizo::Test::BDD::Cucumber::Harness;
 use strict;
 use warnings;
 use Moose;
- 
+
 extends 'Test::BDD::Cucumber::Harness::TestBuilder';
 
 use Cwd;
