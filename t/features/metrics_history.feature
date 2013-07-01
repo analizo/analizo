@@ -35,7 +35,7 @@ Feature: analizo metrics-history
 
   Scenario: support for parallel processing
     Given I copy t/samples/evolution.tar.gz into a temporary directory
-    And I run "tar xzf evolution.tar.gz"
+    When I run "tar xzf evolution.tar.gz"
     And I run "cd evolution && analizo metrics-history -o ../sequential.csv"
     And I run "cd evolution && analizo metrics-history -p 2 -o ../parallel.csv"
     Then the exit status must be 0
@@ -43,10 +43,10 @@ Feature: analizo metrics-history
     And I run "sort parallel.csv > parallel-sorted.csv"
     And I run "diff -u sequential-sorted.csv parallel-sorted.csv"
     Then the output must not match "---"
-    Then the exit status must be 0
+    And the exit status must be 0
 
   Scenario: language filters
     Given I copy t/samples/mixed into a temporary directory
-    And I run "(cd mixed && git init && git add * && git commit -m 'initial commit')"
+    When I run "(cd mixed && git init && git add * && git commit -m 'initial commit')"
     And I run "analizo metrics-history --language java mixed"
     Then the output must not match "native_backend.c"
