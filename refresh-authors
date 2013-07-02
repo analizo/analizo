@@ -1,0 +1,4 @@
+#!/usr/bin/perl
+use Git::Wrapper;
+use List::MoreUtils qw(uniq);
+print join("\n", uniq sort Git::Wrapper->new('./')->RUN('log', {pretty => "format:%aN <%aE>"}));

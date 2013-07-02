@@ -1,95 +1,33 @@
-Source: analizo
+Source: {{ lc $dist->name}}
 Section: devel
 Priority: extra
-Maintainer: Antonio Terceiro <terceiro@softwarelivre.org>
-Build-Depends: debhelper (>= 10)
-# Please do not update the Build-Depends-Indep field directly. Update
-# Makefile.PL first, then run debian/refresh script
+Maintainer: {{ $dist->authors->[0] }}
+Build-Depends: debhelper (>= 7.0.50~)
 Build-Depends-Indep:
- rake,
- ruby-rspec,
- libfile-copy-recursive-perl,
- libfile-libmagic-perl,
- libfile-slurp-perl,
- libmethod-signatures-perl,
- libtest-bdd-cucumber-perl,
- libtest-class-perl,
- libtest-exception-perl,
- libtest-mockmodule-perl,
- libtest-mockobject-perl,
- doxyparse (>= 1.8.14~rc1),
- g++ (>= 4.8~),
- gcc (>= 4.8~),
- git,
- man,
- ruby,
- sloccount,
- sqlite3,
- libapp-cmd-perl,
- libchi-perl,
- libclass-accessor-perl,
- libclass-inspector-perl,
- libdbd-sqlite3-perl,
- libdbi-perl,
- libdigest-sha-perl,
- libfile-copy-recursive-perl,
- libfile-homedir-perl,
- libfile-share-perl,
- libfile-sharedir-perl,
- libfindbin-libs-perl,
- libgraph-perl,
- libgraph-writer-dsm-perl (>= 0.005),
- libgraph-readwrite-perl (>= 2.09),
- libjson-perl,
- liblist-compare-perl,
- libmojolicious-perl,
- libstatistics-descriptive-perl,
- libterm-progressbar-perl,
- libyaml-perl,
- libzmq-ffi-perl,
- libarchive-extract-perl
-Standards-Version: 3.9.8
+{{
+use Config::INI::Reader;
+use Debian::AptContents;
+our $hash = Config::INI::Reader->read_file('dist.ini');
+our $c = Debian::AptContents->new({homedir => "/tmp/dh-make-perl"});
+my @Prereqs = (keys(%{ $hash->{'Prereqs / BuildRequires'} }), keys(%{ $hash->{'Prereqs / TestRequires'} }));
+join(",\n", map { ' ' . $c->find_perl_module_package($_) } @Prereqs)
+}}
+Standards-Version: 3.9.6
 Homepage: http://analizo.org
 
-Package: analizo
+Package: {{ lc $dist->name}}
 Architecture: all
 # Please do not update the Depends: field directly. Update Makefile.PL first,
 # then run debian/refresh script
 Depends:
  ${misc:Depends},
  ${perl:Depends},
- doxyparse (>= 1.8.14~rc1),
- g++ (>= 4.8~),
- gcc (>= 4.8~),
- git,
- man,
- ruby,
- sloccount,
- sqlite3,
- libapp-cmd-perl,
- libchi-perl,
- libclass-accessor-perl,
- libclass-inspector-perl,
- libdbd-sqlite3-perl,
- libdbi-perl,
- libdigest-sha-perl,
- libfile-copy-recursive-perl,
- libfile-homedir-perl,
- libfile-share-perl,
- libfile-sharedir-perl,
- libfindbin-libs-perl,
- libgraph-perl,
- libgraph-writer-dsm-perl (>= 0.005),
- libgraph-readwrite-perl (>= 2.09),
- libjson-perl,
- liblist-compare-perl,
- libmojolicious-perl,
- libstatistics-descriptive-perl,
- libterm-progressbar-perl,
- libyaml-perl,
- libzmq-ffi-perl
+{{
+my @Prereqs = keys(%{ $hash->{'Prereqs / RuntimeRequires'} });
+join(",\n", map { ' ' . $_ } grep { ! /^perl$/ } map { $c->find_perl_module_package($_) } @Prereqs)
+}}
 Recommends: graphviz
-Description: multi-language source code analysis toolkit
+Description: {{ $dist->abstract }}
  Analizo parses source code in multiple languages and report useful information
  about it, such as module dependency, source code metrics and more.
  .

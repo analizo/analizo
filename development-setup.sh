@@ -3,7 +3,7 @@
 set -e
 
 setup_debian() {
-  sudo apt-get -q -y install wget gnupg
+	sudo apt-get install wget gnupg
   which lsb_release || sudo apt-get -q -y install lsb-release
   codename=$(lsb_release -c | awk '{print($2)}')
   if type prepare_$codename >/dev/null 2>&1; then
@@ -12,16 +12,32 @@ setup_debian() {
     echo "WARNING: no specific preparation steps for $codename"
   fi
 
-  sudo apt-get -q -y install wget
   if [ ! -f /etc/apt/sources.list.d/analizo.list ]; then
+    which wget || sudo apt-get -q -y install wget
+    which gpg || sudo apt-get -q -y install gnupg
     echo "deb http://www.analizo.org/download/ ./" | sudo sh -c 'cat > /etc/apt/sources.list.d/analizo.list'
     wget -O - http://www.analizo.org/download/signing-key.asc | sudo apt-key add -
+    #echo "deb http://debian.joenio.me unstable/" | sudo sh -c 'cat >> /etc/apt/sources.list.d/analizo.list'
+    #wget -O - http://debian.joenio.me/signing.asc | sudo apt-key add -
+    sudo apt-get update
   fi
-  sudo apt-get update
+  which apt-file || sudo apt-get -q -y install apt-file
+  sudo apt-file update
 
-  packages=$(sed -e '1,/^Build-Depends-Indep:/ d; /^\S/,$ d; s/,//; s/(.*$//' debian/control)
+  sudo apt-get -q -y install dh-make-perl libdist-zilla-perl
+  packages=$(dh-make-perl locate $(dzil authordeps) | grep 'package$' | grep ' is in ' | sed 's/.\+is in \(.\+\) package/\1/')
   sudo apt-get -q -y -f install $packages
-  sudo apt-get -q -y install libfile-sharedir-install-perl libtext-template-perl pandoc
+
+  packages=$(dh-make-perl locate $(dzil listdeps) | grep 'package$' | grep ' is in ' | sed 's/.\+is in \(.\+\) package/\1/')
+  sudo apt-get -q -y -f install $packages
+
+  # `dzil externaldeps` foi submetido ao upstream, aguardando aprovação
+  # https://github.com/mjgardner/Dist-Zilla-Plugin-RequiresExternal/pull/5
+  # packages=$(dzil externaldeps)
+  # sudo apt-get -q -y -f install $packages
+  # instalando dependencias "na mao" enquanto PullRequest n tem resposta
+  sudo apt-get install -q -y -f doxyparse sloccount sqlite3 man pandoc
+
 }
 
 prepare_precise() {
@@ -31,6 +47,7 @@ prepare_precise() {
   fi
   apt-get install -q -y libzeromq-perl
 }
+
 prepare_quantal() {
   if ! grep -q ZeroMQ Makefile.PL; then
     # only needed while we depend on ZeroMQ
@@ -39,17 +56,10 @@ prepare_quantal() {
   apt-get install -q -y libzeromq-perl
 }
 
-# FIXME share data with Makefile.PL
+# FIXME share data with Makefile.PL/dist.ini
 needed_programs='
   cpanm
-  doxyparse
   git
-  ruby
-  sloccount
-  rake
-  rspec
-  sqlite3
-  man
   pkg-config
 '
 
@@ -89,10 +99,10 @@ check_non_perl_dependencies() {
 
 setup_generic() {
   check_non_perl_dependencies
-  cpanm --installdeps .
+  dzil listdeps | cpanm
 }
 
-if [ ! -f ./analizo ]; then
+if [ ! -f ./bin/analizo ]; then
   echo "Please run this script from the root of Analizo sources!"
   exit 1
 fi
