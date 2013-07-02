@@ -15,7 +15,11 @@ use t::Analizo::Test::BDD::Cucumber::Harness;
 # file matching .*_steps.pl as a Step file, and .*\.feature as a feature file.
 # The features are returned in @features, and the executor is created with the
 # step definitions loaded.
-my ($executor, @features) = Test::BDD::Cucumber::Loader->load('t/features/');
+# It's possible to execute just a feature by passing it as argument in
+# command-line. Like: $ perl test.pl t/features/dsm.feature
+my ($executor, @features) = @ARGV == 0
+  ? Test::BDD::Cucumber::Loader->load('t/features/')
+  : Test::BDD::Cucumber::Loader->load(@ARGV);
 
 # Create a Harness to execute against. TestBuilder harness prints TAP
 my $harness = t::Analizo::Test::BDD::Cucumber::Harness->new({});
