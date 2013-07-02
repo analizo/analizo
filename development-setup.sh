@@ -32,11 +32,10 @@ prepare_squeeze() {
   fi
   apt-get install -q -y -t squeeze-backports rubygems
 
-  (gem list | grep cucumber) || sudo gem install --no-ri --no-rdoc cucumber
   (gem list | grep rspec) || sudo gem install --no-ri --no-rdoc rspec
 
   apt-get install -q -y equivs
-  for fakepkg in cucumber ruby-rspec; do
+  for fakepkg in ruby-rspec; do
     (
       echo "Section: misc"
       echo "Priority: optional"
@@ -71,7 +70,6 @@ needed_programs='
   git
   ruby
   sloccount
-  cucumber
   rake
   rspec
   sqlite3
