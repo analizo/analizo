@@ -1,7 +1,0 @@
-Tools:
-- Jinja2
-- Flask
-
-To start application:
-
-$ python myapp.py
