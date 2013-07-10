@@ -1,3 +1,13 @@
+analizo (1.18.0) UNRELEASED; urgency=low
+
+  ### Add changelog here before release, use the git log:
+  ###
+  ### $ git shortlog 1.17.0..HEAD
+  ###
+  ### Then change UNRELEASED to unstable
+
+ -- Joenio Costa <joenio@colivre.coop.br>  Tue, 09 Jul 2013 22:16:15 -0300
+
 analizo (1.17.0) unstable; urgency=low
 
   [ Antonio Terceiro ]
