@@ -85,7 +85,6 @@ needed_programs='
   ruby
   sloccount
   cucumber
-  rake
   rspec
   sqlite3
   man
