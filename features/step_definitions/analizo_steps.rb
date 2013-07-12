@@ -7,7 +7,7 @@ saved_path = ENV["PATH"]
 ENV['LC_ALL'] = 'C'
 
 Before do
-  ENV['PATH'] = top_dir + ':' + ENV['PATH']
+  ENV['PATH'] = "#{top_dir}/bin" + ':' + ENV['PATH']
   ENV["ANALIZO_CACHE"] = Dir.mktmpdir
 end
 

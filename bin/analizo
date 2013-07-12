@@ -117,9 +117,9 @@ list.
 use strict;
 use FindBin qw($RealBin $RealScript);
 
-if (-e "$RealBin/Makefile.PL") {
+if (-e "$RealBin/../dist.ini") {
   # Development mode
-  my $local_lib = "$RealBin/lib";
+  my $local_lib = "$RealBin/../lib";
   unshift @INC, $local_lib;
   $ENV{PERL5LIB} = $ENV{PERL5LIB} ? join(':', ($local_lib, $ENV{PERL5LIB})) : $local_lib;
   $ENV{PATH} = join(':', ($RealBin, $ENV{PATH}));
