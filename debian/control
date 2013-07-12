@@ -38,7 +38,7 @@ Build-Depends-Indep:
  libyaml-perl,
  libyaml-tiny-perl,
  libzmq-libzmq2-perl
-Standards-Version: 3.9.1
+Standards-Version: 3.9.4
 Homepage: http://analizo.org
 
 Package: analizo
