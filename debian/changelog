@@ -1,5 +1,7 @@
 analizo (1.18.0) UNRELEASED; urgency=low
 
+  * Non-maintainer upload
+
   ### Add changelog here before release, use the git log:
   ###
   ### $ git shortlog 1.17.0..HEAD
