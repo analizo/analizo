@@ -1,80 +1,28 @@
-Source: analizo
+Source: {{ lc $dist->name}}
 Section: devel
 Priority: extra
-Maintainer: Antonio Terceiro <terceiro@softwarelivre.org>
+Maintainer: {{ $dist->authors->[0] }}
 Build-Depends: debhelper (>= 7.0.50~)
-# Please do not update the Build-Depends-Indep field directly. Update
-# Makefile.PL first, then run debian/refresh script
 Build-Depends-Indep:
- cucumber,
- file,
- ruby-rspec,
- libtest-class-perl,
- libtest-exception-perl,
- libtest-mockmodule-perl,
- libtest-mockobject-perl,
- doxyparse (>= 1.5.8-12~),
- git,
- man,
- ruby,
- sloccount,
- sqlite3,
- libchi-perl,
- libclass-accessor-perl,
- libdbd-sqlite3-perl,
- libdbi-perl,
- libdigest-sha-perl,
- libfile-copy-recursive-perl,
- libfile-homedir-perl,
- libfile-share-perl,
- libfile-sharedir-perl,
- libgraph-perl,
- libgraph-writer-dsm-perl (>= 0.005),
- libjson-perl,
- liblist-compare-perl,
- libmojolicious-perl,
- libstatistics-descriptive-perl,
- libterm-progressbar-perl,
- libyaml-perl,
- libyaml-tiny-perl,
- libzmq-libzmq2-perl
+{{
+use Config::INI::Reader;
+our $hash = Config::INI::Reader->read_file('dist.ini');
+join(",\n", map { s/::/-/g; lc " lib-$_-perl" } keys %{ $hash->{'Prereqs / BuildRequires'} })
+}}
+{{join(",\n", map { s/::/-/g; lc " lib-$_-perl" } keys %{ $hash->{'Prereqs / TestRequires'} })}}
 Standards-Version: 3.9.4
 Homepage: http://analizo.org
 
-Package: analizo
+Package: {{ lc $dist->name}}
 Architecture: all
 # Please do not update the Depends: field directly. Update Makefile.PL first,
 # then run debian/refresh script
 Depends:
  ${misc:Depends},
  ${perl:Depends},
- doxyparse (>= 1.5.8-12~),
- git,
- man,
- ruby,
- sloccount,
- sqlite3,
- libchi-perl,
- libclass-accessor-perl,
- libdbd-sqlite3-perl,
- libdbi-perl,
- libdigest-sha-perl,
- libfile-copy-recursive-perl,
- libfile-homedir-perl,
- libfile-share-perl,
- libfile-sharedir-perl,
- libgraph-perl,
- libgraph-writer-dsm-perl (>= 0.005),
- libjson-perl,
- liblist-compare-perl,
- libmojolicious-perl,
- libstatistics-descriptive-perl,
- libterm-progressbar-perl,
- libyaml-perl,
- libyaml-tiny-perl,
- libzmq-libzmq2-perl
-Recommends: graphviz
-Description: multi-language source code analysis toolkit
+{{join(",\n", map { s/::/-/g; lc " lib-$_-perl" } keys %{ $hash->{'Prereqs / RuntimeRequires'} })}}
+Recommends:
+Description: {{ $dist->abstract }}
  Analizo parses source code in multiple languages and report useful information
  about it, such as module dependency, source code metrics and more.
  .
