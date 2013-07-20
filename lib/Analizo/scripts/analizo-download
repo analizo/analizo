@@ -1,0 +1,24 @@
+#!/usr/bin/perl -w
+use strict;
+use Analizo::Command;
+use Analizo::VCS;
+
+=for
+
+USAGE:
+<download> <DRIVER> <URL>
+
+AVAILABLE DRIVERS:
+- Subversion
+- Git
+
+eg.:
+$ analizo download Subversion http://crimsonglory.googlecode.com/svn/trunk/
+$ analizo download Git git://github.com/joenio/visualizo.git
+
+=cut
+
+my $driver = $ARGV[0];
+my $repo = $ARGV[1];
+my $vcs = Analizo::VCS->new($driver);
+exit $vcs->download($repo);
