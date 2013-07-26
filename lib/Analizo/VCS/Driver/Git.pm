@@ -1,6 +1,7 @@
 package Analizo::VCS::Driver::Git;
-use Moo;
-extends 'Analizo::VCS::Driver';
+use strict;
+use warnings;
+use base 'Analizo::VCS::Driver';
 use Git::Wrapper;
 
 sub download {

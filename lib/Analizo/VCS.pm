@@ -1,11 +1,14 @@
 package Analizo::VCS;
-use Moo;
+use strict;
+use warnings;
+use Class::Accessor::Fast qw(antlers);
 use Analizo::VCS::Driver;
 
 has driver => (is => 'ro');
 
-sub BUILDARGS {
+sub new {
   my ($class, $driver_name) = @_;
+  die unless $driver_name;
   my @available_drivers = Analizo::VCS::Driver->available_drivers;
   unless (grep { $_ eq $driver_name } @available_drivers) {
     die "Unavailable driver: $driver_name\n" .
@@ -14,7 +17,7 @@ sub BUILDARGS {
   }
   my $DRIVER_CLASS = "Analizo::VCS::Driver::$driver_name";
   eval "use $DRIVER_CLASS;";
-  return { driver => $DRIVER_CLASS->new };
+  $class->SUPER::new({ driver => $DRIVER_CLASS->new });
 }
 
 sub download {

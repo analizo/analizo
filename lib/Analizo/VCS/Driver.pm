@@ -1,6 +1,9 @@
 package Analizo::VCS::Driver;
-use Moo;
-use Digest::SHA qw(sha1_hex);
+use strict;
+use warnings;
+use Class::Accessor::Fast qw(antlers);
+use List::MoreUtils qw(uniq);
+use File::Find;
 
 has url => (is => 'rw');
 has url_sha1 => (is => 'ro', lazy => 1, builder => '_calculate_url_hash');

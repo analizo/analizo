@@ -1,6 +1,7 @@
 package Analizo::VCS::Driver::Subversion;
-use Moo;
-extends 'Analizo::VCS::Driver';
+use strict;
+use warnings;
+use base 'Analizo::VCS::Driver';
 use SVN::Client;
 
 sub download {
