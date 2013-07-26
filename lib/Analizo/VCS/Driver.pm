@@ -6,20 +6,41 @@ use List::MoreUtils qw(uniq);
 use File::Find;
 
 has url => (is => 'rw');
-has url_sha1 => (is => 'ro', lazy => 1, builder => '_calculate_url_hash');
+has output => (is => 'rw');
 
-sub _calculate_url_hash {
-  my ($self) = @_;
-  sha1_hex($self->url);
+sub _find_files {
+  my ($search_path) = @_;
+  my @files = ();
+  local $_;
+  File::Find::find({
+    no_chdir => 1,
+    wanted => sub {
+      return unless $File::Find::name =~ /\.pm$/;
+      return unless $File::Find::name =~ m#/Analizo/VCS/Driver/#;
+      (my $path = $File::Find::name) =~ s#^\\./##;
+      push @files, $path;
+    }
+  }, $search_path);
+  return @files;
 }
 
-sub repository_exists {
-  my ($self) = @_;
-  -e $self->url_sha1 && -d $self->url_sha1;
+sub _find_drivers {
+  my @SEARCHDIR = @_;
+  my @files = ();
+  foreach my $search_path (grep { -d $_ } @SEARCHDIR) {
+    push @files, _find_files($search_path);
+  }
+  my @drivers = ();
+  foreach my $file (@files) {
+    $file =~ s#.*/Analizo/VCS/Driver/##;
+    $file =~ s#\.pm##;
+    push @drivers, $file;
+  }
+  uniq @drivers;
 }
 
 sub available_drivers {
-  qw[ Git Subversion ];
+  _find_drivers(@INC);
 }
 
 1;

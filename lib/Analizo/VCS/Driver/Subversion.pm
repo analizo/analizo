@@ -4,11 +4,11 @@ use warnings;
 use base 'Analizo::VCS::Driver';
 use SVN::Client;
 
-sub download {
+sub fetch {
   my ($self) = @_;
   my $svn = SVN::Client->new();
   my $recursive = 1;
-  $svn->checkout($self->url, $self->url_sha1, 'HEAD', $recursive);
+  $svn->checkout($self->url, $self->output, 'HEAD', $recursive);
   return 1;
 }
 
