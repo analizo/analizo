@@ -40,7 +40,8 @@ sub _find_drivers {
 }
 
 sub available_drivers {
-  _find_drivers(@INC);
+  my @drivers = _find_drivers(@INC);
+  sort @drivers;
 }
 
 1;

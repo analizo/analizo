@@ -1,12 +1,13 @@
 #!/usr/bin/perl -w
 use strict;
+use warnings;
 use Analizo::Command;
 use Analizo::VCS;
 use Getopt::Long;
 
 =head1 NAME
 
-analizo-fetch - download files from Version Control System repository
+analizo-fetch - fetch files from Version Control System's repositories
 
 =head1 USAGE
 
@@ -15,11 +16,12 @@ analizo-fetch - download files from Version Control System repository
 =head1 EXAMPLES
 
   analizo fetch Subversion http://crimsonglory.googlecode.com/svn/trunk crimsonglory
-  analizo fetch Git git://github.com/joenio/visualizo.git visualizo
+  analizo fetch Git git://github.com/joenio/analizo.git analizo
 
 =head1 DESCRIPTION
 
-`analizo fetch` download files from various diferent Version Control Systems.
+B<analizo-fetch> fetch files from various different kinds of Version Control
+System.
 
 =head1 OPTIONS
 
