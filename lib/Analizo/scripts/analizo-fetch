@@ -1,0 +1,95 @@
+#!/usr/bin/perl -w
+use strict;
+use Analizo::Command;
+use Analizo::VCS;
+use Getopt::Long;
+
+=head1 NAME
+
+analizo-fetch - download files from Version Control System repository
+
+=head1 USAGE
+
+  analizo fetch [OPTIONS] <driver> <url> <output>
+
+=head1 EXAMPLES
+
+  analizo fetch Subversion http://crimsonglory.googlecode.com/svn/trunk crimsonglory
+  analizo fetch Git git://github.com/joenio/visualizo.git visualizo
+
+=head1 DESCRIPTION
+
+`analizo fetch` download files from various diferent Version Control Systems.
+
+=head1 OPTIONS
+
+=over
+
+=item --drivers
+
+List available drivers.
+
+=back
+
+=head1 ARGUMENTS
+
+=over
+
+=item <driver>
+
+The kind of the repository related to the <url>.
+
+(see all available drivers with --drivers option).
+
+=item <url>
+
+The URL of the repository to fetch.
+
+=item <output>
+
+Output directory.
+
+=back
+
+=cut
+
+my $__drivers = undef;
+my $__help = undef;
+GetOptions(
+  'drivers' => \$__drivers,
+  'help'    => \$__help,
+) or exit(1);
+
+if ($__help) {
+  exec('analizo', 'doc', __FILE__)
+}
+
+if ($__drivers) {
+  local $" = "\n";
+  my @available_drivers = Analizo::VCS::Driver->available_drivers;
+  print "Available drivers:\n";
+  print "@available_drivers\n\n";
+  exit 0;
+}
+
+if(@ARGV != 3){
+  exec('analizo', 'doc', '--usage', __FILE__);
+}
+
+my $driver = $ARGV[0];
+my $repo = $ARGV[1];
+my $output = $ARGV[2];
+
+my $vcs = Analizo::VCS->new($driver);
+my $success = $vcs->fetch($repo, $output);
+
+if ($success) {
+  print " done\n";
+  exit 0;
+}
+
+exit 1;
+
+=head1 COPYRIGHT AND AUTHORS
+
+See B<analizo(1)>
