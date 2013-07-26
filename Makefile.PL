@@ -49,7 +49,7 @@ WriteMakefile(
   LICENSE => 'GPLv3+',
   ABSTRACT => 'Source code analysis toolkit',
   PREREQ_PM => {
-    'Class::Accessor' => 0,
+    'Class::Accessor' => 0.34,
     'DBD::SQLite' => 0,
     'DBI' => 0,
     'CHI' => 0,
