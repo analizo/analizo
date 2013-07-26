@@ -49,7 +49,7 @@ WriteMakefile(
   LICENSE => 'GPLv3+',
   ABSTRACT => 'Source code analysis toolkit',
   PREREQ_PM => {
-    'Class::Accessor' => 0,
+    'Class::Accessor' => 0.34,
     'DBD::SQLite' => 0,
     'DBI' => 0,
     'CHI' => 0,
@@ -68,12 +68,15 @@ WriteMakefile(
     'File::HomeDir' => 0,
     'YAML::Tiny' => 0,
     'Graph::Writer::DSM' => 0.005,
+    'SVN::Client' => 0,
+    'Git::Wrapper' => 0,
   },
   BUILD_REQUIRES => {
     'Test::Class' => 0,
     'Test::Exception' => 0,
     'Test::MockObject' => 0,
     'Test::MockModule' => 0,
+    'Test::File' => 0,
   },
   test => {
     TESTS => 't/*.t t/*/*.t t/*/*/*.t t/*/*/*/*.t',
