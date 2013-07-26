@@ -201,3 +201,7 @@ Then /^analizo must present a list of languages$/ do
     line.should match(/(^Languages:\n$)|(^\w+\n$)/)
   end
 end
+
+Then /^the directory "([^\"]*)" should exist$/ do |file|
+  File.directory?(file).should == true
+end

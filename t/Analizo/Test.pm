@@ -56,7 +56,7 @@ sub unpack_sample_git_repository {
   for my $repo (@repos) {
     system("tar xzf t/samples/$repo.tar.gz -C $tmpdir");
   }
-  &$code();
+  &$code($tmpdir);
   system("rm -rf $tmpdir");
 }
 
