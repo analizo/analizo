@@ -29,7 +29,7 @@ _analizo_graph() {
 	if [[ ${cur} == -* ]] ; then
 		COMPREPLY=( $(compgen -W "${options}" -- ${cur}))
 	else
-		COMPREPLY=( $(compgen -f ${cur}) )
+		COMPREPLY=( $(compgen -d ${cur}) )
 	fi
 	return 0
 }
@@ -39,6 +39,8 @@ _analizo_metrics() {
 	options="-e -h -l -o -g -n -d --extractor --help --list --output --global-only --language --exclude"
 	if [[ ${cur} == -* ]] ; then
 		COMPREPLY=( $(compgen -W "${options}" -- ${cur}))
+	else
+		COMPREPLY=( $(compgen -d ${cur}) )
 	fi
 	return 0
 }
@@ -48,6 +50,8 @@ _analizo_metrics-batch() {
 	options="-p -h -o -q --parallel --help --output --quiet"
 	if [[ ${cur} == -* ]] ; then
 		COMPREPLY=( $(compgen -W "${options}" -- ${cur}))
+	else
+		COMPREPLY=( $(compgen -d ${cur}) )
 	fi
 	return 0
 }
@@ -57,6 +61,8 @@ _analizo_metrics-history() {
 	options="-p -n -o -f -l -b -h -u --parallel --language --output --format --list --progressbar --help --usage"
 	if [[ ${cur} == -* ]] ; then
 		COMPREPLY=( $(compgen -W "${options}" -- ${cur}))
+	else
+		COMPREPLY=( $(compgen -d ${cur}) )
 	fi
 	return 0
 }
@@ -66,6 +72,8 @@ _analizo_tree-evolution() {
 	options="-l -h --language --help"
 	if [[ ${cur} == -* ]] ; then
 		COMPREPLY=( $(compgen -W "${options}" -- ${cur}))
+	else
+		COMPREPLY=( $(compgen -d ${cur}) )
 	fi
 	return 0
 }
