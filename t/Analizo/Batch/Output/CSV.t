@@ -6,6 +6,7 @@ use Test::More 'no_plan';
 use t::Analizo::Test;
 
 use Analizo::Batch::Output::CSV;
+use Analizo::Batch::Output::yaml2csv;
 use Analizo::Batch::Job::Directories;
 
 my $TMPDIR = tmpdir();
