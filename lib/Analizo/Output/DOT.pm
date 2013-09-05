@@ -43,15 +43,15 @@ sub string {
   if ($self->group_by_module) {
     # listing dependencies grouped by module
     my $modules_dependencies = { };
-    foreach my $caller (keys %{$self->model->calls}) {
-      foreach my $callee (keys %{$self->model->calls->{$caller}}) {
+    foreach my $caller (sort(keys %{$self->model->calls})) {
+      foreach my $callee (sort(keys %{$self->model->calls->{$caller}})) {
         my $calling_module = $self->_function_to_module($caller);
         my $called_module = $self->_function_to_module($callee);
         next unless (defined($calling_module) && defined($called_module) && ($calling_module ne $called_module));
         _add_dependency($modules_dependencies, $calling_module, $called_module);
       }
     }
-    foreach my $subclass (keys(%{$self->model->{inheritance}})) {
+    foreach my $subclass (sort(keys(%{$self->model->{inheritance}}))) {
       foreach my $superclass ($self->model->inheritance($subclass)) {
         _add_dependency($modules_dependencies, $subclass, $superclass);
       }
@@ -66,8 +66,8 @@ sub string {
 
   } else {
     # listing raw dependency info
-    foreach my $caller (grep { $self->_include_caller($_) } keys(%{$self->model->calls})) {
-      foreach my $callee (grep { $self->_include_callee($_) } keys(%{$self->model->calls->{$caller}})) {
+    foreach my $caller (grep { $self->_include_caller($_) } sort(keys(%{$self->model->calls}))) {
+      foreach my $callee (grep { $self->_include_callee($_) } sort(keys(%{$self->model->calls->{$caller}}))) {
         my $style = _reftype_to_style($self->model->calls->{$caller}->{$callee});
         $result .= sprintf("\"%s\" -> \"%s\" [style=%s];\n", $self->_demangle($caller), $self->_demangle($callee), $style);
       }

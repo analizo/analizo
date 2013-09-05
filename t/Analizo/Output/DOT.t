@@ -93,8 +93,8 @@ sub listing_two_calls : Tests {
   is(
     $output->string,
     'digraph callgraph {
-"function1(type *)" -> "function3()" [style=solid];
 "function1(type *)" -> "function2(type1, type2)" [style=solid];
+"function1(type *)" -> "function3()" [style=solid];
 }
 ',
     'must generate correctly a graph with f1 -> f2, f1 -> f3'
