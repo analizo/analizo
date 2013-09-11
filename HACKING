@@ -100,6 +100,14 @@ You are encouraged to learn how to use git since it's a powerful version
 control system and it can make it easy for you to keep in sync with Analizo
 development.
 
+Patches with multiple authors should list the authors in the commit message,
+using a `Signed-off-by` tag, one author per line. Example:
+
+  Signed-off-by: John Doe <johndoe@example.org>
+  Signed-off-by: Random Hacker <rhacker@example.org>
+
+See commit 005c3bff4e0809eae0340e7629678186d1621930 for an example.
+
 =================================================
 = Installing dependencies on non-Debian systems =
 =================================================
