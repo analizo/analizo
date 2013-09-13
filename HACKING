@@ -100,8 +100,14 @@ You are encouraged to learn how to use git since it's a powerful version
 control system and it can make it easy for you to keep in sync with Analizo
 development.
 
-Patches with multiple authors should list the authors in the commit message,
-using a `Signed-off-by` tag, one author per line. Example:
+Please write good commits messages. Read the following two links, and use
+common sense:
+
+- http://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html
+- http://robots.thoughtbot.com/post/48933156625/5-useful-tips-for-a-better-commit-message
+
+Patches with multiple authors should list the authors in the end of commit
+message, using a `Signed-off-by` tag, one author per line. Example:
 
   Signed-off-by: John Doe <johndoe@example.org>
   Signed-off-by: Random Hacker <rhacker@example.org>
