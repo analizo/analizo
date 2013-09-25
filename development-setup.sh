@@ -3,7 +3,7 @@
 set -e
 
 setup_debian() {
-  apt-get -q -y install wget
+  sudo apt-get -q -y install wget
   which lsb_release || apt-get -q -y install lsb-release
   codename=$(lsb_release -c | awk '{print($2)}')
   if type prepare_$codename >/dev/null 2>&1; then
@@ -12,7 +12,7 @@ setup_debian() {
     echo "WARNING: no specific preparation steps for $codename"
   fi
 
-  apt-get -q -y install devscripts equivs wget
+  sudo apt-get -q -y install devscripts equivs wget
   if [ ! -f /etc/apt/sources.list.d/analizo.list ]; then
     echo 'deb http://analizo.org/download/ ./' > /etc/apt/sources.list.d/analizo.list
     wget -O - http://analizo.org/download/signing-key.asc | apt-key add -
