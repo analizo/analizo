@@ -6,9 +6,10 @@ setup_debian() {
   apt-get -q -y install wget
   which lsb_release || apt-get -q -y install lsb-release
   codename=$(lsb_release -c | awk '{print($2)}')
-  type prepare_$codename >/dev/null 2>&1
-  if [ $? -eq  0 ]; then
+  if type prepare_$codename >/dev/null 2>&1; then
     prepare_$codename
+  else
+    echo "WARNING: no specific preparation steps for $codename"
   fi
 
   apt-get -q -y install devscripts equivs wget
@@ -21,6 +22,7 @@ setup_debian() {
   mk-build-deps
   sudo dpkg --unpack analizo-build-deps*.deb
   sudo apt-get -q -y -f install
+  sudo apt-get -q -y install libfile-sharedir-install-perl
 }
 
 prepare_squeeze() {
