@@ -4,7 +4,7 @@ set -e
 
 setup_debian() {
   sudo apt-get -q -y install wget
-  which lsb_release || apt-get -q -y install lsb-release
+  which lsb_release || sudo apt-get -q -y install lsb-release
   codename=$(lsb_release -c | awk '{print($2)}')
   if type prepare_$codename >/dev/null 2>&1; then
     prepare_$codename
