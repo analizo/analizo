@@ -14,9 +14,9 @@ setup_debian() {
 
   sudo apt-get -q -y install devscripts equivs wget
   if [ ! -f /etc/apt/sources.list.d/analizo.list ]; then
-    echo 'deb http://analizo.org/download/ ./' > /etc/apt/sources.list.d/analizo.list
-    wget -O - http://analizo.org/download/signing-key.asc | apt-key add -
-    apt-get update
+    echo "deb http://analizo.org/download/ ./" | sudo sh -c 'cat > /etc/apt/sources.list.d/analizo.list'
+    wget -O - http://analizo.org/download/signing-key.asc | sudo apt-key add -
+    sudo apt-get update
   fi
   rm -f analizo-build-deps*.deb
   mk-build-deps
