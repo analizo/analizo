@@ -50,20 +50,6 @@ prepare_squeeze() {
 
 }
 
-prepare_wheezy() {
-  if ! grep -q ZeroMQ Makefile.PL; then
-    # only needed while we depend on ZeroMQ
-    return
-  fi
-  dpkg-query --show libzeromq-perl && return
-  apt-get install -q -y libzeromq-perl && return # on we can `apt-get install`
-  arch=$(dpkg-architecture -qDEB_HOST_ARCH)
-  libzeromq=libzeromq-perl_0.23-1_$arch.deb
-  wget -O "/tmp/$libzeromq" "http://analizo.org/wheezy/$libzeromq"
-  dpkg --unpack "/tmp/$libzeromq"
-  apt-get -q -y -f install
-}
-
 prepare_precise() {
   if ! grep -q ZeroMQ Makefile.PL; then
     # only needed while we depend on ZeroMQ
