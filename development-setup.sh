@@ -12,16 +12,15 @@ setup_debian() {
     echo "WARNING: no specific preparation steps for $codename"
   fi
 
-  sudo apt-get -q -y install devscripts equivs wget
+  sudo apt-get -q -y install wget
   if [ ! -f /etc/apt/sources.list.d/analizo.list ]; then
     echo "deb http://analizo.org/download/ ./" | sudo sh -c 'cat > /etc/apt/sources.list.d/analizo.list'
     wget -O - http://analizo.org/download/signing-key.asc | sudo apt-key add -
     sudo apt-get update
   fi
-  rm -f analizo-build-deps*.deb
-  mk-build-deps
-  sudo dpkg --unpack analizo-build-deps*.deb
-  sudo apt-get -q -y -f install
+
+  packages=$(sed -e '1,/^Build-Depends-Indep:/ d; /^\S/,$ d; s/,//; s/(.*$//' debian/control)
+  sudo apt-get -q -y -f install $packages
   sudo apt-get -q -y install libfile-sharedir-install-perl
 }
 
