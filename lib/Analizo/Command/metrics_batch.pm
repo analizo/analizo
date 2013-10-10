@@ -7,9 +7,11 @@ use Analizo::Batch::Directories;
 use Analizo::Batch::Output::CSV;
 use File::Basename;
 
+# ABSTRACT: processes several source code directories in batch
+
 =head1 NAME
 
-Analizo::Command::metrics_batch - processes several source code directories in batch
+analizo metrics-batch - processes several source code directories in batch
 
 =head1 USAGE
 

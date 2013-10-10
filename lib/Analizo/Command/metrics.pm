@@ -7,9 +7,11 @@ use Analizo::Metrics;
 use Analizo::Batch::Job::Directories;
 use File::Basename;
 
+# ABSTRACT: analizo's metric reporting tool
+
 =head1 NAME
 
-Analizo::Command::metrics - analizo's metric reporting tool
+analizo-metrics - analizo's metric reporting tool
 
 =head1 USAGE
 

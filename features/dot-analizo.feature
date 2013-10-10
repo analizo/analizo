@@ -17,12 +17,12 @@ Feature: loading command line options from .analizo
     And I create a file called .analizo with the following content
       | <tool>: --help |
     When I run "analizo <tool>"
-    Then the output must match "Analizo::Command::<filename>\(1\)"
+    Then the output must match "analizo-<tool>\(1\)"
   Examples:
-    | tool             | filename         |
-    | graph            | graph            |
-    | metrics          | metrics          |
-    | metrics-batch    | metrics_batch    |
-    | metrics-history  | metrics_history  |
-    | tree-evolution   | tree_evolution   |
-    | evolution-matrix | evolution_matrix |
+    | tool             |
+    | graph            |
+    | metrics          |
+    | metrics-batch    |
+    | metrics-history  |
+    | tree-evolution   |
+    | evolution-matrix |

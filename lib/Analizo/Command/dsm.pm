@@ -9,9 +9,11 @@ use Graph::Writer::DSM::HTML;
 use File::Basename;
 use Cwd 'abs_path';
 
+# ABSTRACT: draw the design structure matrix from call graph
+
 =head1 NAME
 
-Analizo::Command::dsm - draw the design structure matrix from call graph
+analizo dsm - draw the design structure matrix from call graph
 
 =head1 USAGE
 

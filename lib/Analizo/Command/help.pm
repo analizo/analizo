@@ -3,9 +3,11 @@ use base qw(App::Cmd::Command::help Analizo::Command);
 use strict;
 use warnings;
 
+#ABSTRACT: displays the help
+
 =head1 NAME
 
-Analizo::Command::help - displays the help
+analizo help - displays the help
 
 =head1 DESCRIPTION
 
@@ -28,7 +30,7 @@ sub execute {
     exit 0;
   }
   elsif ($self->app->global_options->help) {
-    $self->show_manpage('Analizo');
+    $self->show_manpage('Analizo', 'analizo');
     exit 0;
   }
   elsif ($self->app->global_options->usage) {

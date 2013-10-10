@@ -9,9 +9,11 @@ use YAML::Tiny;
 use Mojo::Template;
 use File::Basename;
 
+# ABSTRACT: generates an evolution matrix from analizo .yml metric files
+
 =head1 NAME
 
-Analizo::Command::evolution_matrix - generates an evolution matrix from analizo .yml metric files
+analizo evolution-matrix - generates an evolution matrix from analizo .yml metric files
 
 =head1 USAGE
 

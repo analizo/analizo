@@ -7,9 +7,11 @@ use Analizo::Extractor;
 use Analizo::Output::DOT;
 use File::Basename;
 
+# ABSTRACT: dependency graph generator
+
 =head1 NAME
 
-Analizo::Command::graph - dependency graph generator
+analizo graph - dependency graph generator
 
 =head1 USAGE
 

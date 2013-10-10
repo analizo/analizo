@@ -5,9 +5,11 @@ use strict;
 use warnings;
 use Analizo::Batch::Git;
 
+#ABSTRACT: processes a Git repository collection metrics
+
 =head1 NAME
 
-Analizo::Command::metrics_history - processes a Git repository collection metrics
+analizo metrics-history - processes a Git repository collection metrics
 
 =head1 USAGE
 
@@ -202,7 +204,7 @@ analizo was not tested with MySQL yet.
 
 =head1 SEE ALSO
 
-L<Analizo::Command::metrics>
+B<analizo-metrics(1)>
 
 =head1 COPYRIGHT AND AUTHORS
 

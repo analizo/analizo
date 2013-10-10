@@ -7,7 +7,7 @@ our $VERSION = '1.17.0';
 
 =head1 NAME
 
-Analizo - a source code analysis suite
+analizo - a source code analysis suite
 
 =head1 USAGE
 

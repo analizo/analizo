@@ -30,7 +30,7 @@ sub validate_args {
   }
   elsif ($self->app->global_options->help) {
     my $package = ref $self;
-    $self->show_manpage($package);
+    $self->show_manpage($package, $self->command_names);
     exit 0;
   }
   elsif ($self->app->global_options->usage) {
@@ -46,10 +46,10 @@ sub version_information {
 }
 
 sub show_manpage {
-  my ($self, $package) = @_;
+  my ($self, $package, $command_name) = @_;
   my $version_information = $self->version_information;
-  my $file = Class::Inspector->loaded_filename($package);
-  exec("pod2man --name='$package' --release='$version_information' --center='Analizo documentation' '$file' | man -l -");
+  my $file = Class::Inspector->resolved_filename($package);
+  exec("pod2man --name='analizo-$command_name' --release='$version_information' --center='Analizo documentation' '$file' | man -l -");
 }
 
 1;

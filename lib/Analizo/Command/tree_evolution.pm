@@ -7,9 +7,11 @@ use Digest::SHA qw(sha1_hex);
 use File::Basename;
 use Analizo::LanguageFilter;
 
+#ABSTRACT:  watch the evolution of the source code
+
 =head1 NAME
 
-Analizo::Command::tree_evolution - watch the evolution of the source code
+analizo tree-evolution - watch the evolution of the source code
 
 =head1 USAGE
 

@@ -4,7 +4,9 @@ use File::Basename;
 
 my %manpages = ();
 for my $script (glob('lib/Analizo/Command/*')) {
-  $manpages{$script} = 'blib/man1/analizo-' . basename($script, '.pm') . '.1';
+  my $path = 'blib/man1/analizo-' . basename($script, '.pm') . '.1';
+  $path =~ s/_/-/g;
+  $manpages{$script} = $path;
 }
 $manpages{'lib/Analizo.pm'} = 'blib/man1/analizo.1';
 
@@ -45,6 +47,8 @@ WriteMakefile(
   VERSION_FROM => 'lib/Analizo.pm',
   EXE_FILES => ['analizo'],
   MAN1PODS => \%manpages,
+  MAN1EXT => '1',
+  MAN3PODS => {},
   AUTHOR => 'Antonio Terceiro <terceiro@softwarelivre.org>',
   LICENSE => 'GPLv3+',
   ABSTRACT => 'Source code analysis toolkit',
