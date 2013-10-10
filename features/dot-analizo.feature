@@ -15,16 +15,14 @@ Feature: loading command line options from .analizo
   Scenario Outline: all others
     Given I change to an empty temporary directory
     And I create a file called .analizo with the following content
-      | <command>: --help |
-    When I run "analizo <command>"
-    Then the output must match "analizo-<command>\(1\)"
+      | <tool>: --help |
+    When I run "analizo <tool>"
+    Then the output must match "Analizo::Command::<filename>\(1\)"
   Examples:
-    | command          |
-    | graph            |
-    | metrics          |
-    | metrics-batch    |
-    | metrics-history  |
-    | tree-evolution   |
-    | evolution-matrix |
-  # | doc              |
-  # this is not Perl, so for now they do not support this.
+    | tool             | filename         |
+    | graph            | graph            |
+    | metrics          | metrics          |
+    | metrics-batch    | metrics_batch    |
+    | metrics-history  | metrics_history  |
+    | tree-evolution   | tree_evolution   |
+    | evolution-matrix | evolution_matrix |
