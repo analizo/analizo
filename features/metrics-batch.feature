@@ -4,14 +4,14 @@ Feature: metrics batch
   So I can compare their metrics
 
   Scenario: "hello, world"
-    Given I am in t/samples/hello_world
-    When I run "analizo metrics-batch && rm -f metrics.csv"
+    Given I copy t/samples/hello_world/* into a temporary directory
+    When I run "analizo metrics-batch"
     Then the output must match "I: Processed c."
     Then the output must match "I: Processed cpp."
     Then the output must match "I: Processed java."
 
   Scenario: summarizing
-    Given I am in t/samples/hello_world
+    Given I copy t/samples/hello_world/* into a temporary directory
     When I run "analizo metrics-batch --quiet -o data.csv && cat data.csv && rm -f data.csv"
     Then the output must match "^id,"
     And the output must not match ",---,"
