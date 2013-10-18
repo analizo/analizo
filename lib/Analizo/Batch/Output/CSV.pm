@@ -32,7 +32,7 @@ sub write_data {
     my $line = join(',', $job->id, @metadata, @values) . "\n";
     print $fh $line;
 
-    $self->write_details($job->id, $details);
+    $self->_write_details($job->id, $details);
   }
 }
 
@@ -48,7 +48,7 @@ sub _encode_value($) {
   return &$encoder($value);
 }
 
-sub write_details {
+sub _write_details {
   my ($self, $id, $details) = @_;
   my @array_of_values = ();
   my $files_name;
@@ -56,24 +56,24 @@ sub write_details {
   my $csv_filename = $id. "-details.csv";
   open my $csv_handler, '>'.$csv_filename  || die "Cannot open ".$id."-details.csv\n".$!;
 
-  print $csv_handler "\"filename\",".
-         "\"module\",".
-         "\"acc\",".
-         "\"accm\",".
-         "\"amloc\",".
-         "\"anpm\",".
-         "\"cbo\",".
-         "\"dit\",".
-         "\"lcom4\",".
-         "\"loc\",".
-         "\"mmloc\",".
-         "\"noa\",".
-         "\"noc\",".
-         "\"nom\",".
-         "\"npm\",".
-         "\"npa\",".
-         "\"rfc\",".
-         "\"sc\"\n";
+  print $csv_handler "filename,".
+         "module,".
+         "acc,".
+         "accm,".
+         "amloc,".
+         "anpm,".
+         "cbo,".
+         "dit,".
+         "lcom4,".
+         "loc,".
+         "mmloc,".
+         "noa,".
+         "noc,".
+         "nom,".
+         "npm,".
+         "npa,".
+         "rfc,".
+         "sc\n";
 
   foreach (@$details)
   {
@@ -86,8 +86,8 @@ sub write_details {
       $file_name = $_->{_filename}[0]."\/".$_->{_filename}[1];
     }
 
-    push @array_of_values,  "\"".$file_name."\",".
-          "\"".$_->{_module}."\",".
+    push @array_of_values,  "".$file_name.",".
+          "".$_->{_module}.",".
           $_->{acc}.",".
           $_->{accm}.",".
           $_->{amloc}.",".
