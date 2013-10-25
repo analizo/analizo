@@ -49,49 +49,48 @@ sub _encode_value($) {
 }
 
 sub _extract_short_names_of_metrics {
-	my $metrics_instance = new Analizo::Metrics();
-	my @short_names = ();
+  my $metrics_instance = new Analizo::Metrics();
+  my @short_names = ();
 
-	my %metrics_names = $metrics_instance->list_of_metrics();
+  my %metrics_names = $metrics_instance->list_of_metrics();
 
-	@short_names = keys %metrics_names;
+  @short_names = sort(keys %metrics_names);
 
-	return @short_names;
+  return @short_names;
 }
 
 sub _write_details {
   my ($self, $id, $details) = @_;
   my @array_of_values = ();
-  my $files_name;
+  my $file_name;
 
-	my @fields = $self->_extract_short_names_of_metrics();
+  my @fields = $self->_extract_short_names_of_metrics();
 
   my $csv_filename = $id. "-details.csv";
   open my $csv_handler, '>'.$csv_filename  || die "Cannot open ".$id."-details.csv\n".$!;
 	
-	print $csv_handler "filename".",module";
+  print $csv_handler "filename".",module";
 
-	foreach (@fields){
-		print $csv_handler ",".$_;
-	}
+  foreach (@fields){
+    print $csv_handler ",".$_;
+  }
 
-	print $csv_handler "\n";
+  print $csv_handler "\n";
 
   foreach (@$details){
     if($_->{_filename}[1] eq ""){
       $file_name = $_->{_filename}[0];
-    }
-    else{
+    }else{
       $file_name = $_->{_filename}[0]."\/".$_->{_filename}[1];
     }
 
-		push @array_of_values, $file_name.",".$_->{_module};
+    push @array_of_values, $file_name.",".$_->{_module};
 
-		foreach $field (@fields){
-			push @array_of_values, ",".$_->{$field};
-		}
+    foreach $field (@fields){
+      push @array_of_values, ",".$_->{$field};
+    }
 
-		push @array_of_values, "\n";
+    push @array_of_values, "\n";
   }
 
   print $csv_handler @array_of_values;
