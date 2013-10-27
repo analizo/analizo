@@ -78,19 +78,19 @@ sub _write_details {
   print $csv_handler "\n";
 
   foreach (@$details){
-    if($_->{_filename}[1] eq ""){
+    if(!( $_->{_filename}[1])){
       $file_name = $_->{_filename}[0];
     }else{
       $file_name = $_->{_filename}[0]."\/".$_->{_filename}[1];
     }
 
-    push @array_of_values, $file_name.",".$_->{_module};
+    CORE::push @array_of_values, $file_name.",".$_->{_module};
 
     foreach $field (@fields){
-      push @array_of_values, ",".$_->{$field};
+      CORE::push @array_of_values, ",".$_->{$field};
     }
 
-    push @array_of_values, "\n";
+    CORE::push @array_of_values, "\n";
   }
 
   print $csv_handler @array_of_values;
