@@ -5,7 +5,7 @@ use Test::BDD::Cucumber::StepFile;
 use Method::Signatures;
 use File::Slurp;
 use File::Temp qw( tempdir );
-use File::Copy::Recursive qw( rcopy );
+use File::Copy::Recursive;
 use YAML::Tiny;
 use feature "switch";
 use File::LibMagic;
@@ -40,7 +40,7 @@ Then qr/^the exit status must not be (\d+)$/, func($c) {
 
 Step qr/^I copy (.*) into a temporary directory$/, func($c) {
   my $tmpdir = tempdir(CLEANUP => 1);
-  rcopy(glob($1), $tmpdir);
+  File::Copy::Recursive::rcopy_glob($1, $tmpdir);
   chdir $tmpdir;
 };
 

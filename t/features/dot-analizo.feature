@@ -18,17 +18,15 @@ Feature: loading command line options from .analizo
     Given I change to an empty temporary directory
     And I create a file called .analizo with the following content
       """
-      <command>: --help
+      <tool>: --help
       """
-    When I run "analizo <command>"
-    Then the output must match "analizo-<command>(1)"
+    When I run "analizo <tool>"
+    Then the output must match "analizo-<tool>(1)"
     Examples:
-      | command          |
+      | tool             |
       | graph            |
       | metrics          |
       | metrics-batch    |
       | metrics-history  |
       | tree-evolution   |
       | evolution-matrix |
-    # | doc              |
-    # this is not Perl, so for now they do not support this.

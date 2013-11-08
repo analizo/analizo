@@ -6,7 +6,7 @@ use base qw(Class::Accessor::Fast);
 __PACKAGE__->mk_accessors(qw(cells cell_width cell_height max_width max_height name));
 
 sub versions {
-  my $self = shift;
+  my ($self) = @_;
   [sort { compare_versions($a, $b) } uniq(map { keys %$_ } values %{$self->cells})];
 }
 
@@ -30,7 +30,7 @@ sub modules {
 }
 
 sub put {
-  my $self = shift;
+  my ($self) = @_;
   my ($mod, $version, $data) = @_;
   die "Cannot use empty version (mod = $mod, version = $version, data = $data)" unless $version;
   my $cell = Analizo::EvolutionMatrix::Cell->new({matrix => $self, data => $data});
@@ -46,22 +46,21 @@ sub put {
 }
 
 sub get {
-  my $self = shift;
-  my ($mod, $version) = @_;
+  my ($self, $mod, $version) = @_;
   $self->cells->{$mod} && $self->cells->{$mod}->{$version};
 }
 
 sub is_empty {
-  my $self = shift;
+  my ($self) = @_;
   $self->cells && keys %{$self->cells} == 0;
 }
 
 sub cell_width {
-  shift->{cell_width} || 'nom';
+  shift->{cell_width};
 }
 
 sub cell_height {
-  shift->{cell_height} || 'loc';
+  shift->{cell_height};
 }
 
 sub max_width {
@@ -73,7 +72,7 @@ sub max_height {
 }
 
 sub name {
-  shift->{name} || 'Unamed project';
+  shift->{name};
 }
 
 1;

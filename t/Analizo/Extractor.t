@@ -101,8 +101,8 @@ sub must_consider_only__supported_languages : Tests {
   my @processed = ();
   no warnings;
   local *Analizo::Extractor::actually_process = sub {
-    my $self = shift;
-    @processed = @_;
+    my ($self, @options) = @_;
+    @processed = @options;
   };
   use warnings;
 
@@ -121,8 +121,8 @@ sub must_filter_input_with_language_filter : Tests {
   my @processed = ();
   no warnings;
   local *Analizo::Extractor::actually_process = sub {
-    my $self = shift;
-    @processed = @_;
+    my ($self, @options) = @_;
+    @processed = @options;
   };
 
   my $extractor = new Analizo::Extractor;
@@ -153,8 +153,8 @@ sub must_not_process_files_in_excluded_dirs : Tests {
   my @processed = ();
   no warnings;
   local *Analizo::Extractor::actually_process = sub {
-    my $self = shift;
-    @processed = sort(@_);
+    my ($self, @options) = @_;
+    @processed = sort(@options);
   };
   use warnings;
 
@@ -168,8 +168,8 @@ sub must_not_exclude_everything_in_the_case_of_unexisting_excluded_dir : Tests {
   my @processed = ();
   no warnings;
   local *Analizo::Extractor::actually_process = sub {
-    my $self = shift;
-    @processed = sort(@_);
+    my ($self, @options) = @_;
+    @processed = sort(@options);
   };
   use warnings;
 

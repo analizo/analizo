@@ -9,8 +9,8 @@ use File::Temp qw/ tempfile /;
 use Cwd;
 
 sub new {
-  my $package = shift;
-  return bless { files => [], @_ }, $package;
+  my ($package, @options) = @_;
+  return bless { files => [], @options }, $package;
 }
 
 sub _add_file {
@@ -126,9 +126,9 @@ sub _strip_current_directory {
 }
 
 sub actually_process {
-  my $self = shift;
+  my ($self, @input_files) = @_;
   my ($temp_handle, $temp_filename) = tempfile();
-  foreach my $input_file (@_) {
+  foreach my $input_file (@input_files) {
     print $temp_handle "$input_file\n"
   }
   close $temp_handle;

@@ -1,0 +1,113 @@
+#!/bin/bash
+
+_analizo_doc() {
+	local options
+	options="-u -h --usage --help"
+	if [[ ${cur} == -* ]] ; then
+		COMPREPLY=( $(compgen -W "${options}" -- ${cur}))
+	else
+		COMPREPLY=( $(compgen -f ${cur}) )
+	fi
+
+	return 0
+}
+
+_analizo_evolution-matrix() {
+	local options
+	options="-h -x -y -n -o --help --width --height --name --output"
+	if [[ ${cur} == -* ]] ; then
+		COMPREPLY=( $(compgen -W "${options}" -- ${cur}))
+	else
+		COMPREPLY=( $(compgen -f ${cur}) )
+	fi
+	return 0
+}
+
+_analizo_graph() {
+	local options
+	options="-t -m -c -e -o -h --omit --cluster --modules --extractor --output --help"
+	if [[ ${cur} == -* ]] ; then
+		COMPREPLY=( $(compgen -W "${options}" -- ${cur}))
+	else
+		COMPREPLY=( $(compgen -d ${cur}) )
+	fi
+	return 0
+}
+
+_analizo_metrics() {
+	local options
+	options="-e -h -l -o -g -n -d --extractor --help --list --output --global-only --language --exclude"
+	if [[ ${cur} == -* ]] ; then
+		COMPREPLY=( $(compgen -W "${options}" -- ${cur}))
+	else
+		COMPREPLY=( $(compgen -d ${cur}) )
+	fi
+	return 0
+}
+
+_analizo_metrics-batch() {
+	local options
+	options="-p -h -o -q --parallel --help --output --quiet"
+	if [[ ${cur} == -* ]] ; then
+		COMPREPLY=( $(compgen -W "${options}" -- ${cur}))
+	else
+		COMPREPLY=( $(compgen -d ${cur}) )
+	fi
+	return 0
+}
+
+_analizo_metrics-history() {
+	local options
+	options="-p -n -o -f -l -b -h -u --parallel --language --output --format --list --progressbar --help --usage"
+	if [[ ${cur} == -* ]] ; then
+		COMPREPLY=( $(compgen -W "${options}" -- ${cur}))
+	else
+		COMPREPLY=( $(compgen -d ${cur}) )
+	fi
+	return 0
+}
+
+_analizo_tree-evolution() {
+	local options
+	options="-l -h --language --help"
+	if [[ ${cur} == -* ]] ; then
+		COMPREPLY=( $(compgen -W "${options}" -- ${cur}))
+	else
+		COMPREPLY=( $(compgen -d ${cur}) )
+	fi
+	return 0
+}
+
+_analizo() {
+	local cur prev opts tools
+	COMPREPLY=()
+	_get_comp_words_by_ref cur prev
+	opts="-v -h --version --help"
+	tools="doc evolution-matrix graph metrics metrics-batch metrics-history tree-evolution"
+
+	case "${prev}" in
+		analizo)
+			if [[ ${cur} == -* ]] ; then
+				COMPREPLY=( $(compgen -W "${opts}" -- ${cur}))
+				return 0
+			else
+				COMPREPLY=( $(compgen -W "${tools}" -- ${cur}) )
+				return 0
+			fi
+			;;
+
+			*)
+			for tool in $tools
+				do
+					if [ $prev == $tool ]; then
+						_analizo_${tool}
+						return 0
+					fi
+				done
+			return 0
+			;;
+	esac
+	
+	return 0
+}
+complete -F _analizo analizo

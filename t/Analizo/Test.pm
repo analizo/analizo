@@ -5,6 +5,7 @@ use warnings;
 use base qw( Exporter );
 our @EXPORT = qw(
   on_dir
+  on_tmpdir
   mock
   tmpdir
   unpack_sample_git_repository
@@ -12,6 +13,7 @@ our @EXPORT = qw(
 );
 
 use Test::MockObject::Extends;
+use File::Path qw(remove_tree);
 
 sub on_dir {
   my ($dir, $code) = @_;
@@ -29,7 +31,7 @@ sub on_dir {
 }
 
 sub mock {
-  my $object = shift;
+  my ($object) = @_;
   new Test::MockObject::Extends($object);
 }
 
@@ -43,6 +45,15 @@ sub tmpdir_for {
   my ($filename) = @_;
   $filename = abs_path($filename);
   return $filename . '.tmpdir';
+}
+
+sub on_tmpdir {
+  my ($code) = @_;
+  my $tmpdir = tmpdir;
+  mkdir $tmpdir;
+  my $result = on_dir($tmpdir, $code);
+  remove_tree $tmpdir;
+  return $result;
 }
 
 sub unpack_sample_git_repository {
@@ -61,7 +72,7 @@ sub unpack_sample_git_repository {
 }
 
 sub readfile {
-  my $filename = shift;
+  my ($filename) = @_;
   open INPUT, $filename;
   my @lines = <INPUT>;
   close INPUT;

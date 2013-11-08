@@ -30,7 +30,7 @@ sub new {
 }
 
 sub _initialize_calculators {
-  my $model = shift;
+  my ($model) = @_;
   my %calculators = (
     total_abstract_classes            => new Analizo::GlobalMetric::TotalAbstractClasses(model => $model),
     total_methods_per_abstract_class  => new Analizo::GlobalMetric::MethodsPerAbstractClass(model => $model),
@@ -53,7 +53,7 @@ sub _initialize_metric_report {
 }
 
 sub list {
-  my $self = shift;
+  my ($self) = @_;
   my %list = (
     total_cof => "Total Coupling Factor",
     total_modules => "Total Number of Modules",
@@ -100,7 +100,8 @@ sub _add_metric_value_to_values_list {
 }
 
 sub report {
-  my $self = shift;
+
+  my ($self) = @_;
 
   $self->_include_metrics_from_calculators;
   $self->_add_statistics;
@@ -110,14 +111,14 @@ sub report {
 }
 
 sub _include_metrics_from_calculators {
-  my $self = shift;
+  my ($self) = @_;
   for my $metric (keys %{$self->calculators}) {
     $self->metric_report->{$metric} = $self->calculators->{$metric}->calculate();
   }
 }
 
 sub _add_statistics {
-  my $self = shift;
+  my ($self) = @_;
 
   for my $metric (keys %{$self->values_lists}) {
     my $statistics = Statistics::Descriptive::Full->new();
@@ -158,7 +159,7 @@ sub _add_distributions_statistics {
 }
 
 sub _add_total_coupling_factor {
-  my $self = shift;
+  my ($self) = @_;
   my $total_modules = $self->metric_report->{'total_modules'};
   my $total_acc = $self->metric_report->{'acc_sum'};
 
@@ -171,7 +172,7 @@ sub coupling_factor {
 }
 
 sub _number_of_combinations {
-  my $total_modules = shift;
+  my ($total_modules) = @_;
   return $total_modules * ($total_modules - 1);
 }
 

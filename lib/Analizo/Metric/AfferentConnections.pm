@@ -28,7 +28,7 @@ sub calculate {
 }
 
 sub _number_of_modules_that_call_module {
-  my $self = shift;
+  my ($self) = @_;
 
   my @seen_modules = ();
   for my $caller_member (keys(%{$self->model->calls})){

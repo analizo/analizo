@@ -3,24 +3,25 @@
 set -e
 
 setup_debian() {
-  apt-get -q -y install wget
-  which lsb_release || apt-get -q -y install lsb-release
+  sudo apt-get -q -y install wget
+  which lsb_release || sudo apt-get -q -y install lsb-release
   codename=$(lsb_release -c | awk '{print($2)}')
-  type prepare_$codename >/dev/null 2>&1
-  if [ $? -eq  0 ]; then
+  if type prepare_$codename >/dev/null 2>&1; then
     prepare_$codename
+  else
+    echo "WARNING: no specific preparation steps for $codename"
   fi
 
-  apt-get -q -y install devscripts equivs wget
+  sudo apt-get -q -y install wget
   if [ ! -f /etc/apt/sources.list.d/analizo.list ]; then
-    echo 'deb http://analizo.org/download/ ./' > /etc/apt/sources.list.d/analizo.list
-    wget -O - http://analizo.org/download/signing-key.asc | apt-key add -
-    apt-get update
+    echo "deb http://analizo.org/download/ ./" | sudo sh -c 'cat > /etc/apt/sources.list.d/analizo.list'
+    wget -O - http://analizo.org/download/signing-key.asc | sudo apt-key add -
+    sudo apt-get update
   fi
-  rm -f analizo-build-deps*.deb
-  mk-build-deps
-  sudo dpkg --unpack analizo-build-deps*.deb
-  sudo apt-get -q -y -f install
+
+  packages=$(sed -e '1,/^Build-Depends-Indep:/ d; /^\S/,$ d; s/,//; s/(.*$//' debian/control)
+  sudo apt-get -q -y -f install $packages
+  sudo apt-get -q -y install libfile-sharedir-install-perl
 }
 
 prepare_squeeze() {
@@ -45,20 +46,6 @@ prepare_squeeze() {
     (cd /tmp/ && equivs-build ${fakepkg}.equivs && dpkg -i ${fakepkg}_1.0_all.deb)
   done
 
-}
-
-prepare_wheezy() {
-  if ! grep -q ZeroMQ Makefile.PL; then
-    # only needed while we depend on ZeroMQ
-    return
-  fi
-  dpkg-query --show libzeromq-perl && return
-  apt-get install -q -y libzeromq-perl && return # on we can `apt-get install`
-  arch=$(dpkg-architecture -qDEB_HOST_ARCH)
-  libzeromq=libzeromq-perl_0.23-1_$arch.deb
-  wget -O "/tmp/$libzeromq" "http://analizo.org/wheezy/$libzeromq"
-  dpkg --unpack "/tmp/$libzeromq"
-  apt-get -q -y -f install
 }
 
 prepare_precise() {

@@ -8,7 +8,6 @@ Feature: give manpage on --help
     Then the output must match "analizo-<tool>\(1\)"
     Examples:
       | tool             |
-      | doc              |
       | evolution-matrix |
       | graph            |
       | metrics          |
