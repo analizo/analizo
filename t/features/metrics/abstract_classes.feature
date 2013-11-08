@@ -3,29 +3,29 @@ Feature: number of abstract classes
   I want analizo to report the number of abstract classes in my code
   So that I can evaluate it
 
-  Scenario Outline: "Hello, world" project
+  Scenario: "Hello, world" project
     Given I am in t/samples/hello_world/<language>
     When I run "analizo metrics ."
     Then analizo must report that the project has total_abstract_classes = 0
-  Examples:
-    | language |
-    | cpp      |
-    | java     |
+    Examples:
+      | language |
+      | cpp      |
+      | java     |
 
-  Scenario Outline: "Animals" project
+  Scenario: "Animals" project
     Given I am in t/samples/animals/<language>
     When I run "analizo metrics ."
     Then analizo must report that the project has total_abstract_classes = 1
-  Examples:
-    | language |
-    | cpp      |
-    | java     |
+    Examples:
+      | language |
+      | cpp      |
+      | java     |
 
-  Scenario Outline: "Polygons" project
+  Scenario: "Polygons" project
     Given I am in t/samples/polygons/<language>
     When I run "analizo metrics ."
     Then analizo must report that the project has total_abstract_classes = 2
-  Examples:
-    | language |
-    | cpp      |
-    | java     |
+    Examples:
+      | language |
+      | cpp      |
+      | java     |

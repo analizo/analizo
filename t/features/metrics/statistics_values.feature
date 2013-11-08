@@ -3,7 +3,7 @@ Feature: output statistics values of metrics
   I want to ouput statistics values of metrics
   So that I can evaluate a project at once
 
-  Scenario Outline: "Hello, world" project
+  Scenario: "Hello, world" project
     Given I am in t/samples/hello_world/
     When I run "analizo metrics ."
     Then the output must match "<metric>_mean:"
@@ -18,23 +18,22 @@ Feature: output statistics values of metrics
     Then the output must match "<metric>_quantile_max:"
     Then the output must match "<metric>_kurtosis:"
     Then the output must match "<metric>_skewness:"
-
-  Examples:
-    | metric |
-    | acc    |
-    | accm   |
-    | amloc  |
-    | anpm   |
-    | cbo    |
-    | dit    |
-    | lcom4  |
-    | loc    |
-    | mmloc  |
-    | noa    |
-    | noc    |
-    | nom    |
-    | npm    |
-    | npa    |
-    | rfc    |
-    | sc     |
+    Examples:
+      | metric |
+      | acc    |
+      | accm   |
+      | amloc  |
+      | anpm   |
+      | cbo    |
+      | dit    |
+      | lcom4  |
+      | loc    |
+      | mmloc  |
+      | noa    |
+      | noc    |
+      | nom    |
+      | npm    |
+      | npa    |
+      | rfc    |
+      | sc     |
 

@@ -23,4 +23,4 @@ Feature: analizo wrapper script
   Scenario: invalid option
     When I run "analizo --invalid-option"
     Then the output must match "Unrecognized command"
-    And the exit status must be 1
+    And the exit status must not be 0
