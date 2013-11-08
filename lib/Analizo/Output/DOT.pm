@@ -69,7 +69,7 @@ sub string {
     foreach my $caller (grep { $self->_include_caller($_) } sort(keys(%{$self->model->calls}))) {
       foreach my $callee (grep { $self->_include_callee($_) } sort(keys(%{$self->model->calls->{$caller}}))) {
         my $style = _reftype_to_style($self->model->calls->{$caller}->{$callee});
-        $result .= sprintf("\"%s\" -> \"%s\" [style=%s];\n", $self->_demangle($caller), $self->_demangle($callee), $style);
+        $result .= sprintf("\"%s\" -> \"%s\" [style=%s];\n", $caller, $callee, $style);
       }
     }
   }
@@ -100,8 +100,7 @@ sub _calculate_clusters {
     $result .= "subgraph \"cluster_$module\" {\n";
     $result .= sprintf("  label = \"%s\";\n", _file_to_module($module));
     foreach my $member ($self->model->all_members($module)) {
-      my $demangled = $self->_demangle($member);
-      $result .= sprintf("  node [label=\"%s\"] \"%s\";\n", $demangled, $demangled);
+      $result .= sprintf("  node [label=\"%s\"] \"%s\";\n", $member, $member);
     }
     $result .= "}\n";
   }
@@ -129,11 +128,6 @@ sub _reftype_to_style {
     'variable' => 'dashed',
   );
   return $styles{$reftype} || 'solid';
-}
-
-sub _demangle {
-  my ($self, $mangled) = @_;
-  return $self->model->demangle($mangled);
 }
 
 1;
