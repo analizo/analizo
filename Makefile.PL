@@ -75,6 +75,7 @@ WriteMakefile(
     'Class::Inspector' => 0,
     'Graph::Writer::DSM' => 0.005,
     'FindBin::libs' => 0,
+    'Graph::Writer::Dot' => 2.05,
   },
   BUILD_REQUIRES => {
     'Test::Class' => 0,
