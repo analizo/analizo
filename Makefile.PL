@@ -2,13 +2,7 @@ use ExtUtils::MakeMaker;
 use File::ShareDir::Install;
 use File::Basename;
 
-my %manpages = ();
-for my $script (glob('lib/Analizo/Command/*')) {
-  my $path = 'blib/man1/analizo-' . basename($script, '.pm') . '.1';
-  $path =~ s/_/-/g;
-  $manpages{$script} = $path;
-}
-$manpages{'lib/Analizo.pm'} = 'blib/man1/analizo.1';
+do 'man.pl';
 
 sub CheckExtraDependencies {
   my ($type, %dependencies) = @_;
