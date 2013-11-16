@@ -1,0 +1,7 @@
+# Introduction
+
+Analizo is a free, multi-language, extensible source code analysis and
+visualization toolkit. It supports the extraction and calculation of a fair
+number of source code metrics, generation of dependency graphs, and software
+evolution analysis.
+
