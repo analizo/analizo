@@ -1,6 +1,6 @@
-.bundle
-tags
-Makefile
+/.bundle
+/tags
+/Makefile
 *~
 *.swp
 /site/*.html
