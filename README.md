@@ -1,21 +1,16 @@
-=======
-= About
-=======
+# About Analizo
 
 Analizo is a suite of source code analysis tools, aimed at being
-language-independent and extensible. The project home page is http://analizo.org
+language-independent and extensible. The project home page is
+http://analizo.org
 
-==============
-= Installation
-==============
+# Installation
 
-See INSTALL file.
+See INSTALL.md.
 
-===========
-= Copyright
-===========
+# Copyright
 
-Copyright (c) The Analizo developers.
+Copyright © The Analizo developers.
 
 Please see the AUTHORS file for a full list of the copyright holders.
 
@@ -32,24 +27,15 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-=================
-= Acknowledgments
-=================
+# Acknowledgments
 
 Analizo has been supported by several organizations:
 
-Brazilian National Research Council (CNPQ)
-http://www.cnpq.br/
+* [Brazilian National Research Council (CNPQ)](http://www.cnpq.br/)
+* [Bahia State's Research Support Foundation
+  (FAPESB)](http://www.fapesb.ba.gov.br/)
+* [The Brazilian National Institute of Science and Technology for Software
+  Engineering](http://www.ines.org.br/)
+* [Qualipso project](http://www.qualipso.org/)
+* [USP FLOSS Competence Center](http://ccsl.ime.usp.br/)
 
-Bahia State's Research Support Foundation (FAPESB)
-http://www.fapesb.ba.gov.br/
-
-The Brazilian National Institute of Science and Technology for Software
-Engineering
-http://www.ines.org.br/
-
-Qualipso project
-http://www.qualipso.org/
-
-USP FLOSS Competence Center
-http://ccsl.ime.usp.br/
