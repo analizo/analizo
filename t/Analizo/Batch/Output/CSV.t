@@ -102,7 +102,9 @@ sub must_write_hash_data_as_string : Tests {
 
 sub __create {
   my @args = @_;
-  return new Analizo::Batch::Output::CSV(@args);
+  my $output = mock(new Analizo::Batch::Output::CSV(@args));
+  $output->mock('write_details', sub { });
+  return $output;
 }
 
 __PACKAGE__->runtests;
