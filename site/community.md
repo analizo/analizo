@@ -17,5 +17,7 @@ Report bugs [at Github](http://github.com/analizo/analizo/issues).
 
 ## Contributing
 
+Source code is available [at Github](http://github.com/analizo/analizo).
+
 See the "developer documentation" section at the [Documentation
 page](documentation.html).

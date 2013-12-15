@@ -19,6 +19,20 @@ $(SITEDOCS): %.html : %.md template.html.tt page.pl
 man.mk: man.pl
 	perl $< > $@
 
+upload: all
+	rsync \
+		-avp \
+		--delete \
+		--copy-links \
+		--exclude '*.swp' \
+		--exclude '*.pm' \
+		--exclude '*.md' \
+		--exclude '*.pl' \
+		--exclude '*.mk' \
+		--exclude '*.tt' \
+		--exclude Makefile \
+		./ analizo.org:analizo/
+
 clean:
 	$(RM) man.mk $(MAN)
 	$(RM) index.html
