@@ -20,7 +20,7 @@ Feature: analizo metrics-history
 
   Scenario: actually processing
     When I explode t/samples/evolution.tar.gz
-    And I run "(analizo metrics-history -o metrics.csv . && cat metrics.csv)"
+    And I run "analizo metrics-history -o metrics.csv . && cat metrics.csv"
     Then the output must match "^id,previous_commit_id,author_date,author_name,author_email,.*,sc_mean"
     And the output must match "0a06a6fcc2e7b4fe56d134e89d74ad028bb122ed,eb67c27055293e835049b58d7d73ce3664d3f90e"
     # merge commit:
