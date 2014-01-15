@@ -17,7 +17,8 @@ sub new {
     conditional_paths => {},
     abstract_classes => [],
     module_names => [],
-    total_eloc => 0
+    total_eloc => 0,
+    divisions_by_zero => {}
   );
   return bless { @defaults }, __PACKAGE__;
 }
@@ -48,6 +49,11 @@ sub declare_module {
     push @{$self->{module_names}}, $module;
   }
   if (defined($file)) {
+    #undup filename
+    foreach (@{$self->{files}->{$module}}) {
+      return if($_ eq $file);
+    }
+
     $self->{files}->{$module} ||= [];
     push(@{$self->{files}->{$module}}, $file);
 
@@ -245,4 +251,15 @@ sub _function_to_file {
   $self->{files}->{$module};
 }
 
+sub declare_divisions_by_zero {
+  my ($self, $module, $value) = @_;
+  $self->{divisions_by_zero}->{$module} = $value;
+}
+
+sub divisions_by_zero {
+  my ($self) = @_;
+  return $self->{divisions_by_zero};
+}
+
 1;
+

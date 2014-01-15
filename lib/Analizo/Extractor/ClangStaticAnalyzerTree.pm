@@ -17,7 +17,7 @@ sub building_tree {
   my $bug_name;
   my @raw_path;
 
-  if($_ =~ m/<\/td><td class="DESC">([^<]+)<\/td><td>([^&]+)<\/td><td class="Q">([\d]+)<\/td><td class="Q">/) {
+  if($line =~ m/<\/td><td class="DESC">([^<]+)<\/td><td>([^&]+)<\/td><td class="Q">([\d]+)<\/td><td class="Q">/) {
     @raw_path = split("<span class=\"W\"> </span>", $2);
     $file_name = join('', @raw_path);
     $bug_name = $1;

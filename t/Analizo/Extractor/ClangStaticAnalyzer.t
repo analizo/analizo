@@ -1,6 +1,6 @@
 package t::Analizo::Extractor::ClangStaticAnalyzer;
 use base qw(Test::Class);
-use Test::More tests => 5;
+use Test::More tests => 7;
 
 use strict;
 use warnings;
@@ -23,13 +23,14 @@ sub has_a_model : Tests {
 }
 
 sub test_actually_process : Tests {
-  no warnings 'redefine';
   our $report_tree;
 
+  no warnings;
   local *Analizo::Extractor::ClangStaticAnalyzer::feed = sub {
     my ($self, $tree) = @_;
     $report_tree = $tree;
   };
+  use warnings;
 
   my $extractor = new Analizo::Extractor::ClangStaticAnalyzer;
   $extractor->actually_process("t/samples/clang_analyzer/division_by_zero.c", "t/samples/clang_analyzer/dead_assignment.c");
@@ -44,6 +45,29 @@ sub test_actually_process : Tests {
   }
 
   is($total_bugs , 2, "2 bugs expected");
+}
+
+sub feed_declares_divisions_by_zero : Tests {
+
+  our $received_module;
+  our $received_value;
+
+  no warnings;
+  local *Analizo::Model::declare_divisions_by_zero = sub {
+    my ($self, $module, $value) = @_;
+    $received_module = $module;
+    $received_value = $value;
+  };
+  use warnings;
+  my $tree;
+  $tree->{'file.c'}->{'Division by zero'} = 2;
+
+  my $extractor = new Analizo::Extractor::ClangStaticAnalyzer;
+  $extractor->feed($tree);
+
+  is($received_module,'file','Module name must be the file name.');
+  is($received_value, 2, '2 bugs expected.');
+
 }
 
 __PACKAGE__->runtests;

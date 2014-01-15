@@ -240,5 +240,11 @@ sub group_files_when_build_graph : Tests {
   is_deeply(\@vertices, ['src/a', 'src/b', 'src/c']);
 }
 
+sub declaring_divisions_by_zero : Tests {
+  my $model = new Analizo::Model;
+  $model->declare_divisions_by_zero('file', 2);
+  is($model->{divisions_by_zero}->{'file'}, 2);
+}
+
 __PACKAGE__->runtests;
 

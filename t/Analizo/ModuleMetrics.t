@@ -29,6 +29,7 @@ sub metrics_of_module : Tests {
 
   $model->declare_function('mod1', 'f2');
   $model->add_loc('f2', 10);
+  $model->declare_divisions_by_zero('mod1', 2);
   my $report = $module_metrics->report('mod1');
 
   is($report->{'_module'}, 'mod1');
@@ -36,6 +37,7 @@ sub metrics_of_module : Tests {
   is($report->{'noa'}, 0);
   is($report->{'npm'}, 1);
   is($report->{'amloc'}, 10);
+  is($report->{'dbz'}, 2);
 }
 
 __PACKAGE__->runtests;
