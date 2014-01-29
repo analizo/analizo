@@ -5,6 +5,7 @@ use base qw(Analizo::Extractor);
 use Analizo::Extractor::ClangStaticAnalyzerTree;
 use Cwd;
 use File::Basename;
+use File::Find;
 
 sub new {
   my ($package, @options) = @_;
@@ -24,23 +25,39 @@ sub actually_process {
   my $file_report;
   my $files_list = join(' ', @c_files);
   my $output_folder = "/tmp/analizo-clang-analyzer";
+  our $html_report;
+  my @files;
 
-  my $analyze_command = "scan-build -o $output_folder gcc -c $files_list >/dev/null 2>/dev/null";
+  foreach my $c_file(@c_files) {
 
-  #FIXME: Eval removed due to returning bug
-  system($analyze_command);
-  my $html_report = glob("$output_folder/*/index.html");
+    my $analyze_command = "scan-build -o $output_folder gcc -c $c_file >/dev/null 2>/dev/null";
 
-  #FIXME: Exception for no report file
-  open ($file_report, '<', $html_report);#  or die $!;
+    #FIXME: Eval removed due to returning bug
+    my $clang_return = system($analyze_command);
 
-  while(<$file_report>){
-    $tree = $clang_tree->building_tree($_);
+    $c_file =~ s/\.\///;
+
+    if ($clang_return != 0){
+      warn "The file [$c_file] was not compiled. System error: $clang_return\n";
+    }
+
+    find({wanted => sub {
+          $html_report = $File::Find::name if m/index\.html/;
+        }}, $output_folder);
+
+    if(defined $html_report) {
+      open ($file_report, '<', $html_report);
+
+      while(<$file_report>){
+        $tree = $clang_tree->building_tree($_, $c_file);
+      }
+
+      close ($file_report);
+    }
+
+    system("rm -rf $output_folder");
+
   }
-
-  close ($file_report);
-
-  system("rm -rf $output_folder");
 
   $self->feed($tree);
 
@@ -57,7 +74,8 @@ sub feed {
   foreach my $file_name (keys %$tree) {
     my $bugs_hash = $tree->{$file_name};
 
-    my $module = fileparse($file_name, qr/\.[^.]*/);
+    my $module = $file_name;
+    $module =~ s/\.[^.]*$//;
 
     $self->model->declare_module($module, $file_name);
 

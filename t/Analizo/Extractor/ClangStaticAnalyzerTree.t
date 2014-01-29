@@ -34,7 +34,7 @@ sub building_tree_with_reports_from_radom_file  : Tests {
 
   open (my $file_report, '<', $report_path) or die $!;
   while(<$file_report>){
-    $report_tree = $tree->building_tree($_);
+    $report_tree = $tree->building_tree($_, "file.c");
   }
   close ($file_report);
 
@@ -46,7 +46,7 @@ sub building_tree_with_reports_empty_file  : Tests {
   my $report_tree;
   my $metrics_size = 0;
 
-  $report_tree = $tree->building_tree("");
+  $report_tree = $tree->building_tree("", "file.c");
 
   $metrics_size = keys $report_tree if defined $report_tree;
   is($metrics_size , 0, "No metrics expected");
@@ -58,7 +58,7 @@ sub building_tree_with_reports_from_multiple_files : Tests {
 
   open (my $file_report, '<', $report_path) or die $!;
   while(<$file_report>){
-    $report_tree = $tree->building_tree($_);
+    $report_tree = $tree->building_tree($_, "file.c");
   }
   close ($file_report);
 

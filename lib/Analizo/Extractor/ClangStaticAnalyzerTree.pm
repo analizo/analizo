@@ -12,14 +12,10 @@ sub new {
 }
 
 sub building_tree {
-  my ($self, $line) = @_;
-  my $file_name;
+  my ($self, $line, $file_name) = @_;
   my $bug_name;
-  my @raw_path;
 
   if($line =~ m/<\/td><td class="DESC">([^<]+)<\/td><td>([^&]+)<\/td><td class="Q">([\d]+)<\/td><td class="Q">/) {
-    @raw_path = split("<span class=\"W\"> </span>", $2);
-    $file_name = join('', @raw_path);
     $bug_name = $1;
 
     if(!defined $tree->{$file_name}->{$bug_name}) {

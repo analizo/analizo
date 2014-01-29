@@ -33,7 +33,7 @@ sub test_actually_process : Tests {
   use warnings;
 
   my $extractor = new Analizo::Extractor::ClangStaticAnalyzer;
-  $extractor->actually_process("t/samples/clang_analyzer/division_by_zero.c", "t/samples/clang_analyzer/dead_assignment.c");
+  $extractor->actually_process("t/samples/clang_analyzer/division_by_zero.c", "t/samples/clang_analyzer/dead_assignment.c", "t/samples/clang_analyzer/no_compilable.c");
 
   my $total_bugs = 0;
   foreach my $file_name (keys %$report_tree) {
@@ -42,6 +42,7 @@ sub test_actually_process : Tests {
     foreach my $bugs (values %$bugs_hash) {
       $total_bugs += $bugs;
     }
+    
   }
 
   is($total_bugs , 2, "2 bugs expected");
@@ -60,12 +61,12 @@ sub feed_declares_divisions_by_zero : Tests {
   };
   use warnings;
   my $tree;
-  $tree->{'file.c'}->{'Division by zero'} = 2;
+  $tree->{'a/b/c.d/dir/file.c'}->{'Division by zero'} = 2;
 
   my $extractor = new Analizo::Extractor::ClangStaticAnalyzer;
   $extractor->feed($tree);
 
-  is($received_module,'file','Module name must be the file name.');
+  is($received_module,'a/b/c.d/dir/file','Module name must be the file name.');
   is($received_value, 2, '2 bugs expected.');
 
 }
