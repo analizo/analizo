@@ -242,14 +242,14 @@ sub group_files_when_build_graph : Tests {
 
 sub declaring_divisions_by_zero : Tests {
   my $model = new Analizo::Model;
-  $model->declare_divisions_by_zero('file', 2);
-  is($model->{divisions_by_zero}->{'file'}, 2);
+  $model->declare_security_metrics('Division by zero', 'file', 2);
+  is($model->{security_metrics}->{'Division by zero'}->{'file'}, 2);
 }
 
 sub declaring_dead_assignment : Tests {
   my $model = new Analizo::Model;
-  $model->declare_dead_assignment('file', 2);
-  is($model->{dead_assignment}->{'file'}, 2);
+  $model->declare_security_metrics('Dead assignment', 'file', 2);
+  is($model->{security_metrics}->{'Dead assignment'}->{'file'}, 2);
 }
 
 __PACKAGE__->runtests;

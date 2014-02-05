@@ -19,9 +19,10 @@ sub description {
 sub calculate {
   my ($self, $module) = @_;
 
-  return 0 if (!defined $self->model->divisions_by_zero->{$module});
+  return 0 if (!defined $self->model->security_metrics('Division by zero', $module));
 
-  return $self->model->divisions_by_zero->{$module};
+  return $self->model->security_metrics('Division by zero', $module);
+
 }
 
 1;

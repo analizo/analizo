@@ -79,21 +79,26 @@ sub feed {
 
     $self->model->declare_module($module, $file_name);
 
-    if (defined $tree->{$file_name}->{'Division by zero'}) {
-      my $value = $tree->{$file_name}->{'Division by zero'};
-      $self->model->declare_divisions_by_zero($module, $value);
-    }
-    else {
-      $self->model->declare_divisions_by_zero($module, 0);
+    foreach $bug (keys $bugs_hash) {
+      my $value = $tree->{$file_name}->{$bug};
+      $self->model->declare_security_metrics($bug, $module, $value);
     }
 
-    if (defined $tree->{$file_name}->{'Dead assignment'}) {
-      my $value = $tree->{$file_name}->{'Dead assignment'};
-      $self->model->declare_dead_assignment($module, $value);
-    }
-    else {
-      $self->model->declare_dead_assignment($module, 0);
-    }
+#    if (defined $tree->{$file_name}->{'Division by zero'}) {
+#      my $value = $tree->{$file_name}->{'Division by zero'};
+#      $self->model->declare_security_metrics('Division by zero', $module, $value);
+#    }
+#    else {
+#      $self->model->declare_security_metrics($module, 0);
+#    }
+#
+#    if (defined $tree->{$file_name}->{'Dead assignment'}) {
+#      my $value = $tree->{$file_name}->{'Dead assignment'};
+#      $self->model->declare_dead_assignment($module, $value);
+#    }
+#    else {
+#      $self->model->declare_dead_assignment($module, 0);
+#    }
   }
 }
 

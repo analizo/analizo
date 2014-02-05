@@ -29,8 +29,8 @@ sub metrics_of_module : Tests {
 
   $model->declare_function('mod1', 'f2');
   $model->add_loc('f2', 10);
-  $model->declare_divisions_by_zero('mod1', 2);
-  $model->declare_dead_assignment('mod1', 2);
+  $model->declare_security_metrics('Division by zero', 'mod1', 2);
+  $model->declare_security_metrics('Dead assignment', 'mod1', 2);
   my $report = $module_metrics->report('mod1');
 
   is($report->{'_module'}, 'mod1');

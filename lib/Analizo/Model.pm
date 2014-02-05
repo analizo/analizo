@@ -18,8 +18,7 @@ sub new {
     abstract_classes => [],
     module_names => [],
     total_eloc => 0,
-    divisions_by_zero => {},
-    dead_assignment => {}
+    security_metrics => {}
   );
   return bless { @defaults }, __PACKAGE__;
 }
@@ -252,24 +251,34 @@ sub _function_to_file {
   $self->{files}->{$module};
 }
 
-sub declare_divisions_by_zero {
-  my ($self, $module, $value) = @_;
-  $self->{divisions_by_zero}->{$module} = $value;
+sub declare_security_metrics {
+  my ($self, $bug_name, $module, $value) = @_;
+  $self->{security_metrics}->{$bug_name}->{$module} = $value;
 }
 
-sub divisions_by_zero {
-  my ($self) = @_;
-  return $self->{divisions_by_zero};
+sub security_metrics {
+  my ($self, $bug_name, $module) = @_;
+  return $self->{security_metrics}->{$bug_name}->{$module};
 }
 
-sub declare_dead_assignment {
-  my ($self, $module, $value) = @_;
-  $self->{dead_assignment}->{$module} = $value;
-}
-
-sub dead_assignment {
-  my ($self) = @_;
-  return $self->{dead_assignment};
-}
+#sub declare_divisions_by_zero {
+#  my ($self, $module, $value) = @_;
+#  $self->{divisions_by_zero}->{$module} = $value;
+#}
+#
+#sub divisions_by_zero {
+#  my ($self) = @_;
+#  return $self->{divisions_by_zero};
+#}
+#
+#sub declare_dead_assignment {
+#  my ($self, $module, $value) = @_;
+#  $self->{dead_assignment}->{$module} = $value;
+#}
+#
+#sub dead_assignment {
+#  my ($self) = @_;
+#  return $self->{dead_assignment};
+#}
 1;
 

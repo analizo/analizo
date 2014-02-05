@@ -54,8 +54,8 @@ sub feed_declares_divisions_by_zero : Tests {
   our $received_value;
 
   no warnings;
-  local *Analizo::Model::declare_divisions_by_zero = sub {
-    my ($self, $module, $value) = @_;
+  local *Analizo::Model::declare_security_metrics = sub {
+    my ($self, $bug, $module, $value) = @_;
     $received_module = $module;
     $received_value = $value;
   };
@@ -77,8 +77,8 @@ sub feed_declares_dead_assignment : Tests {
   our $received_value;
 
   no warnings;
-  local *Analizo::Model::declare_dead_assignment = sub {
-    my ($self, $module, $value) = @_;
+  local *Analizo::Model::declare_security_metrics = sub {
+    my ($self, $bug_name, $module, $value) = @_;
     $received_module = $module;
     $received_value = $value;
   };

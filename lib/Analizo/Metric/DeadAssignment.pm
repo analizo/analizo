@@ -19,9 +19,9 @@ sub description {
 sub calculate {
   my ($self, $module) = @_;
 
-  return 0 if (!defined $self->model->dead_assignment->{$module});
+  return 0 if (!defined $self->model->security_metrics('Dead assignment', $module));
 
-  return $self->model->dead_assignment->{$module};
+  return $self->model->security_metrics('Dead assignment', $module);
 }
 
 1;
