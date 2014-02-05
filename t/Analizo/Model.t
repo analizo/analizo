@@ -246,5 +246,11 @@ sub declaring_divisions_by_zero : Tests {
   is($model->{divisions_by_zero}->{'file'}, 2);
 }
 
+sub declaring_dead_assignment : Tests {
+  my $model = new Analizo::Model;
+  $model->declare_dead_assignment('file', 2);
+  is($model->{dead_assignment}->{'file'}, 2);
+}
+
 __PACKAGE__->runtests;
 

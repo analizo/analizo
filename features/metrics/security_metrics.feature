@@ -14,3 +14,15 @@ Feature: Security Metrics
     When I run "analizo metrics --extractor ClangStaticAnalyzer t/samples/clang_analyzer/dbz"
 	Then the output must match "dbz: 2"
     And the exit status must be 0
+
+  Scenario: Verifying dead assignment in output
+    Given I am in .
+    When I run "analizo metrics --extractor ClangStaticAnalyzer t/samples/clang_analyzer/"
+	Then the output must match "da"
+    And the exit status must be 0
+
+  Scenario: Verifying value of dead assignment in output
+    Given I am in .
+    When I run "analizo metrics --extractor ClangStaticAnalyzer t/samples/clang_analyzer"
+	Then the output must match "da: 1"
+    And the exit status must be 0

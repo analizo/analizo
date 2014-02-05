@@ -18,7 +18,8 @@ sub new {
     abstract_classes => [],
     module_names => [],
     total_eloc => 0,
-    divisions_by_zero => {}
+    divisions_by_zero => {},
+    dead_assignment => {}
   );
   return bless { @defaults }, __PACKAGE__;
 }
@@ -261,5 +262,14 @@ sub divisions_by_zero {
   return $self->{divisions_by_zero};
 }
 
+sub declare_dead_assignment {
+  my ($self, $module, $value) = @_;
+  $self->{dead_assignment}->{$module} = $value;
+}
+
+sub dead_assignment {
+  my ($self) = @_;
+  return $self->{dead_assignment};
+}
 1;
 

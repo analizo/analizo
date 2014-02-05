@@ -1,6 +1,6 @@
 package t::Analizo::Extractor::ClangStaticAnalyzer;
 use base qw(Test::Class);
-use Test::More tests => 7;
+use Test::More tests => 9;
 
 use strict;
 use warnings;
@@ -42,7 +42,7 @@ sub test_actually_process : Tests {
     foreach my $bugs (values %$bugs_hash) {
       $total_bugs += $bugs;
     }
-    
+
   }
 
   is($total_bugs , 2, "2 bugs expected");
@@ -71,5 +71,27 @@ sub feed_declares_divisions_by_zero : Tests {
 
 }
 
+sub feed_declares_dead_assignment : Tests {
+
+  our $received_module;
+  our $received_value;
+
+  no warnings;
+  local *Analizo::Model::declare_dead_assignment = sub {
+    my ($self, $module, $value) = @_;
+    $received_module = $module;
+    $received_value = $value;
+  };
+  use warnings;
+  my $tree;
+  $tree->{'a/b/c.d/dir/file.c'}->{'Dead assignment'} = 2;
+
+  my $extractor = new Analizo::Extractor::ClangStaticAnalyzer;
+  $extractor->feed($tree);
+
+  is($received_module,'a/b/c.d/dir/file','Module name must be the file name.');
+  is($received_value, 2, '2 bugs expected.');
+
+}
 __PACKAGE__->runtests;
 

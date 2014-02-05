@@ -19,6 +19,7 @@ use Analizo::Metric::NumberOfPublicMethods;
 use Analizo::Metric::ResponseForClass;
 use Analizo::Metric::StructuralComplexity;
 use Analizo::Metric::DivisionsByZero;
+use Analizo::Metric::DeadAssignment;
 
 __PACKAGE__->mk_accessors(qw(model metric_calculators));
 
@@ -54,6 +55,7 @@ sub _initialize_metric_calculators {
     rfc                  => new Analizo::Metric::ResponseForClass(model => $model),
     sc                   => new Analizo::Metric::StructuralComplexity(model => $model, cbo => $cbo, lcom4 => $lcom4),
     dbz                   => new Analizo::Metric::DivisionsByZero(model => $model),
+    da                   => new Analizo::Metric::DeadAssignment(model => $model),
   );
   return \%calculators;
 }
