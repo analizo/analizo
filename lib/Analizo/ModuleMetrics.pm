@@ -20,6 +20,7 @@ use Analizo::Metric::ResponseForClass;
 use Analizo::Metric::StructuralComplexity;
 use Analizo::Metric::DivisionsByZero;
 use Analizo::Metric::DeadAssignment;
+use Analizo::Metric::MemoryLeak;
 
 __PACKAGE__->mk_accessors(qw(model metric_calculators));
 
@@ -56,6 +57,7 @@ sub _initialize_metric_calculators {
     sc                   => new Analizo::Metric::StructuralComplexity(model => $model, cbo => $cbo, lcom4 => $lcom4),
     dbz                   => new Analizo::Metric::DivisionsByZero(model => $model),
     da                   => new Analizo::Metric::DeadAssignment(model => $model),
+    mlk                   => new Analizo::Metric::MemoryLeak(model => $model),
   );
   return \%calculators;
 }

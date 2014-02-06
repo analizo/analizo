@@ -1,6 +1,6 @@
 package t::Analizo::Extractor::ClangStaticAnalyzer;
 use base qw(Test::Class);
-use Test::More tests => 9;
+use Test::More tests => 11;
 
 use strict;
 use warnings;
@@ -33,7 +33,7 @@ sub test_actually_process : Tests {
   use warnings;
 
   my $extractor = new Analizo::Extractor::ClangStaticAnalyzer;
-  $extractor->actually_process("t/samples/clang_analyzer/division_by_zero.c", "t/samples/clang_analyzer/dead_assignment.c", "t/samples/clang_analyzer/no_compilable.c");
+  $extractor->actually_process("t/samples/clang_analyzer/dead_assignment.c", "t/samples/clang_analyzer/division_by_zero.c", "t/samples/clang_analyzer/memory_leak.c", "t/samples/clang_analyzer/no_compilable.c");
 
   my $total_bugs = 0;
   foreach my $file_name (keys %$report_tree) {
@@ -45,7 +45,7 @@ sub test_actually_process : Tests {
 
   }
 
-  is($total_bugs , 2, "2 bugs expected");
+  is($total_bugs , 3, "3 bugs expected");
 }
 
 sub feed_declares_divisions_by_zero : Tests {
@@ -93,5 +93,29 @@ sub feed_declares_dead_assignment : Tests {
   is($received_value, 2, '2 bugs expected.');
 
 }
+
+sub feed_declares_memory_leak : Tests {
+
+  our $received_module;
+  our $received_value;
+
+  no warnings;
+  local *Analizo::Model::declare_security_metrics = sub {
+    my ($self, $bug_name, $module, $value) = @_;
+    $received_module = $module;
+    $received_value = $value;
+  };
+  use warnings;
+  my $tree;
+  $tree->{'a/b/c.d/dir/file.c'}->{'Memory leak'} = 2;
+
+  my $extractor = new Analizo::Extractor::ClangStaticAnalyzer;
+  $extractor->feed($tree);
+
+  is($received_module,'a/b/c.d/dir/file','Module name must be the file name.');
+  is($received_value, 2, '2 bugs expected.');
+
+}
+
 __PACKAGE__->runtests;
 

@@ -31,6 +31,7 @@ sub metrics_of_module : Tests {
   $model->add_loc('f2', 10);
   $model->declare_security_metrics('Division by zero', 'mod1', 2);
   $model->declare_security_metrics('Dead assignment', 'mod1', 2);
+  $model->declare_security_metrics('Memory leak', 'mod1', 2);
   my $report = $module_metrics->report('mod1');
 
   is($report->{'_module'}, 'mod1');
@@ -40,6 +41,7 @@ sub metrics_of_module : Tests {
   is($report->{'amloc'}, 10);
   is($report->{'dbz'}, 2);
   is($report->{'da'}, 2);
+  is($report->{'mlk'}, 2);
 }
 
 __PACKAGE__->runtests;

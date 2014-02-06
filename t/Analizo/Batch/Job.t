@@ -155,12 +155,12 @@ sub cache_of_model_and_metrics : Tests {
   # cache. Maybe this is a bug in the CHI cache driver
   $model2->{calls}->{'Animal::name()'} = {};
   $model2->{modules}->{'Mammal'} = {};
+  $model2->{security_metrics}->{'Memory leak'} = {};
+  $model2->{security_metrics}->{'Dead assignment'} = {};
+  $model2->{security_metrics}->{'Division by zero'} = {};
 
   is($model_result, 'cache used', 'use cache for model');
   is($metrics_result, 'cache used', 'use cache for metrics');
-
-  # print "\n\nModel 2: [$model2]\tModel 1: [$model1]";
-  #print "\n\nMetrics 2: [$metrics2]\tMetrics 1: [$metrics1]";
 
   is_deeply($model2, $model1, 'cached model is the same');
   is_deeply($metrics2, $metrics1, 'cached metrics is the same ');
