@@ -27,7 +27,7 @@ sub write_data {
       print $fh $header;
     }
 
-    my @metadata = map { _encode_value($_->[1]) } @$metadata;
+    my @metadata = map{ _encode_value($_->[1])} @$metadata;
     my @values = map { _encode_value($summary->{$_}) } @fields;
     my $line = join(',', $job->id, @metadata, @values) . "\n";
     print $fh $line;
@@ -49,65 +49,65 @@ sub _encode_value($) {
 }
 
 sub write_details {
-  my ($self, $id, $details) = @_;
-  my @array_of_values = ();
-  my $files_name;
+	my ($self, $id, $details) = @_;
+	my @array_of_values = ();
+	my $files_name;
 
-  my $csv_filename = $id. "-details.csv";
-  open my $csv_handler, '>'.$csv_filename  || die "Cannot open ".$id."-details.csv\n".$!;
+	my $csv_filename = $id. "-details.csv";
+	open my $csv_handler, '>'.$csv_filename  || die "Cannot open ".$id."-details.csv\n".$!;
 
-  print $csv_handler "\"filename\",".
-         "\"module\",".
-         "\"acc\",".
-         "\"accm\",".
-         "\"amloc\",".
-         "\"anpm\",".
-         "\"cbo\",".
-         "\"dit\",".
-         "\"lcom4\",".
-         "\"loc\",".
-         "\"mmloc\",".
-         "\"noa\",".
-         "\"noc\",".
-         "\"nom\",".
-         "\"npm\",".
-         "\"npa\",".
-         "\"rfc\",".
-         "\"sc\"\n";
+	print $csv_handler "\"filename\",".
+			   "\"module\",".
+			   "\"acc\",".
+			   "\"accm\",".
+			   "\"amloc\",".
+			   "\"anpm\",".
+			   "\"cbo\",".
+			   "\"dit\",".
+			   "\"lcom4\",".
+			   "\"loc\",".
+			   "\"mmloc\",".
+			   "\"noa\",".
+			   "\"noc\",".
+			   "\"nom\",".
+			   "\"npm\",".
+			   "\"npa\",".
+			   "\"rfc\",".
+			   "\"sc\"\n";
 
-  foreach (@$details)
-  {
-    if($_->{_filename}[1] eq "")
-    {
-      $file_name = $_->{_filename}[0];
-    }
-    else
-    {
-      $file_name = $_->{_filename}[0]."\/".$_->{_filename}[1];
-    }
+	foreach (@$details)
+	{
+		if($_->{_filename}[1] eq "")
+		{
+			$file_name = $_->{_filename}[0];
+		}
+		else
+		{
+			$file_name = $_->{_filename}[0]."\/".$_->{_filename}[1];
+		}
 
-    push @array_of_values,  "\"".$file_name."\",".
-          "\"".$_->{_module}."\",".
-          $_->{acc}.",".
-          $_->{accm}.",".
-          $_->{amloc}.",".
-          $_->{anpm}.",".
-          $_->{cbo}.",".
-          $_->{dit}.",".
-          $_->{lcom4}.",".
-          $_->{loc}.",".
-          $_->{mmloc}.",".
-          $_->{noa}.",".
-          $_->{noc}.",".
-          $_->{nom}.",".
-          $_->{npm}.",".
-          $_->{npa}.",".
-          $_->{rfc}.",".
-          $_->{sc}."\n";
-  }
+		push @array_of_values,  "\"".$file_name."\",".
+					"\"".$_->{_module}."\",".
+					$_->{acc}.",".
+					$_->{accm}.",".
+					$_->{amloc}.",".
+					$_->{anpm}.",".
+					$_->{cbo}.",".
+					$_->{dit}.",".
+					$_->{lcom4}.",".
+					$_->{loc}.",".
+					$_->{mmloc}.",".
+					$_->{noa}.",".
+					$_->{noc}.",".
+					$_->{nom}.",".
+					$_->{npm}.",".
+					$_->{npa}.",".
+					$_->{rfc}.",".
+					$_->{sc}."\n";
+	}
 
-  print $csv_handler @array_of_values;
-  close $csv_handler;
+	print $csv_handler @array_of_values;
+	close $csv_handler;
 }
 
 1;
