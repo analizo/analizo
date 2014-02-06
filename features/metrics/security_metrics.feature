@@ -39,3 +39,27 @@ Feature: Security Metrics
     Then the output must match "mlk: 1"
     And the exit status must be 0
 
+  Scenario: Verifying dereference of null pointer in output
+    Given I am in .
+    When I run "analizo metrics --extractor ClangStaticAnalyzer t/samples/clang_analyzer/"
+	Then the output must match "dnp"
+    And the exit status must be 0
+
+  Scenario: Verifying value of dereference of null pointer in output
+    Given I am in .
+    When I run "analizo metrics --extractor ClangStaticAnalyzer t/samples/clang_analyzer"
+    Then the output must match "dnp: 1"
+    And the exit status must be 0
+
+  Scenario: Verifying assigned undefined value in output
+    Given I am in .
+    When I run "analizo metrics --extractor ClangStaticAnalyzer t/samples/clang_analyzer/"
+	Then the output must match "auv"
+    And the exit status must be 0
+
+  Scenario: Verifying value of assigned undefined value in output
+    Given I am in .
+    When I run "analizo metrics --extractor ClangStaticAnalyzer t/samples/clang_analyzer"
+    Then the output must match "auv: 1"
+    And the exit status must be 0
+

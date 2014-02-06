@@ -21,6 +21,8 @@ use Analizo::Metric::StructuralComplexity;
 use Analizo::Metric::DivisionsByZero;
 use Analizo::Metric::DeadAssignment;
 use Analizo::Metric::MemoryLeak;
+use Analizo::Metric::DereferenceOfNullPointer;
+use Analizo::Metric::AssignedUndefinedValue;
 
 __PACKAGE__->mk_accessors(qw(model metric_calculators));
 
@@ -58,6 +60,8 @@ sub _initialize_metric_calculators {
     dbz                   => new Analizo::Metric::DivisionsByZero(model => $model),
     da                   => new Analizo::Metric::DeadAssignment(model => $model),
     mlk                   => new Analizo::Metric::MemoryLeak(model => $model),
+    dnp                   => new Analizo::Metric::DereferenceOfNullPointer(model => $model),
+    auv                   => new Analizo::Metric::AssignedUndefinedValue(model => $model),
   );
   return \%calculators;
 }

@@ -32,6 +32,8 @@ sub metrics_of_module : Tests {
   $model->declare_security_metrics('Division by zero', 'mod1', 2);
   $model->declare_security_metrics('Dead assignment', 'mod1', 2);
   $model->declare_security_metrics('Memory leak', 'mod1', 2);
+  $model->declare_security_metrics('Dereference of null pointer', 'mod1', 2);
+  $model->declare_security_metrics('Assigned value is garbage or undefined', 'mod1', 2);
   my $report = $module_metrics->report('mod1');
 
   is($report->{'_module'}, 'mod1');
@@ -42,6 +44,8 @@ sub metrics_of_module : Tests {
   is($report->{'dbz'}, 2);
   is($report->{'da'}, 2);
   is($report->{'mlk'}, 2);
+  is($report->{'dnp'}, 2);
+  is($report->{'auv'}, 2);
 }
 
 __PACKAGE__->runtests;

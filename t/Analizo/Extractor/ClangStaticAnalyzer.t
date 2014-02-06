@@ -1,6 +1,6 @@
 package t::Analizo::Extractor::ClangStaticAnalyzer;
 use base qw(Test::Class);
-use Test::More tests => 11;
+use Test::More tests => 15;
 
 use strict;
 use warnings;
@@ -108,6 +108,52 @@ sub feed_declares_memory_leak : Tests {
   use warnings;
   my $tree;
   $tree->{'a/b/c.d/dir/file.c'}->{'Memory leak'} = 2;
+
+  my $extractor = new Analizo::Extractor::ClangStaticAnalyzer;
+  $extractor->feed($tree);
+
+  is($received_module,'a/b/c.d/dir/file','Module name must be the file name.');
+  is($received_value, 2, '2 bugs expected.');
+
+}
+
+sub feed_declares_dereference_of_null_pointer : Tests {
+
+  our $received_module;
+  our $received_value;
+
+  no warnings;
+  local *Analizo::Model::declare_security_metrics = sub {
+    my ($self, $bug_name, $module, $value) = @_;
+    $received_module = $module;
+    $received_value = $value;
+  };
+  use warnings;
+  my $tree;
+  $tree->{'a/b/c.d/dir/file.c'}->{'Dereference of null pointer'} = 2;
+
+  my $extractor = new Analizo::Extractor::ClangStaticAnalyzer;
+  $extractor->feed($tree);
+
+  is($received_module,'a/b/c.d/dir/file','Module name must be the file name.');
+  is($received_value, 2, '2 bugs expected.');
+
+}
+
+sub feed_declares_assigned_undefined_value : Tests {
+
+  our $received_module;
+  our $received_value;
+
+  no warnings;
+  local *Analizo::Model::declare_security_metrics = sub {
+    my ($self, $bug_name, $module, $value) = @_;
+    $received_module = $module;
+    $received_value = $value;
+  };
+  use warnings;
+  my $tree;
+  $tree->{'a/b/c.d/dir/file.c'}->{'Assigned value is garbage or undefined'} = 2;
 
   my $extractor = new Analizo::Extractor::ClangStaticAnalyzer;
   $extractor->feed($tree);
