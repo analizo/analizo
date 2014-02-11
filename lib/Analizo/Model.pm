@@ -261,24 +261,5 @@ sub security_metrics {
   return $self->{security_metrics}->{$bug_name}->{$module};
 }
 
-#sub declare_divisions_by_zero {
-#  my ($self, $module, $value) = @_;
-#  $self->{divisions_by_zero}->{$module} = $value;
-#}
-#
-#sub divisions_by_zero {
-#  my ($self) = @_;
-#  return $self->{divisions_by_zero};
-#}
-#
-#sub declare_dead_assignment {
-#  my ($self, $module, $value) = @_;
-#  $self->{dead_assignment}->{$module} = $value;
-#}
-#
-#sub dead_assignment {
-#  my ($self) = @_;
-#  return $self->{dead_assignment};
-#}
 1;
 

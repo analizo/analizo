@@ -83,22 +83,6 @@ sub feed {
       my $value = $tree->{$file_name}->{$bug};
       $self->model->declare_security_metrics($bug, $module, $value);
     }
-
-#    if (defined $tree->{$file_name}->{'Division by zero'}) {
-#      my $value = $tree->{$file_name}->{'Division by zero'};
-#      $self->model->declare_security_metrics('Division by zero', $module, $value);
-#    }
-#    else {
-#      $self->model->declare_security_metrics($module, 0);
-#    }
-#
-#    if (defined $tree->{$file_name}->{'Dead assignment'}) {
-#      my $value = $tree->{$file_name}->{'Dead assignment'};
-#      $self->model->declare_dead_assignment($module, $value);
-#    }
-#    else {
-#      $self->model->declare_dead_assignment($module, 0);
-#    }
   }
 }
 

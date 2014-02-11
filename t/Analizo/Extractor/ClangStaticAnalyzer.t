@@ -1,6 +1,6 @@
 package t::Analizo::Extractor::ClangStaticAnalyzer;
 use base qw(Test::Class);
-use Test::More tests => 17;
+use Test::More tests => 16;
 
 use strict;
 use warnings;
@@ -50,12 +50,14 @@ sub test_actually_process : Tests {
 
 sub feed_declares_divisions_by_zero : Tests {
 
+  our $received_bug;
   our $received_module;
   our $received_value;
 
   no warnings;
   local *Analizo::Model::declare_security_metrics = sub {
     my ($self, $bug, $module, $value) = @_;
+    $received_bug = $bug;
     $received_module = $module;
     $received_value = $value;
   };
@@ -66,6 +68,7 @@ sub feed_declares_divisions_by_zero : Tests {
   my $extractor = new Analizo::Extractor::ClangStaticAnalyzer;
   $extractor->feed($tree);
 
+  is($received_bug,'Division by zero','Bug name must be Division by zero');
   is($received_module,'a/b/c.d/dir/file','Module name must be the file name.');
   is($received_value, 2, '2 bugs expected.');
 
@@ -154,29 +157,6 @@ sub feed_declares_assigned_undefined_value : Tests {
   use warnings;
   my $tree;
   $tree->{'a/b/c.d/dir/file.c'}->{'Assigned value is garbage or undefined'} = 2;
-
-  my $extractor = new Analizo::Extractor::ClangStaticAnalyzer;
-  $extractor->feed($tree);
-
-  is($received_module,'a/b/c.d/dir/file','Module name must be the file name.');
-  is($received_value, 2, '2 bugs expected.');
-
-}
-
-sub feed_declares_return_of_stack_variable_address : Tests {
-
-  our $received_module;
-  our $received_value;
-
-  no warnings;
-  local *Analizo::Model::declare_security_metrics = sub {
-    my ($self, $bug_name, $module, $value) = @_;
-    $received_module = $module;
-    $received_value = $value;
-  };
-  use warnings;
-  my $tree;
-  $tree->{'a/b/c.d/dir/file.c'}->{'Return of address to stack-allocated memory'} = 2;
 
   my $extractor = new Analizo::Extractor::ClangStaticAnalyzer;
   $extractor->feed($tree);

@@ -58,11 +58,11 @@ sub _initialize_metric_calculators {
     npa                  => new Analizo::Metric::NumberOfPublicAttributes(model => $model),
     rfc                  => new Analizo::Metric::ResponseForClass(model => $model),
     sc                   => new Analizo::Metric::StructuralComplexity(model => $model, cbo => $cbo, lcom4 => $lcom4),
-    dbz                   => new Analizo::Metric::DivisionsByZero(model => $model),
+    dbz                  => new Analizo::Metric::DivisionsByZero(model => $model),
     da                   => new Analizo::Metric::DeadAssignment(model => $model),
-    mlk                   => new Analizo::Metric::MemoryLeak(model => $model),
-    dnp                   => new Analizo::Metric::DereferenceOfNullPointer(model => $model),
-    auv                   => new Analizo::Metric::AssignedUndefinedValue(model => $model),
+    mlk                  => new Analizo::Metric::MemoryLeak(model => $model),
+    dnp                  => new Analizo::Metric::DereferenceOfNullPointer(model => $model),
+    auv                  => new Analizo::Metric::AssignedUndefinedValue(model => $model),
     rsva                 => new Analizo::Metric::ReturnOfStackVariableAddress(model => $model),
   );
   return \%calculators;
