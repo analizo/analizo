@@ -63,3 +63,14 @@ Feature: Security Metrics
     Then the output must match "auv: 1"
     And the exit status must be 0
 
+  Scenario: Verifying return of stack variable address in output
+    Given I am in .
+    When I run "analizo metrics --extractor ClangStaticAnalyzer t/samples/clang_analyzer/"
+	Then the output must match "rsva"
+    And the exit status must be 0
+
+  Scenario: Verifying value of return of stack variable address in output
+    Given I am in .
+    When I run "analizo metrics --extractor ClangStaticAnalyzer t/samples/clang_analyzer"
+    Then the output must match "rsva: 1"
+    And the exit status must be 0

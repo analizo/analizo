@@ -23,6 +23,7 @@ use Analizo::Metric::DeadAssignment;
 use Analizo::Metric::MemoryLeak;
 use Analizo::Metric::DereferenceOfNullPointer;
 use Analizo::Metric::AssignedUndefinedValue;
+use Analizo::Metric::ReturnOfStackVariableAddress;
 
 __PACKAGE__->mk_accessors(qw(model metric_calculators));
 
@@ -62,6 +63,7 @@ sub _initialize_metric_calculators {
     mlk                   => new Analizo::Metric::MemoryLeak(model => $model),
     dnp                   => new Analizo::Metric::DereferenceOfNullPointer(model => $model),
     auv                   => new Analizo::Metric::AssignedUndefinedValue(model => $model),
+    rsva                 => new Analizo::Metric::ReturnOfStackVariableAddress(model => $model),
   );
   return \%calculators;
 }
