@@ -1,6 +1,6 @@
 package t::Analizo::Extractor::ClangStaticAnalyzer;
 use base qw(Test::Class);
-use Test::More tests => 16;
+use Test::More tests => 17;
 
 use strict;
 use warnings;
@@ -44,7 +44,7 @@ sub test_actually_process : Tests {
     }
 
   }
-
+  is($report_tree->{'t/samples/clang_analyzer/no_compilable.c'}->{'Memory leak'}, undef, 'Metric must be undef');
   is($total_bugs , 3, "3 bugs expected");
 }
 

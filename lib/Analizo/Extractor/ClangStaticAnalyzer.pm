@@ -7,14 +7,55 @@ use Cwd;
 use File::Basename;
 use File::Find;
 
+my $include_dirs;
+my $lib_dirs;
+my $libs_list;
+
 sub new {
-  my ($package, @options) = @_;
+  my ($package, $includedirs, $libdirs, $libs, @options) = @_;
+  $include_dirs = $includedirs;
+  $lib_dirs = $libdirs;
+  $libs_list = $libs;
   return bless { files => [], @options }
+}
+
+sub include_flags {
+  my ($self) = @_;
+  if (not defined $include_dirs) {
+    return "";
+  }
+  my @dirs = split(':', $include_dirs);
+  my $flags = '-I'.join(' -I', @dirs);
+  return $flags;
+}
+
+sub lib_flags {
+  my ($self) = @_;
+  my $dirs_flags;
+  my $libs_flags;
+
+  if (not defined $lib_dirs) {
+    $dirs_flags = "";
+  }
+  else {
+    my @dirs = split(':', $lib_dirs);
+    $dirs_flags = '-L'.join(' -L', @dirs);
+  }
+  if (not defined $libs_list) {
+    $libs_flags = "";
+  }
+  else {
+    my @libs = split(',', $libs_list);
+    $libs_flags = '-l'.join(' -l', @libs);
+  }
+  my $flags = $dirs_flags." ".$libs_flags;
+  return $flags;
 }
 
 sub actually_process {
   my ($self, @input_files) = @_;
   my @c_files;
+
   foreach my $file(@input_files) {
     push(@c_files, $file) if($file =~ m/\.c$/);
   }
@@ -24,29 +65,34 @@ sub actually_process {
   my $tree;
   my $file_report;
   my $files_list = join(' ', @c_files);
-  my $output_folder = "/tmp/analizo-clang-analyzer";
-  our $html_report;
+  my $analizo_folder = "/tmp/analizo-clang-analyzer";
+  my $output_folder = "";
+  my $html_report;
   my @files;
+  my $flags = "";
+  my $clang_return;
+
+  $flags = include_flags()." ".lib_flags();
+
+  print "\n\nFlags: [$flags]\n\n";
 
   foreach my $c_file(@c_files) {
 
-    my $analyze_command = "scan-build -o $output_folder gcc -c $c_file >/dev/null 2>/dev/null";
-
     #FIXME: Eval removed due to returning bug
-    my $clang_return = system($analyze_command);
+    $clang_return = `scan-build -o $analizo_folder gcc -c $c_file $flags 2>&1`;
 
     $c_file =~ s/\.\///;
 
-    if ($clang_return != 0){
-      warn "The file [$c_file] was not compiled. System error: $clang_return\n";
+    if ($clang_return =~ m/error/ and $clang_return =~ m/contains no reports\./){
+      warn "The file [$c_file] was not compiled.\n";
+      next;
     }
 
-    find({wanted => sub {
-          $html_report = $File::Find::name if m/index\.html/;
-        }}, $output_folder);
+    if($clang_return =~ m/scan-view $analizo_folder\/([^']+)/) {
+      $output_folder = $analizo_folder."/".$1;
+      $html_report = $output_folder."/index.html";
 
-    if(defined $html_report) {
-      open ($file_report, '<', $html_report);
+      open ($file_report, '<', $html_report) or die $!;
 
       while(<$file_report>){
         $tree = $clang_tree->building_tree($_, $c_file);

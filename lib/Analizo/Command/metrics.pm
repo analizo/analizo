@@ -30,6 +30,9 @@ sub opt_spec {
     [ 'output|o=s',   'output file name' ],
     [ 'language=s',   'process only filenames matching known extensions for the <lang>> programming' ],
     [ 'exclude|x=s',  'exclude <dirs> (a colon-separated list of directories) from the analysis' ],
+    [ 'includedirs|I=s',  'include <dirs> (a colon-separated list of directories) with C/C++ header files' ],
+    [ 'libdirs|L=s',  'include <dirs> (a colon-separated list of directories) with C/C++ static and dynamic libraries files' ],
+    [ 'libs=s',  'include <dirs> (a colon-separated list of directories) with C/C++ linked libraries files' ],
   );
 }
 
@@ -83,6 +86,24 @@ sub execute {
   if ($opt->exclude) {
     my @excluded_directories = split(':', $opt->exclude);
     $job->exclude(@excluded_directories);
+  }
+  if ($opt->includedirs) {
+    $job->includedirs($opt->includedirs);
+  } 
+  else {
+    $job->includedirs('.');
+  }
+  if ($opt->libdirs) {
+    $job->libdirs($opt->libdirs);
+  } 
+  else {
+    $job->libdirs('.');
+  }
+  if ($opt->libs) {
+    $job->libs($opt->libs);
+  } 
+  else {
+    $job->libs('.');
   }
   $job->execute();
   my $metrics = $job->metrics;
