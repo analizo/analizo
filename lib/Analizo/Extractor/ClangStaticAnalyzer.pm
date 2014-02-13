@@ -74,8 +74,6 @@ sub actually_process {
 
   $flags = include_flags()." ".lib_flags();
 
-  print "\n\nFlags: [$flags]\n\n";
-
   foreach my $c_file(@c_files) {
 
     #FIXME: Eval removed due to returning bug
@@ -85,10 +83,8 @@ sub actually_process {
 
     if ($clang_return =~ m/error/ and $clang_return =~ m/contains no reports\./){
       warn "The file [$c_file] was not compiled.\n";
-      next;
     }
-
-    if($clang_return =~ m/scan-view $analizo_folder\/([^']+)/) {
+    elsif($clang_return =~ m/scan-view $analizo_folder\/([^']+)/) {
       $output_folder = $analizo_folder."/".$1;
       $html_report = $output_folder."/index.html";
 
@@ -99,10 +95,9 @@ sub actually_process {
       }
 
       close ($file_report);
+
+      `rm -rf $output_folder`;
     }
-
-    system("rm -rf $output_folder");
-
   }
 
   $self->feed($tree);
