@@ -89,19 +89,19 @@ sub execute {
   }
   if ($opt->includedirs) {
     $job->includedirs($opt->includedirs);
-  } 
+  }
   else {
     $job->includedirs('.');
   }
   if ($opt->libdirs) {
     $job->libdirs($opt->libdirs);
-  } 
+  }
   else {
     $job->libdirs('.');
   }
   if ($opt->libs) {
     $job->libs($opt->libs);
-  } 
+  }
   else {
     $job->libs('.');
   }
@@ -167,6 +167,23 @@ Exclude <I<dirs>> (a colon-separated list of directories) from the analysis.
 This is useful, for example, when you want to focus on production code and
 exclude test code from the analysis. You could do that by passing something
 like pass B<--exclude test>.
+
+=item --includedirs <dirs>, -I <dirs>
+
+Include directories that contains the headers files if they are not in same
+directory of the source code. This is used when C/C++ source code must be
+compiled (Clang extractor).
+
+=item --libdirs <dirs>, -L <dirs>
+
+Include directories that contains static and dynamic libraries. This is used
+when C/C++ source code must be compiled (Clang extractor).
+
+
+=item --libs <library>
+
+Link the source code with external libraries. This is used when C/C++ source
+code must be compiled (Clang extractor).
 
 =back
 
