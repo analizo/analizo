@@ -252,5 +252,34 @@ sub declaring_dead_assignment : Tests {
   is($model->{security_metrics}->{'Dead assignment'}->{'file'}, 2);
 }
 
+sub declaring_out_of_bound_array_access : Tests {
+  my $model = new Analizo::Model;
+  $model->declare_security_metrics('Out-of-bound array access', 'file', 2);
+  is($model->{security_metrics}->{'Out-of-bound array access'}->{'file'}, 2);
+}
+
+sub declaring_assigned_undefined_value : Tests {
+  my $model = new Analizo::Model;
+  $model->declare_security_metrics('Assigned undefined value', 'file', 2);
+  is($model->{security_metrics}->{'Assigned undefined value'}->{'file'}, 2);
+}
+
+sub declaring_memory_leak : Tests {
+  my $model = new Analizo::Model;
+  $model->declare_security_metrics('Memory leak', 'file', 2);
+  is($model->{security_metrics}->{'Memory leak'}->{'file'}, 2);
+}
+
+sub declaring_return_of_stack_variable_address : Tests {
+  my $model = new Analizo::Model;
+  $model->declare_security_metrics('Return of stack variable address', 'file', 2);
+  is($model->{security_metrics}->{'Return of stack variable address'}->{'file'}, 2);
+}
+
+sub declaring_dereference_of_null_pointer : Tests {
+  my $model = new Analizo::Model;
+  $model->declare_security_metrics('Dereference of null pointer', 'file', 2);
+  is($model->{security_metrics}->{'Dereference of null pointer'}->{'file'}, 2);
+}
 __PACKAGE__->runtests;
 

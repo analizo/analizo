@@ -74,3 +74,16 @@ Feature: Security Metrics
     When I run "analizo metrics --extractor ClangStaticAnalyzer t/samples/clang_analyzer"
     Then the output must match "rsva: 1"
     And the exit status must be 0
+
+  Scenario: Verifying out-of-bound array access in output
+    Given I am in .
+    When I run "analizo metrics --extractor ClangStaticAnalyzer t/samples/clang_analyzer/"
+	Then the output must match "obaa"
+    And the exit status must be 0
+
+  Scenario: Verifying value of out-of-bound array access in output
+    Given I am in .
+    When I run "analizo metrics --extractor ClangStaticAnalyzer t/samples/clang_analyzer"
+    Then the output must match "obaa: 1"
+    And the exit status must be 0
+
