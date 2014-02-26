@@ -87,3 +87,15 @@ Feature: Security Metrics
     Then the output must match "obaa: 1"
     And the exit status must be 0
 
+  Scenario: Verifying uninitialized argument value in output
+    Given I am in .
+    When I run "analizo metrics --extractor ClangStaticAnalyzer t/samples/clang_analyzer/"
+	Then the output must match "uav"
+    And the exit status must be 0
+
+  Scenario: Verifying value of uninitialized argument value in output
+    Given I am in .
+    When I run "analizo metrics --extractor ClangStaticAnalyzer t/samples/clang_analyzer"
+    Then the output must match "uav: 1"
+    And the exit status must be 0
+

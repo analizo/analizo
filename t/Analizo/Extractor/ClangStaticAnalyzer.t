@@ -1,6 +1,6 @@
 package t::Analizo::Extractor::ClangStaticAnalyzer;
 use base qw(Test::Class);
-use Test::More tests => 19;
+use Test::More tests => 21;
 
 use strict;
 use warnings;
@@ -189,5 +189,27 @@ sub feed_declares_return_of_stack_variable_address : Tests {
 
 }
 
+sub feed_declares_uninitialized_argument_value : Tests {
+
+  our $received_module;
+  our $received_value;
+
+  no warnings;
+  local *Analizo::Model::declare_security_metrics = sub {
+    my ($self, $bug_name, $module, $value) = @_;
+    $received_module = $module;
+    $received_value = $value;
+  };
+  use warnings;
+  my $tree;
+  $tree->{'a/b/c.d/dir/file.c'}->{'Uninitialized argument value'} = 4;
+
+  my $extractor = new Analizo::Extractor::ClangStaticAnalyzer;
+  $extractor->feed($tree);
+
+  is($received_module,'a/b/c.d/dir/file','Module name must be the file name.');
+  is($received_value, 4, '4 bugs expected.');
+
+}
 __PACKAGE__->runtests;
 

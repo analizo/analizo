@@ -25,6 +25,7 @@ use Analizo::Metric::DereferenceOfNullPointer;
 use Analizo::Metric::AssignedUndefinedValue;
 use Analizo::Metric::ReturnOfStackVariableAddress;
 use Analizo::Metric::OutOfBoundArrayAccess;
+use Analizo::Metric::UninitializedArgumentValue;
 
 __PACKAGE__->mk_accessors(qw(model metric_calculators));
 
@@ -66,6 +67,7 @@ sub _initialize_metric_calculators {
     auv                  => new Analizo::Metric::AssignedUndefinedValue(model => $model),
     rsva                 => new Analizo::Metric::ReturnOfStackVariableAddress(model => $model),
     obaa                 => new Analizo::Metric::OutOfBoundArrayAccess(model => $model),
+    uav                 => new Analizo::Metric::UninitializedArgumentValue(model => $model),
   );
   return \%calculators;
 }
