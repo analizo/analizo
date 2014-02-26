@@ -57,7 +57,7 @@ sub actually_process {
   my @c_files;
 
   foreach my $file(@input_files) {
-    push(@c_files, $file) if($file =~ m/\.c$/);
+    push(@c_files, $file) if($file =~ m/\.c/);
   }
   return if(scalar(@c_files) < 1);
 
