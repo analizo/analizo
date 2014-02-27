@@ -281,5 +281,18 @@ sub declaring_dereference_of_null_pointer : Tests {
   $model->declare_security_metrics('Dereference of null pointer', 'file', 2);
   is($model->{security_metrics}->{'Dereference of null pointer'}->{'file'}, 2);
 }
+
+sub declaring_bad_free : Tests {
+  my $model = new Analizo::Model;
+  $model->declare_security_metrics('Bad free', 'file', 2);
+  is($model->{security_metrics}->{'Bad free'}->{'file'}, 2);
+}
+
+sub declaring_double_free : Tests {
+  my $model = new Analizo::Model;
+  $model->declare_security_metrics('Double free', 'file', 2);
+  is($model->{security_metrics}->{'Double free'}->{'file'}, 2);
+}
+
 __PACKAGE__->runtests;
 

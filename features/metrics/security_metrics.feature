@@ -111,3 +111,14 @@ Feature: Security Metrics
     Then the output must match "bf: 1"
     And the exit status must be 0
 
+  Scenario: Verifying double free in output
+    Given I am in .
+    When I run "analizo metrics --extractor ClangStaticAnalyzer t/samples/clang_analyzer/"
+	Then the output must match "df"
+    And the exit status must be 0
+
+  Scenario: Verifying value of double free in output
+    Given I am in .
+    When I run "analizo metrics --extractor ClangStaticAnalyzer t/samples/clang_analyzer"
+    Then the output must match "df: 1"
+    And the exit status must be 0

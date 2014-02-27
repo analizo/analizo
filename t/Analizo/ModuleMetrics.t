@@ -38,6 +38,7 @@ sub metrics_of_module : Tests {
   $model->declare_security_metrics('Out-of-bound array access', 'mod1', 7);
   $model->declare_security_metrics('Uninitialized argument value', 'mod1', 8);
   $model->declare_security_metrics('Bad free', 'mod1', 9);
+  $model->declare_security_metrics('Double free', 'mod1', 10);
   my $report = $module_metrics->report('mod1');
 
   is($report->{'_module'}, 'mod1');
@@ -54,6 +55,7 @@ sub metrics_of_module : Tests {
   is($report->{'obaa'}, 7);
   is($report->{'uav'}, 8);
   is($report->{'bf'}, 9);
+  is($report->{'df'}, 10);
 }
 
 __PACKAGE__->runtests;
