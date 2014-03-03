@@ -4,7 +4,7 @@ use base qw(Analizo::Command);
 use strict;
 use warnings;
 use Analizo::Extractor;
-use Analizo::Output::DOT;
+use Graph::Writer::Dot '2.05';
 use File::Basename;
 
 # ABSTRACT: dependency graph generator
@@ -48,21 +48,20 @@ sub validate {
 sub execute {
   my ($self, $opt, $args) = @_;
   my $extractor = Analizo::Extractor->load($opt->extractor);
-  my $model = $extractor->model;
-  my $output = new Analizo::Output::DOT(model => $model);
-  # functions to omit
-  for my $omited (split(/,/, $opt->omit)) {
-    $output->omit($omited);
-  }
-  # whether to cluster functions by file or not
-  $output->cluster($opt->cluster);
-  # wheter to group by module or not
-  $output->group_by_module($opt->modules);
   $extractor->process(@$args);
+  my @omitted = split /,/, $opt->omit;
+  my $graph = $extractor->model->callgraph(
+    group_by_module => $opt->modules,
+    omit => \@omitted,
+  );
   if ($opt->output) {
     open STDOUT, '>', $opt->output or die "$!";
   }
-  print $output->string;
+  my $stdout = \*STDOUT;
+  my $graph_writer = Graph::Writer::Dot->new(
+    cluster => ($opt->cluster ? 'group' : undef),
+  );
+  $graph_writer->write_graph($graph, $stdout);
   close STDOUT;
 }
 

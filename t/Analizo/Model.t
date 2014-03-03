@@ -240,5 +240,124 @@ sub group_files_when_build_graph : Tests {
   is_deeply(\@vertices, ['src/a', 'src/b', 'src/c']);
 }
 
-__PACKAGE__->runtests;
+sub empty_call_graph : Tests {
+  my $model = Analizo::Model->new;
+  is($model->callgraph, '', 'empty output must give empty digraph');
+}
 
+sub listing_calls : Tests {
+  my $model = Analizo::Model->new;
+  $model->declare_function('module1', 'function1');
+  $model->declare_function('module1', 'function2');
+  $model->add_call('function1', 'function2', 'direct');
+  is(
+    $model->callgraph,
+    'function1-function2',
+    'must generate correctly a graph with one call'
+  );
+}
+
+sub listing_two_calls : Tests {
+  my $model = Analizo::Model->new;
+  $model->declare_function('module1', 'function1(type)');
+  $model->declare_function('module1', 'function2(type1, type2)');
+  $model->declare_function('module1', 'function3()');
+  $model->add_call('function1(type *)', 'function2(type1, type2)', 'direct');
+  $model->add_call('function1(type *)', 'function3()', 'direct');
+  is(
+    $model->callgraph,
+    'function1(type *)-function2(type1, type2),function1(type *)-function3()',
+    'must generate correctly a graph with f1 -> f2, f1 -> f3'
+  );
+}
+
+sub listing_only_defined_functions : Tests {
+  my $model = Analizo::Model->new;
+  $model->declare_function('module1', 'function1');
+  $model->declare_function('module2', 'function2');
+  $model->add_call('function1', 'function2');
+  $model->add_call('function2', 'function3');
+  is(
+    $model->callgraph,
+    'function1-function2',
+    'must include by default only functions inside the project'
+  );
+}
+
+sub ommiting_functions : Tests {
+  my $model = Analizo::Model->new;
+  $model->declare_function('module1', 'function1');
+  $model->declare_function('module1', 'function2');
+  $model->declare_function('module1', 'function3');
+  $model->add_call('function1', 'function2');
+  $model->add_call('function1', 'function3');
+  is(
+    $model->callgraph(omit => ['function3']),
+    'function1-function2',
+    'must be able to omit a called function'
+  );
+  is(
+    $model->callgraph(omit => ['function1']),
+    '',
+    'must be able to omit a caller function'
+  );
+}
+
+sub including_external_functions : Tests {
+  my $model = Analizo::Model->new;
+  $model->declare_function('module1', 'function1');
+  $model->add_call('function1', 'function2');
+  is(
+    $model->callgraph(include_externals => 1),
+    'function1-function2',
+    'must be able to omit a called function'
+  );
+}
+
+sub groupping_by_module : Tests {
+  my $model = Analizo::Model->new;
+  $model->declare_function('cluster1.c.r1874.expand', 'function1');
+  $model->declare_function('cluster2.c.r9873.expand', 'function2');
+  $model->declare_function('cluster2.c.r9873.expand', 'function3');
+  $model->add_call('function1', 'function2');
+  $model->add_call('function1', 'function3');
+  is(
+    $model->callgraph(group_by_module => 1),
+    'cluster1.c-cluster2.c',
+    'must list correctly a single dependency arrow between two modules'
+  );
+  $model->add_call('function1', 'function4');
+  $model->declare_function('cluster3.c.r8773.expand', 'function4');
+  is(
+    $model->callgraph(group_by_module => 1),
+    'cluster1.c-cluster2.c,cluster1.c-cluster3.c',
+    'must list arrow targets in lexicographic order'
+  );
+  $model->add_call('function5', 'function1');
+  $model->declare_function('cluster0.c.r7412.expand', 'function5');
+  is(
+    $model->callgraph(group_by_module => 1),
+    'cluster0.c-cluster1.c,cluster1.c-cluster2.c,cluster1.c-cluster3.c',
+    'must list arrow sources in in lexicographic order'
+  );
+}
+
+sub use_of_variables : Tests {
+  my $model = Analizo::Model->new;
+  $model->declare_function('module1.c.r1234.expand', 'function1');
+  $model->declare_variable('module2.c', 'myvariable');
+  $model->add_variable_use('function1', 'myvariable');
+  is(
+    $model->callgraph,
+    'function1-myvariable',
+    'must output declared variables'
+  );
+  # test grouping by module
+  is(
+    $model->callgraph(group_by_module => 1),
+    'module1.c-module2.c',
+    'must use variable information for inter-module dependencies'
+  );
+}
+
+__PACKAGE__->runtests;
