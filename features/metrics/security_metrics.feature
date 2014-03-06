@@ -171,7 +171,7 @@ Feature: Security Metrics
     Then the output must match "ua: 1"
     And the exit status must be 0
 
-  Scenario: Verifying function gets buffer overflow in output
+  Scenario: Verifying gets buffer overflow in output
     Given I am in .
     When I run "analizo metrics --extractor ClangStaticAnalyzer t/samples/clang_analyzer/"
     Then the output must match "fgbo"
@@ -181,4 +181,16 @@ Feature: Security Metrics
     Given I am in .
     When I run "analizo metrics --extractor ClangStaticAnalyzer t/samples/clang_analyzer"
     Then the output must match "fgbo: 1"
+    And the exit status must be 0
+
+  Scenario: Verifying dereference of undefined pointer value
+    Given I am in .
+    When I run "analizo metrics --extractor ClangStaticAnalyzer t/samples/clang_analyzer/"
+    Then the output must match "dupv"
+    And the exit status must be 0
+
+  Scenario: Verifying value of function dereference of undefined pointer value
+    Given I am in .
+    When I run "analizo metrics --extractor ClangStaticAnalyzer t/samples/clang_analyzer"
+    Then the output must match "dupv: 1"
     And the exit status must be 0

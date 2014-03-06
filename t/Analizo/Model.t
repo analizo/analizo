@@ -324,5 +324,11 @@ sub declaring_function_gets_buffer_overflow : Tests {
   is($model->{security_metrics}->{"Potential buffer overflow in call to \'gets\'"}->{'file'}, 2);
 }
 
+sub declaring_function_dereference_of_undefined_pointer_value : Tests {
+  my $model = new Analizo::Model;
+  $model->declare_security_metrics('Dereference of undefined pointer value', 'file', 2);
+  is($model->{security_metrics}->{'Dereference of undefined pointer value'}->{'file'}, 2);
+}
+
 __PACKAGE__->runtests;
 

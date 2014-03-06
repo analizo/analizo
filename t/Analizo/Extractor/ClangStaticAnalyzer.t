@@ -1,6 +1,6 @@
 package t::Analizo::Extractor::ClangStaticAnalyzer;
 use base qw(Test::Class);
-use Test::More tests => 35;
+use Test::More tests => 37;
 
 use strict;
 use warnings;
@@ -367,6 +367,28 @@ sub feed_declares_function_gets_buffer_overflow : Tests {
 
   is($received_module,'a/b/c.d/dir/file','Module name must be the file name.');
   is($received_value, 11, '11 bugs expected.');
+
+}
+
+sub feed_declares_dereference_of_undefined_pointer_value : Tests {
+  our $received_module;
+  our $received_value;
+
+  no warnings;
+  local *Analizo::Model::declare_security_metrics = sub {
+    my ($self, $bug_name, $module, $value) = @_;
+    $received_module = $module;
+    $received_value = $value;
+  };
+  use warnings;
+  my $tree;
+  $tree->{'a/b/c.d/dir/file.c'}->{'Dereference of undefined pointer value'} = 13;
+
+  my $extractor = new Analizo::Extractor::ClangStaticAnalyzer;
+  $extractor->feed($tree);
+
+  is($received_module,'a/b/c.d/dir/file','Module name must be the file name.');
+  is($received_value, 13, '13 bugs expected.');
 
 }
 __PACKAGE__->runtests;

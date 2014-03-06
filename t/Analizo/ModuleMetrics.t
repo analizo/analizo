@@ -44,6 +44,7 @@ sub metrics_of_module : Tests {
   $model->declare_security_metrics('Offset free', 'mod1', 7);
   $model->declare_security_metrics('Undefined allocation of 0 bytes (CERT MEM04-C; CWE-131)', 'mod1', 7);
   $model->declare_security_metrics("Potential buffer overflow in call to \'gets\'", 'mod1', 11);
+  $model->declare_security_metrics('Dereference of undefined pointer value', 'mod1', 13);
   my $report = $module_metrics->report('mod1');
 
   is($report->{'_module'}, 'mod1');
@@ -66,6 +67,7 @@ sub metrics_of_module : Tests {
   is($report->{'osf'}, 7);
   is($report->{'ua'}, 7);
   is($report->{'fgbo'}, 11);
+  is($report->{'dupv'}, 13);
 }
 
 __PACKAGE__->runtests;
