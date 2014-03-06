@@ -311,5 +311,12 @@ sub declaring_offset_free : Tests {
   $model->declare_security_metrics('Offset free', 'file', 2);
   is($model->{security_metrics}->{'Offset free'}->{'file'}, 2);
 }
+
+sub declaring_undefined_allocation : Tests {
+  my $model = new Analizo::Model;
+  $model->declare_security_metrics('Undefined allocation of 0 bytes (CERT MEM04-C; CWE-131)', 'file', 2);
+  is($model->{security_metrics}->{'Undefined allocation of 0 bytes (CERT MEM04-C; CWE-131)'}->{'file'}, 2);
+}
+
 __PACKAGE__->runtests;
 

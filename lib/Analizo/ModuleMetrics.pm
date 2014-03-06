@@ -31,6 +31,7 @@ use Analizo::Metric::DoubleFree;
 use Analizo::Metric::BadDeallocator;
 use Analizo::Metric::UseAfterFree;
 use Analizo::Metric::OffsetFree;
+use Analizo::Metric::UndefinedAllocation;
 
 __PACKAGE__->mk_accessors(qw(model metric_calculators));
 
@@ -78,6 +79,7 @@ sub _initialize_metric_calculators {
     bd                   => new Analizo::Metric::BadDeallocator(model => $model),
     uaf                  => new Analizo::Metric::UseAfterFree(model => $model),
     osf                  => new Analizo::Metric::OffsetFree(model => $model),
+    ua                   => new Analizo::Metric::UndefinedAllocation(model => $model),
   );
   return \%calculators;
 }

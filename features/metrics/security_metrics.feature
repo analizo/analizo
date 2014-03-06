@@ -158,3 +158,15 @@ Feature: Security Metrics
     When I run "analizo metrics --extractor ClangStaticAnalyzer t/samples/clang_analyzer"
     Then the output must match "osf: 3"
     And the exit status must be 0
+
+  Scenario: Verifying undefined allocation in output
+    Given I am in .
+    When I run "analizo metrics --extractor ClangStaticAnalyzer t/samples/clang_analyzer/"
+    Then the output must match "ua"
+    And the exit status must be 0
+
+  Scenario: Verifying value of undefined allocation in output
+    Given I am in .
+    When I run "analizo metrics --extractor ClangStaticAnalyzer t/samples/clang_analyzer"
+    Then the output must match "ua: 1"
+    And the exit status must be 0

@@ -168,6 +168,7 @@ sub cache_of_model_and_metrics : Tests {
   $model2->{security_metrics}->{'Bad deallocator'} = {};
   $model2->{security_metrics}->{'Use-after-free'} = {};
   $model2->{security_metrics}->{'Offset free'} = {};
+  $model2->{security_metrics}->{'Undefined allocation of 0 bytes (CERT MEM04-C; CWE-131)'} = {};
 
   is($model_result, 'cache used', 'use cache for model');
   is($metrics_result, 'cache used', 'use cache for metrics');

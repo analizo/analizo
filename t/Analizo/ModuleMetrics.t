@@ -42,6 +42,7 @@ sub metrics_of_module : Tests {
   $model->declare_security_metrics('Bad deallocator', 'mod1', 5);
   $model->declare_security_metrics('Use-after-free', 'mod1', 6);
   $model->declare_security_metrics('Offset free', 'mod1', 7);
+  $model->declare_security_metrics('Undefined allocation of 0 bytes (CERT MEM04-C; CWE-131)', 'mod1', 7);
   my $report = $module_metrics->report('mod1');
 
   is($report->{'_module'}, 'mod1');
@@ -62,6 +63,7 @@ sub metrics_of_module : Tests {
   is($report->{'bd'}, 5);
   is($report->{'uaf'}, 6);
   is($report->{'osf'}, 7);
+  is($report->{'ua'}, 7);
 }
 
 __PACKAGE__->runtests;
