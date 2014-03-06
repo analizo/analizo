@@ -34,6 +34,7 @@ use Analizo::Metric::OffsetFree;
 use Analizo::Metric::UndefinedAllocation;
 use Analizo::Metric::FunctionGetsBufferOverflow;
 use Analizo::Metric::DereferenceOfUndefinedPointerValue;
+use Analizo::Metric::AllocatorSizeofOperandMismatch;
 
 __PACKAGE__->mk_accessors(qw(model metric_calculators));
 
@@ -84,6 +85,7 @@ sub _initialize_metric_calculators {
     ua                   => new Analizo::Metric::UndefinedAllocation(model => $model),
     fgbo                 => new Analizo::Metric::FunctionGetsBufferOverflow(model => $model),
     dupv                 => new Analizo::Metric::DereferenceOfUndefinedPointerValue(model => $model),
+    asom                 => new Analizo::Metric::AllocatorSizeofOperandMismatch(model => $model),
   );
   return \%calculators;
 }

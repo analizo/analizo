@@ -171,6 +171,7 @@ sub cache_of_model_and_metrics : Tests {
   $model2->{security_metrics}->{'Undefined allocation of 0 bytes (CERT MEM04-C; CWE-131)'} = {};
   $model2->{security_metrics}->{"Potential buffer overflow in call to \'gets\'"} = {};
   $model2->{security_metrics}->{'Dereference of undefined pointer value'} = {};
+  $model2->{security_metrics}->{'Allocator sizeof operand mismatch'} = {};
 
   is($model_result, 'cache used', 'use cache for model');
   is($metrics_result, 'cache used', 'use cache for metrics');

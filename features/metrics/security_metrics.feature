@@ -194,3 +194,15 @@ Feature: Security Metrics
     When I run "analizo metrics --extractor ClangStaticAnalyzer t/samples/clang_analyzer"
     Then the output must match "dupv: 1"
     And the exit status must be 0
+
+  Scenario: Verifying allocator sizeof operand mismatch
+    Given I am in .
+    When I run "analizo metrics --extractor ClangStaticAnalyzer t/samples/clang_analyzer/"
+    Then the output must match "asom"
+    And the exit status must be 0
+
+  Scenario: Verifying value of function allocator sizeof operand mismatch
+    Given I am in .
+    When I run "analizo metrics --extractor ClangStaticAnalyzer t/samples/clang_analyzer"
+    Then the output must match "asom: 1"
+    And the exit status must be 0
