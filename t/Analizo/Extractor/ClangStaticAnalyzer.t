@@ -1,6 +1,6 @@
 package t::Analizo::Extractor::ClangStaticAnalyzer;
 use base qw(Test::Class);
-use Test::More tests => 33;
+use Test::More tests => 35;
 
 use strict;
 use warnings;
@@ -348,5 +348,26 @@ sub feed_declares_undefined_allocation : Tests {
 
 }
 
+sub feed_declares_function_gets_buffer_overflow : Tests {
+  our $received_module;
+  our $received_value;
+
+  no warnings;
+  local *Analizo::Model::declare_security_metrics = sub {
+    my ($self, $bug_name, $module, $value) = @_;
+    $received_module = $module;
+    $received_value = $value;
+  };
+  use warnings;
+  my $tree;
+  $tree->{'a/b/c.d/dir/file.c'}->{"Potential buffer overflow in call to \'gets\'"} = 11;
+
+  my $extractor = new Analizo::Extractor::ClangStaticAnalyzer;
+  $extractor->feed($tree);
+
+  is($received_module,'a/b/c.d/dir/file','Module name must be the file name.');
+  is($received_value, 11, '11 bugs expected.');
+
+}
 __PACKAGE__->runtests;
 

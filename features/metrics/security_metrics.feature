@@ -170,3 +170,15 @@ Feature: Security Metrics
     When I run "analizo metrics --extractor ClangStaticAnalyzer t/samples/clang_analyzer"
     Then the output must match "ua: 1"
     And the exit status must be 0
+
+  Scenario: Verifying function gets buffer overflow in output
+    Given I am in .
+    When I run "analizo metrics --extractor ClangStaticAnalyzer t/samples/clang_analyzer/"
+    Then the output must match "fgbo"
+    And the exit status must be 0
+
+  Scenario: Verifying value of function gets buffer overflow in output
+    Given I am in .
+    When I run "analizo metrics --extractor ClangStaticAnalyzer t/samples/clang_analyzer"
+    Then the output must match "fgbo: 1"
+    And the exit status must be 0

@@ -318,5 +318,11 @@ sub declaring_undefined_allocation : Tests {
   is($model->{security_metrics}->{'Undefined allocation of 0 bytes (CERT MEM04-C; CWE-131)'}->{'file'}, 2);
 }
 
+sub declaring_function_gets_buffer_overflow : Tests {
+  my $model = new Analizo::Model;
+  $model->declare_security_metrics("Potential buffer overflow in call to \'gets\'", 'file', 2);
+  is($model->{security_metrics}->{"Potential buffer overflow in call to \'gets\'"}->{'file'}, 2);
+}
+
 __PACKAGE__->runtests;
 
