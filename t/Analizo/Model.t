@@ -300,5 +300,11 @@ sub declaring_bad_deallocator : Tests {
   is($model->{security_metrics}->{'Bad deallocator'}->{'file'}, 2);
 }
 
+sub declaring_use_after_free : Tests {
+  my $model = new Analizo::Model;
+  $model->declare_security_metrics('Use-after-free', 'file', 2);
+  is($model->{security_metrics}->{'Use-after-free'}->{'file'}, 2);
+}
+
 __PACKAGE__->runtests;
 
