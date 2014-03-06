@@ -294,5 +294,11 @@ sub declaring_double_free : Tests {
   is($model->{security_metrics}->{'Double free'}->{'file'}, 2);
 }
 
+sub declaring_bad_deallocator : Tests {
+  my $model = new Analizo::Model;
+  $model->declare_security_metrics('Bad deallocator', 'file', 2);
+  is($model->{security_metrics}->{'Bad deallocator'}->{'file'}, 2);
+}
+
 __PACKAGE__->runtests;
 

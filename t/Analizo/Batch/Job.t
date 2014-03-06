@@ -165,6 +165,7 @@ sub cache_of_model_and_metrics : Tests {
   $model2->{security_metrics}->{'Uninitialized argument value'} = {};
   $model2->{security_metrics}->{'Bad free'} = {};
   $model2->{security_metrics}->{'Double free'} = {};
+  $model2->{security_metrics}->{'Bad deallocator'} = {};
 
   is($model_result, 'cache used', 'use cache for model');
   is($metrics_result, 'cache used', 'use cache for metrics');

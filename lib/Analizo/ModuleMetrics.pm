@@ -28,6 +28,7 @@ use Analizo::Metric::OutOfBoundArrayAccess;
 use Analizo::Metric::UninitializedArgumentValue;
 use Analizo::Metric::BadFree;
 use Analizo::Metric::DoubleFree;
+use Analizo::Metric::BadDeallocator;
 
 __PACKAGE__->mk_accessors(qw(model metric_calculators));
 
@@ -72,6 +73,7 @@ sub _initialize_metric_calculators {
     uav                  => new Analizo::Metric::UninitializedArgumentValue(model => $model),
     bf                   => new Analizo::Metric::BadFree(model => $model),
     df                   => new Analizo::Metric::DoubleFree(model => $model),
+    bd                   => new Analizo::Metric::BadDeallocator(model => $model),
   );
   return \%calculators;
 }

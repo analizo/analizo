@@ -39,6 +39,7 @@ sub metrics_of_module : Tests {
   $model->declare_security_metrics('Uninitialized argument value', 'mod1', 8);
   $model->declare_security_metrics('Bad free', 'mod1', 9);
   $model->declare_security_metrics('Double free', 'mod1', 10);
+  $model->declare_security_metrics('Bad deallocator', 'mod1', 5);
   my $report = $module_metrics->report('mod1');
 
   is($report->{'_module'}, 'mod1');
@@ -56,6 +57,7 @@ sub metrics_of_module : Tests {
   is($report->{'uav'}, 8);
   is($report->{'bf'}, 9);
   is($report->{'df'}, 10);
+  is($report->{'bd'}, 5);
 }
 
 __PACKAGE__->runtests;

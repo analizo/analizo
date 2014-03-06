@@ -1,6 +1,6 @@
 package t::Analizo::Extractor::ClangStaticAnalyzer;
 use base qw(Test::Class);
-use Test::More tests => 25;
+use Test::More tests => 27;
 
 use strict;
 use warnings;
@@ -255,6 +255,29 @@ sub feed_declares_double_free : Tests {
 
   is($received_module,'a/b/c.d/dir/file','Module name must be the file name.');
   is($received_value, 5, '5 bugs expected.');
+
+}
+
+sub feed_declares_bad_deallocator : Tests {
+
+  our $received_module;
+  our $received_value;
+
+  no warnings;
+  local *Analizo::Model::declare_security_metrics = sub {
+    my ($self, $bug_name, $module, $value) = @_;
+    $received_module = $module;
+    $received_value = $value;
+  };
+  use warnings;
+  my $tree;
+  $tree->{'a/b/c.d/dir/file.c'}->{'Bad deallocator'} = 6;
+
+  my $extractor = new Analizo::Extractor::ClangStaticAnalyzer;
+  $extractor->feed($tree);
+
+  is($received_module,'a/b/c.d/dir/file','Module name must be the file name.');
+  is($received_value, 6, '6 bugs expected.');
 
 }
 
