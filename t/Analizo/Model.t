@@ -306,5 +306,10 @@ sub declaring_use_after_free : Tests {
   is($model->{security_metrics}->{'Use-after-free'}->{'file'}, 2);
 }
 
+sub declaring_offset_free : Tests {
+  my $model = new Analizo::Model;
+  $model->declare_security_metrics('Offset free', 'file', 2);
+  is($model->{security_metrics}->{'Offset free'}->{'file'}, 2);
+}
 __PACKAGE__->runtests;
 

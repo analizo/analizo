@@ -146,3 +146,15 @@ Feature: Security Metrics
     When I run "analizo metrics --extractor ClangStaticAnalyzer t/samples/clang_analyzer"
     Then the output must match "uaf: 1"
     And the exit status must be 0
+
+  Scenario: Verifying offset free in output
+    Given I am in .
+    When I run "analizo metrics --extractor ClangStaticAnalyzer t/samples/clang_analyzer/"
+    Then the output must match "osf"
+    And the exit status must be 0
+
+  Scenario: Verifying value of offset free in output
+    Given I am in .
+    When I run "analizo metrics --extractor ClangStaticAnalyzer t/samples/clang_analyzer"
+    Then the output must match "osf: 3"
+    And the exit status must be 0

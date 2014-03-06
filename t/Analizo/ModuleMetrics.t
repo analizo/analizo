@@ -41,6 +41,7 @@ sub metrics_of_module : Tests {
   $model->declare_security_metrics('Double free', 'mod1', 10);
   $model->declare_security_metrics('Bad deallocator', 'mod1', 5);
   $model->declare_security_metrics('Use-after-free', 'mod1', 6);
+  $model->declare_security_metrics('Offset free', 'mod1', 7);
   my $report = $module_metrics->report('mod1');
 
   is($report->{'_module'}, 'mod1');
@@ -60,6 +61,7 @@ sub metrics_of_module : Tests {
   is($report->{'df'}, 10);
   is($report->{'bd'}, 5);
   is($report->{'uaf'}, 6);
+  is($report->{'osf'}, 7);
 }
 
 __PACKAGE__->runtests;

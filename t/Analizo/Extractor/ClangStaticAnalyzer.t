@@ -1,6 +1,6 @@
 package t::Analizo::Extractor::ClangStaticAnalyzer;
 use base qw(Test::Class);
-use Test::More tests => 29;
+use Test::More tests => 31;
 
 use strict;
 use warnings;
@@ -301,6 +301,29 @@ sub feed_declares_use_after_free : Tests {
 
   is($received_module,'a/b/c.d/dir/file','Module name must be the file name.');
   is($received_value, 7, '7 bugs expected.');
+
+}
+
+sub feed_declares_offset_free : Tests {
+
+  our $received_module;
+  our $received_value;
+
+  no warnings;
+  local *Analizo::Model::declare_security_metrics = sub {
+    my ($self, $bug_name, $module, $value) = @_;
+    $received_module = $module;
+    $received_value = $value;
+  };
+  use warnings;
+  my $tree;
+  $tree->{'a/b/c.d/dir/file.c'}->{'Offset free'} = 8;
+
+  my $extractor = new Analizo::Extractor::ClangStaticAnalyzer;
+  $extractor->feed($tree);
+
+  is($received_module,'a/b/c.d/dir/file','Module name must be the file name.');
+  is($received_value, 8, '8 bugs expected.');
 
 }
 __PACKAGE__->runtests;
