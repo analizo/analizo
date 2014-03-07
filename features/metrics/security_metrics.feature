@@ -3,230 +3,30 @@ Feature: Security Metrics
   I want to analyze the number of bugs in my project
   So that I can correct them
 
-  Scenario: Verifying divisions by zero in output
+  Scenario Outline: Verifying security metrics in output
     Given I am in .
     When I run "analizo metrics --extractor ClangStaticAnalyzer t/samples/clang_analyzer/"
-    Then the output must match "dbz"
+    Then the output must match "<short_name_metric>: <value>"
     And the exit status must be 0
+  Examples:
+    | short_name_metric | value |
+    | dbz               | 2     |
+    | da                | 1     |
+    | mlk               | 1     |
+    | dnp               | 1     |
+    | auv               | 1     |
+    | rsva              | 1     |
+    | obaa              | 1     |
+    | uav               | 1     |
+    | bf                | 1     |
+    | df                | 1     |
+    | bd                | 1     |
+    | uaf               | 1     |
+    | osf               | 3     |
+    | ua                | 1     |
+    | fgbo              | 1     |
+    | dupv              | 1     |
+    | asom              | 1     |
+    | an                | 1     |
+    | saigv             | 1     |
 
-  Scenario: Verifying value of divisions by zero in output
-    Given I am in .
-    When I run "analizo metrics --extractor ClangStaticAnalyzer t/samples/clang_analyzer/dbz"
-    Then the output must match "dbz: 2"
-    And the exit status must be 0
-
-  Scenario: Verifying dead assignment in output
-    Given I am in .
-    When I run "analizo metrics --extractor ClangStaticAnalyzer t/samples/clang_analyzer/"
-    Then the output must match "da"
-    And the exit status must be 0
-
-  Scenario: Verifying value of dead assignment in output
-    Given I am in .
-    When I run "analizo metrics --extractor ClangStaticAnalyzer t/samples/clang_analyzer"
-    Then the output must match "da: 1"
-    And the exit status must be 0
-
-  Scenario: Verifying memory leak in output
-    Given I am in .
-    When I run "analizo metrics --extractor ClangStaticAnalyzer t/samples/clang_analyzer/"
-    Then the output must match "mlk"
-    And the exit status must be 0
-
-  Scenario: Verifying value of memory leak in output
-    Given I am in .
-    When I run "analizo metrics --extractor ClangStaticAnalyzer t/samples/clang_analyzer"
-    Then the output must match "mlk: 1"
-    And the exit status must be 0
-
-  Scenario: Verifying dereference of null pointer in output
-    Given I am in .
-    When I run "analizo metrics --extractor ClangStaticAnalyzer t/samples/clang_analyzer/"
-    Then the output must match "dnp"
-    And the exit status must be 0
-
-  Scenario: Verifying value of dereference of null pointer in output
-    Given I am in .
-    When I run "analizo metrics --extractor ClangStaticAnalyzer t/samples/clang_analyzer"
-    Then the output must match "dnp: 1"
-    And the exit status must be 0
-
-  Scenario: Verifying assigned undefined value in output
-    Given I am in .
-    When I run "analizo metrics --extractor ClangStaticAnalyzer t/samples/clang_analyzer/"
-    Then the output must match "auv"
-    And the exit status must be 0
-
-  Scenario: Verifying value of assigned undefined value in output
-    Given I am in .
-    When I run "analizo metrics --extractor ClangStaticAnalyzer t/samples/clang_analyzer"
-    Then the output must match "auv: 1"
-    And the exit status must be 0
-
-  Scenario: Verifying return of stack variable address in output
-    Given I am in .
-    When I run "analizo metrics --extractor ClangStaticAnalyzer t/samples/clang_analyzer/"
-    Then the output must match "rsva"
-    And the exit status must be 0
-
-  Scenario: Verifying value of return of stack variable address in output
-    Given I am in .
-    When I run "analizo metrics --extractor ClangStaticAnalyzer t/samples/clang_analyzer"
-    Then the output must match "rsva: 1"
-    And the exit status must be 0
-
-  Scenario: Verifying out-of-bound array access in output
-    Given I am in .
-    When I run "analizo metrics --extractor ClangStaticAnalyzer t/samples/clang_analyzer/"
-    Then the output must match "obaa"
-    And the exit status must be 0
-
-  Scenario: Verifying value of out-of-bound array access in output
-    Given I am in .
-    When I run "analizo metrics --extractor ClangStaticAnalyzer t/samples/clang_analyzer"
-    Then the output must match "obaa: 1"
-    And the exit status must be 0
-
-  Scenario: Verifying uninitialized argument value in output
-    Given I am in .
-    When I run "analizo metrics --extractor ClangStaticAnalyzer t/samples/clang_analyzer/"
-    Then the output must match "uav"
-    And the exit status must be 0
-
-  Scenario: Verifying value of uninitialized argument value in output
-    Given I am in .
-    When I run "analizo metrics --extractor ClangStaticAnalyzer t/samples/clang_analyzer"
-    Then the output must match "uav: 1"
-    And the exit status must be 0
-
-  Scenario: Verifying bad free in output
-    Given I am in .
-    When I run "analizo metrics --extractor ClangStaticAnalyzer t/samples/clang_analyzer/"
-    Then the output must match "bf"
-    And the exit status must be 0
-
-  Scenario: Verifying value of bad free in output
-    Given I am in .
-    When I run "analizo metrics --extractor ClangStaticAnalyzer t/samples/clang_analyzer"
-    Then the output must match "bf: 1"
-    And the exit status must be 0
-
-  Scenario: Verifying double free in output
-    Given I am in .
-    When I run "analizo metrics --extractor ClangStaticAnalyzer t/samples/clang_analyzer/"
-    Then the output must match "df"
-    And the exit status must be 0
-
-  Scenario: Verifying value of double free in output
-    Given I am in .
-    When I run "analizo metrics --extractor ClangStaticAnalyzer t/samples/clang_analyzer"
-    Then the output must match "df: 1"
-    And the exit status must be 0
-
-  Scenario: Verifying bad deallocator in output
-    Given I am in .
-    When I run "analizo metrics --extractor ClangStaticAnalyzer t/samples/clang_analyzer/"
-    Then the output must match "bd"
-    And the exit status must be 0
-
-  Scenario: Verifying value of bad deallocator in output
-    Given I am in .
-    When I run "analizo metrics --extractor ClangStaticAnalyzer t/samples/clang_analyzer"
-    Then the output must match "bd: 1"
-    And the exit status must be 0
-
-  Scenario: Verifying use-after-free in output
-    Given I am in .
-    When I run "analizo metrics --extractor ClangStaticAnalyzer t/samples/clang_analyzer/"
-    Then the output must match "uaf"
-    And the exit status must be 0
-
-  Scenario: Verifying value of use-after-free in output
-    Given I am in .
-    When I run "analizo metrics --extractor ClangStaticAnalyzer t/samples/clang_analyzer"
-    Then the output must match "uaf: 1"
-    And the exit status must be 0
-
-  Scenario: Verifying offset free in output
-    Given I am in .
-    When I run "analizo metrics --extractor ClangStaticAnalyzer t/samples/clang_analyzer/"
-    Then the output must match "osf"
-    And the exit status must be 0
-
-  Scenario: Verifying value of offset free in output
-    Given I am in .
-    When I run "analizo metrics --extractor ClangStaticAnalyzer t/samples/clang_analyzer"
-    Then the output must match "osf: 3"
-    And the exit status must be 0
-
-  Scenario: Verifying undefined allocation in output
-    Given I am in .
-    When I run "analizo metrics --extractor ClangStaticAnalyzer t/samples/clang_analyzer/"
-    Then the output must match "ua"
-    And the exit status must be 0
-
-  Scenario: Verifying value of undefined allocation in output
-    Given I am in .
-    When I run "analizo metrics --extractor ClangStaticAnalyzer t/samples/clang_analyzer"
-    Then the output must match "ua: 1"
-    And the exit status must be 0
-
-  Scenario: Verifying gets buffer overflow in output
-    Given I am in .
-    When I run "analizo metrics --extractor ClangStaticAnalyzer t/samples/clang_analyzer/"
-    Then the output must match "fgbo"
-    And the exit status must be 0
-
-  Scenario: Verifying value of function gets buffer overflow in output
-    Given I am in .
-    When I run "analizo metrics --extractor ClangStaticAnalyzer t/samples/clang_analyzer"
-    Then the output must match "fgbo: 1"
-    And the exit status must be 0
-
-  Scenario: Verifying dereference of undefined pointer value
-    Given I am in .
-    When I run "analizo metrics --extractor ClangStaticAnalyzer t/samples/clang_analyzer/"
-    Then the output must match "dupv"
-    And the exit status must be 0
-
-  Scenario: Verifying value of function dereference of undefined pointer value
-    Given I am in .
-    When I run "analizo metrics --extractor ClangStaticAnalyzer t/samples/clang_analyzer"
-    Then the output must match "dupv: 1"
-    And the exit status must be 0
-
-  Scenario: Verifying allocator sizeof operand mismatch
-    Given I am in .
-    When I run "analizo metrics --extractor ClangStaticAnalyzer t/samples/clang_analyzer/"
-    Then the output must match "asom"
-    And the exit status must be 0
-
-  Scenario: Verifying value of function allocator sizeof operand mismatch
-    Given I am in .
-    When I run "analizo metrics --extractor ClangStaticAnalyzer t/samples/clang_analyzer"
-    Then the output must match "asom: 1"
-    And the exit status must be 0
-
-  Scenario: Verifying argument null in output
-    Given I am in .
-    When I run "analizo metrics --extractor ClangStaticAnalyzer t/samples/clang_analyzer/"
-    Then the output must match "an"
-    And the exit status must be 0
-
-  Scenario: Verifying value of argument null in output
-    Given I am in .
-    When I run "analizo metrics --extractor ClangStaticAnalyzer t/samples/clang_analyzer"
-    Then the output must match "an: 1"
-    And the exit status must be 0
-
-  Scenario: Verifying stack address into global variable in output
-    Given I am in .
-    When I run "analizo metrics --extractor ClangStaticAnalyzer t/samples/clang_analyzer/"
-    Then the output must match "saigv"
-    And the exit status must be 0
-
-  Scenario: Verifying value of stack address into global variable in output
-    Given I am in .
-    When I run "analizo metrics --extractor ClangStaticAnalyzer t/samples/clang_analyzer"
-    Then the output must match "saigv: 1"
-    And the exit status must be 0

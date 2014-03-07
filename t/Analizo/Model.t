@@ -324,13 +324,13 @@ sub declaring_function_gets_buffer_overflow : Tests {
   is($model->{security_metrics}->{"Potential buffer overflow in call to \'gets\'"}->{'file'}, 2);
 }
 
-sub declaring_function_dereference_of_undefined_pointer_value : Tests {
+sub declaring_dereference_of_undefined_pointer_value : Tests {
   my $model = new Analizo::Model;
   $model->declare_security_metrics('Dereference of undefined pointer value', 'file', 2);
   is($model->{security_metrics}->{'Dereference of undefined pointer value'}->{'file'}, 2);
 }
 
-sub declaring_function_allocator_sizeof_operand_mismatch : Tests {
+sub declaring_allocator_sizeof_operand_mismatch : Tests {
   my $model = new Analizo::Model;
   $model->declare_security_metrics('Allocator sizeof operand mismatch', 'file', 2);
   is($model->{security_metrics}->{'Allocator sizeof operand mismatch'}->{'file'}, 2);
