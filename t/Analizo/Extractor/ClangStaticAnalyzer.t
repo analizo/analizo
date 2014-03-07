@@ -1,6 +1,6 @@
 package t::Analizo::Extractor::ClangStaticAnalyzer;
 use base qw(Test::Class);
-use Test::More tests => 41;
+use Test::More tests => 43;
 
 use strict;
 use warnings;
@@ -435,5 +435,28 @@ sub feed_declares_argument_null : Tests {
   is($received_value, 18, '18 bugs expected.');
 
 }
+
+sub feed_declares_stack_address_into_global_variable : Tests {
+  our $received_module;
+  our $received_value;
+
+  no warnings;
+  local *Analizo::Model::declare_security_metrics = sub {
+    my ($self, $bug_name, $module, $value) = @_;
+    $received_module = $module;
+    $received_value = $value;
+  };
+  use warnings;
+  my $tree;
+  $tree->{'a/b/c.d/dir/file.c'}->{'Stack address stored into global variable'} = 19;
+
+  my $extractor = new Analizo::Extractor::ClangStaticAnalyzer;
+  $extractor->feed($tree);
+
+  is($received_module,'a/b/c.d/dir/file','Stack address stored into global variable');
+  is($received_value, 19, '19 bugs expected.');
+
+}
+
 __PACKAGE__->runtests;
 

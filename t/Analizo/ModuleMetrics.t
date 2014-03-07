@@ -47,6 +47,7 @@ sub metrics_of_module : Tests {
   $model->declare_security_metrics('Dereference of undefined pointer value', 'mod1', 13);
   $model->declare_security_metrics('Allocator sizeof operand mismatch', 'mod1', 17);
   $model->declare_security_metrics('Argument with \'nonnull\' attribute passed null', 'mod1', 19);
+  $model->declare_security_metrics('Stack address stored into global variable', 'mod1', 21);
   my $report = $module_metrics->report('mod1');
 
   is($report->{'_module'}, 'mod1');
@@ -72,6 +73,7 @@ sub metrics_of_module : Tests {
   is($report->{'dupv'}, 13);
   is($report->{'asom'}, 17);
   is($report->{'an'}, 19);
+  is($report->{'saigv'}, 21);
 }
 
 __PACKAGE__->runtests;

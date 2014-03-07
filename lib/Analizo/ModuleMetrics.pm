@@ -36,6 +36,7 @@ use Analizo::Metric::FunctionGetsBufferOverflow;
 use Analizo::Metric::DereferenceOfUndefinedPointerValue;
 use Analizo::Metric::AllocatorSizeofOperandMismatch;
 use Analizo::Metric::ArgumentNull;
+use Analizo::Metric::StackAddressIntoGlobalVariable;
 
 __PACKAGE__->mk_accessors(qw(model metric_calculators));
 
@@ -88,6 +89,7 @@ sub _initialize_metric_calculators {
     dupv                 => new Analizo::Metric::DereferenceOfUndefinedPointerValue(model => $model),
     asom                 => new Analizo::Metric::AllocatorSizeofOperandMismatch(model => $model),
     an                   => new Analizo::Metric::ArgumentNull(model => $model),
+    saigv                => new Analizo::Metric::StackAddressIntoGlobalVariable(model => $model),
   );
   return \%calculators;
 }
