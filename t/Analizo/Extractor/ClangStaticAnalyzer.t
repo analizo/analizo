@@ -1,6 +1,6 @@
 package t::Analizo::Extractor::ClangStaticAnalyzer;
 use base qw(Test::Class);
-use Test::More tests => 39;
+use Test::More tests => 41;
 
 use strict;
 use warnings;
@@ -411,6 +411,28 @@ sub feed_declares_allocator_sizeof_operand_mismatch : Tests {
 
   is($received_module,'a/b/c.d/dir/file','Allocator sizeof operand mismatch');
   is($received_value, 17, '17 bugs expected.');
+
+}
+
+sub feed_declares_argument_null : Tests {
+  our $received_module;
+  our $received_value;
+
+  no warnings;
+  local *Analizo::Model::declare_security_metrics = sub {
+    my ($self, $bug_name, $module, $value) = @_;
+    $received_module = $module;
+    $received_value = $value;
+  };
+  use warnings;
+  my $tree;
+  $tree->{'a/b/c.d/dir/file.c'}->{'Argument with \'nonnull\' attribute passed null'} = 18;
+
+  my $extractor = new Analizo::Extractor::ClangStaticAnalyzer;
+  $extractor->feed($tree);
+
+  is($received_module,'a/b/c.d/dir/file','Argument with \'nonnull\' attribute passed null');
+  is($received_value, 18, '18 bugs expected.');
 
 }
 __PACKAGE__->runtests;

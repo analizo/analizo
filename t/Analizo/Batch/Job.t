@@ -172,6 +172,7 @@ sub cache_of_model_and_metrics : Tests {
   $model2->{security_metrics}->{"Potential buffer overflow in call to \'gets\'"} = {};
   $model2->{security_metrics}->{'Dereference of undefined pointer value'} = {};
   $model2->{security_metrics}->{'Allocator sizeof operand mismatch'} = {};
+  $model2->{security_metrics}->{'Argument with \'nonnull\' attribute passed null'} = {};
 
   is($model_result, 'cache used', 'use cache for model');
   is($metrics_result, 'cache used', 'use cache for metrics');

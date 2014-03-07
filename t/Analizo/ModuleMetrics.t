@@ -46,6 +46,7 @@ sub metrics_of_module : Tests {
   $model->declare_security_metrics("Potential buffer overflow in call to \'gets\'", 'mod1', 11);
   $model->declare_security_metrics('Dereference of undefined pointer value', 'mod1', 13);
   $model->declare_security_metrics('Allocator sizeof operand mismatch', 'mod1', 17);
+  $model->declare_security_metrics('Argument with \'nonnull\' attribute passed null', 'mod1', 19);
   my $report = $module_metrics->report('mod1');
 
   is($report->{'_module'}, 'mod1');
@@ -70,6 +71,7 @@ sub metrics_of_module : Tests {
   is($report->{'fgbo'}, 11);
   is($report->{'dupv'}, 13);
   is($report->{'asom'}, 17);
+  is($report->{'an'}, 19);
 }
 
 __PACKAGE__->runtests;

@@ -206,3 +206,15 @@ Feature: Security Metrics
     When I run "analizo metrics --extractor ClangStaticAnalyzer t/samples/clang_analyzer"
     Then the output must match "asom: 1"
     And the exit status must be 0
+
+  Scenario: Verifying argument null in output
+    Given I am in .
+    When I run "analizo metrics --extractor ClangStaticAnalyzer t/samples/clang_analyzer/"
+    Then the output must match "an"
+    And the exit status must be 0
+
+  Scenario: Verifying value of argument null in output
+    Given I am in .
+    When I run "analizo metrics --extractor ClangStaticAnalyzer t/samples/clang_analyzer"
+    Then the output must match "an: 1"
+    And the exit status must be 0

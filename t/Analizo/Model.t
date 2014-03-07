@@ -336,5 +336,11 @@ sub declaring_function_allocator_sizeof_operand_mismatch : Tests {
   is($model->{security_metrics}->{'Allocator sizeof operand mismatch'}->{'file'}, 2);
 }
 
+sub declaring_argument_null : Tests {
+  my $model = new Analizo::Model;
+  $model->declare_security_metrics('Argument with \'nonnull\' attribute passed null', 'file', 2);
+  is($model->{security_metrics}->{'Argument with \'nonnull\' attribute passed null'}->{'file'}, 2);
+}
+
 __PACKAGE__->runtests;
 
