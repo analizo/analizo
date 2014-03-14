@@ -7,3 +7,4 @@
 /site/man.mk
 /site/man/
 /site/pod2htmd.tmp
+*.csv

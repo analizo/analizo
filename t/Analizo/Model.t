@@ -240,5 +240,113 @@ sub group_files_when_build_graph : Tests {
   is_deeply(\@vertices, ['src/a', 'src/b', 'src/c']);
 }
 
+sub declaring_divisions_by_zero : Tests {
+  my $model = new Analizo::Model;
+  $model->declare_security_metrics('Division by zero', 'file', 2);
+  is($model->{security_metrics}->{'Division by zero'}->{'file'}, 2);
+}
+
+sub declaring_dead_assignment : Tests {
+  my $model = new Analizo::Model;
+  $model->declare_security_metrics('Dead assignment', 'file', 2);
+  is($model->{security_metrics}->{'Dead assignment'}->{'file'}, 2);
+}
+
+sub declaring_out_of_bound_array_access : Tests {
+  my $model = new Analizo::Model;
+  $model->declare_security_metrics('Out-of-bound array access', 'file', 2);
+  is($model->{security_metrics}->{'Out-of-bound array access'}->{'file'}, 2);
+}
+
+sub declaring_assigned_undefined_value : Tests {
+  my $model = new Analizo::Model;
+  $model->declare_security_metrics('Assigned undefined value', 'file', 2);
+  is($model->{security_metrics}->{'Assigned undefined value'}->{'file'}, 2);
+}
+
+sub declaring_memory_leak : Tests {
+  my $model = new Analizo::Model;
+  $model->declare_security_metrics('Memory leak', 'file', 2);
+  is($model->{security_metrics}->{'Memory leak'}->{'file'}, 2);
+}
+
+sub declaring_return_of_stack_variable_address : Tests {
+  my $model = new Analizo::Model;
+  $model->declare_security_metrics('Return of stack variable address', 'file', 2);
+  is($model->{security_metrics}->{'Return of stack variable address'}->{'file'}, 2);
+}
+
+sub declaring_dereference_of_null_pointer : Tests {
+  my $model = new Analizo::Model;
+  $model->declare_security_metrics('Dereference of null pointer', 'file', 2);
+  is($model->{security_metrics}->{'Dereference of null pointer'}->{'file'}, 2);
+}
+
+sub declaring_bad_free : Tests {
+  my $model = new Analizo::Model;
+  $model->declare_security_metrics('Bad free', 'file', 2);
+  is($model->{security_metrics}->{'Bad free'}->{'file'}, 2);
+}
+
+sub declaring_double_free : Tests {
+  my $model = new Analizo::Model;
+  $model->declare_security_metrics('Double free', 'file', 2);
+  is($model->{security_metrics}->{'Double free'}->{'file'}, 2);
+}
+
+sub declaring_bad_deallocator : Tests {
+  my $model = new Analizo::Model;
+  $model->declare_security_metrics('Bad deallocator', 'file', 2);
+  is($model->{security_metrics}->{'Bad deallocator'}->{'file'}, 2);
+}
+
+sub declaring_use_after_free : Tests {
+  my $model = new Analizo::Model;
+  $model->declare_security_metrics('Use-after-free', 'file', 2);
+  is($model->{security_metrics}->{'Use-after-free'}->{'file'}, 2);
+}
+
+sub declaring_offset_free : Tests {
+  my $model = new Analizo::Model;
+  $model->declare_security_metrics('Offset free', 'file', 2);
+  is($model->{security_metrics}->{'Offset free'}->{'file'}, 2);
+}
+
+sub declaring_undefined_allocation : Tests {
+  my $model = new Analizo::Model;
+  $model->declare_security_metrics('Undefined allocation of 0 bytes (CERT MEM04-C; CWE-131)', 'file', 2);
+  is($model->{security_metrics}->{'Undefined allocation of 0 bytes (CERT MEM04-C; CWE-131)'}->{'file'}, 2);
+}
+
+sub declaring_function_gets_buffer_overflow : Tests {
+  my $model = new Analizo::Model;
+  $model->declare_security_metrics("Potential buffer overflow in call to \'gets\'", 'file', 2);
+  is($model->{security_metrics}->{"Potential buffer overflow in call to \'gets\'"}->{'file'}, 2);
+}
+
+sub declaring_dereference_of_undefined_pointer_value : Tests {
+  my $model = new Analizo::Model;
+  $model->declare_security_metrics('Dereference of undefined pointer value', 'file', 2);
+  is($model->{security_metrics}->{'Dereference of undefined pointer value'}->{'file'}, 2);
+}
+
+sub declaring_allocator_sizeof_operand_mismatch : Tests {
+  my $model = new Analizo::Model;
+  $model->declare_security_metrics('Allocator sizeof operand mismatch', 'file', 2);
+  is($model->{security_metrics}->{'Allocator sizeof operand mismatch'}->{'file'}, 2);
+}
+
+sub declaring_argument_null : Tests {
+  my $model = new Analizo::Model;
+  $model->declare_security_metrics('Argument with \'nonnull\' attribute passed null', 'file', 2);
+  is($model->{security_metrics}->{'Argument with \'nonnull\' attribute passed null'}->{'file'}, 2);
+}
+
+sub declaring_stack_address_into_global_variable : Tests {
+  my $model = new Analizo::Model;
+  $model->declare_security_metrics('Stack address stored into global variable', 'file', 2);
+  is($model->{security_metrics}->{'Stack address stored into global variable'}->{'file'}, 2);
+}
+
 __PACKAGE__->runtests;
 

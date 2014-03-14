@@ -17,7 +17,8 @@ sub new {
     conditional_paths => {},
     abstract_classes => [],
     module_names => [],
-    total_eloc => 0
+    total_eloc => 0,
+    security_metrics => {}
   );
   return bless { @defaults }, __PACKAGE__;
 }
@@ -48,6 +49,11 @@ sub declare_module {
     push @{$self->{module_names}}, $module;
   }
   if (defined($file)) {
+    #undup filename
+    foreach (@{$self->{files}->{$module}}) {
+      return if($_ eq $file);
+    }
+
     $self->{files}->{$module} ||= [];
     push(@{$self->{files}->{$module}}, $file);
 
@@ -245,4 +251,15 @@ sub _function_to_file {
   $self->{files}->{$module};
 }
 
+sub declare_security_metrics {
+  my ($self, $bug_name, $module, $value) = @_;
+  $self->{security_metrics}->{$bug_name}->{$module} = $value;
+}
+
+sub security_metrics {
+  my ($self, $bug_name, $module) = @_;
+  return $self->{security_metrics}->{$bug_name}->{$module};
+}
+
 1;
+
