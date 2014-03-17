@@ -42,6 +42,7 @@ sub WriteMakefile {
 my $code = `cat Makefile.PL`;
 $code =~ s/use ExtUtils::MakeMaker;//;
 $code =~ s/sub\s*CheckExtraDependencies/sub _CheckExtraDependencies/;
+$code =~ s/MAN1POD/#MAN1PODS/;
 eval $code;
 
 unshift @dependencies, '${misc:Depends}', '${perl:Depends}';
