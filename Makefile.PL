@@ -25,6 +25,9 @@ CheckExtraDependencies(
   'sloccount' => 0,
   'sqlite3' => 0,
   'man' => 0,
+  'clang-3.5' => '(>= 3.5)',
+  'gcc' => '(>= 4.8~)',
+  'g++' => '(>= 4.8~)',
 );
 CheckExtraDependencies(
   'build',
@@ -59,7 +62,7 @@ WriteMakefile(
     'YAML' => 0,
     'Statistics::Descriptive' => 0,
     'Term::ProgressBar' => 0,
-    'ZMQ::LibZMQ2' => 0,
+    'ZeroMQ' => 0,
     'Mojolicious' => 0,
     'File::ShareDir' => 0,
     'File::Share' => 0,

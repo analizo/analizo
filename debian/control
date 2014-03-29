@@ -14,7 +14,10 @@ Build-Depends-Indep:
  libtest-exception-perl,
  libtest-mockmodule-perl,
  libtest-mockobject-perl,
+ clang-3.5 (>= 3.5),
  doxyparse (>= 1.5.8-12~),
+ g++ (>= 4.8~),
+ gcc (>= 4.8~),
  git,
  man,
  ruby,
@@ -41,7 +44,7 @@ Build-Depends-Indep:
  libterm-progressbar-perl,
  libyaml-perl,
  libyaml-tiny-perl,
- libzmq-libzmq2-perl
+ libzeromq-perl
 Standards-Version: 3.9.1
 Homepage: http://analizo.org
 
@@ -52,7 +55,10 @@ Architecture: all
 Depends:
  ${misc:Depends},
  ${perl:Depends},
+ clang-3.5 (>= 3.5),
  doxyparse (>= 1.5.8-12~),
+ g++ (>= 4.8~),
+ gcc (>= 4.8~),
  git,
  man,
  ruby,
@@ -79,7 +85,7 @@ Depends:
  libterm-progressbar-perl,
  libyaml-perl,
  libyaml-tiny-perl,
- libzmq-libzmq2-perl
+ libzeromq-perl
 Recommends: graphviz
 Description: multi-language source code analysis toolkit
  Analizo parses source code in multiple languages and report useful information

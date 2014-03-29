@@ -13,6 +13,7 @@ our $QUIET = undef;
 
 __PACKAGE__->mk_ro_accessors(qw(current_member));
 __PACKAGE__->mk_accessors(qw(current_file));
+__PACKAGE__->mk_accessors('includedir');
 
 sub new {
   die(sprintf("%s cannot be instantied. Try %s->load() instead", __PACKAGE__, __PACKAGE__));
@@ -83,6 +84,7 @@ sub use_filters {
 
 sub process {
   my ($self, @input) = @_;
+
   if ($self->use_filters) {
     @input = $self->apply_filters(@input);
   }
