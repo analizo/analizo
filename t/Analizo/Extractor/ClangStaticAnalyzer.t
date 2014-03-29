@@ -1,6 +1,6 @@
 package t::Analizo::Extractor::ClangStaticAnalyzer;
 use base qw(Test::Class);
-use Test::More tests => 43;
+use Test::More;
 
 use strict;
 use warnings;

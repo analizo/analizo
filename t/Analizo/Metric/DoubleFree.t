@@ -1,6 +1,6 @@
 package t::Analizo::Metric::DoubleFree;
 use base qw(Test::Class);
-use Test::More tests => 5;
+use Test::More;
 
 use strict;
 use warnings;

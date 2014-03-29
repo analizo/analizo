@@ -1,6 +1,6 @@
 package t::Analizo::LanguageFilter;
 use base qw(Test::Class);
-use Test::More 'no_plan';
+use Test::More;
 
 use strict;
 use warnings;

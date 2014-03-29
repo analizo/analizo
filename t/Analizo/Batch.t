@@ -2,7 +2,7 @@ package t::Analizo::Batch;
 use strict;
 use warnings;
 use base qw(Test::Class);
-use Test::More 'no_plan';
+use Test::More;
 use t::Analizo::Test;
 use Analizo::Batch;
 use Analizo::Batch::Job;
