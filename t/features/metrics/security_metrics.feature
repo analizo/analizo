@@ -29,4 +29,5 @@ Feature: Security Metrics
     | asom              | 1     |
     | an                | 1     |
     | saigv             | 1     |
+    | rogu              | 1     |
 
