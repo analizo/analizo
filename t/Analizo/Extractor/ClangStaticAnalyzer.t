@@ -458,5 +458,28 @@ sub feed_declares_stack_address_into_global_variable : Tests {
 
 }
 
+sub feed_declares_potential_insecure_temp_file_in_call : Tests {
+  our $received_module;
+  our $received_value;
+
+  no warnings;
+  local *Analizo::Model::declare_security_metrics = sub {
+    my ($self, $bug_name, $module, $value) = @_;
+    $received_module = $module;
+    $received_value = $value;
+  };
+  use warnings;
+  my $tree;
+
+  $tree->{'a/b/c.d/dir/file.c'}->{'Potential insecure temporary file in call \'mktemp\''} = 21;
+
+  my $extractor = new Analizo::Extractor::ClangStaticAnalyzer;
+  $extractor->feed($tree);
+
+  is($received_module,'a/b/c.d/dir/file','Potential insecure temporary file in call \'mktemp\'');
+  is($received_value, 21, '21 bugs expected.');
+
+}
+
 __PACKAGE__->runtests;
 

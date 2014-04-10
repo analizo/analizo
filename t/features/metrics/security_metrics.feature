@@ -10,6 +10,8 @@ Feature: Security Metrics
     And the exit status must be 0
   Examples:
     | short_name_metric | value |
+    | rogu              | 1     |
+    | pitfc             | 1     |
     | dbz               | 2     |
     | da                | 1     |
     | mlk               | 1     |
@@ -29,5 +31,4 @@ Feature: Security Metrics
     | asom              | 1     |
     | an                | 1     |
     | saigv             | 1     |
-    | rogu              | 1     |
 

@@ -2,8 +2,8 @@
 #include <stdio.h>
 int main()
 {
-	int * x = (int *) malloc(sizeof(int));
-	if (x>0)
+	int * x;
+	if (x != NULL)
 		return 0;
 	return 0;
 }

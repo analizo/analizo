@@ -38,6 +38,7 @@ use Analizo::Metric::AllocatorSizeofOperandMismatch;
 use Analizo::Metric::ArgumentNull;
 use Analizo::Metric::StackAddressIntoGlobalVariable;
 use Analizo::Metric::ResultIsGarbage;
+use Analizo::Metric::PotentialInsecureTempFileInCall;
 
 __PACKAGE__->mk_accessors(qw(model metric_calculators));
 
@@ -92,6 +93,7 @@ sub _initialize_metric_calculators {
     an                   => new Analizo::Metric::ArgumentNull(model => $model),
     saigv                => new Analizo::Metric::StackAddressIntoGlobalVariable(model => $model),
     rogu                 => new Analizo::Metric::ResultIsGarbage(model => $model),
+    pitfc                => new Analizo::Metric::PotentialInsecureTempFileInCall(model => $model),
 
   );
   return \%calculators;

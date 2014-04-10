@@ -176,6 +176,8 @@ sub cache_of_model_and_metrics : Tests {
   $model2->{security_metrics}->{'Stack address stored into global variable'} = {};
   $model2->{security_metrics}->{'Result of operation is garbage or undefined'} = {};
 
+  $model2->{security_metrics}->{'Potential insecure temporary file in call \'mktemp\''} = {};
+
   is($model_result, 'cache used', 'use cache for model');
   is($metrics_result, 'cache used', 'use cache for metrics');
 
