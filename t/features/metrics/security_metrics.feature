@@ -3,8 +3,8 @@ Feature: Security Metrics
   I want to analyze the number of bugs in my project
   So that I can correct them
 
-  Scenario Outline: Verifying security metrics in output
-    Given I am in .
+  Scenario: Verifying security metrics in output
+	Given I am in .
     When I run "analizo metrics --extractor ClangStaticAnalyzer t/samples/clang_analyzer/"
     Then the output must match "<short_name_metric>: <value>"
     And the exit status must be 0
