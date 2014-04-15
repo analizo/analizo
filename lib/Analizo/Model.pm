@@ -9,7 +9,6 @@ sub new {
     modules => {},
     files => {},
     module_by_file => {},
-    demangle => {},
     calls => {},
     lines => {},
     protection => {},
@@ -91,13 +90,10 @@ sub members {
 }
 
 sub declare_member {
-  my ($self, $module, $member, $demangled_name, $type) = @_;
+  my ($self, $module, $member, $type) = @_;
 
   # mapping member to module
   $self->{members}->{$member} = $module;
-
-  # demangling name
-  $self->{demangle}->{$member} = $demangled_name;
 }
 
 sub type {
@@ -106,9 +102,9 @@ sub type {
 }
 
 sub declare_function {
-  my ($self, $module, $function, $demangled_name) = @_;
+  my ($self, $module, $function) = @_;
   return unless $module;
-  $self->declare_member($module, $function, $demangled_name, 'function');
+  $self->declare_member($module, $function, 'function');
 
   if (!exists($self->{modules}->{$module})){
     $self->{modules}->{$module} = {};
@@ -120,8 +116,8 @@ sub declare_function {
 }
 
 sub declare_variable {
-  my ($self, $module, $variable, $demangled_name) = @_;
-  $self->declare_member($module, $variable, $demangled_name, 'variable');
+  my ($self, $module, $variable) = @_;
+  $self->declare_member($module, $variable, 'variable');
 
   if (!exists($self->{modules}->{$module})){
     $self->{modules}->{$module} = {};
@@ -130,11 +126,6 @@ sub declare_variable {
   if(! grep { $_ eq $variable } @{$self->{modules}->{$module}->{variables}}){
     push @{$self->{modules}->{$module}->{variables}}, $variable;
   }
-}
-
-sub demangle {
-  my ($self, $function) = @_;
-  return $self->{demangle}->{$function} || $function;
 }
 
 sub add_call {

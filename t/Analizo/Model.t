@@ -77,18 +77,6 @@ sub declaring_function : Tests {
   ok((grep { $_ eq 'anotherfunction' } @{$model->{modules}->{'mymodule'}->{functions}}), 'must store members in a module');
 }
 
-sub declaring_function_with_demangled_name : Tests {
-  my $model = new Analizo::Model;
-  $model->declare_function('mymodule', 'myfunction', 'demangled_name');
-  ok((grep { $_ eq 'demangled_name'} $model->demangle('myfunction')), 'must store mapping from mangled name to demangled name')
-}
-
-sub use_mangled_name_by_default_when_demanglig : Tests {
-  my $model = new Analizo::Model;
-  $model->declare_function("mod1", 'f1');
-  is($model->demangle('f1'), 'f1', 'must demangle to the function name itself by default');
-}
-
 sub declaring_variables : Tests {
   my $model = new Analizo::Model;
   $model->declare_variable('mymodule', 'myvariable');
