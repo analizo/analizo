@@ -33,7 +33,7 @@ sub description : Tests {
 sub calculate : Tests {
   is($an->calculate('file'), 0, 'file without argument null');
 
-  $model->declare_security_metrics('Argument null', 'file', 2);
+  $model->declare_security_metrics("Argument with \'nonnull\' attribute passed null", 'file', 2);
   is($an->calculate('file'), 2, 'one module, with 2 argument null');
 }
 
