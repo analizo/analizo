@@ -251,6 +251,7 @@ sub declare_security_metrics {
 sub security_metrics {
   my ($self, $bug_name, $module) = @_;
   return $self->{security_metrics}->{$bug_name}->{$module};
+}
 
 sub _add_dependency {
   my ($dependencies, $from, $to) = @_;
@@ -341,6 +342,5 @@ sub _include_callee {
   return $self->_include_caller($member, @omitted) && ( exists($self->members->{$member}) || $include_externals );
 }
 
-}
 1;
 
