@@ -19,7 +19,10 @@ $(SITEDOCS): %.html : %.md template.html.tt page.pl
 man.mk: man.pl
 	perl $< > $@
 
-upload: all
+publish:
+	git clone git@github.com:analizo/analizo.github.io.git publish
+
+upload: all publish
 	rsync \
 		-avp \
 		--delete \
@@ -31,7 +34,12 @@ upload: all
 		--exclude '*.mk' \
 		--exclude '*.tt' \
 		--exclude Makefile \
-		./ analizo.org:analizo/
+		--exclude publish \
+		./ publish/
+	cd publish && \
+		git add . && \
+		git commit -a -m "Site published on $(shell date)" && \
+		git push
 
 clean:
 	$(RM) man.mk $(MAN)
