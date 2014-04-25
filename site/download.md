@@ -6,7 +6,7 @@ choice of download, see below.
 ## Source code
 
 Analizo source code can be obtained by downloading
-[analizo_{$version}.tar.gz](http://analizo.org/download/analizo_{$version}.tar.gz)
+[analizo_{$version}.tar.gz](download/analizo_{$version}.tar.gz)
 To perform the installation, check the [installation
 instructions](installation.html).
 
@@ -26,14 +26,14 @@ the steps must be performed as =root= user.
 1) Create a file `/etc/apt/sources.list.d/analizo.list` file with the following
 contents:
 
-```
+```repository
 deb http://analizo.org/download/ ./
 deb-src http://analizo.org/download/ ./
 ```
 
 2) Add the repository signing key to your list of trusted keys:
 
-```
+```repository
 # wget -O - http://analizo.org/download/signing-key.asc | apt-key add -
 ```
 

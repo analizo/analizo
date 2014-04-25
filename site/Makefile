@@ -23,6 +23,7 @@ publish:
 	git clone git@github.com:analizo/analizo.github.io.git publish
 
 upload: all publish
+	cd publish && git pull
 	rsync \
 		-avp \
 		--delete \
@@ -35,6 +36,8 @@ upload: all publish
 		--exclude '*.tt' \
 		--exclude Makefile \
 		--exclude publish \
+		--exclude .git \
+		--exclude download/ \
 		./ publish/
 	cd publish && \
 		git add . && \
