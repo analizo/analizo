@@ -1,3 +1,17 @@
+analizo (1.18.0) unstable; urgency=low
+
+  [ Alexandre Barbosa ] [ Lucas Kanashiro ]
+
+  * New release
+  * Removing dependency cucumber in faver of Test::BDD:Cucumber
+  * Adding new extractor for security metrics:
+    + 21 new security metrics
+  * Adding new dependencies:
+    + gcc
+    + clang
+
+ -- Alexandre <alexandreab@live.com>  Fri, 25 Apr 2014 20:12:31 +0000
+
 analizo (1.17.0) unstable; urgency=low
 
   [ Antonio Terceiro ]
