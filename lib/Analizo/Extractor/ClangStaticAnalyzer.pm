@@ -77,7 +77,7 @@ sub actually_process {
   foreach my $c_file(@c_files) {
 
     #FIXME: Eval removed due to returning bug
-    $clang_return = `scan-build -o $analizo_folder gcc -c $c_file $flags 2>&1`;
+    $clang_return = `scan-build -enable-checker alpha -o $analizo_folder gcc -c $c_file $flags 2>&1`;
 
     $c_file =~ s/\.\///;
 

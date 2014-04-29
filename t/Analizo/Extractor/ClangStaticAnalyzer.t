@@ -45,7 +45,7 @@ sub test_actually_process : Tests {
 
   }
   is($report_tree->{'t/samples/clang_analyzer/no_compilable.c'}->{'Memory leak'}, undef, 'Metric must be undef');
-  is($total_bugs , 3, "3 bugs expected");
+  is($total_bugs , 4, "4 bugs expected");
 }
 
 sub feed_declares_divisions_by_zero : Tests {
