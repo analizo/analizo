@@ -120,7 +120,7 @@ sub feed {
 
     $self->model->declare_module($module, $file_name);
 
-    foreach $bug (keys $bugs_hash) {
+    foreach $bug (keys %$bugs_hash) {
       my $value = $tree->{$file_name}->{$bug};
       $self->model->declare_security_metrics($bug, $module, $value);
     }
