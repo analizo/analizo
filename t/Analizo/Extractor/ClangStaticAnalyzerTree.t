@@ -38,7 +38,7 @@ sub building_tree_with_reports_from_radom_file  : Tests {
   }
   close ($file_report);
 
-  $metrics_size = keys $report_tree if defined $report_tree;
+  $metrics_size = keys %$report_tree if defined $report_tree;
   is($metrics_size , 0, "No metrics expected");
 }
 
@@ -48,7 +48,7 @@ sub building_tree_with_reports_empty_file  : Tests {
 
   $report_tree = $tree->building_tree("", "file.c");
 
-  $metrics_size = keys $report_tree if defined $report_tree;
+  $metrics_size = keys %$report_tree if defined $report_tree;
   is($metrics_size , 0, "No metrics expected");
 }
 
