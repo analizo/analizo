@@ -17,7 +17,6 @@ use CHI;
 use Analizo::Model;
 use Analizo::Extractor;
 use Analizo::Extractor::Sloccount;
-use Analizo::Extractor::ClangStaticAnalyzer;
 use Analizo::Metrics;
 
 __PACKAGE__->mk_accessors(qw(model metrics id directory extractor));
@@ -133,7 +132,6 @@ sub execute {
     my @extractors = (
       Analizo::Extractor->load($self->extractor, model => $model),
       new Analizo::Extractor::Sloccount(model => $model),
-      new Analizo::Extractor::ClangStaticAnalyzer($self->includedirs, $self->libdirs, $self->libs, model => $model),
     );
     for my $extractor (@extractors) {
       $self->share_filters_with($extractor);
