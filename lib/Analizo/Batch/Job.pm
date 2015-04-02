@@ -129,8 +129,11 @@ sub execute {
   my $model = $self->cache->get($model_cache_key);
   if (!defined $model) {
     $model = new Analizo::Model;
+
+    my @options_array =  ($self->includedirs, $self->libdirs, $self->libs, "model", $model);
+
     my @extractors = (
-      Analizo::Extractor->load($self->extractor, model => $model),
+      Analizo::Extractor->load($self->extractor, @options_array),
       new Analizo::Extractor::Sloccount(model => $model),
     );
     for my $extractor (@extractors) {
