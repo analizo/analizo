@@ -45,8 +45,15 @@ sub load {
   eval "use $extractor";
   die "error loading $extractor_method extractor: $@" if $@;
 
-  eval { $extractor = $extractor->new(@options) };
-  die "error instancing extractor: $@" if $@;
+  if($extractor_method ne "ClangStaticAnalyzer" && scalar @options > 2){
+         my ($includedirs, $libdirs, $libs,@options_array) = @options;
+         eval { $extractor = $extractor->new(@options_array) };
+         die "error instancing extractor: $@" if $@;
+  }
+  else {
+       eval { $extractor = $extractor->new(@options) };
+       die "error instancing extractor: $@" if $@;
+   }   
 
   return $extractor;
 }
