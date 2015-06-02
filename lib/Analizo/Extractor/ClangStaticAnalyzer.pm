@@ -12,11 +12,11 @@ my $lib_dirs;
 my $libs_list;
 
 sub new {
-  my ($package, $includedirs, $libdirs, $libs, @options) = @_;
-  $include_dirs = $includedirs;
-  $lib_dirs = $libdirs;
-  $libs_list = $libs;
-  return bless { files => [], @options }
+  my ($package, %options) = @_;
+  $include_dirs = $options{includedirs};
+  $lib_dirs = $options{libdirs};
+  $libs_list = $options{libs};
+  return bless { files => [], %options }
 }
 
 sub include_flags {
