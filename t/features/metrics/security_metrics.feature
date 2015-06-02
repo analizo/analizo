@@ -6,29 +6,26 @@ Feature: Security Metrics
   Scenario: Verifying security metrics in output
 	Given I am in .
     When I run "analizo metrics --extractor ClangStaticAnalyzer t/samples/clang_analyzer/"
-    Then the output must match "<short_name_metric>: <value>"
-    And the exit status must be 0
-  Examples:
-    | short_name_metric | value |
-    | rogu              | 1     |
-    | pitfc             | 1     |
-    | dbz               | 2     |
-    | da                | 1     |
-    | mlk               | 1     |
-    | dnp               | 1     |
-    | auv               | 1     |
-    | rsva              | 1     |
-    | obaa              | 1     |
-    | uav               | 1     |
-    | bf                | 1     |
-    | df                | 1     |
-    | bd                | 1     |
-    | uaf               | 1     |
-    | osf               | 3     |
-    | ua                | 1     |
-    | fgbo              | 1     |
-    | dupv              | 1     |
-    | asom              | 1     |
-    | an                | 1     |
-    | saigv             | 1     |
+    Then the exit status must be 0
+    And the output must match "rogu: 1"
+    And the output must match "pitfc: 1"
+    And the output must match "dbz: 2"
+    And the output must match "da: 1"
+    And the output must match "mlk: 1"
+    And the output must match "dnp: 1"
+    And the output must match "auv: 1"
+    And the output must match "rsva: 1"
+    And the output must match "obaa: 1"
+    And the output must match "uav: 1"
+    And the output must match "bf: 1"
+    And the output must match "df: 1"
+    And the output must match "bd: 1"
+    And the output must match "uaf: 1"
+    And the output must match "osf: 3"
+    And the output must match "ua: 1"
+    And the output must match "fgbo: 1"
+    And the output must match "dupv: 1"
+    And the output must match "asom: 1"
+    And the output must match "an: 1"
+    And the output must match "saigv: 1"
 
