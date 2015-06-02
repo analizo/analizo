@@ -27,6 +27,7 @@ Build-Depends-Indep:
  sloccount,
  sqlite3,
  libapp-cmd-perl,
+ libarchive-extract-perl,
  libchi-perl,
  libclass-accessor-perl,
  libclass-inspector-perl,
