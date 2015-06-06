@@ -84,7 +84,7 @@ or to `terceiro@softwarelivre.org`. Or create a pull request on github.
 To create a patch:
 
 ```
-$ git clone git://gitorious.org/analizo/analizo.git
+$ git clone https://github.com/analizo/analizo.git
 $ cd analizo
 $ edit file
 $ git commit file
