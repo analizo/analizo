@@ -127,7 +127,7 @@ and git (your operating system probably already has packages for these)
 2) Install Doxyparse
 
 ```
-$ git clone https://gitlab.com/analizo/doxyparse.git
+$ git clone https://github.com/analizo/doxyparse.git
 $ cd doxyparse
 $ ./configure --with-doxyparse
 $ make
