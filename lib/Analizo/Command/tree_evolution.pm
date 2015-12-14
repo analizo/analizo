@@ -100,6 +100,8 @@ directory called src/output.
 
 =back
 
+analizo tree-evolution is part of the analizo suite.
+
 =head1 OPTIONS
 
 =over

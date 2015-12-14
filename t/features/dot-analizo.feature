@@ -21,7 +21,7 @@ Feature: loading command line options from .analizo
       <command>: --help
       """
     When I run "analizo <command>"
-    Then the output must match "analizo-<command>(1)"
+    Then the output must match "analizo <command> is part of the analizo suite."
     Examples:
       | command          |
       | graph            |

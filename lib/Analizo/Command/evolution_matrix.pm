@@ -101,6 +101,8 @@ project, considering all the versions passed in the command line. By default
 the output is trown in the standard output, but once can override that with
 the B<-o> option.
 
+analizo evolution-matrix is part of the analizo suite.
+
 =head1 OPTIONS
 
 =over

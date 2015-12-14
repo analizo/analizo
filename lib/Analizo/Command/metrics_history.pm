@@ -112,6 +112,8 @@ the revisions will be accumulated in a file called I<metrics.csv> inside
 I<input>. If I<input> is ommitted, the current directory (.) s
 assumed.
 
+analizo metrics-history is part of the analizo suite.
+
 =head1 RELEVANT COMMITS
 
 B<analizo metrics-history> considers as relevant the commits that changed at

@@ -105,6 +105,8 @@ statistical packages.
 
 =back
 
+analizo metrics-batch is part of the analizo suite.
+
 =head1 OPTIONS
 
 =over
