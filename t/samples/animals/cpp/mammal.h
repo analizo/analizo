@@ -4,6 +4,7 @@
 #include "animal.h"
 
 class Mammal: public Animal {
+  virtual ~Mammal() = 0;
 };
 
 #endif

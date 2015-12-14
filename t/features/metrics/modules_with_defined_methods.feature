@@ -15,7 +15,7 @@ Feature: number of abstract classes
   Scenario: "Animals" project
     Given I am in t/samples/animals/<language>
     When I run "analizo metrics ."
-    Then analizo must report that the project has total_modules_with_defined_methods = 4
+    Then analizo must report that the project has total_modules_with_defined_methods = 5
     Examples:
       | language |
       | cpp      |
