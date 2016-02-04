@@ -7,6 +7,7 @@ use base qw(Analizo::Extractor);
 
 use File::Temp qw/ tempfile /;
 use Cwd;
+use YAML;
 
 sub new {
   my ($package, @options) = @_;
@@ -32,82 +33,97 @@ sub _cpp_hack {
 }
 
 sub feed {
-  my ($self, $line) = @_;
+  my ($self, $doxyparse_output, $line) = @_;
+  my $yaml = Load($doxyparse_output);
+  foreach my $full_filename (keys %$yaml) {
 
-  # current file declaration
-  if ($line =~ /^file (.*)$/) {
-    my $file = _strip_current_directory($1);
+    # current file declaration
+    my $file = _strip_current_directory($full_filename);
     $self->current_file($file);
     $self->_add_file($file);
-  }
 
-  # current module declaration
-  if ($line =~ /^module (.+)$/) {
-    my $modulename = _file_to_module($1);
-    $self->current_module($modulename);
-    $self->_cpp_hack($modulename);
-  }
+    # current module declaration
+    foreach my $module (keys %{$yaml->{$full_filename}}) {
+      my $modulename = _file_to_module($module);
+      next if defined $yaml->{$full_filename}->{$module} && ref($yaml->{$full_filename}->{$module}) ne 'HASH';
 
-  # function declarations
-  if ($line =~ m/^\s{3}function (.*) in line \d+$/) {
-    my $function = _qualified_name($self->current_module, $1);
-    $self->model->declare_function($self->current_module, $function);
-    $self->{current_member} = $function;
-  }
-  # variable declarations
-  elsif ($line =~ m/^\s{3}variable (.+) in line \d+$/) {
-    my $variable = _qualified_name($self->current_module, $1);
-    $self->model->declare_variable($self->current_module, $variable);
-    $self->{current_member} = $variable;
-  }
-  
-  #FIXME: Implement define treatment
-  # define declarations
-  elsif ($line =~ m/^\s{3}define (.+) in line \d+$/) {
-    my $define = _qualified_name($self->current_module, $1);
-    $self->{current_member} = $define;
-  }
+      $self->current_module($modulename);
+      $self->_cpp_hack($modulename);
 
-  # inheritance
-  if ($line =~ m/^\s{3}inherits from (.+)$/) {
-    $self->model->add_inheritance($self->current_module, $1);
-  }
+      # inheritance
+      if (defined $yaml->{$full_filename}->{$module}->{inherits}) {
+        my $inherits = $yaml->{$full_filename}->{$module}->{inherits};
+        $self->model->add_inheritance($self->current_module, $inherits);
+      }
 
-  # function calls/uses
-  if ($line =~ m/^\s{6}uses function (.*) defined in (.+)$/) {
-    my $function = _qualified_name($2, $1);
-    $self->model->add_call($self->current_member, $function, 'direct');
-  }
+      # abstract class
+      if (defined $yaml->{$full_filename}->{$module}->{informations}) {
+        if ($yaml->{$full_filename}->{$module}->{informations} eq 'abstract class') {
+          $self->model->add_abstract_class($self->current_module);
+        }
+      }
 
-  # variable references
-  elsif ($line =~ m/^\s{6}uses variable (.+) defined in (.+)$/) {
-    my $variable = _qualified_name($2, $1);
-    $self->model->add_variable_use($self->current_member, $variable);
-  }
+      foreach my $definition (@{$yaml->{$full_filename}->{$module}->{defines}}) {
+        my ($name) = keys %$definition;
+        my $type = $definition->{$name}->{type};
+        my $qualified_name = _qualified_name($self->current_module, $name);
+        $self->{current_member} = $qualified_name;
 
-  # public members
-  if ($line =~ m/^\s{6}protection public$/) {
-    $self->model->add_protection($self->current_member, 'public');
-  }
+        # function declarations
+        if ($type eq 'function') {
+          $self->model->declare_function($self->current_module, $qualified_name);
+        }
+        # variable declarations
+        elsif ($type eq 'variable') {
+          $self->model->declare_variable($self->current_module, $qualified_name);
+        }
+        #FIXME: Implement define treatment (no novo doxyparse identifica como type = "macro definition")
+        # define declarations
+        elsif ($type eq 'macro definition') {
+          #$self->{current_member} = $qualified_name;
+        }
 
-  # method LOC
-  if($line =~ m/^\s{6}(\d+) lines of code$/){
-    $self->model->add_loc($self->current_member, $1);
-  }
+        # public members
+        if (defined $definition->{$name}->{protection}) {
+          my $protection = $definition->{$name}->{protection};
+          $self->model->add_protection($self->current_member, $protection);
+        }
 
-  #method parameters
-  if($line =~ m/^\s{6}(\d+) parameters$/) {
-    $self->model->add_parameters($self->current_member, $1);
-  }
+        # method LOC
+        if (defined $definition->{$name}->{lines_of_code}) {
+          $self->model->add_loc($self->current_member, $definition->{$name}->{lines_of_code});
+        }
 
+        # method parameters
+        if (defined $definition->{$name}->{parameters}) {
+          $self->model->add_parameters($self->current_member, $definition->{$name}->{parameters});
+        }
+
+        foreach my $uses (@{ $definition->{$name}->{uses} }) {
+          my ($uses_name) = keys %$uses;
+          my $uses_type = $uses->{$uses_name}->{type};
+          my $defined_in = $uses->{$uses_name}->{defined_in};
+          my $qualified_uses_name = _qualified_name($defined_in, $uses_name);
+          # function calls/uses
+          if ($uses_type eq 'function') {
+            #print "### add call\n";
+            $self->model->add_call($self->current_member, $qualified_uses_name, 'direct');
+          }
+          # variable references
+          elsif ($uses_type eq 'variable') {
+            $self->model->add_variable_use($self->current_member, $qualified_uses_name);
+          }
+
+        }
+      }
+    }
+  }
+  return;
+
+  # TODO not supported by doxyparse YML format yet
   #method conditional paths
   if($line =~ m/^\s{6}(\d+) conditional paths$/){
     $self->model->add_conditional_paths($self->current_member, $1);
-  }
-
-  # abstract class
-  if ($line =~ m/^\s{3}abstract class$/) {
-    $self->model->add_abstract_class($self->current_module);
   }
 }
 
@@ -142,10 +158,10 @@ sub actually_process {
 
   eval {
     open DOXYPARSE, "doxyparse - < $temp_filename |" or die $!;
-    while (<DOXYPARSE>) {
-      $self->feed($_);
-    }
+    local $/ = undef;
+    my $doxyparse_output = <DOXYPARSE>;
     close DOXYPARSE;
+    $self->feed($doxyparse_output);
     unlink $temp_filename;
   };
   if($@) {
