@@ -6,7 +6,7 @@ choice of download, see below.
 ## Source code
 
 Analizo source code can be obtained by downloading
-[analizo_{$version}.tar.gz](download/analizo_{$version}.tar.gz).
+<a href="http://analizo.org/download/analizo_{$version}.tar.xz">analizo_{$version}.tar.xz</a>.
 To perform the installation, check the [installation
 instructions](installation.html).
 
