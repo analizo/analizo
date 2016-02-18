@@ -11,7 +11,7 @@ Ubuntu as well. Installing the Debian package has the follwing advantages:
      on your system.
 
 You will find the instructions to install Analizo Debian package below. All of
-the steps must be performed as root user:
+the steps must be performed as =root= user:
 
 1) Create a file /etc/apt/sources.list.d/analizo.list file with the following
 contents:
@@ -24,7 +24,7 @@ deb-src http://analizo.org/download/ ./
 2) Add the repository signing key to your list of trusted keys:
 
 ```repository
-$ wget -O - http://analizo.org/download/signing-key.asc | apt-key add -
+# wget -O - http://analizo.org/download/signing-key.asc | apt-key add -
 ```
 
 3) Update your package lists:
