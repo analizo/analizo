@@ -49,7 +49,7 @@ Build-Depends-Indep:
  libyaml-perl,
  libyaml-tiny-perl,
  libzeromq-perl
-Standards-Version: 3.9.1
+Standards-Version: 3.9.6
 Homepage: http://analizo.org
 
 Package: analizo
