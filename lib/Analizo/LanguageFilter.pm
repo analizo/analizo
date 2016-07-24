@@ -8,7 +8,7 @@ use base qw(Analizo::FilenameFilter);
 
 our $FILTERS = {
   c         => 'c|h',
-  cpp       => 'cpp|cxx|cc|h|hpp',
+  cpp       => 'cpp|cxx|cc|h|hh|hpp',
   java      => 'java',
 };
 $FILTERS->{all} = join('|', values(%$FILTERS));
