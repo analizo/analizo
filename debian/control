@@ -48,7 +48,8 @@ Build-Depends-Indep:
  libterm-progressbar-perl,
  libyaml-perl,
  libyaml-tiny-perl,
- libzeromq-perl
+ libzeromq-perl,
+ libarchive-extract-perl
 Standards-Version: 3.9.6
 Homepage: http://analizo.org
 
