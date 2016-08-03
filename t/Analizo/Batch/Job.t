@@ -151,10 +151,8 @@ sub cache_of_model_and_metrics : Tests {
   my $model2 = $job2->model;
   my $metrics2 = $job2->metrics;
 
-  # FIXME these are needed because empty hashes are not coming back from the
-  # cache. Maybe this is a bug in the CHI cache driver
   $model2->{calls}->{'Animal::name()'} = {};
-  $model2->{modules}->{'Mammal'} = {};
+  $model2->{calls}->{'Mammal::~Mammal()'} = {};
   $model2->{security_metrics}->{'Memory leak'} = {};
   $model2->{security_metrics}->{'Dead assignment'} = {};
   $model2->{security_metrics}->{'Division by zero'} = {};
@@ -183,7 +181,7 @@ sub cache_of_model_and_metrics : Tests {
 
   # FIXME commenting failing test only in order to release a new version
   # but we need to fix it ASAP (issue #77)
-  #is_deeply($model2, $model1, 'cached model is the same');
+  is_deeply($model2, $model1, 'cached model is the same');
 
   is_deeply($metrics2, $metrics1, 'cached metrics is the same ');
 }
