@@ -4,7 +4,7 @@ use base qw(Analizo::Command);
 use strict;
 use warnings;
 use Analizo::Extractor;
-use Graph::Writer::Dot '2.05';
+use Graph::Writer::Dot '2.09';
 use File::Basename;
 
 # ABSTRACT: dependency graph generator
