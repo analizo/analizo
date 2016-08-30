@@ -3,7 +3,7 @@ use App::Cmd::Setup -app;
 use strict;
 use warnings;
 
-our $VERSION = '1.19.0';
+our $VERSION = '1.19.1';
 
 =head1 NAME
 
