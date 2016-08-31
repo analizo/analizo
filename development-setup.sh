@@ -14,8 +14,10 @@ setup_debian() {
 
   sudo apt-get -q -y install wget
   if [ ! -f /etc/apt/sources.list.d/analizo.list ]; then
-    echo "deb http://analizo.org/download/ ./" | sudo sh -c 'cat > /etc/apt/sources.list.d/analizo.list'
-    wget -O - http://analizo.org/download/signing-key.asc | sudo apt-key add -
+    echo "deb http://www.analizo.org/download/ ./" | sudo sh -c 'cat > /etc/apt/sources.list.d/analizo.list'
+    wget -O - http://www.analizo.org/download/signing-key.asc | sudo apt-key add -
+    echo "deb http://debian.joenio.me unstable/" | sudo sh -c 'cat >> /etc/apt/sources.list.d/analizo.list'
+    wget -O - http://debian.joenio.me/signing.asc | sudo apt-key add -
     sudo apt-get update
   fi
 
