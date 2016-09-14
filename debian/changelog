@@ -1,3 +1,10 @@
+analizo (1.20.0) UNRELEASED; urgency=medium
+
+  * Non-maintainer upload.
+  * wip
+
+ -- Joenio Costa <joenio@linda-lee.neuromancer>  Wed, 14 Sep 2016 00:18:27 -0300
+
 analizo (1.19.1) unstable; urgency=medium
 
   * fix bug on CBO metric
