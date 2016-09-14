@@ -12,7 +12,7 @@ Feature: metrics batch
   
   Scenario: summarizing
     Given I am in t/samples/hello_world/
-	When I run "analizo metrics-batch --quiet -o data.csv && cat data.csv && rm -f *.csv"
+    When I run "analizo metrics-batch --quiet -o data.csv && cat data.csv && rm -f *.csv"
     Then the output must match "^id,"
     And the output must not match ",---,"
     And the output must match "c,"
