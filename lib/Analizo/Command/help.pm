@@ -1,5 +1,5 @@
 package Analizo::Command::help;
-use base qw(App::Cmd::Command::help Analizo::Command);
+use parent qw(App::Cmd::Command::help Analizo::Command);
 use strict;
 use warnings;
 
@@ -25,11 +25,17 @@ it is called when the script `analizo` is executed without inform any command.
 
 sub execute {
   my ($self, $opt, $args) = @_;
+  my $command_name = $args->[0];
   if ($self->app->global_options->version) {
     printf("%s\n", $self->version_information);
     exit 0;
   }
-  elsif ($self->app->global_options->help) {
+  elsif ($command_name) {
+    (my $package_name = $command_name) =~ s/-/_/g;
+    $self->show_manpage("Analizo::Command::$package_name", $command_name);
+    exit 0;
+  }
+  elsif ($self->app->global_options->help || (@ARGV && $ARGV[0] eq '--help')) {
     $self->show_manpage('Analizo', 'analizo');
     exit 0;
   }
