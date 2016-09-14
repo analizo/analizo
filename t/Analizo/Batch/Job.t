@@ -1,7 +1,7 @@
 package t::Analizo::Batch::Job;
 use strict;
 use warnings;
-use base qw(t::Analizo::Test::Class);
+use parent qw(t::Analizo::Test::Class);
 use Test::More;
 use Test::MockObject::Extends;
 use Test::MockModule;
