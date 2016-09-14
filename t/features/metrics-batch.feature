@@ -29,3 +29,19 @@ Feature: metrics batch
     And I run "diff -u sequential-sorted.csv parallel-sorted.csv"
     Then the output must not match "---"
     Then the exit status must be 0
+
+  Scenario: passing two input directories as argument
+    Given I copy t/samples/hello_world/* into a temporary directory
+    When I run "analizo metrics-batch --quiet -o data.csv cpp java"
+    Then the exit status must be 0
+    And the file "c-details.csv" should not exist
+    And the file "cpp-details.csv" should exist
+    And the file "java-details.csv" should exist
+
+  Scenario: passing one input directory as argument
+    Given I copy t/samples/hello_world/* into a temporary directory
+    When I run "analizo metrics-batch --quiet -o data.csv cpp"
+    Then the exit status must be 0
+    And the file "c-details.csv" should not exist
+    And the file "cpp-details.csv" should exist
+    And the file "java-details.csv" should not exist

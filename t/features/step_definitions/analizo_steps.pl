@@ -40,7 +40,7 @@ Then qr/^the exit status must not be (\d+)$/, func($c) {
 
 Step qr/^I copy (.*) into a temporary directory$/, func($c) {
   my $tmpdir = tempdir(CLEANUP => 1);
-  rcopy(glob($1), $tmpdir);
+  rcopy($1, $tmpdir);
   chdir $tmpdir;
 };
 
@@ -131,6 +131,11 @@ Then qr/^analizo must present a list of languages$/, func($c) {
 Then qr/^the file "([^\"]*)" should exist$/, func($c) {
   my $file = $1;
   ok(-e $file);
+};
+
+Then qr/^the file "([^\"]*)" should not exist$/, func($c) {
+  my $file = $1;
+  ok(! -e $file);
 };
 
 Then qr/^the file "(.*?)" should have type (.*)$/, func($c) {
