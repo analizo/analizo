@@ -60,7 +60,7 @@ WriteMakefile(
     'YAML' => 0,
     'Statistics::Descriptive' => 0,
     'Term::ProgressBar' => 0,
-    'ZeroMQ' => 0,
+    'ZMQ::FFI' => 0,
     'Mojolicious' => 0,
     'File::ShareDir' => 0,
     'File::Share' => 0,

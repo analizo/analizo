@@ -4,8 +4,3 @@
 * fix the evolution matrix to do some sorting; display modules that appear earlier in the top
 * do some marketing of the tool.
 * bash completion
-* move away from ZeroMQ.
-
-  "Please note that this module has been DEPRECATED in favor of ZMQ::LibZMQ2,
-  ZMQ::LibZMQ3, and ZMQ. see https://github.com/lestrrat/p5-ZMQ and other CPAN
-  pages."
