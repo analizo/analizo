@@ -167,7 +167,7 @@ sub add_conditional_paths {
 
 sub add_protection {
   my ($self, $member, $protection) = @_;
-  $self->{protection}->{$member} = $protection;
+  $self->{protection}->{$member} = $protection if $member;
 }
 
 sub add_parameters {
