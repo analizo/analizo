@@ -77,6 +77,7 @@ needed_programs='
   sqlite3
   man
   pkg-config
+  gnupg
 '
 
 needed_libraries='
@@ -118,7 +119,7 @@ setup_generic() {
   cpanm --installdeps .
 }
 
-if [ ! -f ./analizo ]; then
+if [ ! -f ./bin/analizo ]; then
   echo "Please run this script from the root of Analizo sources!"
   exit 1
 fi
