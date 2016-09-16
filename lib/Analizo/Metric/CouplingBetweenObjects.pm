@@ -21,6 +21,7 @@ sub description {
 sub calculate {
   my ($self, $module) = @_;
   $self->analized_module($module);
+  $self->calls_to({});
 
   my $number_of_calls_to_other_modules = $self->_number_of_calls_to_other_modules();
   return $number_of_calls_to_other_modules;

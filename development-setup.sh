@@ -14,14 +14,16 @@ setup_debian() {
 
   sudo apt-get -q -y install wget
   if [ ! -f /etc/apt/sources.list.d/analizo.list ]; then
-    echo "deb http://analizo.org/download/ ./" | sudo sh -c 'cat > /etc/apt/sources.list.d/analizo.list'
-    wget -O - http://analizo.org/download/signing-key.asc | sudo apt-key add -
+    echo "deb http://www.analizo.org/download/ ./" | sudo sh -c 'cat > /etc/apt/sources.list.d/analizo.list'
+    wget -O - http://www.analizo.org/download/signing-key.asc | sudo apt-key add -
+    echo "deb http://debian.joenio.me unstable/" | sudo sh -c 'cat >> /etc/apt/sources.list.d/analizo.list'
+    wget -O - http://debian.joenio.me/signing.asc | sudo apt-key add -
     sudo apt-get update
   fi
 
   packages=$(sed -e '1,/^Build-Depends-Indep:/ d; /^\S/,$ d; s/,//; s/(.*$//' debian/control)
   sudo apt-get -q -y -f install $packages
-  sudo apt-get -q -y install libfile-sharedir-install-perl
+  sudo apt-get -q -y install libfile-sharedir-install-perl libtext-template-perl pandoc
 }
 
 prepare_squeeze() {
@@ -32,11 +34,10 @@ prepare_squeeze() {
   fi
   apt-get install -q -y -t squeeze-backports rubygems
 
-  (gem list | grep cucumber) || sudo gem install --no-ri --no-rdoc cucumber
   (gem list | grep rspec) || sudo gem install --no-ri --no-rdoc rspec
 
   apt-get install -q -y equivs
-  for fakepkg in cucumber ruby-rspec; do
+  for fakepkg in ruby-rspec; do
     (
       echo "Section: misc"
       echo "Priority: optional"

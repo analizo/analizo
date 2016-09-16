@@ -20,6 +20,7 @@ use Analizo::Extractor::Sloccount;
 use Analizo::Metrics;
 
 __PACKAGE__->mk_accessors(qw(model metrics id directory extractor));
+__PACKAGE__->mk_accessors(qw(includedirs libdirs libs));
 
 sub new {
   my ($class, @options) = @_;
@@ -128,9 +129,15 @@ sub execute {
   my $model = $self->cache->get($model_cache_key);
   if (!defined $model) {
     $model = new Analizo::Model;
+    my %options = (
+      model => $model,
+      includedirs => $self->includedirs,
+      libdirs => $self->libdirs,
+      libs => $self->libs,
+    );
     my @extractors = (
-      Analizo::Extractor->load($self->extractor, model => $model),
-      new Analizo::Extractor::Sloccount(model => $model),
+      Analizo::Extractor->load($self->extractor, %options),
+      new Analizo::Extractor::Sloccount(%options),
     );
     for my $extractor (@extractors) {
       $self->share_filters_with($extractor);

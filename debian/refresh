@@ -9,6 +9,7 @@ sub cpan2debian {
     my $debian_pkg = 'lib' . lc($_) . '-perl';
     $debian_pkg =~ s/::/-/g;
     $debian_pkg =~ s/sqlite/sqlite3/;   # special case
+    $debian_pkg =~ s/libgraph-writer-dot-perl/libgraph-readwrite-perl/; # special case
     if ($version) {
       $debian_pkg .= " (>= $version)";
     }
@@ -42,6 +43,7 @@ sub WriteMakefile {
 my $code = `cat Makefile.PL`;
 $code =~ s/use ExtUtils::MakeMaker;//;
 $code =~ s/sub\s*CheckExtraDependencies/sub _CheckExtraDependencies/;
+$code =~ s/MAN1POD/#MAN1PODS/;
 eval $code;
 
 unshift @dependencies, '${misc:Depends}', '${perl:Depends}';

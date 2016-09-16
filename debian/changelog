@@ -1,6 +1,7 @@
-analizo (1.18.0+nmu1) UNRELEASED; urgency=low
+analizo (1.20.0) UNRELEASED; urgency=medium
 
-  * Non-maintainer upload
+  * Non-maintainer upload.
+  * wip
 
   ### Add changelog here before release, use the git log:
   ###
@@ -8,7 +9,39 @@ analizo (1.18.0+nmu1) UNRELEASED; urgency=low
   ###
   ### Then change UNRELEASED to unstable
 
- -- Joenio Costa <joenio@colivre.coop.br>  Tue, 09 Jul 2013 22:16:15 -0300
+ -- Joenio Costa <joenio@linda-lee.neuromancer>  Wed, 14 Sep 2016 00:18:27 -0300
+
+analizo (1.19.1) unstable; urgency=medium
+
+  * fix bug on CBO metric
+
+ -- Joenio Costa <joenio@joenio.me>  Thu, 01 Sep 2016 14:44:16 -0300
+
+analizo (1.19.0) unstable; urgency=low
+
+  * Depend on doxyparse >= 1.8.11 to compute Abstract Class (issue #6)
+
+ -- Joenio Costa <joenio@colivre.coop.br>  Thu, 18 Feb 2016 11:25:21 -0200
+
+analizo (1.18.1) unstable; urgency=medium
+
+  * Removing ClangStaticAnalyzer extractor as default
+
+ -- Lucas Kanashiro <kanashiro.duarte@gmail.com>  Tue, 10 Mar 2015 15:43:39 -0300
+
+analizo (1.18.0) unstable; urgency=low
+
+  [ Alexandre Barbosa ] [ Lucas Kanashiro ]
+
+  * New release
+  * Removing dependency cucumber in faver of Test::BDD:Cucumber
+  * Adding new extractor for security metrics:
+    + 21 new security metrics
+  * Adding new dependencies:
+    + gcc
+    + clang
+
+ -- Alexandre <alexandreab@live.com>  Fri, 25 Apr 2014 20:12:31 +0000
 
 analizo (1.17.0) unstable; urgency=low
 

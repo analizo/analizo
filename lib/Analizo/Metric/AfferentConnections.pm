@@ -61,7 +61,7 @@ sub _member_calls_analized_module {
 
 sub _called_module_is_the_analized {
   my ($self, $called_module, $caller_module) = @_;
-  return $caller_module ne $called_module && $called_module eq $self->analized_module;
+  return ($caller_module && $called_module) && $caller_module ne $called_module && $called_module eq $self->analized_module;
 }
 
 sub _recursive_number_of_children {

@@ -10,7 +10,7 @@ our $hash = Config::INI::Reader->read_file('dist.ini');
 join(",\n", map { s/::/-/g; lc " lib-$_-perl" } keys %{ $hash->{'Prereqs / BuildRequires'} })
 }}
 {{join(",\n", map { s/::/-/g; lc " lib-$_-perl" } keys %{ $hash->{'Prereqs / TestRequires'} })}}
-Standards-Version: 3.9.4
+Standards-Version: 3.9.6
 Homepage: http://analizo.org
 
 Package: {{ lc $dist->name}}
@@ -21,7 +21,7 @@ Depends:
  ${misc:Depends},
  ${perl:Depends},
 {{join(",\n", map { s/::/-/g; lc " lib-$_-perl" } keys %{ $hash->{'Prereqs / RuntimeRequires'} })}}
-Recommends:
+Recommends: graphviz
 Description: {{ $dist->abstract }}
  Analizo parses source code in multiple languages and report useful information
  about it, such as module dependency, source code metrics and more.

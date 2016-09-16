@@ -2,7 +2,7 @@ package t::Analizo::GlobalMetric::ChangeCost;
 use strict;
 use warnings;
 use base qw(Test::Class);
-use Test::More 'no_plan'; # REMOVE THE 'no_plan'
+use Test::More;
 use Analizo::Model;
 use vars qw($model $metric);
 

@@ -1,8 +1,8 @@
 package t::Analizo::Command::metrics_batch;
 use strict;
 use warnings;
-use base qw(t::Analizo::Test::Class);
-use Test::More 'no_plan';
+use parent qw(t::Analizo::Test::Class);
+use Test::More;
 use t::Analizo::Test;
 use Analizo;
 

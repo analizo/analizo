@@ -60,6 +60,13 @@ sub feed {
     $self->model->declare_variable($self->current_module, $variable);
     $self->{current_member} = $variable;
   }
+  
+  #FIXME: Implement define treatment
+  # define declarations
+  elsif ($line =~ m/^\s{3}define (.+) in line \d+$/) {
+    my $define = _qualified_name($self->current_module, $1);
+    $self->{current_member} = $define;
+  }
 
   # inheritance
   if ($line =~ m/^\s{3}inherits from (.+)$/) {

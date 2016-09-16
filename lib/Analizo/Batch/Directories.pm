@@ -10,7 +10,7 @@ __PACKAGE__->mk_accessors(qw(directories));
 sub new {
   my ($class, @directories) = @_;
   my $self = $class->SUPER::new;
-  if ($#directories < 1) {
+  if (@directories < 1) {
     @directories = glob('*');
   }
   @directories = grep { -d $_ } @directories;

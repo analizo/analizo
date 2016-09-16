@@ -1,6 +1,6 @@
 package t::Analizo::Metric::NumberOfAttributes;
 use base qw(Test::Class);
-use Test::More 'no_plan'; # REMOVE THE 'no_plan'
+use Test::More;
 
 use strict;
 use warnings;

@@ -1,8 +1,7 @@
 package Analizo::Batch::Runner::Parallel;
 use strict;
 use warnings;
-use ZMQ::LibZMQ2;
-use ZMQ::Constants qw(ZMQ_PUSH ZMQ_PULL ZMQ_REQ ZMQ_REP);
+use ZMQ::FFI qw(ZMQ_PUSH ZMQ_PULL ZMQ_REQ ZMQ_REP);
 use YAML;
 
 use base qw( Analizo::Batch::Runner );
@@ -67,27 +66,27 @@ sub wait_for_workers {
 sub coordinate_workers {
   my ($self, $batch, $output) = @_;
 
-  my $context = zmq_init();
+  my $context = ZMQ::FFI->new();
 
-  my $queue = zmq_socket($context, ZMQ_PUSH);
-  zmq_bind($queue, _socket_spec('queue', $$));
+  my $queue = $context->socket(ZMQ_PUSH);
+  $queue->bind(_socket_spec('queue', $$));
 
-  my $results = zmq_socket($context, ZMQ_PULL);
-  zmq_bind($results, _socket_spec('results', $$));
+  my $results = $context->socket(ZMQ_PULL);
+  $results->bind(_socket_spec('results', $$));
 
   # push jobs to queue
   my $results_expected = 0;
   while (my $job = $batch->next()) {
-    zmq_send($queue, Dump($job));
+    $queue->send(Dump($job));
     $results_expected++;
   }
-  zmq_send($queue, Dump({}));
+  $queue->send(Dump({}));
 
   # collect results
   my $results_received = 0;
   while ($results_received < $results_expected) {
-    my $msg = zmq_recv($results);
-    my $job = Load(zmq_msg_data($msg));
+    my $msg = $results->recv();
+    my $job = Load($msg);
     $output->push($job);
     $results_received++;
     $self->report_progress($job, $results_received, $results_expected);
@@ -96,31 +95,31 @@ sub coordinate_workers {
 
 sub distributor {
   my ($parent_pid, $number_of_workers) = @_;
-  my $context = zmq_init();
+  my $context = ZMQ::FFI->new();
 
-  my $queue = zmq_socket($context, ZMQ_PULL);
-  zmq_connect($queue, _socket_spec('queue', $parent_pid));
+  my $queue = $context->socket(ZMQ_PULL);
+  $queue->connect(_socket_spec('queue', $parent_pid));
 
-  my $job_source = zmq_socket($context, ZMQ_REP);
-  zmq_bind($job_source, _socket_spec('job_source', $parent_pid));
+  my $job_source = $context->socket(ZMQ_REP);
+  $job_source->bind(_socket_spec('job_source', $parent_pid));
 
   my @queue;
   my $job;
   while(1) {
-    my $msg = zmq_recv($queue);
-    $job = Load(zmq_msg_data($msg));
+    my $msg = $queue->recv();
+    $job = Load($msg);
     last if !exists($job->{id});
     push(@queue, $job);
   }
 
   my $workers_finished = 0;
   while ($workers_finished < $number_of_workers) {
-    zmq_recv($job_source);
+    $job_source->recv();
     if(scalar(@queue) > 0) {
       $job = shift(@queue);
-      zmq_send($job_source, Dump($job));
+      $job_source->send(Dump($job));
     } else {
-      zmq_send($job_source, Dump({}));
+      $job_source->send(Dump({}));
       $workers_finished++;
     }
   }
@@ -128,22 +127,22 @@ sub distributor {
 
 sub worker {
   my ($parent_pid) = @_;
-  my $context = zmq_init();
-  my $source = zmq_socket($context, ZMQ_REQ);
-  zmq_connect($source, _socket_spec('job_source', $parent_pid));
-  my $results = zmq_socket($context, ZMQ_PUSH);
-  zmq_connect($results, _socket_spec('results', $parent_pid));
+  my $context = ZMQ::FFI->new();
+  my $source = $context->socket(ZMQ_REQ);
+  $source->connect(_socket_spec('job_source', $parent_pid));
+  my $results = $context->socket(ZMQ_PUSH);
+  $results->connect(_socket_spec('results', $parent_pid));
   my $run = 1;
   my $last_job = undef;
   while ($run) {
-    zmq_send($source, '');
-    my $msg = zmq_recv($source);
-    my $job = Load(zmq_msg_data($msg));
+    $source->send('');
+    my $msg = $source->recv();
+    my $job = Load($msg);
     if (exists($job->{id})) {
       $last_job = $job;
       $job->parallel_prepare();
       $job->execute();
-      zmq_send($results, Dump($job));
+      $results->send(Dump($job));
     } else {
       # a job without an id means that there are no more jobs to process, we
       # should exit.

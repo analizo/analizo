@@ -1,6 +1,7 @@
 package Analizo::Model;
 use strict;
 use Graph;
+use File::Basename;
 
 sub new {
   my @defaults = (
@@ -8,7 +9,6 @@ sub new {
     modules => {},
     files => {},
     module_by_file => {},
-    demangle => {},
     calls => {},
     lines => {},
     protection => {},
@@ -17,7 +17,8 @@ sub new {
     conditional_paths => {},
     abstract_classes => [],
     module_names => [],
-    total_eloc => 0
+    total_eloc => 0,
+    security_metrics => {}
   );
   return bless { @defaults }, __PACKAGE__;
 }
@@ -48,6 +49,11 @@ sub declare_module {
     push @{$self->{module_names}}, $module;
   }
   if (defined($file)) {
+    #undup filename
+    foreach (@{$self->{files}->{$module}}) {
+      return if($_ eq $file);
+    }
+
     $self->{files}->{$module} ||= [];
     push(@{$self->{files}->{$module}}, $file);
 
@@ -84,13 +90,10 @@ sub members {
 }
 
 sub declare_member {
-  my ($self, $module, $member, $demangled_name, $type) = @_;
+  my ($self, $module, $member, $type) = @_;
 
   # mapping member to module
   $self->{members}->{$member} = $module;
-
-  # demangling name
-  $self->{demangle}->{$member} = $demangled_name;
 }
 
 sub type {
@@ -99,9 +102,9 @@ sub type {
 }
 
 sub declare_function {
-  my ($self, $module, $function, $demangled_name) = @_;
+  my ($self, $module, $function) = @_;
   return unless $module;
-  $self->declare_member($module, $function, $demangled_name, 'function');
+  $self->declare_member($module, $function, 'function');
 
   if (!exists($self->{modules}->{$module})){
     $self->{modules}->{$module} = {};
@@ -113,8 +116,8 @@ sub declare_function {
 }
 
 sub declare_variable {
-  my ($self, $module, $variable, $demangled_name) = @_;
-  $self->declare_member($module, $variable, $demangled_name, 'variable');
+  my ($self, $module, $variable) = @_;
+  $self->declare_member($module, $variable, 'variable');
 
   if (!exists($self->{modules}->{$module})){
     $self->{modules}->{$module} = {};
@@ -123,11 +126,6 @@ sub declare_variable {
   if(! grep { $_ eq $variable } @{$self->{modules}->{$module}->{variables}}){
     push @{$self->{modules}->{$module}->{variables}}, $variable;
   }
-}
-
-sub demangle {
-  my ($self, $function) = @_;
-  return $self->{demangle}->{$function} || $function;
 }
 
 sub add_call {
@@ -169,7 +167,7 @@ sub add_conditional_paths {
 
 sub add_protection {
   my ($self, $member, $protection) = @_;
-  $self->{protection}->{$member} = $protection;
+  $self->{protection}->{$member} = $protection if $member;
 }
 
 sub add_parameters {
@@ -205,7 +203,7 @@ sub _group_files {
 sub graph {
   my ($self) = @_;
   my $graph = Graph->new;
-  $graph->set_graph_attribute('name', 'callgraph');
+  $graph->set_graph_attribute('name', 'graph');
   foreach my $module (keys %{ $self->{files}}) {
     my $file = _group_files(@{ $self->files($module) });
     $graph->add_vertex($file);
@@ -245,4 +243,104 @@ sub _function_to_file {
   $self->{files}->{$module};
 }
 
+sub declare_security_metrics {
+  my ($self, $bug_name, $module, $value) = @_;
+  $self->{security_metrics}->{$bug_name}->{$module} = $value;
+}
+
+sub security_metrics {
+  my ($self, $bug_name, $module) = @_;
+  return $self->{security_metrics}->{$bug_name}->{$module};
+}
+
+sub _add_dependency {
+  my ($dependencies, $from, $to) = @_;
+  $dependencies->{$from} = { } if !exists($dependencies->{$from});
+  if (exists $dependencies->{$from}->{$to}) {
+    $dependencies->{$from}->{$to} += 1;
+  } else {
+    $dependencies->{$from}->{$to} = 1;
+  }
+}
+
+sub _reftype_to_style {
+  my ($reftype) = @_;
+  $reftype = $reftype || 'direct';
+  my %styles = (
+    'direct' => 'solid',
+    'indirect' => 'dotted',
+    'variable' => 'dashed',
+  );
+  return $styles{$reftype} || 'solid';
+}
+
+sub callgraph {
+  my ($self, %args) = @_;
+  my $graph = Graph->new;
+  $graph->set_graph_attribute('name', 'callgraph');
+
+  if ($args{group_by_module}) {
+    # listing dependencies grouped by module
+    my $modules_dependencies = { };
+    foreach my $caller (sort(keys %{$self->calls})) {
+      foreach my $callee (sort(keys %{$self->calls->{$caller}})) {
+        my $calling_module = $self->_function_to_module($caller);
+        my $called_module = $self->_function_to_module($callee);
+        next unless (defined($calling_module) && defined($called_module) && ($calling_module ne $called_module));
+        _add_dependency($modules_dependencies, $calling_module, $called_module);
+      }
+    }
+    foreach my $subclass (sort(keys(%{$self->{inheritance}}))) {
+      foreach my $superclass ($self->inheritance($subclass)) {
+        _add_dependency($modules_dependencies, $subclass, $superclass);
+      }
+    }
+
+    foreach my $calling_module (sort(keys %{$modules_dependencies})) {
+      foreach my $called_module (sort(keys %{$modules_dependencies->{$calling_module}})) {
+        my $strength = $modules_dependencies->{$calling_module}->{$called_module};
+        $graph->add_edge($calling_module, $called_module);
+        $graph->set_edge_attribute($calling_module, $called_module, 'style', 'solid');
+        $graph->set_edge_attribute($calling_module, $called_module, 'label', $strength);
+      }
+    }
+
+  } else {
+    # listing raw dependency info
+    foreach my $caller (grep { $self->_include_caller($_, @{$args{omit}}) } sort(keys(%{$self->calls}))) {
+      foreach my $callee (grep { $self->_include_callee($_, $args{include_externals}, @{$args{omit}}) } sort(keys(%{$self->calls->{$caller}}))) {
+        my $style = _reftype_to_style($self->calls->{$caller}->{$callee});
+        $graph->add_edge($caller, $callee);
+        $graph->set_edge_attribute($caller, $callee, 'style', $style);
+        $graph->set_vertex_attribute($caller, 'group', $self->_function_to_module($caller));
+        $graph->set_vertex_attribute($callee, 'group', $self->_function_to_module($callee));
+      }
+    }
+  }
+  return $graph;
+}
+
+sub _file_to_module {
+  my ($filename) = @_;
+  $filename =~ s/\.r\d+\.expand$//;
+  return basename($filename);
+}
+
+sub _function_to_module {
+  my ($self, $function) = @_;
+  return undef if !exists($self->members->{$function});
+  return _file_to_module($self->members->{$function});
+}
+
+sub _include_caller {
+  my ($self, $function, @omitted) = @_;
+  return !grep { $function eq $_ } @omitted;
+}
+
+sub _include_callee {
+  my ($self, $member, $include_externals, @omitted) = @_;
+  return $self->_include_caller($member, @omitted) && ( exists($self->members->{$member}) || $include_externals );
+}
+
 1;
+
