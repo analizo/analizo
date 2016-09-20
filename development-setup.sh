@@ -19,11 +19,20 @@ setup_debian() {
     echo "deb http://debian.joenio.me unstable/" | sudo sh -c 'cat >> /etc/apt/sources.list.d/analizo.list'
     wget -O - http://debian.joenio.me/signing.asc | sudo apt-key add -
     sudo apt-get update
+    sudo apt-file update
   fi
 
-  packages=$(sed -e '1,/^Build-Depends-Indep:/ d; /^\S/,$ d; s/,//; s/(.*$//' debian/control)
+  sudo apt-get -q -y install dh-make-perl libdist-zilla-perl
+  packages=$(dh-make-perl locate $(dzil authordeps) | grep 'package$' | grep ' is in ' | sed 's/.\+is in \(.\+\) package/\1/')
   sudo apt-get -q -y -f install $packages
-  sudo apt-get -q -y install libfile-sharedir-install-perl libtext-template-perl pandoc
+  # pacotes que ainda n entraram no testing mas ja estao no sid ou a caminho...
+  sudo apt-get -q -y install libdist-zilla-plugin-bugtracker-perl libdist-zilla-plugin-templatefiles-perl libdist-zilla-plugin-repository-perl libdist-zilla-plugins-cjm-perl
+
+  packages=$(dh-make-perl locate $(dzil listdeps) | grep 'package$' | grep ' is in ' | sed 's/.\+is in \(.\+\) package/\1/')
+  sudo apt-get -q -y -f install $packages
+  # pacotes nao encontrados pelo dh-make-perl locate apesar de existir pacote
+  # bug reportado ao upstream: https://rt.cpan.org/Ticket/Display.html?id=117963
+  sudo apt-get -q -y install libdbd-sqlite3-perl libdbi-perl liblist-moreutils-perl
 }
 
 prepare_squeeze() {
@@ -57,6 +66,7 @@ prepare_precise() {
   fi
   apt-get install -q -y libzeromq-perl
 }
+
 prepare_quantal() {
   if ! grep -q ZeroMQ Makefile.PL; then
     # only needed while we depend on ZeroMQ
@@ -116,7 +126,7 @@ check_non_perl_dependencies() {
 
 setup_generic() {
   check_non_perl_dependencies
-  cpanm --installdeps .
+  dzil listdeps | cpanm
 }
 
 if [ ! -f ./bin/analizo ]; then
