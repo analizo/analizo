@@ -22,32 +22,6 @@ sub has_a_model : Tests {
   isa_ok((Analizo::Extractor->load('ClangStaticAnalyzer'))->model, 'Analizo::Model');
 }
 
-sub test_actually_process : Tests {
-  our $report_tree;
-
-  no warnings;
-  local *Analizo::Extractor::ClangStaticAnalyzer::feed = sub {
-    my ($self, $tree) = @_;
-    $report_tree = $tree;
-  };
-  use warnings;
-
-  my $extractor = new Analizo::Extractor::ClangStaticAnalyzer;
-  $extractor->actually_process("t/samples/clang_analyzer/dead_assignment.c", "t/samples/clang_analyzer/division_by_zero.c", "t/samples/clang_analyzer/memory_leak.c", "t/samples/clang_analyzer/no_compilable.c");
-
-  my $total_bugs = 0;
-  foreach my $file_name (keys %$report_tree) {
-    my $bugs_hash = $report_tree->{$file_name};
-
-    foreach my $bugs (values %$bugs_hash) {
-      $total_bugs += $bugs;
-    }
-
-  }
-  is($report_tree->{'t/samples/clang_analyzer/no_compilable.c'}->{'Memory leak'}, undef, 'Metric must be undef');
-  is($total_bugs , 4, "4 bugs expected");
-}
-
 sub feed_declares_divisions_by_zero : Tests {
 
   our $received_bug;
