@@ -32,7 +32,6 @@ CheckExtraDependencies(
   'build',
   'rake' => 0,
   'rspec' => 0,
-  'clang' => 0,
 );
 
 install_share 'share';

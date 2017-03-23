@@ -6,7 +6,6 @@ Build-Depends: debhelper (>= 7.0.50~)
 # Please do not update the Build-Depends-Indep field directly. Update
 # Makefile.PL first, then run debian/refresh script
 Build-Depends-Indep:
- clang,
  rake,
  ruby-rspec,
  libfile-copy-recursive-perl,
