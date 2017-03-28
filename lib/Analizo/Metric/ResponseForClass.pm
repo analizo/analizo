@@ -2,6 +2,30 @@ package Analizo::Metric::ResponseForClass;
 use strict;
 use base qw(Class::Accessor::Fast Analizo::ModuleMetric);
 
+=head1 NAME
+
+Analizo::Metric::ResponseForClass - Response For Class(RFC) metric
+
+=head1 DESCRIPTION
+
+The metric calculation is based on the following article and calculates the
+sum between the number of methods in the module and the number of functions
+called by each module function.
+
+Article: A metrics suite for object oriented design by Shyam R. Chidamber and
+Chris F. Kemerer.
+
+See the paragraph about Response for Class in the article:
+
+"... The response set of a class is a set of methods that can potentially
+be executed in response to a message received by an object of that class.
+The cardinality of this set is a measure of the attributes of objects in
+the class. Since it specifically includes methods called from outside the
+class, it is also a measure of the potential communication between the 
+class and other classes."
+
+=cut
+
 __PACKAGE__->mk_accessors(qw( model ));
 
 sub new {
