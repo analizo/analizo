@@ -153,28 +153,6 @@ sub cache_of_model_and_metrics : Tests {
 
   $model2->{calls}->{'Animal::name()'} = {};
   $model2->{calls}->{'Mammal::~Mammal()'} = {};
-  $model2->{security_metrics}->{'Memory leak'} = {};
-  $model2->{security_metrics}->{'Dead assignment'} = {};
-  $model2->{security_metrics}->{'Division by zero'} = {};
-  $model2->{security_metrics}->{'Dereference of null pointer'} = {};
-  $model2->{security_metrics}->{'Assigned value is garbage or undefined'} = {};
-  $model2->{security_metrics}->{'Return of address to stack-allocated memory'} = {};
-  $model2->{security_metrics}->{'Out-of-bound array access'} = {};
-  $model2->{security_metrics}->{'Uninitialized argument value'} = {};
-  $model2->{security_metrics}->{'Bad free'} = {};
-  $model2->{security_metrics}->{'Double free'} = {};
-  $model2->{security_metrics}->{'Bad deallocator'} = {};
-  $model2->{security_metrics}->{'Use-after-free'} = {};
-  $model2->{security_metrics}->{'Offset free'} = {};
-  $model2->{security_metrics}->{'Undefined allocation of 0 bytes (CERT MEM04-C; CWE-131)'} = {};
-  $model2->{security_metrics}->{"Potential buffer overflow in call to \'gets\'"} = {};
-  $model2->{security_metrics}->{'Dereference of undefined pointer value'} = {};
-  $model2->{security_metrics}->{'Allocator sizeof operand mismatch'} = {};
-  $model2->{security_metrics}->{'Argument with \'nonnull\' attribute passed null'} = {};
-  $model2->{security_metrics}->{'Stack address stored into global variable'} = {};
-  $model2->{security_metrics}->{'Result of operation is garbage or undefined'} = {};
-
-  $model2->{security_metrics}->{'Potential insecure temporary file in call \'mktemp\''} = {};
 
   is($model_result, 'cache used', 'use cache for model');
   is($metrics_result, 'cache used', 'use cache for metrics');
