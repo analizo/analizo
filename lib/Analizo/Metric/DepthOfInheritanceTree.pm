@@ -14,7 +14,7 @@ path from a module to the class hierarchy root.
 Article: An empirical study of aspect-oriented metrics by Eduardo Kessler Piveta, 
 Ana Moreira, Marcelo Soares Pimenta, Joao Araujo, Pedro Guerreiro and R. Tom Price.
 
-See the paragraph about Depth Of Inheritance Tree in the article:
+See the adaptation of the paragraph about Depth Of Inheritance Tree in the article:
 
 "Considering a function s(x) : Module -> Module that computes the super-class or 
 super-aspect of a giver module, the value of DIT is given by:

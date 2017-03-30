@@ -2,6 +2,33 @@ package Analizo::Metric::AfferentConnections;
 use strict;
 use base qw(Class::Accessor::Fast Analizo::ModuleMetric);
 
+=head1 NAME
+
+Analizo::Metric::Afferent Connections - Afferent Connections per Class (ACC) metric
+
+=head1 DESCRIPTION
+
+The metric calculation is based on the following article and calculates the class
+conectivity.
+
+Article: Monitoring of source code metrics in open source projects by 
+Paulo Roberto Miranda Meirelles.
+
+See the adaptation of the paragraph about Afferente Connections per Class in the article:
+
+"Measures the connectivity of a class. If a class Cc access a method or attribute
+of a class Cs, consider Cc a cliente of the supplier class Cs, denoting Cc => Cs.
+Consider the follow function:
+
+client(Ci, Cj) = 1, if (Ci => Cj) and (Ci != Cj)
+client(Ci, Cj) = 0, otherwise.
+
+So ACC(C) = (sum(client(Ci, Cj)), i = 1 to N), where N is the total number of system
+classes. If the value of this metric is large, a change in the class has substantially more 
+side effects, making maintenance more difficult."
+
+=cut
+
 __PACKAGE__->mk_accessors(qw( model analized_module));
 
 sub new {
