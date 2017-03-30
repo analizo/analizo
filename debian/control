@@ -15,8 +15,6 @@ Homepage: http://analizo.org
 
 Package: {{ lc $dist->name}}
 Architecture: all
-# Please do not update the Depends: field directly. Update Makefile.PL first,
-# then run debian/refresh script
 Depends:
  ${misc:Depends},
  ${perl:Depends},
