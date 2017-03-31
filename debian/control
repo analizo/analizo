@@ -6,10 +6,12 @@ Build-Depends: debhelper (>= 7.0.50~)
 Build-Depends-Indep:
 {{
 use Config::INI::Reader;
+use Debian::AptContents;
 our $hash = Config::INI::Reader->read_file('dist.ini');
-join(",\n", map { s/::/-/g; lc " lib-$_-perl" } keys %{ $hash->{'Prereqs / BuildRequires'} })
+our $c = Debian::AptContents->new({homedir => "/tmp/dh-make-perl"});
+my @Prereqs = (keys(%{ $hash->{'Prereqs / BuildRequires'} }), keys(%{ $hash->{'Prereqs / TestRequires'} }));
+join(",\n", map { ' ' . $c->find_perl_module_package($_) } @Prereqs)
 }}
-{{join(",\n", map { s/::/-/g; lc " lib-$_-perl" } keys %{ $hash->{'Prereqs / TestRequires'} })}}
 Standards-Version: 3.9.6
 Homepage: http://analizo.org
 
@@ -18,7 +20,10 @@ Architecture: all
 Depends:
  ${misc:Depends},
  ${perl:Depends},
-{{join(",\n", map { s/::/-/g; lc " lib-$_-perl" } keys %{ $hash->{'Prereqs / RuntimeRequires'} })}}
+{{
+my @Prereqs = keys(%{ $hash->{'Prereqs / RuntimeRequires'} });
+join(",\n", map { ' ' . $_ } grep { ! /^perl$/ } map { $c->find_perl_module_package($_) } @Prereqs)
+}}
 Recommends: graphviz
 Description: {{ $dist->abstract }}
  Analizo parses source code in multiple languages and report useful information
