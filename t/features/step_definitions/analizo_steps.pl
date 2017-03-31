@@ -15,6 +15,9 @@ our $exit_status;
 our $stdout;
 our $stderr;
 
+use Env qw(@PATH $PWD);
+push @PATH, "$PWD/bin";
+
 When qr/^I run "([^\"]*)"$/, func($c) {
   my $command = $1;
   $exit_status = system "($command) >tmp.out 2>tmp.err";
