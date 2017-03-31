@@ -3,7 +3,6 @@
 set -e
 
 setup_debian() {
-  sudo apt-get -q -y install wget
   which lsb_release || sudo apt-get -q -y install lsb-release
   codename=$(lsb_release -c | awk '{print($2)}')
   if type prepare_$codename >/dev/null 2>&1; then
@@ -12,27 +11,32 @@ setup_debian() {
     echo "WARNING: no specific preparation steps for $codename"
   fi
 
-  sudo apt-get -q -y install wget
   if [ ! -f /etc/apt/sources.list.d/analizo.list ]; then
+    which wget || sudo apt-get -q -y install wget
+    which gpg || sudo apt-get -q -y install gnupg
     echo "deb http://www.analizo.org/download/ ./" | sudo sh -c 'cat > /etc/apt/sources.list.d/analizo.list'
     wget -O - http://www.analizo.org/download/signing-key.asc | sudo apt-key add -
-    echo "deb http://debian.joenio.me unstable/" | sudo sh -c 'cat >> /etc/apt/sources.list.d/analizo.list'
-    wget -O - http://debian.joenio.me/signing.asc | sudo apt-key add -
+    #echo "deb http://debian.joenio.me unstable/" | sudo sh -c 'cat >> /etc/apt/sources.list.d/analizo.list'
+    #wget -O - http://debian.joenio.me/signing.asc | sudo apt-key add -
     sudo apt-get update
-    sudo apt-file update
   fi
+  which apt-file || sudo apt-get -q -y install apt-file
+  sudo apt-file update
 
   sudo apt-get -q -y install dh-make-perl libdist-zilla-perl
   packages=$(dh-make-perl locate $(dzil authordeps) | grep 'package$' | grep ' is in ' | sed 's/.\+is in \(.\+\) package/\1/')
   sudo apt-get -q -y -f install $packages
-  # pacotes que ainda n entraram no testing mas ja estao no sid ou a caminho...
-  sudo apt-get -q -y install libdist-zilla-plugin-bugtracker-perl libdist-zilla-plugin-templatefiles-perl libdist-zilla-plugin-repository-perl libdist-zilla-plugins-cjm-perl
 
   packages=$(dh-make-perl locate $(dzil listdeps) | grep 'package$' | grep ' is in ' | sed 's/.\+is in \(.\+\) package/\1/')
   sudo apt-get -q -y -f install $packages
-  # pacotes nao encontrados pelo dh-make-perl locate apesar de existir pacote
-  # bug reportado ao upstream: https://rt.cpan.org/Ticket/Display.html?id=117963
-  sudo apt-get -q -y install libdbd-sqlite3-perl libdbi-perl liblist-moreutils-perl
+
+  # `dzil externaldeps` foi submetido ao upstream, aguardando aprovação
+  # https://github.com/mjgardner/Dist-Zilla-Plugin-RequiresExternal/pull/5
+  # packages=$(dzil externaldeps)
+  # sudo apt-get -q -y -f install $packages
+  # instalando dependencias "na mao" enquanto PullRequest n tem resposta
+  sudo apt-get install -q -y -f doxyparse sloccount sqlite3 man pandoc
+
 }
 
 prepare_squeeze() {
@@ -75,19 +79,11 @@ prepare_quantal() {
   apt-get install -q -y libzeromq-perl
 }
 
-# FIXME share data with Makefile.PL
+# FIXME share data with Makefile.PL/dist.ini
 needed_programs='
   cpanm
-  doxyparse
   git
-  ruby
-  sloccount
-  cucumber
-  rspec
-  sqlite3
-  man
   pkg-config
-  gnupg
 '
 
 needed_libraries='
