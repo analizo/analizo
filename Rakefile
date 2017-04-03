@@ -3,7 +3,7 @@
 version = File.readlines('lib/Analizo.pm').find { |item| item =~ /VERSION =/ }.strip.gsub(/.*VERSION = '(.*)'.*/, '\1')
 
 desc 'prepares a release tarball and a debian package'
-task :release => [:check_tag, :check_debian_version] do
+task :release => [:check_debian_version] do
   sh "perl Makefile.PL"
   sh "make"
   sh "make test"
@@ -11,16 +11,6 @@ task :release => [:check_tag, :check_debian_version] do
   sh "mv analizo-#{version}.tar.gz ../analizo_#{version}.tar.gz"
   sh 'git buildpackage'
   sh "git tag #{version}"
-end
-
-desc 'checks if there is already a tag for the curren version'
-task :check_tag do
-  sh "git tag | grep '^#{version}$' >/dev/null" do |ok, res|
-    if ok
-      raise "******** There is already a tag for version #{version}, cannot continue"
-    end
-  end
-  puts "Not found tag for version #{version}, we can go on."
 end
 
 desc 'checks if debian version is in sync with "upstream" version'
