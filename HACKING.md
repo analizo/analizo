@@ -31,6 +31,16 @@ Just run `dzil test` in the root of the sources:
 See "Installing Dependencies" above for a guide to install all the software
 that's needed to run Analizo tests.
 
+## Building / releasing
+
+```
+  $ dzil build
+```
+
+```
+  $ dzil release
+```
+
 ## Style and Good practices
 
 Always write automated tests for your code:
