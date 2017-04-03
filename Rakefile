@@ -3,7 +3,7 @@
 version = File.readlines('lib/Analizo.pm').find { |item| item =~ /VERSION =/ }.strip.gsub(/.*VERSION = '(.*)'.*/, '\1')
 
 desc 'prepares a release tarball and a debian package'
-task :release => [:check_repo, :check_tag, :check_debian_version] do
+task :release => [:check_tag, :check_debian_version] do
   sh "perl Makefile.PL"
   sh "make"
   sh "make test"
@@ -11,15 +11,6 @@ task :release => [:check_repo, :check_tag, :check_debian_version] do
   sh "mv analizo-#{version}.tar.gz ../analizo_#{version}.tar.gz"
   sh 'git buildpackage'
   sh "git tag #{version}"
-end
-
-desc 'checks if there are uncommitted changes in the repo'
-task :check_repo do
-  sh "git status | grep 'nothing to commit'" do |ok, res|
-    if !ok
-      raise "******** There are uncommited changes in the repository, cannot continue"
-    end
-  end
 end
 
 desc 'checks if there is already a tag for the curren version'
