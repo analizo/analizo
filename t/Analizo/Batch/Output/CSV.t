@@ -109,6 +109,7 @@ sub must_return_short_names_of_metrics : Tests {
 	ok($short_names[0] eq "acc", "must list acc metric name");
 	ok($short_names[1] eq "accm", "must list accm metric name");
 	ok($short_names[2] eq "amloc", "must list amloc metric name");
+	ok($short_names[3] eq "anpm", "must list anpm metric name");
 }
 
 sub __create {
