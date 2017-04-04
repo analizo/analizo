@@ -26,16 +26,6 @@ v(G) = e - n + 2
 
 where 'e' is the number of edges and 'n' is the number of nodes of the graph."
 
-"... Myers observed that the cyclomatic complexity measures the software 
-complexity, but can't differ the complexity of some simple cases, especially
-the ones wich involves only one condition. To improve the original formula, it
-was suggested: 
-
-v(G)' = [l : u]
-
-where 'l' and 'u' are the inferior and superior limits, respectively, for the
-complexity, being more satisfactory for the cases verified by Myers."
-
 =cut
 
 __PACKAGE__->mk_accessors(qw( model ));
