@@ -8,7 +8,7 @@ Feature: number of attributes metric
     When I run "analizo metrics ."
     Then analizo must report that module Dog has noa = 1
     And analizo must report that module Cat has noa = 1
-    And analizo must report that module <main_module> has noa = 2
+    And analizo must report that module <main_module> has noa = 0
     Examples:
       | language | main_module |
       | cpp      | main        |
