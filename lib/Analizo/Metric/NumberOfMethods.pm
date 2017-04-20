@@ -4,7 +4,7 @@ use base qw(Class::Accessor::Fast Analizo::ModuleMetric);
 
 =head1 NAME
 
-Analizo::Metric::NumberOfMethods - Number Of Methods(NOM) metric
+Analizo::Metric::NumberOfMethods - Number of Methods (NOM) metric
 
 =head1 DESCRIPTION
 
@@ -12,15 +12,16 @@ The metric calculation is based on the following article and calculates the
 number of methods per class to measure the size of the classes in terms of its
 implemented operations.
 
-Article: Monitoring of source code metrics in open source projects by 
-Paulo Roberto Miranda Meirelles.
+Article: I<Monitoring of source code metrics in open source projects> by Paulo
+Roberto Miranda Meirelles.
 
-See the adaptation of the paragraph about Number Of Methods in the article:
+See the adaptation of the paragraph about Number of Methods in the article:
 
-"... This metric is used to help to identify the potential reuse of a class. In
+... This metric is used to help to identify the potential reuse of a class. In
 general, the classes with a large number of methods are harder to be reused,
 because they are more likely to be less cohesive (Lorenz and Kidd, 1994). Thus,
-it's recommended that a class don't have a excessive number of methods (Beck, 1997)."
+it's recommended that a class don't have a excessive number of methods (Beck,
+1997).
 
 =cut
 

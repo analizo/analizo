@@ -4,24 +4,24 @@ use base qw(Class::Accessor::Fast Analizo::ModuleMetric);
 
 =head1 NAME
 
-Analizo::Metric::NumberOfPublicAttributes - Number Of Public Attributes(NPA) metric
+Analizo::Metric::NumberOfPublicAttributes - Number of Public Attributes (NPA) metric
 
 =head1 DESCRIPTION
 
-The metric calculation is based on the following article and calculates the number
-of public attributes of a class.
+The metric calculation is based on the following article and calculates the
+number of public attributes of a class.
 
-Article: Monitoring of source code metrics in open source projects by 
-Paulo Roberto Miranda Meirelles.
+Article: I<Monitoring of source code metrics in open source projects> by Paulo
+Roberto Miranda Meirelles.
 
-See the adaptation of the paragraph about Number of Public Attributes in the article:
+See the adaptation of the paragraph about Number of Public Attributes in the
+article:
 
-"It measures the encapsulation. The attributes of a class must only serve to the 
+It measures the encapsulation. The attributes of a class must only serve to the
 functionalities of itself. Thus, good programming practices recommend that the
-attributes of a class must be manipulated using the access methods (Beck, 1997),
-the attributes of a class must be private, indicating that the ideal number 
-for this metric is zero. The suggested intervals for Java and C++ are:
-To 1 (good), between 1 and 9 (regular), from 9 forwards (bad)."
+attributes of a class must be manipulated using the access methods (Beck,
+1997), the attributes of a class must be private, indicating that the ideal
+number for this metric is zero.
 
 =cut
 

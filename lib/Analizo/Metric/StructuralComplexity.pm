@@ -7,21 +7,22 @@ use Analizo::Metric::LackOfCohesionOfMethods;
 
 =head1 NAME
 
-Analizo::Metric::StructuralComplexity - Structural Complexity metric
+Analizo::Metric::StructuralComplexity - Structural Complexity (SC) metric
 
 =head1 DESCRIPTION
 
-The metric calculation is based on the following article and calculates the structural
-complexity.
+The metric calculation is based on the following article and calculates the
+structural complexity.
 
-Article: Monitoring of source code metrics in open source projects by 
-Paulo Roberto Miranda Meirelles.
+Article: I<Monitoring of source code metrics in open source projects> by Paulo
+Roberto Miranda Meirelles.
 
 See the adaptation of the paragraph about Structural Complexity in the article:
 
-"When combined with a metric, the coupling and cohesion product is positively correlated 
-to the maintenance effort. Therefore, we use in this PhD research the coupling product (CBO)
-and cohesion (LCOM4) as our structural complexity metric (Darcy et al., 2005)."
+When combined with a metric, the coupling and cohesion product is positively
+correlated to the maintenance effort. Therefore, we use in this PhD research
+the coupling product (CBO) and cohesion (LCOM4) as our structural complexity
+metric (Darcy et al., 2005).
 
 =cut
 

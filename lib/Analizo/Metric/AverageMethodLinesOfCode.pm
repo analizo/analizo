@@ -5,22 +5,21 @@ use Statistics::Descriptive;
 
 =head1 NAME
 
-Analizo::Metric::AverageMethodLinesOfCode - Average Method Lines Of Code(AMLOC) metric
+Analizo::Metric::AverageMethodLinesOfCode - Average Method Lines of Code (AMLOC) metric
 
 =head1 DESCRIPTION
 
 The metric calculation is based on the following article and calculates the
 average number of lines of code per method.
 
-Article: Monitoring of source code metrics in open source projects by 
-Paulo Roberto Miranda Meirelles.
+Article: I<Monitoring of source code metrics in open source projects> by Paulo
+Roberto Miranda Meirelles.
 
-See the adptation of the paragraph about Average Method Lines Of Code metric:
+See the adptation of the paragraph about Average Method Lines of Code metric:
 
-"This metric indicates if the code is well distributed between the methods. How bigger,
-"heavier" are the methods. It's preferible to have a lot of small  and of easy
-understanding operations than few large and complex operations. The suggested intervals
-are: To 10 (good), between 10 and 13 (regular), from 13 onwards (bad)."
+This metric indicates if the code is well distributed between the methods. How
+bigger, "heavier" are the methods. It's preferible to have a lot of small and
+of easy understanding operations than few large and complex operations.
 
 =cut
 

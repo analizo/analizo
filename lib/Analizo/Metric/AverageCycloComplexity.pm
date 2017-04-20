@@ -5,26 +5,25 @@ use Statistics::Descriptive;
 
 =head1 NAME
 
-Analizo::Metric::AverageCycloComplexity - Average Cyclomatic Complexity per 
-Method(ACCM) metric
+Analizo::Metric::AverageCycloComplexity - Average Cyclomatic Complexity per Method (ACCM) metric
 
 =head1 DESCRIPTION
 
 The metric calculation is based on the following article and calculates the
 complexity of the program.
 
-Article: Monitoring of source code metrics in open source projects by 
-Paulo Roberto Miranda Meirelles.
+Article: I<Monitoring of source code metrics in open source projects> by Paulo
+Roberto Miranda Meirelles.
 
 See the adaptation of the paragraph about Average Cyclomatic Complexity per
 Method in the article:
 
-"... The cyclomatic complexity of a graph can be calculated using a formula of 
-graph theory: 
+... The cyclomatic complexity of a graph can be calculated using a formula of
+graph theory:
 
-v(G) = e - n + 2
+  v(G) = e - n + 2
 
-where 'e' is the number of edges and 'n' is the number of nodes of the graph."
+where C<e> is the number of edges and C<n> is the number of nodes of the graph.
 
 =cut
 
@@ -59,4 +58,3 @@ sub calculate {
 }
 
 1;
-
