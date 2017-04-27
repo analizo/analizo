@@ -1,6 +1,10 @@
 # doxyparse
 echo 'deb http://analizo.org/download/ ./' | sudo tee /etc/apt/sources.list.d/analizo.list
 wget -O - http://analizo.org/download/signing-key.asc | sudo apt-key add -
+
+echo "deb http://debian.joenio.me unstable/" | sudo sh -c 'cat >> /etc/apt/sources.list.d/analizo.list'
+wget -O - http://debian.joenio.me/signing.asc | sudo apt-key add -
+
 sudo apt-get update
 sudo apt-get install doxyparse
 sudo rm -rf /etc/apt/sources.list.d/analizo.list
