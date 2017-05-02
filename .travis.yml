@@ -1,4 +1,4 @@
 sudo: required
 language: perl
-install: sh travis.sh
+install: sh development-setup.sh
 script: rake
