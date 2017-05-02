@@ -1,4 +1,4 @@
 sudo: required
 language: perl
 install: sh travis.sh
-script: perl Makefile.PL && make && make test
+script: rake
