@@ -1,4 +1,3 @@
-# Use an official Python runtime as a base image
 FROM debian:stretch
 
 # Set the working directory to /app
@@ -12,13 +11,4 @@ RUN apt-get -y update && apt-get -y install sudo apt-utils && apt-get -y clean
 RUN ./development-setup.sh
 
 # Run tests
-RUN rake
-
-# Make port 80 available to the world outside this container
-#EXPOSE 80
-
-# Define environment variable
-#ENV NAME World
-
-# Run app.py when the container launches
-#CMD ["python", "app.py"]
+CMD ["rake"]
