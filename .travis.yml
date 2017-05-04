@@ -1,6 +1,6 @@
 sudo: required
 language: perl
 services: docker
-before_install: docker -t test . 
+before_install: docker build -t teste .
 install: sh development-setup.sh
 script: rake
