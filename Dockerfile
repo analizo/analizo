@@ -8,7 +8,7 @@ WORKDIR /analizo
 ADD . /analizo
 
 # Install any needed packages specified in requirements.txt
-RUN apt-get update && apt-get install sudo
+RUN apt-get -y update && apt-get -y install sudo apt-utils && apt-get -y clean
 RUN ./development-setup.sh
 
 # Run tests
