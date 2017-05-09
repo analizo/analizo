@@ -4,6 +4,11 @@ language: perl
 
 services: docker
 
-before_install: docker build -t test .
-
 install: true
+
+script:
+- docker pull analizo/test
+- docker create --name travis -v `pwd`:/analizo analizo/test
+- docker start travis
+- docker logs -f travis
+- exit $?
