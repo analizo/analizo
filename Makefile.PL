@@ -67,6 +67,11 @@ WriteMakefile(
     'YAML::Tiny' => 0,
     'App::Cmd' => 0,
     'Class::Inspector' => 0,
+    # On Graph::Writer::DSM 0.006 a warning is
+    # shows on console like shows on issue #65.
+    # Graph::Writer::DSM 0.005 don't show warning, 
+    # but isn't available on Debian Jessie and Sid
+    # repository anymore.
     'Graph::Writer::DSM' => 0.005,
     'FindBin::libs' => 0,
     'Graph::Writer::Dot' => 2.09,
