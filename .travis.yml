@@ -11,4 +11,5 @@ script:
 - docker create --name travis -v `pwd`:/analizo analizo/test
 - docker start travis
 - docker logs -f travis
-- exit $?
+- test `docker ps -a --filter exited=1 | wc -l` == "1"
+
