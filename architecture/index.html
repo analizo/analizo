@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title></title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width">
+
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <style>
+        body {
+            padding-top: 60px;
+            padding-bottom: 40px;
+        }
+        img {
+            margin-top: 20px;
+            margin-bottom: 30px;
+        }
+        p, ul{
+            text-align: justify;
+        }
+        section {
+            padding-top: 35px;
+        }
+
+    </style>
+    <link rel="stylesheet" href="css/bootstrap-responsive.min.css">
+    <link rel="stylesheet" href="css/main.css">
+
+    <script src="js/vendor/modernizr-2.6.2-respond-1.1.0.min.js"></script>
+</head>
+
+<body>
+    <div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="navbar-inner">
+            <div class="container">
+                <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </a>
+                <a class="brand" href="#">Analizo-Arch</a>
+                <div class="nav-collapse collapse">
+                    <ul class="nav">
+                        <li class="active"><a href="#">Home</a></li>
+                        <li><a href="#about">About</a></li>
+                    </ul>
+                </div><!--/.nav-collapse -->
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="row-fluid">
+            <div class="span3 bs-docs-sidebar">
+                <ul class="nav nav-list affix">
+                    <li class="active">
+                        <a href="#introducao">Introdução</a>
+                    </li>
+                    <li>
+                        <a href="#section1">Features</a>
+                    </li>
+                    <li>
+                        <a href="#section2">Arquitetura</a>
+                    </li>
+                    <li>
+                        <a href="#section3">Section 3</a>
+                    </li>
+                    <li>
+                        <a href="#section4">Section 4</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="span9">
+                <section id="introducao">
+                    <div class="page-header">
+                        <h1>Introdução</h1>
+                    </div>
+                    <p>
+                    Analizo é uma ferramenta free, multi-linguage, a análise de código realizada é extensível e também é um tookit de visualização de software. Suporta a extração de um grande número de métricas de código fonte, geração de gráficos de dependência e análise avaliação da evolução de software.
+                    <br><br>
+                    Com o Analizo você pode:
+                    <ul>
+                        <li> 
+                            <b>Analisar código fonte em C, C++ e Java.</b> O suporte para outras linguages é fácil de adicionar, atualmente essa tarefa é executada pelo Doxyparse;
+                        </li>
+                        
+                        <li>
+                            <b>Extrair métricas do código fonte.</b> O Analizo suporta mais de quinze tipos de métricas relacionadas aos módulos do software, mais de 7 métricas relacionadas a projetos e estatísticas descritivas para todos as métricas de módulos;  
+                        </li>
+                        
+                        <li>
+                            <b>Extrair métricas de projetos grandes no modo batch.</b> Você coloca todos os projetos que deseja analisar em uma pasta e o Analizo toma conta do resto;
+                        </li>
+                        
+                        <li>
+                            <b>Extrair métricas de repositórios VCS.</b> O Analizo pode fornecer a evolução dos valores das métricas associadas com os metadados das mudanças para toda a história do projeto;
+                        </li>
+                        
+                        <li>
+                            <b>Desenhar gráficos de dependência.</b> Com a ajuda do Grahviz, o Analizo irá ajudar você com a visualização das dependências entre os módulos do projeto;
+                        </li>
+                        
+                        <li>
+                            <b>Ter ajuda na análise da evolução do software.</b> O Analizo pode analizar várias versões do proeto e produzir uma matriz de evolução, o que ajuda a entender o que aconteceu com o código ao longo do tempo.
+                        </li>
+                    </ul>
+                    o Analizo foi criado por Antonio Terceiro como uma ferramenta de suporte para a sua tese de PhD. Foi inicialmente baseado na ferramenta egypt desenvolvida por Andreas Gustafsson, mas atualmente existe apenas uma pequena parte do código da ferramenta egypt. O Analizo está sendo co-desenvolvido por Antonio Terceiro, Joenio Costa, João Miranda e Paulo Meirelles. O trabalho está sendo suportado pelas seguintes organizações:
+                    <br><br>
+                    <ul>
+                      <li>LES-UFBA</li>
+                      <li>INES</li>
+                      <li>CNPQ</li>
+                      <li>FAPESB</li>
+                      <li>CCSL-USP</li>
+                      <li>Qualipso project</li>
+                    </ul>
+                    </p>
+                </section>
+                <section id="section1">
+                    <div class="page-header">
+                        <h1>Features</h1>
+                    </div>
+                    <p>
+                      
+                      <ul>
+                        <li>
+                          <b>Multi-language source code analysis:</b> Currently, Analizo supports source analysis of code written in C, C++ and Java. However, it can be extended to support other languages since it uses Doxyparse, which is based on Doxygen and thus also supports several different languages.
+                        </li>
+                        <li><b>Metrics:</b> Analizo reports both project-level metrics, which are calculated for the entire project,and module-level metrics, which are calculated individually for each module. On the project-level, Analizo also provides basic descriptive statistics for each of the module-level metrics: sum, mean, median, mode, standard deviation, variance, skewness and kurtosis of the distribution, minimum, and maximum value. The following metrics are supported at the time of writing:
+                          <ul>
+                          <li>Project-level metrics: Total Coupling Factor, Total Lines of Code, Total number
+                          of methods per abstract class, Total Number of Modules/Classes, Total number
+                          of modules/classes with at least one defined attributes, Total number of mod-
+                          ules/classes with at least one defined method, Total Number of Methods.</li>
+                          <li>Module-level metrics: Afferent Connections per Class, Average Cyclomatic Com-
+                          plexity per Method, Average Method LOC, Average Number of Parameters per
+                          Method, Coupling Between Objects, Depth of Inheritance Tree, Lack of Cohesion
+                          of Methods, Lines of Code, Max Method LOC, Number of Attributes, Number of
+                          Children, Number of Methods, Number of Public Attributes, Number of Public
+                          Methods, Response For a Class. </li>
+                        </ul>
+                        </li>
+                      <li><b>Metrics batch processing:</b>
+                      In most quantitative studies on Software Engineering involving the acquisition of source
+                      code metrics on a large number of projects, processing each project individually is im-
+                      practical, error-prone and difficult to repeat. Analizo can process multiple projects in
+                      batch and produce one comma-separated values (CSV) metrics data file for each project,
+                      as well as a summary CSV data file with project-level metrics for all projects. These data
+                      files can be easily imported in statistical tools or in spreadsheet software for further anal-
+                      ysis. This can also be used to analyze several releases of the same project, in software
+                      evolution studies.</li>
+                      <li><b>Metrics history:</b>
+                      Sometimes researchers need to process the history of software projects on a more fine-
+                      grained scale. Analizo can process a version control repository and provide a CSV data
+                      file with the metrics values for each revision in which source code was changed in the
+                      project. Git and Subversion repositories are supported directly, and CVS repositories
+                      must be converted into Git ones beforehand.</li>
+                      <li><b>Dependency Graph output:</b>
+                      Analizo can output module dependency information extracted from a source code tree
+                      in a format suitable for processing with the Graphviz6 graph drawing tools. Figure 2(a)
+                      presents a sample dependency graph obtained by feeding Graphviz’ dot tool with Analizo
+                      graph output.</li>
+                      <li><b>Evolution matrix:</b>
+                      Another useful Analizo feature is generating evolution matrices [Lanza 2001]. After pro-
+                      cessing each release of the project (see Section 4.3), the user can request the creation of an
+                      evolution matrix from the individual data files. Figure 2(b) shows an excerpt of a sample
+                      evolution matrix produced by Analizo.</li>
+                    </ul>
+                    </p>
+                </section>
+                 
+                <section id="section2">
+                    <div class="page-header">
+                        <h1>Arquitetura</h1>
+                    </div>
+
+                    <p>
+                      Analizo architecture is presented in Figure 1, using a Layered style [Clements et al. 2002].
+                      Each layer in the diagram uses only the services provided by the layers directly below it.
+                    </p>
+
+                    <center>
+                        <img src="img/architecture.png" class="img-polaroid">
+                    </center>
+
+                    <p>
+                      The Core layer contains the data structures used to store information concerning
+                      the source code being analyzed, such as the list of existing modules2, elements inside
+                      each module (attributes/variables, or methods/functions), dependency information (call, inheritance, etc). This layer implements most of Analizo business logic, and it does not
+                      depend on any other layer.
+                      The Extractors layer comprises the different source code information extraction
+                      strategies built in Analizo. Extractors get information from source code and store them in
+                      the Core layer data structures. It requires only the creation of a new subclass to add a new
+                      type of extractor that interfaces with another external tool or provides its own analysis
+                      directly. Currently, there are two extractors. Both are interfaces for external source code
+                      parsing tools:
+                      • Analizo::Extractors::Doxyparse is an interface for Doxyparse, a source code parser
+                      for C, C++ and Java developed by our group [Costa 2009]. Doxyparse is based
+                      on Doxygen3 , a multi-language source code documentation system that contains
+                      a robust parser.
+                      • Analizo::Extractors::Sloccount is an interface for David A. Wheeler’s Sloccount4 ,
+                      a tool that calculates the number of effective lines of code.
+                      The other intermediate layers are Metrics and Output. The Metrics layer processes
+                      Core data structures in order to calculate metrics. At the moment, Analizo supports a
+                      fair set of metrics (listed in Section 4). The Output layer is responsible for handling
+                      different file formats. Currently, the only output format implemented is the DOT format
+                      for dependency graphs, but adding new formats is simply a matter of adding new output
+                      handler classes.
+                      The Tools layer comprises a set of command-line tools that constitute Analizo in-
+                      terface for both users and higher-level applications. These tools use services provided by
+                      the other layers: they instantiate the core data structures, one or more extractors, option-
+                      ally the metrics processors, an output format module, and orchestrate them in order to
+                      provide the desired result. Most of the features described in Section 4 are implemented as
+                      Analizo tools.
+                      Those tools are designed to adhere to the UNIX philosophy: they accomplish
+                      specialized tasks and generate output that is suitable to be fed as input to other tools, either
+                      from Analizo itself or other external tools. Some of the tools are implemented on top
+                      of others instead of explicitly manipulating Analizo internals, and some are designed to
+                      provide output for external applications such as graph drawing programs or data analysis
+                      and visualization applications.
+                    </p>
+                </section>
+                 <section id="section3">
+                    <div class="page-header">
+                        <h1>Section 3</h1>
+                    </div>
+                    
+                    <p>Nam liber tempor cum soluta nobis eleifend option congue nihil imperdiet doming id quod mazim placerat facer possim assum. Typi non habent claritatem insitam; est usus legentis in iis qui facit eorum claritatem. Investigationes demonstraverunt lectores legere me lius quod ii legunt saepius. Claritas est etiam processus dynamicus, qui sequitur mutationem consuetudium lectorum. Mirum est notare quam littera gothica, quam nunc putamus parum claram, anteposuerit litterarum formas humanitatis per seacula quarta decima et quinta decima. Eodem modo typi, qui nunc nobis videntur parum clari, fiant sollemnes in futurum.</p>
+                </section>
+            </div>
+        </div> <!-- div class row -->
+
+      <hr>
+        <footer>
+            <p>&copy; FGA-UnB 2013</p>
+        </footer>
+
+    </div> <!-- /container -->
+
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.9.1.min.js"><\/script>')</script>
+
+    <script src="js/vendor/bootstrap.min.js"></script>
+
+    <script src="js/main.js"></script>
+
+    <script>
+        var _gaq=[['_setAccount','UA-XXXXX-X'],['_trackPageview']];
+        (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+        g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+        s.parentNode.insertBefore(g,s)}(document,'script'));
+    </script>
+</body>
+</html>
