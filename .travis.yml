@@ -8,7 +8,7 @@ install: true
 
 script:
 - docker pull analizo/test
-- docker create --name travis -v `pwd`:/analizo analizo/test
+- docker create --name travis -v `pwd`:/home/analizo analizo/test
 - docker start travis
 - docker logs -f travis
 - test `docker ps -a --filter exited=1 | wc -l` == "1"
