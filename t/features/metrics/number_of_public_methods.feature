@@ -1,16 +1,16 @@
-Feature: number of methods
+Feature: number of public methods metric
   As a software developer
-  I want analizo to report the number of methods of each module
-  So that I can evaluate it
+  I want to calculate the number of public methods per module metric
+  So that I can evaluate my code
 
-  Scenario: number of methods of the polygon java sample
+  Scenario: number of attributes in the "Animals" project
     Given I am in t/samples/<sample>/<language>
     When I run "analizo metrics ."
-    Then analizo must report that module <module> has nom = <nom>
+    Then analizo must report that module <module> has npm = <npm>
     Examples:
-      | sample   | language |  module    | nom  |
-      | polygons | cpp      |  CPolygon  | 3    |
-      | polygons | cpp      |  CTetragon | 2    |
+      | sample   | language |  module    | npm  |
+      | polygons | cpp      |  CPolygon  | 2    |
+      | polygons | cpp      |  CTetragon | 1    |
       | polygons | java     |  Polygon   | 3    |
       | animals  | cpp      |  Animal    | 1    |
       | animals  | cpp      |  Cat       | 2    |
@@ -18,4 +18,3 @@ Feature: number of methods
       | animals  | java     |  Animal    | 1    |
       | animals  | java     |  Cat       | 2    |
       | animals  | java     |  Dog       | 2    |
-
