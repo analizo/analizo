@@ -12,4 +12,3 @@ script:
 - docker start travis
 - docker logs -f travis
 - test `docker ps -a --filter exited=1 | wc -l` == "1"
-
