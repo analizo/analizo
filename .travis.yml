@@ -1,5 +1,7 @@
 sudo: required
 
+group: deprecated-2017Q2
+
 language: perl
 
 services: docker
