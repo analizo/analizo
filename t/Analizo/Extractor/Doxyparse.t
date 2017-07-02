@@ -135,14 +135,14 @@ sub detect_variable_uses : Tests {
               line: 5
               uses:
                 - myvariable:
-                    type: variable 
+                    type: variable
                     defined_in: module2
           - hello_world_say(hello_world *):
               type: function
               line: 10
               uses:
                 - avariable:
-                    type: variable 
+                    type: variable
                     defined_in: module2
   ");
   is($extractor->model->{calls}->{'module1::callerfunction'}->{'module2::myvariable'}, 'variable');
@@ -218,7 +218,6 @@ sub detect_number_of_parameters : Tests {
 }
 
 sub detect_conditional_paths : Tests {
-  local $TODO = "conditional paths currently not implemented";
   my $extractor = Analizo::Extractor->load('Doxyparse', current_module => 'module1.c');
   $extractor->feed("---
     src/module1.c:
@@ -227,6 +226,9 @@ sub detect_conditional_paths : Tests {
           - one_function:
               type: function
               line: 5
+              conditional_paths: 3
+              protection: public
+              lines_of_code: 18
   ");
   is($extractor->model->{conditional_paths}->{'module1::one_function'}, 3);
 }
