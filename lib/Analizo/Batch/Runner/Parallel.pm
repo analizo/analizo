@@ -1,7 +1,7 @@
 package Analizo::Batch::Runner::Parallel;
 use strict;
 use warnings;
-use ZeroMQ qw/:all/;
+use ZMQ::FFI qw(ZMQ_PUSH ZMQ_PULL ZMQ_REQ ZMQ_REP);
 use YAML;
 
 use base qw( Analizo::Batch::Runner );
@@ -66,7 +66,7 @@ sub wait_for_workers {
 sub coordinate_workers {
   my ($self, $batch, $output) = @_;
 
-  my $context = ZeroMQ::Context->new();
+  my $context = ZMQ::FFI->new();
 
   my $queue = $context->socket(ZMQ_PUSH);
   $queue->bind(_socket_spec('queue', $$));
@@ -86,7 +86,7 @@ sub coordinate_workers {
   my $results_received = 0;
   while ($results_received < $results_expected) {
     my $msg = $results->recv();
-    my $job = Load($msg->data);
+    my $job = Load($msg);
     $output->push($job);
     $results_received++;
     $self->report_progress($job, $results_received, $results_expected);
@@ -95,7 +95,7 @@ sub coordinate_workers {
 
 sub distributor {
   my ($parent_pid, $number_of_workers) = @_;
-  my $context = ZeroMQ::Context->new();
+  my $context = ZMQ::FFI->new();
 
   my $queue = $context->socket(ZMQ_PULL);
   $queue->connect(_socket_spec('queue', $parent_pid));
@@ -107,7 +107,7 @@ sub distributor {
   my $job;
   while(1) {
     my $msg = $queue->recv();
-    $job = Load($msg->data);
+    $job = Load($msg);
     last if !exists($job->{id});
     push(@queue, $job);
   }
@@ -127,7 +127,7 @@ sub distributor {
 
 sub worker {
   my ($parent_pid) = @_;
-  my $context = ZeroMQ::Context->new();
+  my $context = ZMQ::FFI->new();
   my $source = $context->socket(ZMQ_REQ);
   $source->connect(_socket_spec('job_source', $parent_pid));
   my $results = $context->socket(ZMQ_PUSH);
@@ -137,7 +137,7 @@ sub worker {
   while ($run) {
     $source->send('');
     my $msg = $source->recv();
-    my $job = Load($msg->data);
+    my $job = Load($msg);
     if (exists($job->{id})) {
       $last_job = $job;
       $job->parallel_prepare();

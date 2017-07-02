@@ -9,6 +9,7 @@ sub cpan2debian {
     my $debian_pkg = 'lib' . lc($_) . '-perl';
     $debian_pkg =~ s/::/-/g;
     $debian_pkg =~ s/sqlite/sqlite3/;   # special case
+    $debian_pkg =~ s/libgraph-writer-dot-perl/libgraph-readwrite-perl/; # special case
     if ($version) {
       $debian_pkg .= " (>= $version)";
     }

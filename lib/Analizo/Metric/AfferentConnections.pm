@@ -2,6 +2,34 @@ package Analizo::Metric::AfferentConnections;
 use strict;
 use base qw(Class::Accessor::Fast Analizo::ModuleMetric);
 
+=head1 NAME
+
+Analizo::Metric::AfferentConnections - Afferent Connections per Class (ACC) metric
+
+=head1 DESCRIPTION
+
+The metric calculation is based on the following article and calculates the
+class conectivity.
+
+Article: I<Monitoring of source code metrics in open source projects> by Paulo
+Roberto Miranda Meirelles.
+
+See the adaptation of the paragraph about Afferente Connections per Class in
+the article:
+
+Measures the connectivity of a class. If a class C<Cc> access a method or
+attribute of a class C<Cs>, consider C<Cc> a client of the supplier class
+C<Cs>, denoting C<< Cc => Cs >>.  Consider the follow function:
+
+  client(Ci, Cj) = 1, if (Ci => Cj) and (Ci != Cj)
+  client(Ci, Cj) = 0, otherwise.
+
+So C<ACC(C) = (sum(client(Ci, Cj)), i = 1 to N)>, where C<N> is the total
+number of system classes. If the value of this metric is large, a change in the
+class has substantially more side effects, making maintenance more difficult.
+
+=cut
+
 __PACKAGE__->mk_accessors(qw( model analized_module));
 
 sub new {
@@ -61,7 +89,7 @@ sub _member_calls_analized_module {
 
 sub _called_module_is_the_analized {
   my ($self, $called_module, $caller_module) = @_;
-  return $caller_module ne $called_module && $called_module eq $self->analized_module;
+  return ($caller_module && $called_module) && $caller_module ne $called_module && $called_module eq $self->analized_module;
 }
 
 sub _recursive_number_of_children {

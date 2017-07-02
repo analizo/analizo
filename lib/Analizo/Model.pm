@@ -18,7 +18,6 @@ sub new {
     abstract_classes => [],
     module_names => [],
     total_eloc => 0,
-    security_metrics => {}
   );
   return bless { @defaults }, __PACKAGE__;
 }
@@ -167,7 +166,7 @@ sub add_conditional_paths {
 
 sub add_protection {
   my ($self, $member, $protection) = @_;
-  $self->{protection}->{$member} = $protection;
+  $self->{protection}->{$member} = $protection if $member;
 }
 
 sub add_parameters {
@@ -241,16 +240,6 @@ sub _function_to_file {
   return unless exists $self->members->{$function};
   my $module = $self->members->{$function};
   $self->{files}->{$module};
-}
-
-sub declare_security_metrics {
-  my ($self, $bug_name, $module, $value) = @_;
-  $self->{security_metrics}->{$bug_name}->{$module} = $value;
-}
-
-sub security_metrics {
-  my ($self, $bug_name, $module) = @_;
-  return $self->{security_metrics}->{$bug_name}->{$module};
 }
 
 sub _add_dependency {

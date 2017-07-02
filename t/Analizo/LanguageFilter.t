@@ -25,13 +25,14 @@ sub c_filter_matches_dot_c_and_dot_h : Tests {
   ok(!$filter->matches('Test.java'));
 }
 
-sub cpp_filter_matches_cpp_cc_cxx_hpp_h : Tests {
+sub cpp_filter_matches_cpp_cc_cxx_hpp_h_hh : Tests {
   my $filter = Analizo::LanguageFilter->new("cpp");
   ok($filter->matches('test.cpp'));
   ok($filter->matches('test.cxx'));
   ok($filter->matches('test.cc'));
   ok($filter->matches('test.hpp'));
   ok($filter->matches('test.h'));
+  ok($filter->matches('test.hh'));
 
   ok(!$filter->matches('test.c'));
   ok(!$filter->matches('test.java'));

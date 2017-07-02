@@ -19,7 +19,7 @@ sub CheckExtraDependencies {
 
 CheckExtraDependencies(
   'runtime',
-  'doxyparse' => '(>= 1.5.8-12~)',
+  'doxyparse' => '(>= 1.8.11)',
   'git' => 0,
   'ruby' => 0,
   'sloccount' => 0,
@@ -32,7 +32,6 @@ CheckExtraDependencies(
   'build',
   'rake' => 0,
   'rspec' => 0,
-  'clang-3.5' => 0,
 );
 
 install_share 'share';
@@ -60,7 +59,7 @@ WriteMakefile(
     'YAML' => 0,
     'Statistics::Descriptive' => 0,
     'Term::ProgressBar' => 0,
-    'ZeroMQ' => 0,
+    'ZMQ::FFI' => 0,
     'Mojolicious' => 0,
     'File::ShareDir' => 0,
     'File::Share' => 0,
@@ -70,7 +69,7 @@ WriteMakefile(
     'Class::Inspector' => 0,
     'Graph::Writer::DSM' => 0.005,
     'FindBin::libs' => 0,
-    'Graph::Writer::Dot' => 0,
+    'Graph::Writer::Dot' => 2.09,
   },
   BUILD_REQUIRES => {
     'Test::Class' => 0,

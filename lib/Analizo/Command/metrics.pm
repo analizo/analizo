@@ -30,9 +30,9 @@ sub opt_spec {
     [ 'output|o=s',   'output file name' ],
     [ 'language=s',   'process only filenames matching known extensions for the <lang>> programming' ],
     [ 'exclude|x=s',  'exclude <dirs> (a colon-separated list of directories) from the analysis' ],
-    [ 'includedirs|I=s',  'include <dirs> (a colon-separated list of directories) with C/C++ header files' ],
-    [ 'libdirs|L=s',  'include <dirs> (a colon-separated list of directories) with C/C++ static and dynamic libraries files' ],
-    [ 'libs=s',  'include <dirs> (a colon-separated list of directories) with C/C++ linked libraries files' ],
+    [ 'includedirs|I=s',  'include <dirs> (a colon-separated list of directories) with C/C++ header files', { default => '.' } ],
+    [ 'libdirs|L=s',  'include <dirs> (a colon-separated list of directories) with C/C++ static and dynamic libraries files', { default => '.' } ],
+    [ 'libs=s',  'include <dirs> (a colon-separated list of directories) with C/C++ linked libraries files', { default => '.' } ],
   );
 }
 
@@ -87,24 +87,9 @@ sub execute {
     my @excluded_directories = split(':', $opt->exclude);
     $job->exclude(@excluded_directories);
   }
-  if ($opt->includedirs) {
-    $job->includedirs($opt->includedirs);
-  }
-  else {
-    $job->includedirs('.');
-  }
-  if ($opt->libdirs) {
-    $job->libdirs($opt->libdirs);
-  }
-  else {
-    $job->libdirs('.');
-  }
-  if ($opt->libs) {
-    $job->libs($opt->libs);
-  }
-  else {
-    $job->libs('.');
-  }
+  $job->includedirs($opt->includedirs);
+  $job->libdirs($opt->libdirs);
+  $job->libs($opt->libs);
   $job->execute();
   my $metrics = $job->metrics;
   if ($opt->output) {
@@ -167,23 +152,6 @@ Exclude <I<dirs>> (a colon-separated list of directories) from the analysis.
 This is useful, for example, when you want to focus on production code and
 exclude test code from the analysis. You could do that by passing something
 like pass B<--exclude test>.
-
-=item --includedirs <dirs>, -I <dirs>
-
-Include directories that contains the headers files if they are not in same
-directory of the source code. This is used when C/C++ source code must be
-compiled (Clang extractor).
-
-=item --libdirs <dirs>, -L <dirs>
-
-Include directories that contains static and dynamic libraries. This is used
-when C/C++ source code must be compiled (Clang extractor).
-
-
-=item --libs <library>
-
-Link the source code with external libraries. This is used when C/C++ source
-code must be compiled (Clang extractor).
 
 =back
 

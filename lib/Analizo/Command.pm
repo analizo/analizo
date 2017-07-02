@@ -28,11 +28,6 @@ sub validate_args {
   if ($self->app->global_options->version) {
     $self->usage_error("Invalid option: --version");
   }
-  elsif ($self->app->global_options->help) {
-    my $package = ref $self;
-    $self->show_manpage($package, $self->command_names);
-    exit 0;
-  }
   elsif ($self->app->global_options->usage) {
     print $self->app->usage, "\n", $self->usage;
     exit 0;

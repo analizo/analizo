@@ -3,7 +3,7 @@
 set -e
 
 setup_debian() {
-  sudo apt-get -q -y install wget
+  sudo apt-get -q -y install wget gnupg
   which lsb_release || sudo apt-get -q -y install lsb-release
   codename=$(lsb_release -c | awk '{print($2)}')
   if type prepare_$codename >/dev/null 2>&1; then
@@ -14,14 +14,17 @@ setup_debian() {
 
   sudo apt-get -q -y install wget
   if [ ! -f /etc/apt/sources.list.d/analizo.list ]; then
-    echo "deb http://analizo.org/download/ ./" | sudo sh -c 'cat > /etc/apt/sources.list.d/analizo.list'
-    wget -O - http://analizo.org/download/signing-key.asc | sudo apt-key add -
-    sudo apt-get update
+    echo "deb http://www.analizo.org/download/ ./" | sudo sh -c 'cat > /etc/apt/sources.list.d/analizo.list'
+    wget -O - http://www.analizo.org/download/signing-key.asc | sudo apt-key add -
+    echo "deb http://debian.joenio.me unstable/" | sudo sh -c 'cat >> /etc/apt/sources.list.d/analizo.list'
+    wget -O - http://debian.joenio.me/signing.asc | sudo apt-key add -
   fi
 
+  sudo apt-get update
+
   packages=$(sed -e '1,/^Build-Depends-Indep:/ d; /^\S/,$ d; s/,//; s/(.*$//' debian/control)
-  sudo apt-get -q -y -f install $packages
-  sudo apt-get -q -y install libfile-sharedir-install-perl
+  sudo apt-get -q -y -f --allow-unauthenticated install $packages
+  sudo apt-get -q -y install libfile-sharedir-install-perl libtext-template-perl pandoc
 }
 
 prepare_squeeze() {

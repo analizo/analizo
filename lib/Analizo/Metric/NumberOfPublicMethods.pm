@@ -2,6 +2,29 @@ package Analizo::Metric::NumberOfPublicMethods;
 use strict;
 use base qw(Class::Accessor::Fast Analizo::ModuleMetric);
 
+=head1 NAME
+
+Analizo::Metric::NumerOfPublicMethods - Number of Public Methods (NPM) metric
+
+=head1 DESCRIPTION
+
+The metric calculation is based on the following article and calculates the
+number of public methods of a class.
+
+Article: I<Monitoring of source code metrics in open source projects> by Paulo
+Roberto Miranda Meirelles.
+
+See the adaptation of the paragraph about Number of Public Methods in the
+article:
+
+Represents the size of the "interface" of the class. Methods are directly
+related to the operations provided in the respective class. High values for
+this metric indicate that a class has many methods and probably many
+responsibilities, which conflicts with good programming practices (Beck,
+1997).
+
+=cut
+
 __PACKAGE__->mk_accessors(qw( model ));
 
 sub new {

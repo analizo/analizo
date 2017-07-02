@@ -34,7 +34,7 @@ end
 
 desc 'Acceptance tests'
 test_task 'test:acceptance' do
-  sh 'perl test.pl'
+  sh 'perl -I. test.pl'
 end
 
 task :default => ['test:unit', 'test:acceptance']

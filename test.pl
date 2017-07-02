@@ -16,10 +16,20 @@ use t::Analizo::Test::BDD::Cucumber::Harness;
 # The features are returned in @features, and the executor is created with the
 # step definitions loaded.
 # It's possible to execute just a feature by passing it as argument in
-# command-line. Like: $ perl test.pl t/features/dsm.feature
-my ($executor, @features) = @ARGV == 0
-  ? Test::BDD::Cucumber::Loader->load('t/features/')
-  : Test::BDD::Cucumber::Loader->load(@ARGV);
+# command-line. Like: $ perl -I. test.pl t/features/dsm.feature
+
+my ($executor, @features);
+
+if(@ARGV == 0) {
+  ($executor, @features) = Test::BDD::Cucumber::Loader->load('t/features/');
+} else {
+  ($executor, @features) = Test::BDD::Cucumber::Loader->load(@ARGV);
+
+  my $number_of_steps = keys %{$executor->{steps}};
+  if($number_of_steps == 0){
+    Test::BDD::Cucumber::Loader->load_steps($executor, 't/features/step_definitions/');
+  }
+}
 
 # Create a Harness to execute against. TestBuilder harness prints TAP
 my $harness = t::Analizo::Test::BDD::Cucumber::Harness->new({});
