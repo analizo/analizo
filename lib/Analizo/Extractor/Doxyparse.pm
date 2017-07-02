@@ -25,9 +25,17 @@ sub _cpp_hack {
   if (defined($current) && $current =~ /^(.*)\.(h|hpp)$/) {
     my $prefix = $1;
     # look for a previously added .cpp/.cc/etc
-    my @implementations = grep { $_ =~ /^$prefix\.(cpp|cxx|cc)$/} @{$self->{files}};
-    foreach my $impl (@implementations) {
-      $self->model->declare_module($module, $impl);
+    my @implementations = grep { /^$prefix\.(cpp|cxx|cc)$/ } @{$self->{files}};
+    foreach my $file (@implementations) {
+      $self->model->declare_module($module, $file);
+    }
+  }
+  if (defined($current) && $current =~ /^(.*)\.(cpp|cxx|cc)$/) {
+    my $prefix = $1;
+    # look for a previously added .h/.hpp/etc
+    my @implementations = grep { /^$prefix\.(h|hpp)$/ } @{$self->{files}};
+    foreach my $file (@implementations) {
+      $self->model->declare_module($module, $file);
     }
   }
 }
@@ -35,7 +43,7 @@ sub _cpp_hack {
 sub feed {
   my ($self, $doxyparse_output, $line) = @_;
   my $yaml = Load($doxyparse_output);
-  foreach my $full_filename (keys %$yaml) {
+  foreach my $full_filename (sort keys %$yaml) {
 
     # current file declaration
     my $file = _strip_current_directory($full_filename);
@@ -122,7 +130,6 @@ sub feed {
       }
     }
   }
-  return;
 }
 
 # concat module with symbol (e.g. main::to_string)
