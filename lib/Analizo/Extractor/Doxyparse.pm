@@ -99,6 +99,11 @@ sub feed {
           $self->model->add_parameters($self->current_member, $definition->{$name}->{parameters});
         }
 
+        # method conditional paths
+        if (defined $definition->{$name}->{conditional_paths}) {
+          $self->model->add_conditional_paths($self->current_member, $definition->{$name}->{conditional_paths});
+        }
+
         foreach my $uses (@{ $definition->{$name}->{uses} }) {
           my ($uses_name) = keys %$uses;
           my $uses_type = $uses->{$uses_name}->{type};
@@ -106,7 +111,6 @@ sub feed {
           my $qualified_uses_name = _qualified_name($defined_in, $uses_name);
           # function calls/uses
           if ($uses_type eq 'function') {
-            #print "### add call\n";
             $self->model->add_call($self->current_member, $qualified_uses_name, 'direct');
           }
           # variable references
@@ -119,12 +123,6 @@ sub feed {
     }
   }
   return;
-
-  # TODO not supported by doxyparse YML format yet
-  #method conditional paths
-  if($line =~ m/^\s{6}(\d+) conditional paths$/){
-    $self->model->add_conditional_paths($self->current_member, $1);
-  }
 }
 
 # concat module with symbol (e.g. main::to_string)

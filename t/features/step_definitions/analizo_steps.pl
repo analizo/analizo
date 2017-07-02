@@ -119,6 +119,23 @@ Then qr/^analizo must report that module (.+) has (.+) = (.+)$/, func($c) {
   }
 };
 
+Then qr/^analizo must report that file (.+) not declares module (.+)$/, func($c) {
+  my ($filename, $module) = ($1, $2);
+  my $stream = YAML::Tiny->read_string($stdout);
+  my ($document) = grep { $_->{_module} && $_->{_module} eq $module } @$stream;
+  ok(!grep { /^$filename$/ } @{$document->{_filename}});
+};
+
+Then qr/^analizo must report that file (.+) declares module (.+)$/, func($c) {
+  my ($filename, $module) = ($1, $2);
+  my $stream = YAML::Tiny->read_string($stdout);
+  my ($document) = grep { $_->{_module} && $_->{_module} eq $module } @$stream;
+  #DEBUG
+  #my @filenames = @{$document->{_filename}};
+  #print "##### [@filenames] includes $filename ?\n";
+  ok(grep { /^$filename$/ } @{$document->{_filename}});
+};
+
 Then qr/^analizo must present a list of metrics$/, func($c) {
   like($stdout, qr/Global Metrics:/);
   like($stdout, qr/Module Metrics:/);
