@@ -64,7 +64,6 @@ WriteMakefile(
     'File::ShareDir' => 0,
     'File::Share' => 0,
     'File::HomeDir' => 0,
-    'YAML::Tiny' => 0,
     'App::Cmd' => 0,
     'Class::Inspector' => 0,
     'Graph::Writer::DSM' => 0.005,

@@ -46,7 +46,6 @@ Build-Depends-Indep:
  libstatistics-descriptive-perl,
  libterm-progressbar-perl,
  libyaml-perl,
- libyaml-tiny-perl,
  libzmq-ffi-perl,
  libarchive-extract-perl
 Standards-Version: 3.9.6
@@ -88,7 +87,6 @@ Depends:
  libstatistics-descriptive-perl,
  libterm-progressbar-perl,
  libyaml-perl,
- libyaml-tiny-perl,
  libzeromq-perl
 Recommends: graphviz
 Description: multi-language source code analysis toolkit

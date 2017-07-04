@@ -6,7 +6,7 @@ use Method::Signatures;
 use File::Slurp;
 use File::Temp qw( tempdir );
 use File::Copy::Recursive qw( rcopy );
-use YAML::Syck;
+use YAML;
 use feature "switch";
 use File::LibMagic;
 use Archive::Extract;
