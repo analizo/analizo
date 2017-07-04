@@ -93,11 +93,6 @@ Then qr/^the contents of "(.+)" must match "([^\"]*)"$/, func($c) {
   like(read_file($file), qr/$pattern/);
 };
 
-Then qr/^analizo must emit a warning matching "([^\"]*)"$/, func($c) {
-  my $pattern = $1;
-  like($stderr, qr/$pattern/);
-};
-
 Then qr/^analizo must report that the project has (.+) = ([\d\.]+)$/, func($c) {
   my ($metric, $n) = ($1, $2);
   my @stream = Load($stdout);
