@@ -48,7 +48,7 @@ Build-Depends-Indep:
  libyaml-perl,
  libzmq-ffi-perl,
  libarchive-extract-perl
-Standards-Version: 3.9.6
+Standards-Version: 3.9.8
 Homepage: http://analizo.org
 
 Package: analizo
