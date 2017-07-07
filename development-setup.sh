@@ -16,10 +16,7 @@ setup_debian() {
   if [ ! -f /etc/apt/sources.list.d/analizo.list ]; then
     echo "deb http://www.analizo.org/download/ ./" | sudo sh -c 'cat > /etc/apt/sources.list.d/analizo.list'
     wget -O - http://www.analizo.org/download/signing-key.asc | sudo apt-key add -
-    echo "deb http://debian.joenio.me unstable/" | sudo sh -c 'cat >> /etc/apt/sources.list.d/analizo.list'
-    wget -O - http://debian.joenio.me/signing.asc | sudo apt-key add -
   fi
-
   sudo apt-get update
 
   packages=$(sed -e '1,/^Build-Depends-Indep:/ d; /^\S/,$ d; s/,//; s/(.*$//' debian/control)
