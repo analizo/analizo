@@ -1,6 +1,5 @@
 analizo (1.20.0~rc1) UNRELEASED; urgency=medium
 
-  * Non-maintainer upload.
   * Release Candidate RC1
   * Documenting source code metrics
   * More automated tests
