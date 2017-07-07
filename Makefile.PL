@@ -19,7 +19,7 @@ sub CheckExtraDependencies {
 
 CheckExtraDependencies(
   'runtime',
-  'doxyparse' => '(>= 1.8.14)',
+  'doxyparse' => '(>= 1.8.14~rc1)',
   'git' => 0,
   'ruby' => 0,
   'sloccount' => 0,
