@@ -1,4 +1,4 @@
-analizo (1.20.0~rc1) UNRELEASED; urgency=medium
+analizo (1.20.0~rc1) unstable; urgency=medium
 
   * Release Candidate RC1
   * Documenting source code metrics
@@ -14,7 +14,7 @@ analizo (1.20.0~rc1) UNRELEASED; urgency=medium
   * Fixing development-setup.sh
   * Standardizing the name of test files
 
- -- Joenio Costa <joenio@joenio.me>  Fri, 07 Jul 2017 00:45:24 -0300
+ -- Joenio Costa <joenio@joenio.me>  Fri, 07 Jul 2017 04:31:07 -0300
 
 analizo (1.19.1) unstable; urgency=medium
 
