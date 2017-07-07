@@ -24,30 +24,6 @@ setup_debian() {
   sudo apt-get -q -y install libfile-sharedir-install-perl libtext-template-perl pandoc
 }
 
-prepare_squeeze() {
-
-  if ! test -f  /etc/apt/sources.list.d/squeeze-backports.list; then
-    echo 'deb http://backports.debian.org/debian-backports squeeze-backports main' > /etc/apt/sources.list.d/squeeze-backports.list
-    apt-get update
-  fi
-  apt-get install -q -y -t squeeze-backports rubygems
-
-  (gem list | grep rspec) || sudo gem install --no-ri --no-rdoc rspec
-
-  apt-get install -q -y equivs
-  for fakepkg in ruby-rspec; do
-    (
-      echo "Section: misc"
-      echo "Priority: optional"
-      echo "Standards-Version: 3.6.2"
-      echo
-      echo "Package: ${fakepkg}"
-    ) > /tmp/${fakepkg}.equivs
-    (cd /tmp/ && equivs-build ${fakepkg}.equivs && dpkg -i ${fakepkg}_1.0_all.deb)
-  done
-
-}
-
 prepare_precise() {
   if ! grep -q ZeroMQ Makefile.PL; then
     # only needed while we depend on ZeroMQ
