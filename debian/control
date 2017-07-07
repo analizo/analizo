@@ -17,7 +17,7 @@ Build-Depends-Indep:
  libtest-exception-perl,
  libtest-mockmodule-perl,
  libtest-mockobject-perl,
- doxyparse (>= 1.8.11),
+ doxyparse (>= 1.8.14),
  g++ (>= 4.8~),
  gcc (>= 4.8~),
  git,
@@ -58,7 +58,7 @@ Architecture: all
 Depends:
  ${misc:Depends},
  ${perl:Depends},
- doxyparse (>= 1.8.11),
+ doxyparse (>= 1.8.14),
  g++ (>= 4.8~),
  gcc (>= 4.8~),
  git,
