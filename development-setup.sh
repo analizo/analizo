@@ -20,7 +20,7 @@ setup_debian() {
   sudo apt-get update
 
   packages=$(sed -e '1,/^Build-Depends-Indep:/ d; /^\S/,$ d; s/,//; s/(.*$//' debian/control)
-  sudo apt-get -q -y -f --allow-unauthenticated install $packages
+  sudo apt-get -q -y -f install $packages
   sudo apt-get -q -y install libfile-sharedir-install-perl libtext-template-perl pandoc
 }
 
