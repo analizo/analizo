@@ -87,7 +87,7 @@ Depends:
  libstatistics-descriptive-perl,
  libterm-progressbar-perl,
  libyaml-perl,
- libzeromq-perl
+ libzmq-ffi-perl
 Recommends: graphviz
 Description: multi-language source code analysis toolkit
  Analizo parses source code in multiple languages and report useful information
