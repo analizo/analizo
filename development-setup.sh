@@ -3,7 +3,7 @@
 set -e
 
 setup_debian() {
-	sudo apt-get install wget gnupg
+  sudo apt-get -q -y install wget gnupg
   which lsb_release || sudo apt-get -q -y install lsb-release
   codename=$(lsb_release -c | awk '{print($2)}')
   if type prepare_$codename >/dev/null 2>&1; then
@@ -37,8 +37,33 @@ setup_debian() {
   # sudo apt-get -q -y -f install $packages
   # instalando dependencias "na mao" enquanto PullRequest n tem resposta
   sudo apt-get install -q -y -f doxyparse sloccount sqlite3 man pandoc
+	sudo apt-get update
+}
+
+prepare_squeeze() {
+
+  if ! test -f  /etc/apt/sources.list.d/squeeze-backports.list; then
+    echo 'deb http://backports.debian.org/debian-backports squeeze-backports main' > /etc/apt/sources.list.d/squeeze-backports.list
+    apt-get update
+  fi
+  apt-get install -q -y -t squeeze-backports rubygems
+
+  (gem list | grep rspec) || sudo gem install --no-ri --no-rdoc rspec
+
+  apt-get install -q -y equivs
+  for fakepkg in ruby-rspec; do
+    (
+      echo "Section: misc"
+      echo "Priority: optional"
+      echo "Standards-Version: 3.6.2"
+      echo
+      echo "Package: ${fakepkg}"
+    ) > /tmp/${fakepkg}.equivs
+    (cd /tmp/ && equivs-build ${fakepkg}.equivs && dpkg -i ${fakepkg}_1.0_all.deb)
+  done
 
 }
+
 
 prepare_precise() {
   if ! grep -q ZeroMQ Makefile.PL; then
