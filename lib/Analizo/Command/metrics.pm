@@ -25,6 +25,7 @@ sub opt_spec {
   my ($class, $app) = @_;
   return (
     [ 'list|l',       'displays metric list' ],
+    [ 'all|a', 'displays all metrics'],
     [ 'extractor=s',  'wich extractor method use to analise source code' ],
     [ 'globalonly|global-only|g', 'only output global (project-wide) metrics' ],
     [ 'output|o=s',   'output file name' ],
@@ -98,8 +99,11 @@ sub execute {
   if ($opt->globalonly) {
     print $metrics->report_global_metrics_only;
   }
-  else {
+  if ($opt->all) {
     print $metrics->report;
+  }
+  else {
+    print $metrics->report_only_mean;
   }
   close STDOUT;
 }
