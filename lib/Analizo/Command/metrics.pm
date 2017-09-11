@@ -91,7 +91,7 @@ sub execute {
   $job->includedirs($opt->includedirs);
   $job->libdirs($opt->libdirs);
   $job->libs($opt->libs);
-  $job->execute();
+  $job->execute(!$opt->all);
   my $metrics = $job->metrics;
   if ($opt->output) {
     open STDOUT, '>', $opt->output or die "$!\n";
