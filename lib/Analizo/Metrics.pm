@@ -76,7 +76,6 @@ sub _collect_and_combine_module_metrics {
   if (defined $self->{_collect_and_combine_module_metrics}) {
     return;
   }
-
   for my $module ($self->model->module_names) {
     my $module_metrics = $self->_collect($module);
     $self->_combine($module_metrics);

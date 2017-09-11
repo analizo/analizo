@@ -102,9 +102,9 @@ sub _add_metric_value_to_values_list {
 sub report {
 
   my ($self) = @_;
-
+ 
   $self->_include_metrics_from_calculators;
-  $self->_add_statistics;
+  $self->_add_statistics(0);
   $self->_add_total_coupling_factor;
 
   return \%{$self->metric_report};
@@ -112,7 +112,8 @@ sub report {
 
 sub report_mean {
   my ($self) = @_;
-  my $only_mean = 1; 
+  my $only_mean = 1;
+
   $self->_include_metrics_from_calculators;
   $self->_add_statistics($only_mean);
   $self->_add_total_coupling_factor;
@@ -130,11 +131,11 @@ sub _include_metrics_from_calculators {
 
 sub _add_statistics {
   my ($self, $only_mean) = @_;
-
+  
   for my $metric (keys %{$self->values_lists}) {
     my $statistics = Statistics::Descriptive::Full->new();
     $statistics->add_data(@{$self->values_lists->{$metric}});
-    if($only_mean > 0) {
+    if($only_mean == 1) {
       $self->_add_mean($metric, $statistics);
     } else {
       $self->_add_descriptive_statistics($metric, $statistics);
@@ -187,6 +188,7 @@ sub _add_total_coupling_factor {
 
 sub coupling_factor {
   my ($self, $total_acc, $total_modules) = @_;
+  $total_acc ||= 0;
   return ($total_modules > 1) ? $total_acc / _number_of_combinations($total_modules) : 1;
 }
 
