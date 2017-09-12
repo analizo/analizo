@@ -5,7 +5,7 @@ Feature: change cost degree
 
   Scenario: "Hello, world" project
     Given I am in t/samples/hello_world/<language>
-    When I run "analizo metrics ."
+    When I run "analizo metrics -a ."
     Then analizo must report that the project has change_cost = 0.75
     Examples:
       | language |
@@ -14,7 +14,7 @@ Feature: change cost degree
 
   Scenario: "Animals" project
     Given I am in t/samples/animals/<language>
-    When I run "analizo metrics ."
+    When I run "analizo metrics -a ."
     Then analizo must report that the project has change_cost = 0.44
     Examples:
       | language |
@@ -23,10 +23,10 @@ Feature: change cost degree
 
   Scenario: "Hieracchical Graph" project
     Given I am in t/samples/hierarchical_graph
-    When I run "analizo metrics ."
+    When I run "analizo metrics -a ."
     Then analizo must report that the project has change_cost = 0.42
 
   Scenario: "Cyclical Graph" project
     Given I am in t/samples/cyclical_graph
-    When I run "analizo metrics ."
+    When I run "analizo metrics -a ."
     Then analizo must report that the project has change_cost = 0.5

@@ -9,7 +9,7 @@ Feature: loading command line options from .analizo
       """
       metrics: --language java
       """
-    When I run "analizo metrics ."
+    When I run "analizo metrics -a ."
     Then the output must not match "native_backend.c"
     And the output must match "UI.java"
     And the exit status must be 0
@@ -31,4 +31,4 @@ Feature: loading command line options from .analizo
       | tree-evolution   |
       | evolution-matrix |
     # | doc              |
-    # this is not Perl, so for now they do not support this.
+    # this is not Perl, so for now they do not support this. 

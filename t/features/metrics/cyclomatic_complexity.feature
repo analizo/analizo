@@ -5,7 +5,7 @@ Feature: average cyclomatic complexity per method
 
   Scenario: my "conditionals" C project
     Given I am in t/samples/conditionals/c/
-    When I run "analizo metrics ."
+    When I run "analizo metrics -a ."
     Then analizo must report that module cc1 has accm = 1
     Then analizo must report that module cc2 has accm = 2
     Then analizo must report that module cc3 has accm = 3

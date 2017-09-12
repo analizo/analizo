@@ -5,7 +5,7 @@ Feature: number of attributes metric
 
   Scenario: number of attributes in the "Animals" project
     Given I am in t/samples/animals/<language>
-    When I run "analizo metrics ."
+    When I run "analizo metrics -a ."
     Then analizo must report that module Dog has noa = 1
     And analizo must report that module Cat has noa = 1
     And analizo must report that module <main_module> has noa = 0

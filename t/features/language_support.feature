@@ -37,7 +37,7 @@ Feature: multi-language support
 
   Scenario: some metrics
     Given I am in t/samples/hello_world/<language>
-    When I run "analizo metrics ."
+    When I run "analizo metrics -a ."
     Then analizo must report that the project has total_modules = 2
     And analizo must report that module <main_module> has nom = 1
     And analizo must report that module <hello_world_module> has npm = 3
@@ -55,7 +55,7 @@ Feature: multi-language support
     Then analizo must report that "Cat" depends on "Mammal"
     And analizo must report that "Dog" depends on "Mammal"
     And analizo must report that "Mammal" depends on "Animal"
-    When I run "analizo metrics ."
+    When I run "analizo metrics -a ."
     Then analizo must report that module Cat has dit = 2
     And analizo must report that module Dog has dit = 2
     And analizo must report that module Mammal has dit = 1
@@ -84,7 +84,7 @@ Feature: multi-language support
   # not sure what to expect in this case
   Scenario: mixed Java and C
     Given I am in t/samples/mixed
-    When I run "analizo metrics ."
+    When I run "analizo metrics -a ."
     Then the output must match "_module: native_backend"
     And the output must match "_module: UI"
     And the output must match "_module: Backend"
