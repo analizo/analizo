@@ -151,6 +151,7 @@ sub _add_mean {
 
 sub _add_descriptive_statistics {
   my ($self, $metric, $statistics) = @_;
+  
   $self->metric_report->{$metric . "_mean"} = $statistics->mean();
   $self->metric_report->{$metric . "_mode"} = $statistics->mode();
   $self->metric_report->{$metric . "_standard_deviation"} = $statistics->standard_deviation();
