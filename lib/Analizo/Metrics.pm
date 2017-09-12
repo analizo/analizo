@@ -50,7 +50,6 @@ sub report_global_metrics_only {
 
 sub report_only_mean {
   my ($self) = @_;
-  my $a = "asdfasdfao";
   my ($global_metrics, $module_metrics) = $self->data_mean();
   return Dump($global_metrics); 
 }
