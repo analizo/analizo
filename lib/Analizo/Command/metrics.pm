@@ -67,7 +67,6 @@ sub execute {
     foreach my $key (sort keys %metrics){
       print "$key - $metrics{$key}\n";
     }
-    exit 0;
   }
   my $tree = $args->[0] || '.';
   my $job = new Analizo::Batch::Job::Directories($tree);
@@ -79,7 +78,6 @@ sub execute {
       print "Languages:\n";
       $" = "\n";
       print "@language_list\n";
-      exit 0;
     }
     my $language_filter = Analizo::LanguageFilter->new($opt->language);
     $job->filters($language_filter);
