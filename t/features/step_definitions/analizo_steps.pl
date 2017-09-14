@@ -115,6 +115,7 @@ Then qr/^analizo must report that module (.+) has (.+) = (.+)$/, func($c) {
       is_deeply($module_metrics->{$metric}, \@values);
     }
   }
+
 };
 
 Then qr/^analizo must report that file (.+) not declares module (.+)$/, func($c) {
@@ -167,4 +168,10 @@ When qr/^I explode (.+)$/, func($c) {
 Then qr/^the output lines must match "([^\"]*)"$/, func($c) {
   my $pattern = $1;
   like($stdout, qr/$pattern/);
+};
+
+Then qr/^the number of lines on metrics mean report must be "([^\"]*)"$/, func($c) {
+  my $pattern = $1;
+  my $number_of_lines = $stdout =~ tr/\n//; 
+  is($number_of_lines + 0 , $pattern + 0);
 };
