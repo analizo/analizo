@@ -15,4 +15,4 @@ RUN ./development-setup.sh
 RUN chown -R analizo:analizo /home/analizo
 
 # Run tests
-CMD sudo -u analizo rake
+CMD sudo -u analizo dzil test
