@@ -22,5 +22,3 @@ Feature: mapping modules to filenames
     Given I am in t/samples/hello_world/c
     When I run "analizo metrics -a ."
     Then analizo must report that module hello_world has _filename = [hello_world.c,hello_world.h]
-
-

@@ -117,7 +117,6 @@ Then qr/^analizo must report that module (.+) has (.+) = (.+)$/, func($c) {
       is_deeply($module_metrics->{$metric}, \@values);
     }
   }
-
 };
 
 Then qr/^analizo must present a list of metrics$/, func($c) {

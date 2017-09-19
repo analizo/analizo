@@ -22,5 +22,4 @@ sub is_a_subclass_of_Analizo_Command : Tests {
   isa_ok($cmd, 'Analizo::Command');
 }
 
-
 __PACKAGE__->runtests;
