@@ -115,7 +115,6 @@ Then qr/^analizo must report that module (.+) has (.+) = (.+)$/, func($c) {
       is_deeply($module_metrics->{$metric}, \@values);
     }
   }
-
 };
 
 Then qr/^analizo must report that file (.+) not declares module (.+)$/, func($c) {
