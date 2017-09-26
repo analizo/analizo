@@ -162,6 +162,7 @@ sub _add_descriptive_statistics {
   $self->metric_report->{$metric . "_quantile_lower"}   = $statistics->quantile(1); #lower quartile
   $self->metric_report->{$metric . "_quantile_median"}   = $statistics->median(); #median
   $self->metric_report->{$metric . "_quantile_upper"}   = $statistics->quantile(3); #upper quartile
+  $self->metric_report->{$metric . "_quantile_ninety"}  = $statistics->percentile(90); #90th percentile
   $self->metric_report->{$metric . "_quantile_ninety_five"}  = $statistics->percentile(95); #95th percentile
   $self->metric_report->{$metric . "_quantile_max"} = $statistics->max(); #maximum
  }
