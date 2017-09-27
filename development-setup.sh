@@ -17,8 +17,6 @@ setup_debian() {
     which gpg || sudo apt-get -q -y install gnupg
     echo "deb http://www.analizo.org/download/ ./" | sudo sh -c 'cat > /etc/apt/sources.list.d/analizo.list'
     wget -O - http://www.analizo.org/download/signing-key.asc | sudo apt-key add -
-    #echo "deb http://debian.joenio.me unstable/" | sudo sh -c 'cat >> /etc/apt/sources.list.d/analizo.list'
-    #wget -O - http://debian.joenio.me/signing.asc | sudo apt-key add -
     sudo apt-get update
   fi
   which apt-file || sudo apt-get -q -y install apt-file
@@ -31,13 +29,8 @@ setup_debian() {
   packages=$(dh-make-perl locate $(dzil listdeps) | grep 'package$' | grep ' is in ' | sed 's/.\+is in \(.\+\) package/\1/')
   sudo apt-get -q -y -f install $packages
 
-  # `dzil externaldeps` foi submetido ao upstream, aguardando aprovação
-  # https://github.com/mjgardner/Dist-Zilla-Plugin-RequiresExternal/pull/5
-  # packages=$(dzil externaldeps)
-  # sudo apt-get -q -y -f install $packages
-  # instalando dependencias "na mao" enquanto PullRequest n tem resposta
-  sudo apt-get install -q -y -f doxyparse sloccount sqlite3 man pandoc
-	sudo apt-get update
+  packages=$(dzil externaldeps)
+  sudo apt-get -q -y -f install $packages
 }
 
 prepare_squeeze() {
