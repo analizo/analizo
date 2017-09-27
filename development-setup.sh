@@ -3,6 +3,7 @@
 set -e
 
 setup_debian() {
+  sudo apt-get -q -y install wget gnupg
   which lsb_release || sudo apt-get -q -y install lsb-release
   codename=$(lsb_release -c | awk '{print($2)}')
   if type prepare_$codename >/dev/null 2>&1; then
@@ -16,12 +17,9 @@ setup_debian() {
     which gpg || sudo apt-get -q -y install gnupg
     echo "deb http://www.analizo.org/download/ ./" | sudo sh -c 'cat > /etc/apt/sources.list.d/analizo.list'
     wget -O - http://www.analizo.org/download/signing-key.asc | sudo apt-key add -
-    #echo "deb http://debian.joenio.me unstable/" | sudo sh -c 'cat >> /etc/apt/sources.list.d/analizo.list'
-    #wget -O - http://debian.joenio.me/signing.asc | sudo apt-key add -
-    sudo apt-get update
   fi
   which apt-file || sudo apt-get -q -y install apt-file
-  sudo apt-file update
+  sudo apt-get update
 
   sudo apt-get -q -y install dh-make-perl libdist-zilla-perl
   packages=$(dh-make-perl locate $(dzil authordeps) | grep 'package$' | grep ' is in ' | sed 's/.\+is in \(.\+\) package/\1/')
@@ -36,30 +34,6 @@ setup_debian() {
   # sudo apt-get -q -y -f install $packages
   # instalando dependencias "na mao" enquanto PullRequest n tem resposta
   sudo apt-get install -q -y -f doxyparse sloccount sqlite3 man pandoc
-
-}
-
-prepare_squeeze() {
-
-  if ! test -f  /etc/apt/sources.list.d/squeeze-backports.list; then
-    echo 'deb http://backports.debian.org/debian-backports squeeze-backports main' > /etc/apt/sources.list.d/squeeze-backports.list
-    apt-get update
-  fi
-  apt-get install -q -y -t squeeze-backports rubygems
-
-  (gem list | grep rspec) || sudo gem install --no-ri --no-rdoc rspec
-
-  apt-get install -q -y equivs
-  for fakepkg in ruby-rspec; do
-    (
-      echo "Section: misc"
-      echo "Priority: optional"
-      echo "Standards-Version: 3.6.2"
-      echo
-      echo "Package: ${fakepkg}"
-    ) > /tmp/${fakepkg}.equivs
-    (cd /tmp/ && equivs-build ${fakepkg}.equivs && dpkg -i ${fakepkg}_1.0_all.deb)
-  done
 
 }
 

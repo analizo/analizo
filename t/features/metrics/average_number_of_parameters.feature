@@ -1,4 +1,4 @@
-Feature: number of arguments metric
+Feature: average number of parameters metric
   As a software developer
   I want to calculate the average number of arguments per method metric
   So that I can evaluate my code

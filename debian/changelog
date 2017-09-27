@@ -11,6 +11,24 @@ analizo (1.20.0) UNRELEASED; urgency=medium
 
  -- Joenio Costa <joenio@linda-lee.neuromancer>  Wed, 14 Sep 2016 00:18:27 -0300
 
+analizo (1.20.0~rc1) unstable; urgency=medium
+
+  * Release Candidate RC1
+  * Documenting source code metrics
+  * More automated tests
+  * Dockerfile
+  * Travis continuous testing
+  * Removing CLANG
+  * Doxyparse extractor uses YAML
+  * Migrate from ZeroMQ to ZMQ::FFI
+  * Using YAML instead of YAML::Tiny
+  * Depends on doxyparse 1.8.14
+  * Fixing running of a single acceptance test
+  * Fixing development-setup.sh
+  * Standardizing the name of test files
+
+ -- Joenio Costa <joenio@joenio.me>  Fri, 07 Jul 2017 04:31:07 -0300
+
 analizo (1.19.1) unstable; urgency=medium
 
   * fix bug on CBO metric

@@ -19,7 +19,7 @@ sub any_command_is_a_subclass_of_Analizo_Command : Tests {
 sub version_information : Tests {
   my $analizo = Analizo->new;
   my ($cmd) = $analizo->prepare_command('fake');
-  like($cmd->version_information, qr/^\S+ version \d+\.\d+\.\d+$/);
+  like($cmd->version_information, qr/^\S+ version \d+\.\d+\.\d+(~rc\d+)?$/);
 }
 
 sub execute_some_command : Tests {

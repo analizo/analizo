@@ -2,23 +2,22 @@
 
 ## Getting the source code
 
-```
-$ git clone https://github.com/analizo/analizo.git
+```console
+git clone https://github.com/analizo/analizo.git
 ```
 
 ## Installing Dependencies
 
 Run this command:
 
-```
-  $ sudo ./development-setup.sh
+```console
+sudo ./development-setup.sh
 ```
 
 If you are using Debian, the script will do everything you need.
 
 If you are using another system, you will have to install some dependencies
 first. Check the "Installing dependencies on non-Debian systems" below.
-
 
 ## Running the test suite
 
@@ -93,12 +92,12 @@ or to `terceiro@softwarelivre.org`. Or create a pull request on github.
 
 To create a patch:
 
-```
-$ git clone https://github.com/analizo/analizo.git
-$ cd analizo
-$ edit file
-$ git commit file
-$ git format-patch origin
+```console
+git clone https://github.com/analizo/analizo.git
+cd analizo
+edit file
+git commit file
+git format-patch origin
 ```
 
 This will generate patch files named like
@@ -132,30 +131,12 @@ See commit `005c3bff4e0809eae0340e7629678186d1621930` for an example.
 # Installing dependencies on non-Debian systems
 
 1) Install Doxyparse build dependencies: flex, bison, libqt4-dev, gcc, gcc-c++,
-and git (your operating system probably already has packages for these)
+python, and git (your operating system probably already has packages for these)
 
 2) Install Doxyparse
 
-```
-$ git clone https://github.com/analizo/doxyparse.git
-$ cd doxyparse
-$ ./configure --with-doxyparse
-$ make
-$ sudo install bin/doxyparse /usr/local/bin/
-```
+See https://github.com/analizo/doxyparse/wiki
 
 3) Install sloccount - http://www.dwheeler.com/sloccount/sloccount.html
 
-4) Install rubygems - http://docs.rubygems.org/
-
-* your operating system will probably already have a pre-build package for it.
-
-If you have Ruby installed, you may already have rubygems installed as well.
-
-5) Install cucumber and rspec using rubygems
-
-```
-$ gem install cucumber rspec
-```
-
-6) Make sure you also have `man` and `sqlite3` installed.
+4) Make sure you also have `man` and `sqlite3` installed.

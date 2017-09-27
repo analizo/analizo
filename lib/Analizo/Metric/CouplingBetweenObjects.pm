@@ -2,6 +2,29 @@ package Analizo::Metric::CouplingBetweenObjects;
 use strict;
 use base qw(Class::Accessor::Fast Analizo::ModuleMetric);
 
+=head1 NAME
+
+Analizo::Metric::CouplingBetweenObjects - Coupling Between Objects (CBO) metric
+
+=head1 DESCRIPTION
+
+The metric calculation is based on the following article and calculates the
+number of calls to other modules.
+
+Article: I<A metrics suite for object oriented design> by Shyam R. Chidamber
+and Chris F. Kemerer.
+
+See the paragraph about Coupling Between Objects in the article:
+
+Theoretica Basis: CBO relates to the notion that an object is coupled to
+another object if one of them acts on the other, i.e., methods of one use
+method or instance variables of another. As stated earlier, since objects of
+the same class have the same properties, two classes are coupled when methods
+declared in on class use methods or instance variables defined by the other
+class.
+
+=cut
+
 __PACKAGE__->mk_accessors(qw( model analized_module calls_to ));
 
 sub new {

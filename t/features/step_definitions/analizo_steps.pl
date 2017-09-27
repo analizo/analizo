@@ -6,7 +6,7 @@ use Method::Signatures;
 use File::Slurp;
 use File::Temp qw( tempdir );
 use File::Copy::Recursive qw( rcopy );
-use YAML::Tiny;
+use YAML;
 use feature "switch";
 use File::LibMagic;
 use Archive::Extract;
@@ -96,21 +96,16 @@ Then qr/^the contents of "(.+)" must match "([^\"]*)"$/, func($c) {
   like(read_file($file), qr/$pattern/);
 };
 
-Then qr/^analizo must emit a warning matching "([^\"]*)"$/, func($c) {
-  my $pattern = $1;
-  like($stderr, qr/$pattern/);
-};
-
 Then qr/^analizo must report that the project has (.+) = ([\d\.]+)$/, func($c) {
   my ($metric, $n) = ($1, $2);
-  my $stream = YAML::Tiny->read_string($stdout);
-  cmp_ok($stream->[0]->{$metric}, '==', $n);
+  my @stream = Load($stdout);
+  cmp_ok($stream[0]->{$metric}, '==', $n);
 };
 
 Then qr/^analizo must report that module (.+) has (.+) = (.+)$/, func($c) {
   my ($module, $metric, $value) = ($1, $2, $3);
-  my $stream = YAML::Tiny->read_string($stdout);
-  my ($module_metrics) = grep { $_->{_module} && $_->{_module} eq $module } @$stream;
+  my @stream = Load($stdout);
+  my ($module_metrics) = grep { $_->{_module} && $_->{_module} eq $module } @stream;
   for ($value) {
     when (/^\d+|\d+\.\d+$/) {
       cmp_ok($module_metrics->{$metric}, '==', $value);
@@ -120,6 +115,20 @@ Then qr/^analizo must report that module (.+) has (.+) = (.+)$/, func($c) {
       is_deeply($module_metrics->{$metric}, \@values);
     }
   }
+};
+
+Then qr/^analizo must report that file (.+) not declares module (.+)$/, func($c) {
+  my ($filename, $module) = ($1, $2);
+  my @stream = Load($stdout);
+  my ($document) = grep { $_->{_module} && $_->{_module} eq $module } @stream;
+  ok(!grep { /^$filename$/ } @{$document->{_filename}});
+};
+
+Then qr/^analizo must report that file (.+) declares module (.+)$/, func($c) {
+  my ($filename, $module) = ($1, $2);
+  my @stream = Load($stdout);
+  my ($document) = grep { $_->{_module} && $_->{_module} eq $module } @stream;
+  ok(grep { /^$filename$/ } @{$document->{_filename}});
 };
 
 Then qr/^analizo must present a list of metrics$/, func($c) {

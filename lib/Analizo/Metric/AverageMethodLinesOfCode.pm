@@ -3,6 +3,26 @@ use strict;
 use base qw(Class::Accessor::Fast Analizo::ModuleMetric);
 use Statistics::Descriptive;
 
+=head1 NAME
+
+Analizo::Metric::AverageMethodLinesOfCode - Average Method Lines of Code (AMLOC) metric
+
+=head1 DESCRIPTION
+
+The metric calculation is based on the following article and calculates the
+average number of lines of code per method.
+
+Article: I<Monitoring of source code metrics in open source projects> by Paulo
+Roberto Miranda Meirelles.
+
+See the adptation of the paragraph about Average Method Lines of Code metric:
+
+This metric indicates if the code is well distributed between the methods. How
+bigger, "heavier" are the methods. It's preferible to have a lot of small and
+of easy understanding operations than few large and complex operations.
+
+=cut
+
 __PACKAGE__->mk_accessors(qw( model ));
 
 sub new {
