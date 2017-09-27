@@ -29,7 +29,6 @@ setup_debian() {
   packages=$(dh-make-perl locate $(dzil listdeps) | grep 'package$' | grep ' is in ' | sed 's/.\+is in \(.\+\) package/\1/')
   sudo apt-get -q -y -f install $packages
 
-  sudo apt-get -q -y -f install libdist-zilla-plugin-requiresexternal-perl>=1.008 # remove it when debian updates to 1.008
   packages=$(dzil externaldeps)
   sudo apt-get -q -y -f install $packages
 }
