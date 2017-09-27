@@ -20,6 +20,7 @@ setup_debian() {
   fi
   which apt-file || sudo apt-get -q -y install apt-file
   sudo apt-get update
+  sudo apt-file update
 
   sudo apt-get -q -y install dh-make-perl libdist-zilla-perl
   packages=$(dh-make-perl locate $(dzil authordeps) | grep 'package$' | grep ' is in ' | sed 's/.\+is in \(.\+\) package/\1/')
@@ -28,13 +29,9 @@ setup_debian() {
   packages=$(dh-make-perl locate $(dzil listdeps) | grep 'package$' | grep ' is in ' | sed 's/.\+is in \(.\+\) package/\1/')
   sudo apt-get -q -y -f install $packages
 
-  # `dzil externaldeps` foi submetido ao upstream, aguardando aprovação
-  # https://github.com/mjgardner/Dist-Zilla-Plugin-RequiresExternal/pull/5
-  # packages=$(dzil externaldeps)
-  # sudo apt-get -q -y -f install $packages
-  # instalando dependencias "na mao" enquanto PullRequest n tem resposta
-  sudo apt-get install -q -y -f doxyparse sloccount sqlite3 man pandoc
-
+  sudo apt-get -q -y -f install libdist-zilla-plugin-requiresexternal-perl>=1.008 # remove it when debian updates to 1.008
+  packages=$(dzil externaldeps)
+  sudo apt-get -q -y -f install $packages
 }
 
 prepare_precise() {
