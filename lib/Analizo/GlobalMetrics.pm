@@ -102,13 +102,25 @@ sub _add_metric_value_to_values_list {
 sub report {
 
   my ($self) = @_;
-
+ 
   $self->_include_metrics_from_calculators;
-  $self->_add_statistics;
+  $self->_add_statistics(0);
   $self->_add_total_coupling_factor;
 
   return \%{$self->metric_report};
 }
+
+sub report_mean {
+  my ($self) = @_;
+  my $only_mean = 1;
+
+  $self->_include_metrics_from_calculators;
+  $self->_add_statistics($only_mean);
+  $self->_add_total_coupling_factor;
+
+  return \%{$self->metric_report};
+}
+
 
 sub _include_metrics_from_calculators {
   my ($self) = @_;
@@ -118,19 +130,28 @@ sub _include_metrics_from_calculators {
 }
 
 sub _add_statistics {
-  my ($self) = @_;
-
+  my ($self, $only_mean) = @_;
+  
   for my $metric (keys %{$self->values_lists}) {
     my $statistics = Statistics::Descriptive::Full->new();
     $statistics->add_data(@{$self->values_lists->{$metric}});
-
-    $self->_add_descriptive_statistics($metric, $statistics);
-    $self->_add_distributions_statistics($metric, $statistics);
+    if($only_mean == 1) {
+      $self->_add_mean($metric, $statistics);
+    } else {
+      $self->_add_descriptive_statistics($metric, $statistics);
+      $self->_add_distributions_statistics($metric, $statistics);
+    }
   }
+}
+
+sub _add_mean {
+  my ($self, $metric, $statistics) = @_;
+  $self->metric_report->{$metric . "_mean"} = $statistics->mean();
 }
 
 sub _add_descriptive_statistics {
   my ($self, $metric, $statistics) = @_;
+  
   $self->metric_report->{$metric . "_mean"} = $statistics->mean();
   $self->metric_report->{$metric . "_mode"} = $statistics->mode();
   $self->metric_report->{$metric . "_standard_deviation"} = $statistics->standard_deviation();
@@ -141,9 +162,10 @@ sub _add_descriptive_statistics {
   $self->metric_report->{$metric . "_quantile_lower"}   = $statistics->quantile(1); #lower quartile
   $self->metric_report->{$metric . "_quantile_median"}   = $statistics->median(); #median
   $self->metric_report->{$metric . "_quantile_upper"}   = $statistics->quantile(3); #upper quartile
+  $self->metric_report->{$metric . "_quantile_ninety"}  = $statistics->percentile(90); #90th percentile
   $self->metric_report->{$metric . "_quantile_ninety_five"}  = $statistics->percentile(95); #95th percentile
   $self->metric_report->{$metric . "_quantile_max"} = $statistics->max(); #maximum
-}
+ }
 
 sub _add_distributions_statistics {
   my ($self, $metric, $statistics) = @_;
@@ -168,6 +190,7 @@ sub _add_total_coupling_factor {
 
 sub coupling_factor {
   my ($self, $total_acc, $total_modules) = @_;
+  $total_acc ||= 0;
   return ($total_modules > 1) ? $total_acc / _number_of_combinations($total_modules) : 1;
 }
 

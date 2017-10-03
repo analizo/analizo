@@ -5,7 +5,7 @@ Feature: number of methods
 
   Scenario: number of methods of the polygon java sample
     Given I am in t/samples/<sample>/<language>
-    When I run "analizo metrics ."
+    When I run "analizo metrics -a ."
     Then analizo must report that module <module> has nom = <nom>
     Examples:
       | sample   | language |  module    | nom  |

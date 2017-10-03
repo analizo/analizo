@@ -25,6 +25,7 @@ sub opt_spec {
   my ($class, $app) = @_;
   return (
     [ 'list|l',       'displays metric list' ],
+    [ 'all|a', 'displays all metrics'],
     [ 'extractor=s',  'wich extractor method use to analise source code' ],
     [ 'globalonly|global-only|g', 'only output global (project-wide) metrics' ],
     [ 'output|o=s',   'output file name' ],
@@ -66,7 +67,6 @@ sub execute {
     foreach my $key (sort keys %metrics){
       print "$key - $metrics{$key}\n";
     }
-    exit 0;
   }
   my $tree = $args->[0] || '.';
   my $job = new Analizo::Batch::Job::Directories($tree);
@@ -78,7 +78,6 @@ sub execute {
       print "Languages:\n";
       $" = "\n";
       print "@language_list\n";
-      exit 0;
     }
     my $language_filter = Analizo::LanguageFilter->new($opt->language);
     $job->filters($language_filter);
@@ -90,7 +89,7 @@ sub execute {
   $job->includedirs($opt->includedirs);
   $job->libdirs($opt->libdirs);
   $job->libs($opt->libs);
-  $job->execute();
+  $job->execute(!$opt->all);
   my $metrics = $job->metrics;
   if ($opt->output) {
     open STDOUT, '>', $opt->output or die "$!\n";
@@ -98,8 +97,11 @@ sub execute {
   if ($opt->globalonly) {
     print $metrics->report_global_metrics_only;
   }
-  else {
+  if ($opt->all) {
     print $metrics->report;
+  }
+  else {
+    print $metrics->report_only_mean;
   }
   close STDOUT;
 }

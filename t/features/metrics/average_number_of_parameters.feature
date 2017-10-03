@@ -5,7 +5,7 @@ Feature: average number of parameters metric
 
   Scenario: number of parameters in the "Animals" project
     Given I am in t/samples/animals/<language>
-    When I run "analizo metrics ."
+    When I run "analizo metrics -a ."
     Then analizo must report that module Dog has anpm = 0.5
     And analizo must report that module Cat has anpm = 0.5
     And analizo must report that module <main_module> has anpm = <anpm_main>

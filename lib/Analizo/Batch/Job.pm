@@ -118,8 +118,8 @@ sub metadata_hashref($) {
 }
 
 sub execute {
-  my ($self) = @_;
-
+  my ($self , $only_mean ) = @_;
+  $only_mean ||= 0;
   $self->prepare();
 
   my $tree_id = $self->tree_id();
@@ -152,7 +152,11 @@ sub execute {
   my $metrics = $self->cache->get($metrics_cache_key);
   if (!defined $metrics) {
     $metrics = new Analizo::Metrics(model => $self->model);
-    $metrics->data();
+    if($only_mean == 0){
+      $metrics->data();
+    }else{
+      $metrics->data_mean();
+    }
     $self->cache->set($metrics_cache_key, $metrics);
   }
   $self->metrics($metrics);

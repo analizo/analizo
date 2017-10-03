@@ -44,7 +44,14 @@ sub report {
 sub report_global_metrics_only {
   my ($self) = @_;
   my ($global_metrics, $module_metrics) = $self->data();
+
   return Dump($global_metrics);
+}
+
+sub report_only_mean {
+  my ($self) = @_;
+  my ($global_metrics, $module_metrics) = $self->data_mean();
+  return Dump($global_metrics); 
 }
 
 sub report_module_metrics {
@@ -58,12 +65,19 @@ sub data {
   return ($self->global_metrics->report, $self->module_data());
 }
 
+sub data_mean {
+  my ($self ) = @_;
+  
+  $self->_collect_and_combine_module_metrics;
+  return ($self->global_metrics->report_mean, $self->module_data());
+}
+
+
 sub _collect_and_combine_module_metrics {
   my ($self) = @_;
   if (defined $self->{_collect_and_combine_module_metrics}) {
     return;
   }
-
   for my $module ($self->model->module_names) {
     my $module_metrics = $self->_collect($module);
     $self->_combine($module_metrics);
