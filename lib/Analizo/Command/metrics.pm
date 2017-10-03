@@ -26,6 +26,7 @@ sub opt_spec {
   return (
     [ 'list|l',       'displays metric list' ],
     [ 'all|a', 'displays all metrics'],
+    [ 'mean|m', 'displays mean of all metrics'],
     [ 'extractor=s',  'wich extractor method use to analise source code' ],
     [ 'globalonly|global-only|g', 'only output global (project-wide) metrics' ],
     [ 'output|o=s',   'output file name' ],
@@ -161,6 +162,13 @@ sub execute {
   else {
     print $metrics->report(@binary_statistics);
   }
+
+#  if ($opt->mean) {
+#    print $metrics->report_only_mean;
+#  }else{
+#		print $metrics->report_according_to_file;
+#	}
+
   close STDOUT;
 }
 
