@@ -110,6 +110,15 @@ sub report {
   return \%{$self->metric_report};
 }
 
+sub report_file {
+  my ($self) = @_;
+
+  $self->_include_metrics_from_calculators;
+  $self->_add_statistics_according_to_file;
+  $self->_add_total_coupling_factor;
+
+  return \%{$self->metric_report};
+}
 
 sub _include_metrics_from_calculators {
   my ($self) = @_;
@@ -127,6 +136,22 @@ sub _add_statistics {
     $self->_add_descriptive_statistics($metric, $statistics, @binary_statistics);
     $self->_add_distributions_statistics($metric, $statistics, @binary_statistics);
   }
+}
+
+sub _add_statistics_according_to_file {
+  my ($self) = @_;
+
+  for my $metric (keys %{$self->values_lists}) {
+		my $statistics = Statistics::Descriptive::Full->new();
+		$statistics->add_data(@{$self->values_lists->{$metric}});
+		if(index($metric,"loc") != -1){
+  		$self->metric_report->{$metric . "_mean"} = $statistics->mean();
+		}elsif($metric eq "noc" || $metric eq "dit"){
+  		$self->metric_report->{$metric . "_quantile_ninety"}  = $statistics->percentile(90); #90th percentile
+		}else{
+  		$self->metric_report->{$metric . "_quantile_seventy_five"}  = $statistics->percentile(75); #75th percentile
+		}
+	}
 }
 
 sub _add_descriptive_statistics {
