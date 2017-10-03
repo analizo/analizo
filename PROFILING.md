@@ -2,16 +2,16 @@
 
 Run the desired command under the profiler:
 
-```
-$ analizo=/path/to/analizo
-$ perl -d:DProf -I$analizo/lib $analizo/lib/Analizo/scripts/analizo-COMMAND
+```console
+analizo=/path/to/analizo
+perl -d:DProf -I$analizo/lib $analizo/lib/Analizo/scripts/analizo-COMMAND
 ```
 
 Process the profiler output (this has to be run from the same directory where
 you run the profiler):
 
-```
-$ dprofpp
+```console
+dprofpp
 ```
 
 ## See also

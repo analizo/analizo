@@ -30,8 +30,7 @@ sub modules {
 }
 
 sub put {
-  my ($self) = @_;
-  my ($mod, $version, $data) = @_;
+  my ($self, $mod, $version, $data) = @_;
   die "Cannot use empty version (mod = $mod, version = $version, data = $data)" unless $version;
   my $cell = Analizo::EvolutionMatrix::Cell->new({matrix => $self, data => $data});
   if ($cell->width > $self->max_width) {

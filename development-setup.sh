@@ -12,43 +12,25 @@ setup_debian() {
     echo "WARNING: no specific preparation steps for $codename"
   fi
 
-  sudo apt-get -q -y install wget
   if [ ! -f /etc/apt/sources.list.d/analizo.list ]; then
+    which wget || sudo apt-get -q -y install wget
+    which gpg || sudo apt-get -q -y install gnupg
     echo "deb http://www.analizo.org/download/ ./" | sudo sh -c 'cat > /etc/apt/sources.list.d/analizo.list'
     wget -O - http://www.analizo.org/download/signing-key.asc | sudo apt-key add -
-    echo "deb http://debian.joenio.me unstable/" | sudo sh -c 'cat >> /etc/apt/sources.list.d/analizo.list'
-    wget -O - http://debian.joenio.me/signing.asc | sudo apt-key add -
   fi
-
+  which apt-file || sudo apt-get -q -y install apt-file
   sudo apt-get update
+  sudo apt-file update
 
-  packages=$(sed -e '1,/^Build-Depends-Indep:/ d; /^\S/,$ d; s/,//; s/(.*$//' debian/control)
-  sudo apt-get -q -y -f --allow-unauthenticated install $packages
-  sudo apt-get -q -y install libfile-sharedir-install-perl libtext-template-perl pandoc
-}
+  sudo apt-get -q -y install dh-make-perl libdist-zilla-perl
+  packages=$(dh-make-perl locate $(dzil authordeps) | grep 'package$' | grep ' is in ' | sed 's/.\+is in \(.\+\) package/\1/')
+  sudo apt-get -q -y -f install $packages
 
-prepare_squeeze() {
+  packages=$(dh-make-perl locate $(dzil listdeps) | grep 'package$' | grep ' is in ' | sed 's/.\+is in \(.\+\) package/\1/')
+  sudo apt-get -q -y -f install $packages
 
-  if ! test -f  /etc/apt/sources.list.d/squeeze-backports.list; then
-    echo 'deb http://backports.debian.org/debian-backports squeeze-backports main' > /etc/apt/sources.list.d/squeeze-backports.list
-    apt-get update
-  fi
-  apt-get install -q -y -t squeeze-backports rubygems
-
-  (gem list | grep rspec) || sudo gem install --no-ri --no-rdoc rspec
-
-  apt-get install -q -y equivs
-  for fakepkg in ruby-rspec; do
-    (
-      echo "Section: misc"
-      echo "Priority: optional"
-      echo "Standards-Version: 3.6.2"
-      echo
-      echo "Package: ${fakepkg}"
-    ) > /tmp/${fakepkg}.equivs
-    (cd /tmp/ && equivs-build ${fakepkg}.equivs && dpkg -i ${fakepkg}_1.0_all.deb)
-  done
-
+  packages=$(dzil externaldeps)
+  sudo apt-get -q -y -f install $packages
 }
 
 prepare_precise() {
@@ -58,6 +40,7 @@ prepare_precise() {
   fi
   apt-get install -q -y libzeromq-perl
 }
+
 prepare_quantal() {
   if ! grep -q ZeroMQ Makefile.PL; then
     # only needed while we depend on ZeroMQ
@@ -66,17 +49,10 @@ prepare_quantal() {
   apt-get install -q -y libzeromq-perl
 }
 
-# FIXME share data with Makefile.PL
+# FIXME share data with Makefile.PL/dist.ini
 needed_programs='
   cpanm
-  doxyparse
   git
-  ruby
-  sloccount
-  rake
-  rspec
-  sqlite3
-  man
   pkg-config
 '
 
@@ -116,10 +92,10 @@ check_non_perl_dependencies() {
 
 setup_generic() {
   check_non_perl_dependencies
-  cpanm --installdeps .
+  dzil listdeps | cpanm
 }
 
-if [ ! -f ./analizo ]; then
+if [ ! -f ./bin/analizo ]; then
   echo "Please run this script from the root of Analizo sources!"
   exit 1
 fi

@@ -19,10 +19,10 @@ Feature: multi-language support
     Then analizo must report that "<main_function>" depends on "<hello_say>"
     And analizo must report that "<main_function>" depends on "<hello_destroy>"
     Examples:
-      | language | main_function        | hello_say                                   | hello_destroy                                   |
-      | c        | main::main()         | hello_world::hello_world_say(hello_world *) | hello_world::hello_world_destroy(hello_world *) |
-      | cpp      | main::main()         | HelloWorld::say()                           | HelloWorld::destroy()                           |
-      | java     | Main::main(String[]) | HelloWorld::say()                           | HelloWorld::destroy()                           |
+      | language | main_function         | hello_say                                   | hello_destroy                                   |
+      | c        | main::main()          | hello_world::hello_world_say(hello_world *) | hello_world::hello_world_destroy(hello_world *) |
+      | cpp      | main::main()          | HelloWorld::say()                           | HelloWorld::destroy()                           |
+      | java     | Main::main(String []) | HelloWorld::say()                           | HelloWorld::destroy()                           |
 
   Scenario: intra-module dependencies
     Given I am in t/samples/hello_world/<language>

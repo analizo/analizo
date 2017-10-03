@@ -5,7 +5,7 @@ use strict;
 use warnings;
 use Analizo::EvolutionMatrix;
 use Analizo::EvolutionMatrix::Cell;
-use YAML::Tiny;
+use YAML qw(LoadFile);
 use Mojo::Template;
 use File::Basename;
 
@@ -51,11 +51,10 @@ sub execute {
   });
   foreach my $yml (@$args) {
     (my $version = $yml) =~ s/^.*-(.*)\.yml$/$1/;
-    my $stream = YAML::Tiny->read($yml)
-      or die YAML::Tiny->errstr;
+    my @stream = LoadFile($yml) or die "$!\n";
     print STDERR "I: Processing $yml ...\n";
-    if (@{ $stream } > 0) {
-      foreach my $doc (@{ $stream }) {
+    if (@stream > 0) {
+      foreach my $doc (@stream) {
         if ($doc->{_module}) {
           $matrix->put($doc->{_module}, $version, $doc);
         }
