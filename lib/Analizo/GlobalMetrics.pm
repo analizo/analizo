@@ -101,10 +101,10 @@ sub _add_metric_value_to_values_list {
 
 sub report {
 
-  my ($self) = @_;
- 
+  my ($self, @binary_statistics) = @_;
+
   $self->_include_metrics_from_calculators;
-  $self->_add_statistics(0);
+  $self->_add_statistics(0, @binary_statistics);
   $self->_add_total_coupling_factor;
 
   return \%{$self->metric_report};
@@ -130,15 +130,15 @@ sub _include_metrics_from_calculators {
 }
 
 sub _add_statistics {
-  my ($self, $only_mean) = @_;
-  
+  my ($self, $only_mean, @binary_statistics) = @_;
+
   for my $metric (keys %{$self->values_lists}) {
     my $statistics = Statistics::Descriptive::Full->new();
     $statistics->add_data(@{$self->values_lists->{$metric}});
     if($only_mean == 1) {
       $self->_add_mean($metric, $statistics);
     } else {
-      $self->_add_descriptive_statistics($metric, $statistics);
+      $self->_add_descriptive_statistics($metric, $statistics, @binary_statistics);
       $self->_add_distributions_statistics($metric, $statistics);
     }
   }
@@ -150,21 +150,45 @@ sub _add_mean {
 }
 
 sub _add_descriptive_statistics {
-  my ($self, $metric, $statistics) = @_;
-  
-  $self->metric_report->{$metric . "_mean"} = $statistics->mean();
-  $self->metric_report->{$metric . "_mode"} = $statistics->mode();
-  $self->metric_report->{$metric . "_standard_deviation"} = $statistics->standard_deviation();
-  $self->metric_report->{$metric . "_sum"} = $statistics->sum();
-  $self->metric_report->{$metric . "_variance"} = $statistics->variance();
+  my ($self, $metric, $statistics, @binary_statistics) = @_;
 
-  $self->metric_report->{$metric . "_quantile_min"}   = $statistics->min(); #minimum
-  $self->metric_report->{$metric . "_quantile_lower"}   = $statistics->quantile(1); #lower quartile
-  $self->metric_report->{$metric . "_quantile_median"}   = $statistics->median(); #median
-  $self->metric_report->{$metric . "_quantile_upper"}   = $statistics->quantile(3); #upper quartile
-  $self->metric_report->{$metric . "_quantile_ninety"}  = $statistics->percentile(90); #90th percentile
-  $self->metric_report->{$metric . "_quantile_ninety_five"}  = $statistics->percentile(95); #95th percentile
-  $self->metric_report->{$metric . "_quantile_max"} = $statistics->max(); #maximum
+  if($binary_statistics[0]){
+    $self->metric_report->{$metric . "_mean"} = $statistics->mean();
+  }
+  if($binary_statistics[1]){
+    $self->metric_report->{$metric . "_mode"} = $statistics->mode();
+  }
+  if($binary_statistics[2]){
+    $self->metric_report->{$metric . "_standard_deviation"} = $statistics->standard_deviation();
+  }
+  if($binary_statistics[3]){
+    $self->metric_report->{$metric . "_sum"} = $statistics->sum();
+  }
+  if($binary_statistics[4]){
+    $self->metric_report->{$metric . "_variance"} = $statistics->variance();
+  }
+
+  if($binary_statistics[5]){
+    $self->metric_report->{$metric . "_quantile_min"}   = $statistics->min(); #minimum
+  }
+  if($binary_statistics[6]){
+    $self->metric_report->{$metric . "_quantile_lower"}   = $statistics->quantile(1); #lower quartile
+  }
+  if($binary_statistics[7]){
+    $self->metric_report->{$metric . "_quantile_median"}   = $statistics->median(); #median
+  }
+  if($binary_statistics[8]){
+    $self->metric_report->{$metric . "_quantile_upper"}   = $statistics->quantile(3); #upper quartile
+  }
+  if($binary_statistics[9]){
+    $self->metric_report->{$metric . "_quantile_ninety"}  = $statistics->percentile(90); #90th percentile
+  }
+  if($binary_statistics[10]){
+    $self->metric_report->{$metric . "_quantile_ninety_five"}  = $statistics->percentile(95); #95th percentile
+  }
+  if($binary_statistics[11]){
+    $self->metric_report->{$metric . "_quantile_max"} = $statistics->max(); #maximum
+  }
  }
 
 sub _add_distributions_statistics {
@@ -202,4 +226,3 @@ sub _number_of_combinations {
 
 
 1;
-

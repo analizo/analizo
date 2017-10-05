@@ -34,6 +34,18 @@ sub opt_spec {
     [ 'includedirs|I=s',  'include <dirs> (a colon-separated list of directories) with C/C++ header files', { default => '.' } ],
     [ 'libdirs|L=s',  'include <dirs> (a colon-separated list of directories) with C/C++ static and dynamic libraries files', { default => '.' } ],
     [ 'libs=s',  'include <dirs> (a colon-separated list of directories) with C/C++ linked libraries files', { default => '.' } ],
+    [ 'mean',  'display only mean statistics'],
+    [ 'mode',  'display only mode statistics'],
+    [ 'standard',  'display only standard deviation statistics'],
+    [ 'sum',  'display only sum statistics'],
+    [ 'variance',  'display only variance statistics'],
+    [ 'min',  'display only quantile min statistics'],
+    [ 'lower',  'display only quantile lower statistics'],
+    [ 'median',  'display only quantile median statistics'],
+    [ 'upper',  'display only quantile upper statistics'],
+    [ 'ninety',  'display only quantile ninety statistics'],
+    [ 'ninety_five',  'display only quantile ninety-five statistics'],
+    [ 'max',  'display only quantile max statistics'],
   );
 }
 
@@ -55,6 +67,43 @@ sub validate {
 
 sub execute {
   my ($self, $opt, $args) = @_;
+  my @binary_statistics = (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+  if($opt->mean) {
+    $binary_statistics[0] = 1;
+  }
+  if($opt->mode) {
+    $binary_statistics[1] = 1;
+  }
+  if($opt->standard) {
+    $binary_statistics[2] = 1;
+  }
+  if($opt->sum) {
+    $binary_statistics[3] = 1;
+  }
+  if($opt->variance) {
+    $binary_statistics[4] = 1;
+  }
+  if($opt->min) {
+    $binary_statistics[5] = 1;
+  }
+  if($opt->lower) {
+    $binary_statistics[6] = 1;
+  }
+  if($opt->median) {
+    $binary_statistics[7] = 1;
+  }
+  if($opt->upper) {
+    $binary_statistics[8] = 1;
+  }
+  if($opt->ninety) {
+    $binary_statistics[9] = 1;
+  }
+  if($opt->ninety_five) {
+    $binary_statistics[10] = 1;
+  }
+  if($opt->max) {
+    $binary_statistics[11] = 1;
+  }
   if($opt->list){
     my $metrics_handler = new Analizo::Metrics(model => new Analizo::Model);
     my %metrics = $metrics_handler->list_of_metrics();
@@ -95,10 +144,10 @@ sub execute {
     open STDOUT, '>', $opt->output or die "$!\n";
   }
   if ($opt->globalonly) {
-    print $metrics->report_global_metrics_only;
+    print $metrics->report_global_metrics_only(@binary_statistics);
   }
   if ($opt->all) {
-    print $metrics->report;
+    print $metrics->report(@binary_statistics);
   }
   else {
     print $metrics->report_only_mean;
