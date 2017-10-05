@@ -104,18 +104,7 @@ sub report {
   my ($self, @binary_statistics) = @_;
 
   $self->_include_metrics_from_calculators;
-  $self->_add_statistics(0, @binary_statistics);
-  $self->_add_total_coupling_factor;
-
-  return \%{$self->metric_report};
-}
-
-sub report_mean {
-  my ($self) = @_;
-  my $only_mean = 1;
-
-  $self->_include_metrics_from_calculators;
-  $self->_add_statistics($only_mean);
+  $self->_add_statistics(@binary_statistics);
   $self->_add_total_coupling_factor;
 
   return \%{$self->metric_report};
@@ -130,23 +119,14 @@ sub _include_metrics_from_calculators {
 }
 
 sub _add_statistics {
-  my ($self, $only_mean, @binary_statistics) = @_;
+  my ($self, @binary_statistics) = @_;
 
   for my $metric (keys %{$self->values_lists}) {
     my $statistics = Statistics::Descriptive::Full->new();
     $statistics->add_data(@{$self->values_lists->{$metric}});
-    if($only_mean == 1) {
-      $self->_add_mean($metric, $statistics);
-    } else {
-      $self->_add_descriptive_statistics($metric, $statistics, @binary_statistics);
-      $self->_add_distributions_statistics($metric, $statistics);
-    }
+    $self->_add_descriptive_statistics($metric, $statistics, @binary_statistics);
+    $self->_add_distributions_statistics($metric, $statistics);
   }
-}
-
-sub _add_mean {
-  my ($self, $metric, $statistics) = @_;
-  $self->metric_report->{$metric . "_mean"} = $statistics->mean();
 }
 
 sub _add_descriptive_statistics {
@@ -167,7 +147,6 @@ sub _add_descriptive_statistics {
   if($binary_statistics[4]){
     $self->metric_report->{$metric . "_variance"} = $statistics->variance();
   }
-
   if($binary_statistics[5]){
     $self->metric_report->{$metric . "_quantile_min"}   = $statistics->min(); #minimum
   }

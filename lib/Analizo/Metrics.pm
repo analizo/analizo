@@ -48,12 +48,6 @@ sub report_global_metrics_only {
   return Dump($global_metrics);
 }
 
-sub report_only_mean {
-  my ($self) = @_;
-  my ($global_metrics, $module_metrics) = $self->data_mean();
-  return Dump($global_metrics);
-}
-
 sub report_module_metrics {
   my ($self, @binary_statistics) = @_;
   return join('', map { Dump($_) } @{$self->module_data(@binary_statistics)});
@@ -64,14 +58,6 @@ sub data {
   $self->_collect_and_combine_module_metrics;
   return ($self->global_metrics->report(@binary_statistics), $self->module_data());
 }
-
-sub data_mean {
-  my ($self ) = @_;
-
-  $self->_collect_and_combine_module_metrics;
-  return ($self->global_metrics->report_mean, $self->module_data());
-}
-
 
 sub _collect_and_combine_module_metrics {
   my ($self) = @_;

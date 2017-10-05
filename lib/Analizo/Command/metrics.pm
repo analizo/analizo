@@ -143,7 +143,7 @@ sub execute {
   $job->includedirs($opt->includedirs);
   $job->libdirs($opt->libdirs);
   $job->libs($opt->libs);
-  $job->execute(!$opt->all);
+  $job->execute();
   my $metrics = $job->metrics;
   if ($opt->output) {
     open STDOUT, '>', $opt->output or die "$!\n";
@@ -151,11 +151,8 @@ sub execute {
   if ($opt->globalonly) {
     print $metrics->report_global_metrics_only(@binary_statistics);
   }
-  if ($opt->all) {
-    print $metrics->report(@binary_statistics);
-  }
   else {
-    print $metrics->report_only_mean;
+    print $metrics->report(@binary_statistics);
   }
   close STDOUT;
 }
