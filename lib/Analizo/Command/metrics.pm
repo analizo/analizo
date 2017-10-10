@@ -70,7 +70,7 @@ sub execute {
   my ($self, $opt, $args) = @_;
   my @binary_statistics = (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
   if($opt->all){
-    @binary_statistics = (1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1)
+    @binary_statistics = (1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
   } else {
     if($opt->mean) {
       $binary_statistics[0] = 1;
