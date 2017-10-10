@@ -60,4 +60,13 @@ sub list_languages : Tests {
   ok(grep { /^cpp$/ } @language_list);
 }
 
+sub csharp_filter_matches_cs_only : Tests {
+  my $filter = Analizo::LanguageFilter->new('csharp');
+  ok($filter->matches('Test.cs'));
+  ok(!$filter->matches('Test.java'));
+  ok(!$filter->matches('Test.c'));
+  ok(!$filter->matches('Test.h'));
+  ok(!$filter->matches('Test.cpp'));
+}
+
 __PACKAGE__->runtests;

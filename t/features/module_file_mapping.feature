@@ -25,5 +25,18 @@ Feature: mapping modules to filenames
   Scenario: C
     Given I am in t/samples/hello_world/c
     When I run "analizo metrics ."
-    Then analizo must report that file hello_world.c declares module hello_world
-    Then analizo must report that file hello_world.h declares module hello_world
+    Then analizo must report that module hello_world has _filename = [hello_world.c,hello_world.h]
+    And analizo must report that file hello_world.c declares module hello_world
+    And analizo must report that file hello_world.h declares module hello_world
+
+  Scenario: CSharp hello_world
+    Given I am in t/samples/hello_world/csharp
+    When I run "analizo metrics ."
+    Then analizo must report that module HelloWorld has _filename = [HelloWorld.cs]
+
+  Scenario: CSharp polygons
+    Given I am in t/samples/polygons/csharp
+    When I run "analizo metrics ."
+    Then analizo must report that file Polygon.cs declares module Polygon
+    And analizo must report that file Rect.cs declares module Rect
+    And analizo must report that file Triangle.cs declares module Triangle

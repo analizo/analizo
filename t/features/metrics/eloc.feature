@@ -12,4 +12,4 @@ Feature: number of abstract classes
       | cpp      |  40  |
       | java     |  28  |
       | c        |  35  |
-
+      | csharp   |  29  |

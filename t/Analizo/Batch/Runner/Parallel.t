@@ -46,7 +46,7 @@ sub should_be_equivalent_to_sequential_runner : Tests {
   @jobs_parallel = sort @jobs_parallel;
 
   is_deeply(\@jobs_parallel, \@jobs_sequential);
-  is(scalar(@jobs_parallel), 3, 'must run 3 jobs');
+  is(scalar(@jobs_parallel), 4, 'must run 4 jobs');
 }
 
 sub __create {

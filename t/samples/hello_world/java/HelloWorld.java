@@ -18,8 +18,7 @@ public class HelloWorld {
   }
 
   private void private_method() {
-      hello = 2;
-      System.out.println(hello);
+    hello = 2;
+    System.out.println(hello);
   }
 }
-

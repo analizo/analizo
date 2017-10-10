@@ -249,7 +249,7 @@ sub reading_from_one_input_file : Tests {
   my $extractor = Analizo::Extractor->load('Doxyparse');
 
   # one file
-  $extractor->process('t/samples/sample_basic/module1.c');
+  $extractor->process('t/samples/sample_basic/c/module1.c');
   is(scalar(keys(%{$extractor->model->members})), 1, 'module1 has once member');
   ok(grep { $_ eq 'module1::main()' } keys(%{$extractor->model->members}), 'main is member of module1');
   is(scalar(keys(%{$extractor->model->{modules}})), 1, 'we have once module');
@@ -258,7 +258,7 @@ sub reading_from_one_input_file : Tests {
 
 sub reading_from_some_input_files : Tests {
   # set up
-  my $sample_dir = 't/samples/sample_basic';
+  my $sample_dir = 't/samples/sample_basic/c';
   my $extractor = Analizo::Extractor->load('Doxyparse');
 
   # some files
@@ -274,7 +274,7 @@ sub reading_from_directories : Tests {
   my $extractor = Analizo::Extractor->load('Doxyparse');
 
   # directory
-  $extractor->process('t/samples/sample_basic');
+  $extractor->process('t/samples/sample_basic/c');
   is(scalar(keys(%{$extractor->model->members})), 5);
   is(scalar(keys(%{$extractor->model->{modules}})), 3);
   is($extractor->model->{calls}->{'module1::main()'}->{'module2::say_hello()'}, 'direct');

@@ -111,6 +111,7 @@ sub must_consider_only__supported_languages : Tests {
   @processed = sort @processed;
   my @expected = qw(
     t/samples/mixed/Backend.java
+    t/samples/mixed/CSharp_Backend.cs
     t/samples/mixed/UI.java
     t/samples/mixed/native_backend.c
   );

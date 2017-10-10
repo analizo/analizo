@@ -12,6 +12,7 @@ Feature: multi-language support
       | c        | main        | hello_world        |
       | cpp      | main        | HelloWorld         |
       | java     | Main        | HelloWorld         |
+      | csharp   | main        | HelloWorld         |
 
   Scenario: dependency between specific functions
     Given I am in t/samples/hello_world/<language>
@@ -23,6 +24,7 @@ Feature: multi-language support
       | c        | main::main()          | hello_world::hello_world_say(hello_world *) | hello_world::hello_world_destroy(hello_world *) |
       | cpp      | main::main()          | HelloWorld::say()                           | HelloWorld::destroy()                           |
       | java     | Main::main(String []) | HelloWorld::say()                           | HelloWorld::destroy()                           |
+      | csharp   | main::Main()          | HelloWorld::say()                           | HelloWorld::destroy()                           |
 
   Scenario: intra-module dependencies
     Given I am in t/samples/hello_world/<language>
@@ -34,6 +36,7 @@ Feature: multi-language support
       | c        | hello_world::hello_world_say(hello_world *) | hello_world::hello_world_destroy(hello_world *) | hello_world::_hello_world::id |
       | cpp      | HelloWorld::say()                           | HelloWorld::destroy()                           | HelloWorld::_id               |
       | java     | HelloWorld::say()                           | HelloWorld::destroy()                           | HelloWorld::_id               |
+      | csharp   | HelloWorld::say()                           | HelloWorld::destroy()                           | HelloWorld::_id               |
 
   Scenario: some metrics
     Given I am in t/samples/hello_world/<language>
@@ -48,6 +51,7 @@ Feature: multi-language support
       | c        | main        | hello_world        | 3               | 2                 |
       | cpp      | main        | HelloWorld         | 4               | 1                 |
       | java     | Main        | HelloWorld         | 4               | 1                 |
+      | csharp   | main        | HelloWorld         | 4               | 1                 |
 
   Scenario: inheritance data
     Given I am in t/samples/animals/<language>

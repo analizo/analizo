@@ -12,6 +12,7 @@ Feature: coupling between objects
       | c        | main   |
       | cpp      | main   |
       | java     | Main   |
+      | csharp   | main   |
 
   Scenario: "Animals" project
     Given I am in t/samples/animals/<language>
@@ -20,6 +21,8 @@ Feature: coupling between objects
     Examples:
       | language | module | value |
       | cpp      | main   | 1     |
-      | java     | Main   | 1     |
       | cpp      | mammal | 0     |
+      | java     | Main   | 1     |
       | java     | Mammal | 0     |
+      | csharp   | main   | 1     |
+      | csharp   | Mammal | 0     |
