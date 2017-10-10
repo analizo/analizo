@@ -125,61 +125,69 @@ sub _add_statistics {
     my $statistics = Statistics::Descriptive::Full->new();
     $statistics->add_data(@{$self->values_lists->{$metric}});
     $self->_add_descriptive_statistics($metric, $statistics, @binary_statistics);
-    $self->_add_distributions_statistics($metric, $statistics);
+    $self->_add_distributions_statistics($metric, $statistics, @binary_statistics);
   }
 }
 
 sub _add_descriptive_statistics {
   my ($self, $metric, $statistics, @binary_statistics) = @_;
 
-  if($binary_statistics[0]){
+  if($binary_statistics[0]) {
     $self->metric_report->{$metric . "_mean"} = $statistics->mean();
   }
-  if($binary_statistics[1]){
+  if($binary_statistics[1]) {
     $self->metric_report->{$metric . "_mode"} = $statistics->mode();
   }
-  if($binary_statistics[2]){
+  if($binary_statistics[2]) {
     $self->metric_report->{$metric . "_standard_deviation"} = $statistics->standard_deviation();
   }
-  if($binary_statistics[3]){
+  if($binary_statistics[3]) {
     $self->metric_report->{$metric . "_sum"} = $statistics->sum();
   }
-  if($binary_statistics[4]){
+  if($binary_statistics[4]) {
     $self->metric_report->{$metric . "_variance"} = $statistics->variance();
   }
-  if($binary_statistics[5]){
+  if($binary_statistics[5]) {
     $self->metric_report->{$metric . "_quantile_min"}   = $statistics->min(); #minimum
   }
-  if($binary_statistics[6]){
+  if($binary_statistics[6]) {
     $self->metric_report->{$metric . "_quantile_lower"}   = $statistics->quantile(1); #lower quartile
   }
-  if($binary_statistics[7]){
+  if($binary_statistics[7]) {
     $self->metric_report->{$metric . "_quantile_median"}   = $statistics->median(); #median
   }
-  if($binary_statistics[8]){
+  if($binary_statistics[8]) {
     $self->metric_report->{$metric . "_quantile_upper"}   = $statistics->quantile(3); #upper quartile
   }
-  if($binary_statistics[9]){
+  if($binary_statistics[9]) {
     $self->metric_report->{$metric . "_quantile_ninety"}  = $statistics->percentile(90); #90th percentile
   }
-  if($binary_statistics[10]){
+  if($binary_statistics[10]) {
     $self->metric_report->{$metric . "_quantile_ninety_five"}  = $statistics->percentile(95); #95th percentile
   }
-  if($binary_statistics[11]){
+  if($binary_statistics[11]) {
     $self->metric_report->{$metric . "_quantile_max"} = $statistics->max(); #maximum
   }
  }
 
 sub _add_distributions_statistics {
-  my ($self, $metric, $statistics) = @_;
+  my ($self, $metric, $statistics, @binary_statistics) = @_;
 
   if (($statistics->count >= 4) && ($statistics->variance() > 0)) {
-    $self->metric_report->{$metric . "_kurtosis"} = $statistics->kurtosis();
-    $self->metric_report->{$metric . "_skewness"} = $statistics->skewness();
+    if($binary_statistics[12]) {
+      $self->metric_report->{$metric . "_kurtosis"} = $statistics->kurtosis();
+    }
+    if($binary_statistics[13]) {
+      $self->metric_report->{$metric . "_skewness"} = $statistics->skewness();
+    }
   }
   else {
-    $self->metric_report->{$metric . "_kurtosis"} = 0;
-    $self->metric_report->{$metric . "_skewness"} = 0;
+    if($binary_statistics[12]) {
+      $self->metric_report->{$metric . "_kurtosis"} = 0;
+    }
+    if($binary_statistics[13]) {
+      $self->metric_report->{$metric . "_skewness"} = 0;
+    }
   }
 }
 

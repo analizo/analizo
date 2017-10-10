@@ -46,7 +46,8 @@ sub opt_spec {
     [ 'ninety',  'display only quantile ninety statistics'],
     [ 'ninety_five',  'display only quantile ninety-five statistics'],
     [ 'max',  'display only quantile max statistics'],
-    [ 'all',  'display all statistics'],
+    [ 'kurtosis',  'display only kurtosis statistics'],
+    [ 'skewness',  'display only skewness statistics'],
   );
 }
 
@@ -68,9 +69,9 @@ sub validate {
 
 sub execute {
   my ($self, $opt, $args) = @_;
-  my @binary_statistics = (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+  my @binary_statistics = (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
   if($opt->all){
-    @binary_statistics = (1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
+    @binary_statistics = (1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
   } else {
     if($opt->mean) {
       $binary_statistics[0] = 1;
@@ -107,6 +108,12 @@ sub execute {
     }
     if($opt->max) {
       $binary_statistics[11] = 1;
+    }
+    if($opt->kurtosis) {
+      $binary_statistics[12] = 1;
+    }
+    if($opt->skewness) {
+      $binary_statistics[13] = 1;
     }
   }
   if($opt->list){
