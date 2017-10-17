@@ -26,7 +26,6 @@ sub opt_spec {
   return (
     [ 'list|l',       'displays metric list' ],
     [ 'all|a', 'displays all metrics'],
-    [ 'mean|m', 'displays mean of all metrics'],
     [ 'extractor=s',  'wich extractor method use to analise source code' ],
     [ 'globalonly|global-only|g', 'only output global (project-wide) metrics' ],
     [ 'output|o=s',   'output file name' ],
@@ -160,8 +159,26 @@ sub execute {
     print $metrics->report_global_metrics_only(@binary_statistics);
   }
   else {
-    print $metrics->report(@binary_statistics);
+		my $all_zeroes = is_all_zeroes(\@binary_statistics);
+		if($all_zeroes == 0){
+    	print $metrics->report(@binary_statistics);
+		}else{
+			print $metrics->report_according_to_file;
+		}
   }
+
+sub is_all_zeroes{
+	my @metrics_array = @{$_[0]};
+
+	my $all_zeros = 1;
+	foreach my $metrics_position (@metrics_array) {
+			if($metrics_position != 0) {
+				$all_zeros = 0;
+				last; # One not equal to zero is enough to know if all values are zeros
+			}
+	}
+	return $all_zeros;
+}
 
 #  if ($opt->mean) {
 #    print $metrics->report_only_mean;

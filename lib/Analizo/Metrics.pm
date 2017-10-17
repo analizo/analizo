@@ -48,12 +48,6 @@ sub report_global_metrics_only {
   return Dump($global_metrics);
 }
 
-sub report_only_mean {
-  my ($self) = @_;
-  my ($global_metrics, $module_metrics) = $self->data_mean();
-  return Dump($global_metrics); 
-}
-
 sub report_according_to_file {
   my ($self) = @_;
   my ($global_metrics, $module_metrics) = $self->data_file();
