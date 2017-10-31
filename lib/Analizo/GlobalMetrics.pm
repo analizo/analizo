@@ -138,18 +138,30 @@ sub _add_statistics {
   }
 }
 
-sub _add_statistics_according_to_file {
+sub load_metrics_configurations {
   my ($self) = @_;
+
+	$self->{metrics_configurations} ||= (-e '.analizo'
+			? YAML::LoadFile('.analizo')
+			: {}
+	);
+}
+
+sub _add_statistics_according_to_file {
+	my ($self) = @_;
+
+	$self->load_metrics_configurations();
 
   for my $metric (keys %{$self->values_lists}) {
 		my $statistics = Statistics::Descriptive::Full->new();
 		$statistics->add_data(@{$self->values_lists->{$metric}});
-		if(index($metric,"loc") != -1){
-  		$self->metric_report->{$metric . "_mean"} = $statistics->mean();
-		}elsif($metric eq "noc" || $metric eq "dit"){
+
+		if($self->{metrics_configurations}{$metric} eq "quantile_ninety"){
   		$self->metric_report->{$metric . "_quantile_ninety"}  = $statistics->percentile(90); #90th percentile
-		}else{
+		}elsif($self->{metrics_configurations}{$metric} eq "quantile_seventy_five"){
   		$self->metric_report->{$metric . "_quantile_seventy_five"}  = $statistics->percentile(75); #75th percentile
+		}else{
+			$self->metric_report->{$metric . "_mean"} = $statistics->mean();
 		}
 	}
 }
