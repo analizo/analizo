@@ -30,6 +30,21 @@ sub opt_spec {
     [ 'parallel|p=i',  'activates support for parallel processing' ],
     [ 'format|f=s',    'specifies the output format', { default => 'csv' } ],
     [ 'progressbar|b', 'displays a progress bar during the execution' ],
+    [ 'all|a', 'displays all metrics'],
+    [ 'mean',  'display only mean statistics'],
+    [ 'mode',  'display only mode statistics'],
+    [ 'standard',  'display only standard deviation statistics'],
+    [ 'sum',  'display only sum statistics'],
+    [ 'variance',  'display only variance statistics'],
+    [ 'min',  'display only quantile min statistics'],
+    [ 'lower',  'display only quantile lower statistics'],
+    [ 'median',  'display only quantile median statistics'],
+    [ 'upper',  'display only quantile upper statistics'],
+    [ 'ninety',  'display only quantile ninety statistics'],
+    [ 'ninety_five',  'display only quantile ninety-five statistics'],
+    [ 'max',  'display only quantile max statistics'],
+    [ 'kurtosis',  'display only kurtosis statistics'],
+    [ 'skewness',  'display only skewness statistics'],
   );
 }
 
@@ -59,6 +74,55 @@ sub load_output_driver {
 sub execute {
   my ($self, $opt, $args) = @_;
   my $batch = new Analizo::Batch::Git(@$args);
+
+  my @binary_statistics = (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+  if($opt->all){
+    @binary_statistics = (1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
+  } else {
+    if($opt->mean) {
+      $binary_statistics[0] = 1;
+    }
+    if($opt->mode) {
+      $binary_statistics[1] = 1;
+    }
+    if($opt->standard) {
+      $binary_statistics[2] = 1;
+    }
+    if($opt->sum) {
+      $binary_statistics[3] = 1;
+    }
+    if($opt->variance) {
+      $binary_statistics[4] = 1;
+    }
+    if($opt->min) {
+      $binary_statistics[5] = 1;
+    }
+    if($opt->lower) {
+      $binary_statistics[6] = 1;
+    }
+    if($opt->median) {
+      $binary_statistics[7] = 1;
+    }
+    if($opt->upper) {
+      $binary_statistics[8] = 1;
+    }
+    if($opt->ninety) {
+      $binary_statistics[9] = 1;
+    }
+    if($opt->ninety_five) {
+      $binary_statistics[10] = 1;
+    }
+    if($opt->max) {
+      $binary_statistics[11] = 1;
+    }
+    if($opt->kurtosis) {
+      $binary_statistics[12] = 1;
+    }
+    if($opt->skewness) {
+      $binary_statistics[13] = 1;
+    }
+  }
+
   if ($opt->list) {
     while (my $job = $batch->next()) {
       print $job->id, "\n";
@@ -96,7 +160,7 @@ sub execute {
       }
     );
   }
-  $runner->run($batch, $output);
+  $runner->run($batch, $output, @binary_statistics);
 }
 
 1;

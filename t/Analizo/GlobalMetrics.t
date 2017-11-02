@@ -136,7 +136,7 @@ sub add_loc_mean_when_there_was_no_added_values : Tests {
 sub add_loc_mean_when_there_was_one_added_values : Tests {
   my %module_values = (loc => 1);
   $global_metrics->add_module_values(\%module_values);
-  my @binary_statistics = (1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
+  my @binary_statistics = (1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
   my $report = $global_metrics->report(@binary_statistics);
   is($report->{'loc_mean'}, 1);
 }
@@ -148,7 +148,7 @@ sub add_loc_mean_when_there_were_two_added_values : Tests {
   my %other_values = (loc => 3);
   $global_metrics->add_module_values(\%other_values);
 
-  my @binary_statistics = (1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
+  my @binary_statistics = (1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
   my $report = $global_metrics->report(@binary_statistics);
   is($report->{'loc_mean'}, 2);
 }
@@ -160,7 +160,7 @@ sub add_lcom4_mean_when_there_were_two_added_values : Tests {
   my %other_values = (lcom4 => 3);
   $global_metrics->add_module_values(\%other_values);
 
-  my @binary_statistics = (1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
+  my @binary_statistics = (1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
   my $report = $global_metrics->report(@binary_statistics);
   is($report->{'lcom4_mean'}, 2);
 }
@@ -173,7 +173,7 @@ sub add_rfc_sum_when_there_were_two_added_values : Tests {
   my %other_values = (rfc => 3);
   $global_metrics->add_module_values(\%other_values);
 
-  my @binary_statistics = (1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
+  my @binary_statistics = (1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
   my $report = $global_metrics->report(@binary_statistics);
   is($report->{'rfc_sum'}, 4);
 }
@@ -182,7 +182,7 @@ sub should_have_other_descriptive_statistics : Tests {
   my %module_values = (rfc => 1);
   $global_metrics->add_module_values(\%module_values);
 
-  my @binary_statistics = (1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
+  my @binary_statistics = (1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
   my $report = $global_metrics->report(@binary_statistics);
   isnt($report->{'rfc_mean'}, undef);
   isnt($report->{'rfc_quantile_max'}, undef);
@@ -197,7 +197,8 @@ sub should_have_distributions_statistics : Tests {
   $global_metrics->add_module_values(\%module_values);
   $global_metrics->add_module_values(\%module_values);
   $global_metrics->add_module_values(\%module_values);
-  my $report = $global_metrics->report;
+  my @binary_statistics = (1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
+  my $report = $global_metrics->report(@binary_statistics);
   isnt($report->{'rfc_kurtosis'}, undef);
   isnt($report->{'rfc_skewness'}, undef);
 }
@@ -212,7 +213,7 @@ sub should_add_total_coupling_factor : Tests {
   $global_metrics->add_module_values(\%module_values);
   $global_metrics->add_module_values(\%module_values);
 
-  my @binary_statistics = (1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
+  my @binary_statistics = (1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
   my $report = $global_metrics->report(@binary_statistics);
   is($report->{'total_cof'}, 0.5);
 }

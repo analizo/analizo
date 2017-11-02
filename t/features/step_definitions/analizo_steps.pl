@@ -169,8 +169,8 @@ Then qr/^the output lines must match "([^\"]*)"$/, func($c) {
   like($stdout, qr/$pattern/);
 };
 
-Then qr/^the number of lines on metrics mean report must be "([^\"]*)"$/, func($c) {
+Then qr/^the number of lines on file must be "([^\"]*)"$/, func($c) {
   my $pattern = $1;
-  my $number_of_lines = $stdout =~ tr/\n//; 
+  my $number_of_lines = $stdout =~ tr/\n//;
   is($number_of_lines + 0 , $pattern + 0);
 };

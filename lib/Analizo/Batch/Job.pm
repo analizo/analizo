@@ -118,7 +118,7 @@ sub metadata_hashref($) {
 }
 
 sub execute {
-  my ($self) = @_;
+  my ($self, @binary_statistics) = @_;
   $self->prepare();
 
   my $tree_id = $self->tree_id();
@@ -151,7 +151,7 @@ sub execute {
   my $metrics = $self->cache->get($metrics_cache_key);
   if (!defined $metrics) {
     $metrics = new Analizo::Metrics(model => $self->model);
-    $metrics->data();
+    $metrics->data(@binary_statistics);
     $self->cache->set($metrics_cache_key, $metrics);
   }
   $self->metrics($metrics);
