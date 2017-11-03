@@ -138,6 +138,53 @@ sub _add_statistics {
   }
 }
 
+sub create_metrics_default_values {
+  my ($self) = @_;
+
+	my %default_metrics_values;
+
+	my @keys = (	
+			"npm",
+			"npa",
+			"noc",
+			"nom",
+			"rfc",
+			"lcom4",
+			"anpm",
+			"accm",
+			"acc",
+			"dit",
+			"loc",
+			"cbo",
+			"amloc",
+			"mmloc",
+			"noa",
+			"sc"
+	);
+
+	my @values = (
+			"quantile_seventy_five",
+			"quantile_seventy_five",
+			"quantile_ninety",
+			"quantile_seventy_five",
+			"quantile_seventy_five",
+			"quantile_seventy_five",
+			"quantile_seventy_five",
+			"quantile_seventy_five",
+			"quantile_seventy_five",
+			"quantile_ninety",
+			"mean",
+			"quantile_seventy_five",
+			"mean",
+			"mean",
+			"quantile_seventy_five",
+			"quantile_seventy_five"
+	);
+	@default_metrics_values{@keys} = @values;
+
+	return %default_metrics_values;
+}
+
 sub load_metrics_configurations {
   my ($self) = @_;
 
@@ -145,6 +192,15 @@ sub load_metrics_configurations {
 			? YAML::LoadFile('.analizo')
 			: {}
 	);
+
+	if($self->{metrics_configurations}) {
+		configurations_dictionary = YAML::LoadFile('.analizo');
+	}
+	else {
+		my %default_metrics_values = create_metrics_default_values();
+	}
+	return configurations_dictionary;
+
 }
 
 sub _add_statistics_according_to_file {
