@@ -185,22 +185,41 @@ sub create_metrics_default_values {
 	return %default_metrics_values;
 }
 
+sub test_configuration_file_existance {
+	if(-e '.analizo'){
+		return 1;
+	}
+	else{
+		return 0;
+	}
+}
+
+sub create_file_from_dictionary {
+	my ($self) = @_;
+
+	my %dictionary = %{$_[0]};
+	my $file_name = $_[1];
+
+	open(my $file, ">$file_name" );
+
+	foreach my $metric ( keys %dictionary ) {
+    print $file "$metric: $dictionary{$metric}\n";
+	} 
+
+	close($file);
+}
+
 sub load_metrics_configurations {
   my ($self) = @_;
 
-	$self->{metrics_configurations} ||= (-e '.analizo'
-			? YAML::LoadFile('.analizo')
-			: {}
-	);
-
-	if($self->{metrics_configurations}) {
-		configurations_dictionary = YAML::LoadFile('.analizo');
-	}
-	else {
+	if(!test_configuration_file_existance()) {
 		my %default_metrics_values = create_metrics_default_values();
-	}
-	return configurations_dictionary;
+		my $file_name = '.analizo';
 
+		create_file_from_dictionary(\%default_metrics_values, $file_name);	
+	}
+
+	$self->{metrics_configurations} = YAML::LoadFile('.analizo');
 }
 
 sub _add_statistics_according_to_file {
