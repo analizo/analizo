@@ -166,6 +166,8 @@ sub execute {
 			print $metrics->report_according_to_file;
 		}
   }
+  close STDOUT;
+}
 
 sub is_all_zeroes{
 	my @metrics_array = @{$_[0]};
@@ -178,15 +180,6 @@ sub is_all_zeroes{
 			}
 	}
 	return $all_zeros;
-}
-
-#  if ($opt->mean) {
-#    print $metrics->report_only_mean;
-#  }else{
-#		print $metrics->report_according_to_file;
-#	}
-
-  close STDOUT;
 }
 
 =head1 DESCRIPTION

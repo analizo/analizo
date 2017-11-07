@@ -52,7 +52,8 @@ sub report_according_to_file {
   my ($self) = @_;
   my ($global_metrics, $module_metrics) = $self->data_file();
 
-  return Dump($global_metrics); 
+	my $file_report = Dump($global_metrics) . $self->report_module_metrics();
+	return $file_report;
 }
 
 sub report_module_metrics {
