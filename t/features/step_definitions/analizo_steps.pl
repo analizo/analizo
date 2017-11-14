@@ -25,6 +25,10 @@ When qr/^I run "([^\"]*)"$/, func($c) {
   $stderr = read_file('tmp.err');
 };
 
+Given qr/the .analizo doesn't exist/, func($c) {
+  $exit_status = system "rm -rf .analizo";
+};
+
 Then qr/^the output must match "([^\"]*)"$/, func($c) {
   like($stdout, qr/$1|\Q$1\E/);
 };
