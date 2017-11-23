@@ -73,19 +73,11 @@ sub execute {
   my $flags = Analizo::Flags->new;
   $flags->statistics_flags($opt);
   my @binary_statistics = $flags->get_binary;
-  if($opt->list){
-    my $metrics_handler = new Analizo::Metrics(model => new Analizo::Model);
-    my %metrics = $metrics_handler->list_of_metrics();
-    my %global_metrics = $metrics_handler->list_of_global_metrics();
-    print "Global Metrics:\n";
-    foreach my $key (sort keys %global_metrics){
-      print "$key - $global_metrics{$key}\n";
-    }
-    print "\nModule Metrics:\n";
-    foreach my $key (sort keys %metrics){
-      print "$key - $metrics{$key}\n";
-    }
+
+  if ($flags->has_list_flag($opt)) {
+    $flags->print_metrics_list;
   }
+  
   my $tree = $args->[0] || '.';
   my $job = new Analizo::Batch::Job::Directories($tree);
   $job->extractor($opt->extractor);

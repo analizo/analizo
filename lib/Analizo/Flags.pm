@@ -1,4 +1,5 @@
 package Analizo::Flags;
+use Analizo::Metrics;
 
 use strict;
 use warnings;
@@ -14,6 +15,11 @@ sub new {
 
 sub get_binary {
 	@binary_statistics;
+}
+
+sub has_list_flag() {
+	my ($self, $opt) = @_;
+    return $opt->list;
 }
 
 sub statistics_flags {
@@ -63,6 +69,20 @@ sub statistics_flags {
 	    if($opt->skewness) {
 	      $binary_statistics[13] = 1;
 	    }
+    }
+}
+
+sub print_metrics_list {
+    my $metrics_handler = new Analizo::Metrics(model => new Analizo::Model);
+    my %metrics = $metrics_handler->list_of_metrics();
+    my %global_metrics = $metrics_handler->list_of_global_metrics();
+    print "Global Metrics:\n";
+    foreach my $key (sort keys %global_metrics){
+      print "$key - $global_metrics{$key}\n";
+    }
+    print "\nModule Metrics:\n";
+    foreach my $key (sort keys %metrics){
+      print "$key - $metrics{$key}\n";
     }
 }
 
