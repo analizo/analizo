@@ -6,6 +6,7 @@ use warnings;
 use Analizo::Metrics;
 use Analizo::Batch::Job::Directories;
 use File::Basename;
+use Analizo::Flags;
 
 # ABSTRACT: analizo's metric reporting tool
 
@@ -69,53 +70,9 @@ sub validate {
 
 sub execute {
   my ($self, $opt, $args) = @_;
-  my @binary_statistics = (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-  if($opt->all){
-    @binary_statistics = (1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
-  } else {
-    if($opt->mean) {
-      $binary_statistics[0] = 1;
-    }
-    if($opt->mode) {
-      $binary_statistics[1] = 1;
-    }
-    if($opt->standard) {
-      $binary_statistics[2] = 1;
-    }
-    if($opt->sum) {
-      $binary_statistics[3] = 1;
-    }
-    if($opt->variance) {
-      $binary_statistics[4] = 1;
-    }
-    if($opt->min) {
-      $binary_statistics[5] = 1;
-    }
-    if($opt->lower) {
-      $binary_statistics[6] = 1;
-    }
-    if($opt->median) {
-      $binary_statistics[7] = 1;
-    }
-    if($opt->upper) {
-      $binary_statistics[8] = 1;
-    }
-    if($opt->ninety) {
-      $binary_statistics[9] = 1;
-    }
-    if($opt->ninety_five) {
-      $binary_statistics[10] = 1;
-    }
-    if($opt->max) {
-      $binary_statistics[11] = 1;
-    }
-    if($opt->kurtosis) {
-      $binary_statistics[12] = 1;
-    }
-    if($opt->skewness) {
-      $binary_statistics[13] = 1;
-    }
-  }
+  my $flags = Analizo::Flags->new;
+  $flags->statistics_flags($opt);
+  my @binary_statistics = $flags->get_binary;
   if($opt->list){
     my $metrics_handler = new Analizo::Metrics(model => new Analizo::Model);
     my %metrics = $metrics_handler->list_of_metrics();
