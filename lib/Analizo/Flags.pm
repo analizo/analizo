@@ -1,5 +1,4 @@
 package Analizo::Flags;
-use Analizo::Metrics;
 
 use strict;
 use warnings;
@@ -17,9 +16,14 @@ sub get_binary {
 	@binary_statistics;
 }
 
-sub has_list_flag() {
+sub has_list_flag {
 	my ($self, $opt) = @_;
     return $opt->list;
+}
+
+sub has_language_flag {
+	my ($self, $opt) = @_;
+    return $opt->language;
 }
 
 sub statistics_flags {
@@ -73,6 +77,7 @@ sub statistics_flags {
 }
 
 sub print_metrics_list {
+	require Analizo::Metrics;
     my $metrics_handler = new Analizo::Metrics(model => new Analizo::Model);
     my %metrics = $metrics_handler->list_of_metrics();
     my %global_metrics = $metrics_handler->list_of_global_metrics();
@@ -84,6 +89,19 @@ sub print_metrics_list {
     foreach my $key (sort keys %metrics){
       print "$key - $metrics{$key}\n";
     }
+}
+
+sub print_metrics_according_to_language {
+	my ($self, $opt, $job) = @_;
+	require Analizo::LanguageFilter;
+    if ($opt->language eq 'list') {
+      my @language_list = Analizo::LanguageFilter->list;
+      print "Languages:\n";
+      $" = "\n";
+      print "@language_list\n";
+    }
+    my $language_filter = Analizo::LanguageFilter->new($opt->language);
+    $job->filters($language_filter);
 }
 
 1;

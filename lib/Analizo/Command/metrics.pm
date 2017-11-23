@@ -73,24 +73,14 @@ sub execute {
   my $flags = Analizo::Flags->new;
   $flags->statistics_flags($opt);
   my @binary_statistics = $flags->get_binary;
-
   if ($flags->has_list_flag($opt)) {
     $flags->print_metrics_list;
   }
-  
   my $tree = $args->[0] || '.';
   my $job = new Analizo::Batch::Job::Directories($tree);
   $job->extractor($opt->extractor);
-  if ($opt->language) {
-    require Analizo::LanguageFilter;
-    if ($opt->language eq 'list') {
-      my @language_list = Analizo::LanguageFilter->list;
-      print "Languages:\n";
-      $" = "\n";
-      print "@language_list\n";
-    }
-    my $language_filter = Analizo::LanguageFilter->new($opt->language);
-    $job->filters($language_filter);
+  if ($flags->has_language_flag($opt)) {
+    $flags->print_metrics_according_to_language($opt, $job);
   }
   if ($opt->exclude) {
     my @excluded_directories = split(':', $opt->exclude);
