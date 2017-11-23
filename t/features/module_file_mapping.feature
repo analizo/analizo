@@ -24,7 +24,7 @@ Feature: mapping modules to filenames
 
   Scenario: C
     Given I am in t/samples/hello_world/c
-    When I run "analizo metrics ."
+    When I run "analizo metrics -a ."
     Then analizo must report that module hello_world has _filename = [hello_world.c,hello_world.h]
     And analizo must report that file hello_world.c declares module hello_world
     And analizo must report that file hello_world.h declares module hello_world

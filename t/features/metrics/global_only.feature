@@ -7,11 +7,11 @@ Feature: output only global metrics
     Given I am in t/samples/sample_basic/
 
   Scenario: simple case
-    When I run "analizo metrics --global-only ."
+    When I run "analizo metrics --all --global-only ."
     Then the output must match "cbo_mean:"
     And the output must not match "_module:"
 
   Scenario: short version
-    When I run "analizo metrics -g ."
+    When I run "analizo metrics -g --all ."
     Then the output must match "cbo_mean:"
     And the output must not match "_module:"

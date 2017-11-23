@@ -5,7 +5,7 @@ Feature: output statistics values of metrics
 
   Scenario: "Hello, world" project
     Given I am in t/samples/hello_world/
-    When I run "analizo metrics ."
+    When I run "analizo metrics -a ."
     Then the output must match "<metric>_mean:"
     Then the output must match "<metric>_mode:"
     Then the output must match "<metric>_standard_deviation:"

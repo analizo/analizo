@@ -25,6 +25,10 @@ When qr/^I run "([^\"]*)"$/, func($c) {
   $stderr = read_file('tmp.err');
 };
 
+Given qr/the .analizo doesn't exist/, func($c) {
+  $exit_status = system "rm -rf .analizo";
+};
+
 Then qr/^the output must match "([^\"]*)"$/, func($c) {
   like($stdout, qr/$1|\Q$1\E/);
 };
@@ -167,4 +171,10 @@ When qr/^I explode (.+)$/, func($c) {
 Then qr/^the output lines must match "([^\"]*)"$/, func($c) {
   my $pattern = $1;
   like($stdout, qr/$pattern/);
+};
+
+Then qr/^the number of lines on file must be "([^\"]*)"$/, func($c) {
+  my $pattern = $1;
+  my $number_of_lines = $stdout =~ tr/\n//;
+  is($number_of_lines + 0 , $pattern + 0);
 };
