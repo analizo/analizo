@@ -6,7 +6,7 @@ use warnings;
 use Analizo::Metrics;
 use Analizo::Batch::Job::Directories;
 use File::Basename;
-use Analizo::Flags;
+use Analizo::Flag::Flags;
 
 # ABSTRACT: analizo's metric reporting tool
 
@@ -70,7 +70,7 @@ sub validate {
 
 sub execute {
   my ($self, $opt, $args) = @_;
-  my $flags = new Analizo::Flags;
+  my $flags = new Analizo::Flag::Flags;
   $flags->statistics_flags($opt);
   my @binary_statistics = $flags->get_binary;
   if ($flags->has_list_flag($opt)) {

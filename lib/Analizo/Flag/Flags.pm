@@ -1,4 +1,4 @@
-package Analizo::Flags;
+package Analizo::Flag::Flags;
 
 use strict;
 use warnings;
@@ -39,6 +39,16 @@ sub has_output_flag {
 sub has_global_only_flag {
 	my ($self, $opt) = @_;
     return $opt->globalonly;
+}
+
+sub has_parallel_flag {
+	my ($self, $opt) = @_;
+    return $opt->parallel;
+}
+
+sub has_progressbar_flag {
+	my ($self, $opt) = @_;
+    return $opt->progressbar;
 }
 
 sub statistics_flags {
