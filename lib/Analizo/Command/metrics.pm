@@ -97,27 +97,14 @@ sub execute {
     $flags->print_only_global_metrics($metrics);
   }
   else {
-		my $all_zeroes = is_all_zeroes(\@binary_statistics);
-		if($all_zeroes == 0){
-    	print $metrics->report(@binary_statistics);
-		}else{
-			print $metrics->report_according_to_file;
+    if($flags->should_report_according_to_file()) {
+      $flags->print_metrics_according_to_file($metrics);
+    }
+		else{
+      $flags->print_metrics_according_to_statistics($metrics);
 		}
   }
   $flags->close_output_file();
-}
-
-sub is_all_zeroes{
-	my @metrics_array = @{$_[0]};
-
-	my $all_zeros = 1;
-	foreach my $metrics_position (@metrics_array) {
-			if($metrics_position != 0) {
-				$all_zeros = 0;
-				last; # One not equal to zero is enough to know if all values are zeros
-			}
-	}
-	return $all_zeros;
 }
 
 =head1 DESCRIPTION

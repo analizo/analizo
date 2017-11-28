@@ -141,5 +141,32 @@ sub print_only_global_metrics {
 	print $metrics->report_global_metrics_only(@binary_statistics);
 }
 
+sub should_report_according_to_file() {
+	my $all_zeros = is_all_zeroes(\@binary_statistics);
+	return $all_zeros;
+}
+
+sub is_all_zeroes{
+	my @metrics_array = @{$_[0]};
+
+	my $all_zeros = 1;
+	foreach my $metrics_position (@metrics_array) {
+			if($metrics_position != 0) {
+				$all_zeros = 0;
+				last; # One not equal to zero is enough to know if all values are zeros
+			}
+	}
+	return $all_zeros;
+}
+
+sub print_metrics_according_to_file() {
+	my ($self, $metrics) = @_;
+	print $metrics->report_according_to_file;
+}
+
+sub print_metrics_according_to_statistics {
+	my ($self, $metrics) = @_;
+	print $metrics->report(@binary_statistics);
+}
 
 1;
