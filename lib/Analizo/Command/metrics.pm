@@ -93,8 +93,8 @@ sub execute {
   if ($flags->has_output_flag($opt)) {
     $flags->open_output_file($opt);;
   }
-  if ($opt->globalonly) {
-    print $metrics->report_global_metrics_only(@binary_statistics);
+  if ($flags->has_global_only_flag($opt)) {
+    $flags->print_only_global_metrics($metrics);
   }
   else {
 		my $all_zeroes = is_all_zeroes(\@binary_statistics);

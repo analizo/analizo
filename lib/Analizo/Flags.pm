@@ -36,6 +36,11 @@ sub has_output_flag {
     return $opt->output;
 }
 
+sub has_global_only_flag {
+	my ($self, $opt) = @_;
+    return $opt->globalonly;
+}
+
 sub statistics_flags {
 	my ($self, $opt) = @_;
 	if($opt->all){
@@ -129,6 +134,11 @@ sub open_output_file {
 sub close_output_file {
 	my ($self) = @_;
 	close STDOUT;
+}
+
+sub print_only_global_metrics {	
+	my ($self, $metrics) = @_;
+	print $metrics->report_global_metrics_only(@binary_statistics);
 }
 
 
