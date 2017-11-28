@@ -31,6 +31,11 @@ sub has_exclude_flag {
     return $opt->exclude;
 }
 
+sub has_output_flag {
+	my ($self, $opt) = @_;
+    return $opt->output;
+}
+
 sub statistics_flags {
 	my ($self, $opt) = @_;
 	if($opt->all){
@@ -114,5 +119,17 @@ sub exlude_dir_from_execution {
 	my @excluded_directories = split(':', $opt->exclude);
     $job->exclude(@excluded_directories);
 }
+
+sub open_output_file {
+	my ($self, $opt) = @_;
+	open(STDOUT, '>', $opt->output);
+}
+
+
+sub close_output_file {
+	my ($self) = @_;
+	close STDOUT;
+}
+
 
 1;

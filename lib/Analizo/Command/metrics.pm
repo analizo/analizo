@@ -90,8 +90,8 @@ sub execute {
   $job->libs($opt->libs);
   $job->execute();
   my $metrics = $job->metrics;
-  if ($opt->output) {
-    open STDOUT, '>', $opt->output or die "$!\n";
+  if ($flags->has_output_flag($opt)) {
+    $flags->open_output_file($opt);;
   }
   if ($opt->globalonly) {
     print $metrics->report_global_metrics_only(@binary_statistics);
@@ -104,7 +104,7 @@ sub execute {
 			print $metrics->report_according_to_file;
 		}
   }
-  close STDOUT;
+  $flags->close_output_file();
 }
 
 sub is_all_zeroes{
