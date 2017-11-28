@@ -70,7 +70,7 @@ sub validate {
 
 sub execute {
   my ($self, $opt, $args) = @_;
-  my $flags = Analizo::Flags->new;
+  my $flags = new Analizo::Flags;
   $flags->statistics_flags($opt);
   my @binary_statistics = $flags->get_binary;
   if ($flags->has_list_flag($opt)) {
@@ -82,9 +82,8 @@ sub execute {
   if ($flags->has_language_flag($opt)) {
     $flags->print_metrics_according_to_language($opt, $job);
   }
-  if ($opt->exclude) {
-    my @excluded_directories = split(':', $opt->exclude);
-    $job->exclude(@excluded_directories);
+  if ($flags->has_exclude_flag($opt)) {
+    $flags->exlude_dir_from_execution($opt, $job);
   }
   $job->includedirs($opt->includedirs);
   $job->libdirs($opt->libdirs);

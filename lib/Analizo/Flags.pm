@@ -26,6 +26,11 @@ sub has_language_flag {
     return $opt->language;
 }
 
+sub has_exclude_flag {
+	my ($self, $opt) = @_;
+    return $opt->exclude;
+}
+
 sub statistics_flags {
 	my ($self, $opt) = @_;
 	if($opt->all){
@@ -102,6 +107,12 @@ sub print_metrics_according_to_language {
     }
     my $language_filter = Analizo::LanguageFilter->new($opt->language);
     $job->filters($language_filter);
+}
+
+sub exlude_dir_from_execution {
+	my ($self, $opt, $job) = @_; 
+	my @excluded_directories = split(':', $opt->exclude);
+    $job->exclude(@excluded_directories);
 }
 
 1;
