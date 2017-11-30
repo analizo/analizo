@@ -95,21 +95,12 @@ sub execute {
   }
   my $runner = undef;
   if ($flags->has_parallel_flag($opt)) {
-    require Analizo::Batch::Runner::Parallel;
-    $runner = new Analizo::Batch::Runner::Parallel($opt->parallel);
+    $runner = $execute_history->runner_is_parallel($opt);
   } else {
-    require Analizo::Batch::Runner::Sequential;
-    $runner = new Analizo::Batch::Runner::Sequential;
+    $runner = $execute_history->runner_is_sequential;
   }
   if ($flags->has_progressbar_flag($opt)) {
-    require Term::ProgressBar;
-    my $progressbar = Term::ProgressBar->new({ count => 100, ETA => 'linear' });
-    $runner->progress(
-      sub {
-        my ($job, $done, $total) = @_;
-        $progressbar->update(100 * $done / $total);
-      }
-    );
+    $execute_history->create_flag_progress_bar($runner);
   }
   $runner->run($batch, $output, @binary_statistics);
 }
