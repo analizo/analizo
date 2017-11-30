@@ -81,21 +81,17 @@ sub execute {
   $flags->statistics_flags($opt);
   my @binary_statistics = $flags->get_binary;
   if ($flags->has_list_flag($opt)) {
-    $execute_history->print_metrics_list($batch)
+    $execute_history->print_metrics_list($batch);
   }
   if ($flags->has_language_flag($opt)) {
-    $execute_history->set_language_filter($opt, $batch)
-    # require Analizo::LanguageFilter;
-    # my $language_filter = Analizo::LanguageFilter->new($opt->language);
-    # $batch->filters($language_filter);
+    $execute_history->set_language_filter($opt, $batch);
   }
   if ($flags->has_exclude_flag($opt)) {
-    my @excluded_directories = split(':', $opt->exclude);
-    $batch->exclude(@excluded_directories);
+    $execute_history->exclude_directories_from_report($opt, $batch);
   }
   my $output = $self->load_output_driver($opt->format);
   if ($flags->has_output_flag($opt)) {
-    $output->file($opt->output);
+    $execute_history->set_output_file($opt, $output);
   }
   my $runner = undef;
   if ($flags->has_parallel_flag($opt)) {

@@ -24,4 +24,15 @@ sub set_language_filter {
     $batch->filters($language_filter);
 }
 
+sub exclude_directories_from_report {
+	my($self, $opt, $batch) = @_;
+	my @excluded_directories = split(':', $opt->exclude);
+    $batch->exclude(@excluded_directories);
+}
+
+sub set_output_file {
+	my ($self, $opt, $output) = @_;
+	$output->file($opt->output);
+}
+
 1;
