@@ -159,6 +159,12 @@ sub execute {
   $self->cleanup();
 }
 
+sub get_model() {
+  my ($self) = @_;
+  my $model = $self->model;
+  return $model;
+}
+
 sub project_name($) {
   my ($self) = @_;
   return basename($self->directory);

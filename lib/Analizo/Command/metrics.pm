@@ -8,6 +8,7 @@ use Analizo::Batch::Job::Directories;
 use File::Basename;
 use Analizo::Flag::Flags;
 use Analizo::Flag::ExecuteMetrics;
+use Data::Dumper;
 
 # ABSTRACT: analizo's metric reporting tool
 
@@ -99,8 +100,6 @@ sub execute {
   }
   if ($flags->has_global_only_flag($opt)) {
     $execute_metrics->print_only_global_metrics($metrics, @binary_statistics);
-  }
-  if($opt->output_model){
   }
   else {
     if($execute_metrics->should_report_according_to_file(@binary_statistics)) {
