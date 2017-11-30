@@ -6,6 +6,8 @@ use warnings;
 use Analizo::Metrics;
 use Analizo::Batch::Job::Directories;
 use File::Basename;
+use Analizo::Flag::Flags;
+use Analizo::Flag::ExecuteMetrics;
 
 # ABSTRACT: analizo's metric reporting tool
 
@@ -69,117 +71,43 @@ sub validate {
 
 sub execute {
   my ($self, $opt, $args) = @_;
-  my @binary_statistics = (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-  if($opt->all){
-    @binary_statistics = (1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
-  } else {
-    if($opt->mean) {
-      $binary_statistics[0] = 1;
-    }
-    if($opt->mode) {
-      $binary_statistics[1] = 1;
-    }
-    if($opt->standard) {
-      $binary_statistics[2] = 1;
-    }
-    if($opt->sum) {
-      $binary_statistics[3] = 1;
-    }
-    if($opt->variance) {
-      $binary_statistics[4] = 1;
-    }
-    if($opt->min) {
-      $binary_statistics[5] = 1;
-    }
-    if($opt->lower) {
-      $binary_statistics[6] = 1;
-    }
-    if($opt->median) {
-      $binary_statistics[7] = 1;
-    }
-    if($opt->upper) {
-      $binary_statistics[8] = 1;
-    }
-    if($opt->ninety) {
-      $binary_statistics[9] = 1;
-    }
-    if($opt->ninety_five) {
-      $binary_statistics[10] = 1;
-    }
-    if($opt->max) {
-      $binary_statistics[11] = 1;
-    }
-    if($opt->kurtosis) {
-      $binary_statistics[12] = 1;
-    }
-    if($opt->skewness) {
-      $binary_statistics[13] = 1;
-    }
-  }
-  if($opt->list){
-    my $metrics_handler = new Analizo::Metrics(model => new Analizo::Model);
-    my %metrics = $metrics_handler->list_of_metrics();
-    my %global_metrics = $metrics_handler->list_of_global_metrics();
-    print "Global Metrics:\n";
-    foreach my $key (sort keys %global_metrics){
-      print "$key - $global_metrics{$key}\n";
-    }
-    print "\nModule Metrics:\n";
-    foreach my $key (sort keys %metrics){
-      print "$key - $metrics{$key}\n";
-    }
+  my $flags = new Analizo::Flag::Flags;
+  my $execute_metrics = new Analizo::Flag::ExecuteMetrics;
+  $flags->statistics_flags($opt);
+  my @binary_statistics = $flags->get_binary;
+  
+  if ($flags->has_list_flag($opt)) {
+    $execute_metrics->print_metrics_list;
   }
   my $tree = $args->[0] || '.';
   my $job = new Analizo::Batch::Job::Directories($tree);
   $job->extractor($opt->extractor);
-  if ($opt->language) {
-    require Analizo::LanguageFilter;
-    if ($opt->language eq 'list') {
-      my @language_list = Analizo::LanguageFilter->list;
-      print "Languages:\n";
-      $" = "\n";
-      print "@language_list\n";
-    }
-    my $language_filter = Analizo::LanguageFilter->new($opt->language);
-    $job->filters($language_filter);
+  if ($flags->has_language_flag($opt)) {
+    $execute_metrics->print_metrics_according_to_language($opt, $job);
   }
-  if ($opt->exclude) {
-    my @excluded_directories = split(':', $opt->exclude);
-    $job->exclude(@excluded_directories);
+  if ($flags->has_exclude_flag($opt)) {
+    $execute_metrics->exlude_dir_from_execution($opt, $job);
   }
   $job->includedirs($opt->includedirs);
   $job->libdirs($opt->libdirs);
   $job->libs($opt->libs);
   $job->execute();
   my $metrics = $job->metrics;
-  if ($opt->output) {
-    open STDOUT, '>', $opt->output or die "$!\n";
+  if ($flags->has_output_flag($opt)) {
+    $execute_metrics->open_output_file($opt);;
   }
-  if ($opt->globalonly) {
-    print $metrics->report_global_metrics_only(@binary_statistics);
+  if ($flags->has_global_only_flag($opt)) {
+    $execute_metrics->print_only_global_metrics($metrics, @binary_statistics);
   }
   else {
-		my $all_zeroes = is_all_zeroes(\@binary_statistics);
-		if($all_zeroes == 0){
-    	print $metrics->report(@binary_statistics);
-		}else{
-			print $metrics->report_according_to_file;
+    if($execute_metrics->should_report_according_to_file(@binary_statistics)) {
+      $execute_metrics->print_metrics_according_to_file($metrics);
+    }
+		else{
+      $execute_metrics->print_metrics_according_to_statistics($metrics, @binary_statistics);
 		}
   }
-  close STDOUT;
-}
-
-sub is_all_zeroes{
-	my @metrics_array = @{$_[0]};
-
-	my $all_zeros = 1;
-	foreach my $metrics_position (@metrics_array) {
-			if($metrics_position != 0) {
-				$all_zeros = 0;
-				last; # One not equal to zero is enough to know if all values are zeros
-			}
-	}
-	return $all_zeros;
+  $execute_metrics->close_output_file();
 }
 
 =head1 DESCRIPTION
