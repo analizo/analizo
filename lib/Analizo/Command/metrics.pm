@@ -6,6 +6,7 @@ use warnings;
 use Analizo::Metrics;
 use Analizo::Batch::Job::Directories;
 use File::Basename;
+use Data::Dumper;
 
 # ABSTRACT: analizo's metric reporting tool
 
@@ -153,13 +154,18 @@ sub execute {
   $job->libs($opt->libs);
   $job->execute();
   my $metrics = $job->metrics;
+  if($opt->output_model){
+    my $model = $job->get_model();
+    open STDOUT, '>', "flag_arquivo.txt";
+    print Dumper($model);
+    close STDOUT;
+
+  }
   if ($opt->output) {
     open STDOUT, '>', $opt->output or die "$!\n";
   }
   if ($opt->globalonly) {
     print $metrics->report_global_metrics_only(@binary_statistics);
-  }
-  if($opt->output_model){
   }
   else {
     my $all_zeroes = is_all_zeroes(\@binary_statistics);
