@@ -51,7 +51,7 @@ sub opt_spec {
     [ 'max',  'display only quantile max statistics'],
     [ 'kurtosis',  'display only kurtosis statistics'],
     [ 'skewness',  'display only skewness statistics'],
-    [ 'output_model|om', 'output YML file with information of analyzed path'],
+    [ 'output_model|om=s', 'output YML file with information of analyzed path'],
   );
 }
 
