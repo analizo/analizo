@@ -5,6 +5,7 @@ use strict;
 use warnings;
 use Analizo::Batch::Git;
 use Analizo::Flag::Flags;
+use Analizo::Flag::ExecuteHistory;
 
 #ABSTRACT: processes a Git repository collection metrics
 
@@ -76,18 +77,17 @@ sub execute {
   my ($self, $opt, $args) = @_;
   my $batch = new Analizo::Batch::Git(@$args);
   my $flags = new Analizo::Flag::Flags;
+  my $execute_history = new Analizo::Flag::ExecuteHistory;
   $flags->statistics_flags($opt);
   my @binary_statistics = $flags->get_binary;
   if ($flags->has_list_flag($opt)) {
-    while (my $job = $batch->next()) {
-      print $job->id, "\n";
-    }
-    exit 0;
+    $execute_history->print_metrics_list($batch)
   }
   if ($flags->has_language_flag($opt)) {
-    require Analizo::LanguageFilter;
-    my $language_filter = Analizo::LanguageFilter->new($opt->language);
-    $batch->filters($language_filter);
+    $execute_history->set_language_filter($opt, $batch)
+    # require Analizo::LanguageFilter;
+    # my $language_filter = Analizo::LanguageFilter->new($opt->language);
+    # $batch->filters($language_filter);
   }
   if ($flags->has_exclude_flag($opt)) {
     my @excluded_directories = split(':', $opt->exclude);
