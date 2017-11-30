@@ -48,6 +48,7 @@ sub opt_spec {
     [ 'max',  'display only quantile max statistics'],
     [ 'kurtosis',  'display only kurtosis statistics'],
     [ 'skewness',  'display only skewness statistics'],
+    [ 'output_model|om', 'output YML file with information of analyzed path'],
   );
 }
 
@@ -158,28 +159,30 @@ sub execute {
   if ($opt->globalonly) {
     print $metrics->report_global_metrics_only(@binary_statistics);
   }
+  if($opt->output_model){
+  }
   else {
-		my $all_zeroes = is_all_zeroes(\@binary_statistics);
-		if($all_zeroes == 0){
-    	print $metrics->report(@binary_statistics);
-		}else{
-			print $metrics->report_according_to_file;
-		}
+    my $all_zeroes = is_all_zeroes(\@binary_statistics);
+    if($all_zeroes == 0){
+      print $metrics->report(@binary_statistics);
+    }else{
+      print $metrics->report_according_to_file;
+    }
   }
   close STDOUT;
 }
 
 sub is_all_zeroes{
-	my @metrics_array = @{$_[0]};
+  my @metrics_array = @{$_[0]};
 
-	my $all_zeros = 1;
-	foreach my $metrics_position (@metrics_array) {
-			if($metrics_position != 0) {
-				$all_zeros = 0;
-				last; # One not equal to zero is enough to know if all values are zeros
-			}
-	}
-	return $all_zeros;
+  my $all_zeros = 1;
+  foreach my $metrics_position (@metrics_array) {
+      if($metrics_position != 0) {
+        $all_zeros = 0;
+        last; # One not equal to zero is enough to know if all values are zeros
+      }
+  }
+  return $all_zeros;
 }
 
 =head1 DESCRIPTION
@@ -224,12 +227,19 @@ Don't output the details about modules: only output global (project-wide) metric
 Process only filenames matching known extensions for the <I<lang>> programming
 language. To see which languages are supported, pass B<--language list>.
 
-=item --exclude <dirs>, -x <dirs>
+=item --exclude <dirs>, -x <dirs> 
 
 Exclude <I<dirs>> (a colon-separated list of directories) from the analysis.
 This is useful, for example, when you want to focus on production code and
 exclude test code from the analysis. You could do that by passing something
 like pass B<--exclude test>.
+
+=item --output_model <dir>, --om <dir>
+
+Create an output file with the .yml extension. That file contains structured
+information about the code on the analyzed directory. The informations analyzed are:
+numbers of abstract_classes, members, inheritance, module_by_file, protection, modules, files, 
+calls, conditional_paths, lines, parameters, module_names and total_eloc.
 
 =back
 
