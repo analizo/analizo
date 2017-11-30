@@ -7,6 +7,7 @@ use Analizo::Metrics;
 use Analizo::Batch::Job::Directories;
 use File::Basename;
 use Analizo::Flag::Flags;
+use Analizo::Flag::ExecuteMetrics;
 
 # ABSTRACT: analizo's metric reporting tool
 
@@ -71,19 +72,21 @@ sub validate {
 sub execute {
   my ($self, $opt, $args) = @_;
   my $flags = new Analizo::Flag::Flags;
+  my $execute_metrics = new Analizo::Flag::ExecuteMetrics;
   $flags->statistics_flags($opt);
   my @binary_statistics = $flags->get_binary;
+  
   if ($flags->has_list_flag($opt)) {
-    $flags->print_metrics_list;
+    $execute_metrics->print_metrics_list;
   }
   my $tree = $args->[0] || '.';
   my $job = new Analizo::Batch::Job::Directories($tree);
   $job->extractor($opt->extractor);
   if ($flags->has_language_flag($opt)) {
-    $flags->print_metrics_according_to_language($opt, $job);
+    $execute_metrics->print_metrics_according_to_language($opt, $job);
   }
   if ($flags->has_exclude_flag($opt)) {
-    $flags->exlude_dir_from_execution($opt, $job);
+    $execute_metrics->exlude_dir_from_execution($opt, $job);
   }
   $job->includedirs($opt->includedirs);
   $job->libdirs($opt->libdirs);
@@ -91,20 +94,20 @@ sub execute {
   $job->execute();
   my $metrics = $job->metrics;
   if ($flags->has_output_flag($opt)) {
-    $flags->open_output_file($opt);;
+    $execute_metrics->open_output_file($opt);;
   }
   if ($flags->has_global_only_flag($opt)) {
-    $flags->print_only_global_metrics($metrics);
+    $execute_metrics->print_only_global_metrics($metrics, @binary_statistics);
   }
   else {
-    if($flags->should_report_according_to_file()) {
-      $flags->print_metrics_according_to_file($metrics);
+    if($execute_metrics->should_report_according_to_file(@binary_statistics)) {
+      $execute_metrics->print_metrics_according_to_file($metrics);
     }
 		else{
-      $flags->print_metrics_according_to_statistics($metrics);
+      $execute_metrics->print_metrics_according_to_statistics($metrics, @binary_statistics);
 		}
   }
-  $flags->close_output_file();
+  $execute_metrics->close_output_file();
 }
 
 =head1 DESCRIPTION
