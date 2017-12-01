@@ -109,13 +109,34 @@ sub execute {
       $execute_metrics->print_metrics_according_to_statistics($metrics, @binary_statistics);
 		}
     if($opt->output_model){
-      my $model = $job->get_model();
+      my $model_hash = $job->get_model();
       open STDOUT, '>', $opt->output_model;
-      print Dumper($model);
+      my $model = Dumper($model_hash);
+ 
+      my @substrings_to_remove = ();
+      my $substring_to_replace = "" ;
+
+      push @substrings_to_remove, "\$VAR1 = bless( {" . "\n";
+      push @substrings_to_remove, "}, 'Analizo::Model' );";
+
+      $model = replace_sub_string($model, @substrings_to_remove, $substring_to_replace);
+      
+      print ($model);
       close STDOUT;
     }
   }
   $execute_metrics->close_output_file();
+}
+
+sub replace_sub_string(){
+  my ($model, @substrings_to_remove, $substring_to_replace) = @_;
+  $substring_to_replace ||= ""; # set default value to string
+  
+  for my $substring_to_remove (@substrings_to_remove) {
+    $model =~ s/\Q$substring_to_remove/$substring_to_replace/ig;
+  }
+
+  return $model;
 }
 
 =head1 DESCRIPTION
