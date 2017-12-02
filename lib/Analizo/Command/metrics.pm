@@ -110,17 +110,29 @@ sub execute {
 		}
     if($opt->output_model){
       my $model_hash = $job->get_model();
+
       open STDOUT, '>', $opt->output_model;
       my $model = Dumper($model_hash);
  
-      my @substrings_to_remove = ();
+      my @substrings_to_remove = (); # none substring to remove
       my $substring_to_replace = "" ;
 
-      push @substrings_to_remove, "\$VAR1 = bless( {" . "\n";
-      push @substrings_to_remove, "}, 'Analizo::Model' );";
+      push @substrings_to_remove, "\$VAR1 = bless( ";
+      push @substrings_to_remove, ", 'Analizo::Model' );";
 
       $model = replace_sub_string($model, @substrings_to_remove, $substring_to_replace);
-      
+
+      my $unindent_one_level = "               "; #15 spaces
+      my $value_to_replace = "";
+      my $changed_line = 0;
+
+      my $temporary_model = "";
+      my @lines = split /\n/, $model; 
+      foreach my $line( @lines ) { 
+        $line =~ s/\Q$unindent_one_level/$value_to_replace/i;
+        $temporary_model = $temporary_model . $line . "\n";
+      }
+      $model = $temporary_model;
       print ($model);
       close STDOUT;
     }
