@@ -51,6 +51,11 @@ sub has_progressbar_flag {
     return $opt->progressbar;
 }
 
+sub has_model_flag {
+    my ($self, $opt) = @_;
+    return $opt->output_model; 
+}
+
 sub statistics_flags {
     my ($self, $opt) = @_;
     if($opt->all){

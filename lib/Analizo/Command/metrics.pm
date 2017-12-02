@@ -8,7 +8,6 @@ use Analizo::Batch::Job::Directories;
 use File::Basename;
 use Analizo::Flag::Flags;
 use Analizo::Flag::ExecuteMetrics;
-use Data::Dumper;
 
 # ABSTRACT: analizo's metric reporting tool
 
@@ -96,7 +95,7 @@ sub execute {
   $job->execute();
   my $metrics = $job->metrics;
   if ($flags->has_output_flag($opt)) {
-    $execute_metrics->open_output_file($opt);;
+    $execute_metrics->open_output_file($opt);
   }
   if ($flags->has_global_only_flag($opt)) {
     $execute_metrics->print_only_global_metrics($metrics, @binary_statistics);
@@ -108,47 +107,12 @@ sub execute {
 		else{
       $execute_metrics->print_metrics_according_to_statistics($metrics, @binary_statistics);
 		}
-    if($opt->output_model){
-      my $model_hash = $job->get_model();
-
-      open STDOUT, '>', $opt->output_model;
-      my $model = Dumper($model_hash);
- 
-      my @substrings_to_remove = (); # none substring to remove
-      my $substring_to_replace = "" ;
-
-      push @substrings_to_remove, "\$VAR1 = bless( ";
-      push @substrings_to_remove, ", 'Analizo::Model' );";
-
-      $model = replace_sub_string($model, @substrings_to_remove, $substring_to_replace);
-
-      my $unindent_one_level = "               "; #15 spaces
-      my $value_to_replace = "";
-      my $changed_line = 0;
-
-      my $temporary_model = "";
-      my @lines = split /\n/, $model; 
-      foreach my $line( @lines ) { 
-        $line =~ s/\Q$unindent_one_level/$value_to_replace/i;
-        $temporary_model = $temporary_model . $line . "\n";
-      }
-      $model = $temporary_model;
-      print ($model);
-      close STDOUT;
+    if($flags->has_model_flag($opt)) {
+      $execute_metrics->print_model_output($opt, $job);
     }
+
   }
   $execute_metrics->close_output_file();
-}
-
-sub replace_sub_string(){
-  my ($model, @substrings_to_remove, $substring_to_replace) = @_;
-  $substring_to_replace ||= ""; # set default value to string
-  
-  for my $substring_to_remove (@substrings_to_remove) {
-    $model =~ s/\Q$substring_to_remove/$substring_to_replace/ig;
-  }
-
-  return $model;
 }
 
 =head1 DESCRIPTION

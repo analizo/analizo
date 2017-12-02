@@ -2,6 +2,7 @@ package Analizo::Flag::ExecuteMetrics;
 
 use strict;
 use warnings;
+use Data::Dumper;
 
 sub new {
    my ($class_name) = @_;
@@ -45,7 +46,7 @@ sub exlude_dir_from_execution {
 }
 
 sub open_output_file {
-    my ($self, $opt) = @_;
+    my ($self, $opt ) = @_;
     open(STDOUT, '>', $opt->output);
 }
 
@@ -87,6 +88,59 @@ sub print_metrics_according_to_file() {
 sub print_metrics_according_to_statistics {
     my ($self, $metrics, @binary_statistics) = @_;
     print $metrics->report(@binary_statistics);
+}
+
+sub print_model_output {
+
+    my ($self, $opt, $job) = @_; 
+
+    if($opt->output_model){
+        my $hash_of_model = $job->get_model();
+        my $model = format_model($hash_of_model);
+        
+        open(STDOUT, '>', $opt->output_model);
+        print ($model);
+        $self->close_output_file();
+    }
+}
+
+sub format_model() {
+    my ($hash_of_model) = @_; 
+
+    my $model = Dumper($hash_of_model);
+    $model = replace_sub_string($model);
+    $model = remove_extra_spaces($model);
+
+    return $model;
+}
+
+sub remove_extra_spaces(){
+    my ($model) = @_; 
+
+    my $unindent_fifteen_spaces = "               "; #15 spaces
+    my $value_to_replace = "";
+    my $changed_line = 0;
+
+    my $temporary_model = "";
+    my @lines = split /\n/, $model; 
+    foreach my $line( @lines ) { 
+      $line =~ s/\Q$unindent_fifteen_spaces/$value_to_replace/i;
+      $temporary_model = $temporary_model . $line . "\n";
+    }
+    return $temporary_model;
+}
+
+sub replace_sub_string(){
+  my ($model) = @_;
+
+  my @SUBSTRINGS_TO_REMOVE = ( "\$VAR1 = bless( ", ", 'Analizo::Model' );" );
+  my $substring_to_replace = "";
+
+  foreach my $substring_to_remove (@SUBSTRINGS_TO_REMOVE) {
+    $model =~ s/\Q$substring_to_remove/$substring_to_replace/ig;
+  }
+  
+  return $model;
 }
 
 1;
