@@ -4,11 +4,6 @@
 *~
 *.swp
 Analizo-*
-/site/*.html
-/site/man.mk
-/site/man/
-/site/pod2htmd.tmp
-/site/publish
 *.csv
 MYMETA.json
 MYMETA.yml
