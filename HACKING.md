@@ -23,8 +23,8 @@ first. Check the "Installing dependencies on non-Debian systems" below.
 
 Just run `dzil test` in the root of the sources:
 
-```
-  $ dzil test
+```console
+dzil test
 ```
 
 See "Installing Dependencies" above for a guide to install all the software
@@ -32,12 +32,12 @@ that's needed to run Analizo tests.
 
 ## Building / releasing
 
-```
-  $ dzil build
+```console
+dzil build
 ```
 
-```
-  $ dzil release
+```console
+dzil release
 ```
 
 ## Style and Good practices
