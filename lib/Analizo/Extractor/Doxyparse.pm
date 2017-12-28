@@ -65,8 +65,8 @@ sub feed {
       }
 
       # abstract class
-      if (defined $yaml->{$full_filename}->{$module}->{informations}) {
-        if ($yaml->{$full_filename}->{$module}->{informations} eq 'abstract class') {
+      if (defined $yaml->{$full_filename}->{$module}->{information}) {
+        if ($yaml->{$full_filename}->{$module}->{information} eq 'abstract class') {
           $self->model->add_abstract_class($self->current_module);
         }
       }

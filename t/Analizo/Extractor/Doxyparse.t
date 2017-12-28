@@ -238,7 +238,7 @@ sub detect_abstract_class : Tests {
   $extractor->feed("---
     src/test.cpp:
       An_Abstract_Class:
-        informations: abstract class
+        information: abstract class
   ");
   my @result = $extractor->model->abstract_classes;
   is($result[0], 'An_Abstract_Class', 'extractor detects an abstract class');
