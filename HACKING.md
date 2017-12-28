@@ -40,6 +40,12 @@ dzil build
 dzil release
 ```
 
+`release` task will do:
+
+* Run all tests
+* Build a tar.gz package
+* Create git tag
+
 ## Style and Good practices
 
 Always write automated tests for your code:
