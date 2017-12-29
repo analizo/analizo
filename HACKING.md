@@ -44,7 +44,7 @@ dzil release
 
 * Run all tests
 * Build a tar.gz package
-* Create git tag
+* Create and push git tag
 
 ## Style and Good practices
 
