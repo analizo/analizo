@@ -36,4 +36,4 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Script development-setup.sh fixed
 - Running of a single acceptance Cucumber test fixed
 
-[1.20.0]: https://github.com/analizo/analizo/compare/1.20.0...v1.19.1
+[1.20.0]: https://github.com/analizo/analizo/compare/1.19.1...1.20.0
