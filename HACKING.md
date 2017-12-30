@@ -30,21 +30,11 @@ dzil test
 See "Installing Dependencies" above for a guide to install all the software
 that's needed to run Analizo tests.
 
-## Building / releasing
+## Building
 
 ```console
 dzil build
 ```
-
-```console
-dzil release
-```
-
-`release` task will do:
-
-* Run all tests
-* Build a tar.gz package
-* Create and push git tag
 
 ## Style and Good practices
 
