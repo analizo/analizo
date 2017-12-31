@@ -3,22 +3,20 @@ Section: devel
 Priority: extra
 Maintainer: {{ $dist->authors->[0] }}
 Build-Depends: debhelper (>= 10)
-Build-Depends-Indep:
-{{
+Build-Depends-Indep: {{
 use Config::INI::Reader;
 use Debian::AptContents;
 our $hash = Config::INI::Reader->read_file('dist.ini');
 our $c = Debian::AptContents->new({homedir => "/tmp/dh-make-perl"});
 my @Prereqs = (keys(%{ $hash->{'Prereqs / BuildRequires'} }), keys(%{ $hash->{'Prereqs / TestRequires'} }), keys(%{ $hash->{'RequiresExternal'} }));
-join(",\n", map { ' ' . $c->find_perl_module_package($_) } @Prereqs)
+join(",\n ", grep { $_ } map { $c->find_perl_module_package($_) } @Prereqs)
 }}
-Standards-Version: 3.9.8
+Standards-Version: 4.1.2
 Homepage: http://analizo.org
 
 Package: {{ lc $dist->name}}
 Architecture: all
-Depends:
- ${misc:Depends},
+Depends: ${misc:Depends},
  ${perl:Depends},
 {{
 my @Prereqs = keys(%{ $hash->{'Prereqs / RuntimeRequires'} });
