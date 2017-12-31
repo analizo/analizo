@@ -7,7 +7,7 @@ our $VERSION = '1.20.0';
 
 =head1 NAME
 
-analizo - a source code analysis suite
+analizo - multi-language source code analysis toolkit
 
 =head1 USAGE
 
@@ -143,7 +143,9 @@ itself" mean either Artistic License or GPL version 1 or later.
 
 =item Copyright (c) 1994-2006 Andreas Gustafsson
 
-=item Copyright (c) 2008-2009 Antonio Terceiro
+=item Copyright (c) 2008-2010 Antonio Terceiro
+
+=item Copyright (c) 2014-2017 Joenio Costa
 
 =back
 
