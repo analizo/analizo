@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
-- Source code metrics description
+- Source code metrics documentation
 - Dockerfile added
 - Support for C# (CSharp)
 - More automated tests
