@@ -1,6 +1,6 @@
 Source: {{ lc $dist->name}}
 Section: devel
-Priority: extra
+Priority: optional
 Maintainer: {{ $dist->authors->[0] }}
 Build-Depends: debhelper (>= 10)
 Build-Depends-Indep: {{
