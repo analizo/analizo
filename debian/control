@@ -16,11 +16,15 @@ Homepage: http://analizo.org
 
 Package: {{ lc $dist->name}}
 Architecture: all
-Depends: ${misc:Depends},
- ${perl:Depends},
+Depends: ${misc:Depends}, ${perl:Depends},
 {{
 my @Prereqs = keys(%{ $hash->{'Prereqs / RuntimeRequires'} });
 join(",\n", map { ' ' . $_ } grep { ! /^perl$/ } map { $c->find_perl_module_package($_) } @Prereqs)
+}},
+{{
+my $plugin = $dist->plugin_named('RequiresExternal');
+my @Prereqs = @{ $plugin->_requires };
+join(",\n", map { ' ' . $_ } @Prereqs)
 }}
 Recommends: graphviz
 Description: {{ $dist->abstract }}
