@@ -17,3 +17,11 @@ dzil release
 * run all tests
 * build a tar.gz package
 * create and push git tag
+
+### Debian package
+
+Please install Dist::Zilla::Deb to build Debian package.
+
+```console
+dzil debuild
+```
