@@ -13,7 +13,7 @@ use File::Basename;
 
 =head1 NAME
 
-analizo evolution-matrix - generates an evolution matrix from analizo .yml metric files
+analizo-evolution-matrix - generates an evolution matrix from analizo .yml metric files
 
 =head1 USAGE
 

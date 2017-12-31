@@ -11,7 +11,7 @@ use File::Basename;
 
 =head1 NAME
 
-analizo graph - dependency graph generator
+analizo-graph - dependency graph generator
 
 =head1 USAGE
 

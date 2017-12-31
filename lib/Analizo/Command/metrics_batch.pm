@@ -11,7 +11,7 @@ use File::Basename;
 
 =head1 NAME
 
-analizo metrics-batch - processes several source code directories in batch
+analizo-metrics-batch - processes several source code directories in batch
 
 =head1 USAGE
 

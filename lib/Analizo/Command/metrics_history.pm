@@ -9,7 +9,7 @@ use Analizo::Batch::Git;
 
 =head1 NAME
 
-analizo metrics-history - processes a Git repository collection metrics
+analizo-metrics-history - processes a Git repository collection metrics
 
 =head1 USAGE
 

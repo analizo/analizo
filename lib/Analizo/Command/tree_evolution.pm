@@ -11,7 +11,7 @@ use Analizo::LanguageFilter;
 
 =head1 NAME
 
-analizo tree-evolution - watch the evolution of the source code
+analizo-tree-evolution - watch the evolution of the source code
 
 =head1 USAGE
 

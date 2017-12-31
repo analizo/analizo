@@ -13,7 +13,7 @@ use Cwd 'abs_path';
 
 =head1 NAME
 
-analizo dsm - draw the design structure matrix from call graph
+analizo-dsm - draw the design structure matrix from call graph
 
 =head1 USAGE
 

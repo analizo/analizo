@@ -7,7 +7,7 @@ use warnings;
 
 =head1 NAME
 
-analizo help - displays the help
+analizo-help - displays the help
 
 =head1 DESCRIPTION
 
