@@ -16,7 +16,7 @@ Homepage: http://analizo.org
 
 Package: {{ lc $dist->name}}
 Architecture: all
-Depends: ${misc:Depends}, ${perl:Depends},
+Depends: ${misc:Depends}, ${perl:Depends}, libapp-cmd-perl,
 {{
 my @Prereqs = keys(%{ $hash->{'Prereqs / RuntimeRequires'} });
 join(",\n", map { ' ' . $_ } grep { ! /^perl$/ } map { $c->find_perl_module_package($_) } @Prereqs)
