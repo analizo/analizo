@@ -11,7 +11,7 @@ git clone https://github.com/analizo/analizo.git
 Run this command:
 
 ```console
-sudo ./development-setup.sh
+./development-setup.sh
 ```
 
 If you are using Debian, the script will do everything you need.
@@ -82,9 +82,9 @@ the release process. See the dist.ini for more information.
 
 # Sending patches
 
-Send the patches to the Analizo mailing list: analizo@librelist.com (see
-subscription instructions at [librelist.com homepage](http://librelist.com/))
-or to `terceiro@softwarelivre.org`. Or create a pull request on github.
+Send the patches to the Analizo mailing list: analizo@googlegroups.com (see
+subscription instructions at [community page](community.html))
+or to `joenio@joenio.me`. Or create a pull request on github.
 
 To create a patch:
 
@@ -129,10 +129,8 @@ See commit `005c3bff4e0809eae0340e7629678186d1621930` for an example.
 1) Install Doxyparse build dependencies: flex, bison, libqt4-dev, gcc, gcc-c++,
 python, and git (your operating system probably already has packages for these)
 
-2) Install Doxyparse
+2) Install Doxyparse (see [https://github.com/analizo/doxyparse/wiki][doxyparse])
 
-See https://github.com/analizo/doxyparse/wiki
-
-3) Install sloccount - http://www.dwheeler.com/sloccount/sloccount.html
+3) Install [SLOCCount](http://www.dwheeler.com/sloccount/sloccount.html)
 
 4) Make sure you also have `man` and `sqlite3` installed.
