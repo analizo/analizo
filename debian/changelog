@@ -1,4 +1,14 @@
-analizo (1.20.0) UNRELEASED; urgency=medium
+analizo (1.20.1) unstable; urgency=medium
+
+  * Changelog based on "Keep a Changelog" project
+  * Copyright holder name and email
+  * Development documentation updated
+  * Dist::Zilla::Deb `debuild` task to build Debian package
+  * Declaring missing Debian dependencies
+
+ -- Joenio Costa <joenio@joenio.me>  Tue, 02 Jan 2018 02:04:12 -0200
+
+analizo (1.20.0) unstable; urgency=medium
 
   [ Igor Ribeiro Barbosa Duarte ] [ Izabela Cardoso ]
   * Added metrics documentation
