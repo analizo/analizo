@@ -1,6 +1,6 @@
 class Printer2 {
   private String message;
-  Printer2(String message) {
-    this.message = message;
+  Printer2(String msg) {
+    this.message = msg;
   }
 }
