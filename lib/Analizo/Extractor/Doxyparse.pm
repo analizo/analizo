@@ -60,8 +60,15 @@ sub feed {
 
       # inheritance
       if (defined $yaml->{$full_filename}->{$module}->{inherits}) {
-        my $inherits = $yaml->{$full_filename}->{$module}->{inherits};
-        $self->model->add_inheritance($self->current_module, $inherits);
+        if (ref $yaml->{$full_filename}->{$module}->{inherits} eq 'ARRAY') {
+          foreach my $inherits (@{ $yaml->{$full_filename}->{$module}->{inherits} }) {
+            $self->model->add_inheritance($self->current_module, $inherits);
+          }
+        }
+        else {
+          my $inherits = $yaml->{$full_filename}->{$module}->{inherits};
+          $self->model->add_inheritance($self->current_module, $inherits);
+        }
       }
 
       # abstract class

@@ -1,6 +1,7 @@
 package t::Analizo::Extractor::Doxyparse;
 use base qw(Test::Class);
 use Test::More;
+use Test::Exception;
 
 use strict;
 use warnings;
@@ -352,6 +353,21 @@ sub module_name_can_contain_spaces : Tests {
       TemplatedClass< true >:
   ");
   is($extractor->current_module, 'TemplatedClass< true >')
+}
+
+sub detects_multiple_inheritance_properly : Tests {
+  # set up
+  my $extractor = Analizo::Extractor->load('Doxyparse');
+
+  lives_ok {
+    # directory
+    $extractor->process('t/samples/multiple_inheritance/java/');
+    ok(grep({ $_ eq 'Animal' } @{ $extractor->model->{inheritance}->{'Bird'} }), 'Bird inherits Animal');
+    ok(grep { $_ eq 'Flying' } @{ $extractor->model->{inheritance}->{'Bird'} }, 'Bird inherits Flying');
+    ok(grep { $_ eq 'Animal' } @{ $extractor->model->{inheritance}->{'Horse'} }, 'Horse inherits Animal');
+    ok(grep { $_ eq 'Horse' } @{ $extractor->model->{inheritance}->{'Pegasus'} }, 'Pegasus inherits Horse');
+    ok(grep { $_ eq 'Flying' } @{ $extractor->model->{inheritance}->{'Pegasus'} }, 'Pegasus inherits Flying');
+  } 'multiple inheritance detected';
 }
 
 __PACKAGE__->runtests;
