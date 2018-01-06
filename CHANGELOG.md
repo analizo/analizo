@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [1.20.2] - 2018-01-06
+
+### Added
+
+- New dependencies: Alien::Doxyparse Alien::SLOCCount
+
+### Fixed
+
+- Avoid warnings about YAML duplicate map key "inherits"
+
 ## [1.20.1] - 2018-01-02
 
 ### Added
@@ -52,3 +62,4 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 [1.20.0]: https://github.com/analizo/analizo/compare/1.19.1...1.20.0
 [1.20.1]: https://github.com/analizo/analizo/compare/1.20.0...1.20.1
+[1.20.2]: https://github.com/analizo/analizo/compare/1.20.1...1.20.2

@@ -1,3 +1,10 @@
+analizo (1.20.2) unstable; urgency=medium
+
+  * New dependencies: Alien::Doxyparse Alien::SLOCCount
+  * Avoid warnings about YAML duplicate map key "inherits"
+
+ -- Joenio Costa <joenio@joenio.me>  Sat, 06 Jan 2018 20:18:11 -0200
+
 analizo (1.20.1) unstable; urgency=medium
 
   * Changelog based on "Keep a Changelog" project
