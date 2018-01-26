@@ -1,3 +1,9 @@
+analizo (1.20.3) unstable; urgency=medium
+
+  * Test suite refactored (package namespace t::Analizo renamed to Test::Analizo)
+
+ -- Joenio Costa <joenio@joenio.me>  Fri, 26 Jan 2018 01:21:26 -0200
+
 analizo (1.20.2) unstable; urgency=medium
 
   * New dependencies: Alien::Doxyparse Alien::SLOCCount
