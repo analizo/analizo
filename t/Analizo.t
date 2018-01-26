@@ -1,9 +1,9 @@
 package t::Analizo;
 use strict;
 use warnings;
-use parent qw(t::Analizo::Test::Class);
+use parent qw(Test::Analizo::Class);
 use Test::More;
-use t::Analizo::Test;
+use Test::Analizo;
 
 BEGIN {
   use_ok 'Analizo'

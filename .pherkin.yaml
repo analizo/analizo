@@ -1,0 +1,6 @@
+default:
+  includes:
+    - .
+    - lib
+  extensions:
+    Test::Analizo::BDD::Cucumber::Extension:

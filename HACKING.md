@@ -27,6 +27,18 @@ Just run `dzil test` in the root of the sources:
 dzil test
 ```
 
+To run a single unit test use `prove`:
+
+```console
+prove t/Analizo/Metrics.t
+```
+
+Features can also be executed with `pherkin` as:
+
+```console
+pherkin t/features/metrics-batch.feature
+```
+
 See "Installing Dependencies" above for a guide to install all the software
 that's needed to run Analizo tests.
 

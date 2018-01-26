@@ -3,7 +3,7 @@ use strict;
 use warnings;
 use base qw( Test::Class );
 use Test::More;
-use t::Analizo::Test;
+use Test::Analizo;
 
 use Analizo::Batch::Runner::Parallel;
 

@@ -1,9 +1,9 @@
 package t::Analizo::Command;
 use strict;
 use warnings;
-use parent qw(t::Analizo::Test::Class);
+use parent qw(Test::Analizo::Class);
 use Test::More;
-use t::Analizo::Test;
+use Test::Analizo;
 use Test::Exception;
 
 BEGIN {

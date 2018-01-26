@@ -7,7 +7,6 @@ use File::Slurp;
 use File::Temp qw( tempdir );
 use File::Copy::Recursive qw( rcopy );
 use YAML;
-use feature "switch";
 use File::LibMagic;
 use Archive::Extract;
 
@@ -106,11 +105,11 @@ Then qr/^analizo must report that module (.+) has (.+) = (.+)$/, func($c) {
   my ($module, $metric, $value) = ($1, $2, $3);
   my @stream = Load($stdout);
   my ($module_metrics) = grep { $_->{_module} && $_->{_module} eq $module } @stream;
-  for ($value) {
-    when (/^\d+|\d+\.\d+$/) {
+  if ($module_metrics->{$metric}) {
+    if ($value =~ /^\d+|\d+\.\d+$/) {
       cmp_ok($module_metrics->{$metric}, '==', $value);
     }
-    when (/^\[(.*)\]$/) {
+    elsif ($value =~ /^\[(.*)\]$/) {
       my @values = split(/\s*,\s*/, $1);
       is_deeply($module_metrics->{$metric}, \@values);
     }

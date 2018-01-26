@@ -1,9 +1,9 @@
 package t::Analizo::Command::evolution_matrix;
 use strict;
 use warnings;
-use parent qw(t::Analizo::Test::Class);
+use parent qw(Test::Analizo::Class);
 use Test::More;
-use t::Analizo::Test;
+use Test::Analizo;
 use Analizo;
 
 BEGIN {
