@@ -5,7 +5,7 @@ Feature: number of public methods metric
 
   Scenario: number of attributes in the "Animals" project
     Given I am in t/samples/<sample>/<language>
-    When I run "analizo metrics ."
+    When I run "analizo metrics -a ."
     Then analizo must report that module <module> has npm = <npm>
     Examples:
       | sample   | language |  module    | npm  |

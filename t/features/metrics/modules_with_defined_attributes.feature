@@ -5,7 +5,7 @@ Feature: number of abstract classes
 
   Scenario: "Hello, world" project
     Given I am in t/samples/hello_world/<language>
-    When I run "analizo metrics ."
+    When I run "analizo metrics -a ."
     Then analizo must report that the project has total_modules_with_defined_attributes = 1
     Examples:
       | language |
@@ -15,7 +15,7 @@ Feature: number of abstract classes
 
   Scenario: "Animals" project
     Given I am in t/samples/animals/<language>
-    When I run "analizo metrics ."
+    When I run "analizo metrics -a ."
     Then analizo must report that the project has total_modules_with_defined_attributes = 2
     Examples:
       | language |

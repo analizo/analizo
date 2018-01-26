@@ -1,3 +1,3 @@
 public abstract class Mammal : Animal {
-  public virtual void close() {}
+  public abstract void close() {}
 }

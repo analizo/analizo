@@ -18,7 +18,7 @@ sub parallelism {
 }
 
 sub actually_run {
-  my ($self, $batch, $output) = @_;
+  my ($self, $batch, $output, @binary_statistics) = @_;
   $self->start_workers();
   $self->coordinate_workers($batch, $output);
   $self->wait_for_workers();
@@ -30,7 +30,7 @@ sub _socket_spec {
 }
 
 sub start_workers {
-  my ($self) = @_;
+  my ($self, @binary_statistics) = @_;
   $self->{workers} = [];
   my $n = $self->parallelism();
   my $ppid = $$;
@@ -42,7 +42,7 @@ sub start_workers {
     } else {
       # on child
       $0 = '[analizo worker]';
-      worker($ppid);
+      worker($ppid, @binary_statistics);
       exit();
     }
   }
@@ -126,7 +126,7 @@ sub distributor {
 }
 
 sub worker {
-  my ($parent_pid) = @_;
+  my ($parent_pid, @binary_statistics) = @_;
   my $context = ZMQ::FFI->new();
   my $source = $context->socket(ZMQ_REQ);
   $source->connect(_socket_spec('job_source', $parent_pid));
@@ -141,7 +141,7 @@ sub worker {
     if (exists($job->{id})) {
       $last_job = $job;
       $job->parallel_prepare();
-      $job->execute();
+      $job->execute(@binary_statistics);
       $results->send(Dump($job));
     } else {
       # a job without an id means that there are no more jobs to process, we

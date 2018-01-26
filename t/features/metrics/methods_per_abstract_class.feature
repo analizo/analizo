@@ -5,7 +5,7 @@ Feature: total number of methods per abstract class
 
   Scenario: "Hello, world" project
     Given I am in t/samples/hello_world/<language>
-    When I run "analizo metrics ."
+    When I run "analizo metrics -a ."
     Then analizo must report that the project has total_methods_per_abstract_class = 0
     Examples:
       | language |
@@ -25,7 +25,7 @@ Feature: total number of methods per abstract class
 
   Scenario: "Polygons" project
     Given I am in t/samples/polygons/<language>
-    When I run "analizo metrics ."
+    When I run "analizo metrics -a ."
     Then analizo must report that the project has total_methods_per_abstract_class = <value>
     Examples:
       | language | value |

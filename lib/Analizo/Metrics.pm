@@ -37,25 +37,41 @@ sub list_of_metrics {
 }
 
 sub report {
-  my ($self) = @_;
-  return $self->report_global_metrics_only() . $self->report_module_metrics();
+  my ($self, @binary_statistics) = @_;
+  return $self->report_global_metrics_only(@binary_statistics) . $self->report_module_metrics();
 }
 
 sub report_global_metrics_only {
-  my ($self) = @_;
-  my ($global_metrics, $module_metrics) = $self->data();
+  my ($self, @binary_statistics) = @_;
+  my ($global_metrics, $module_metrics) = $self->data(@binary_statistics);
+
   return Dump($global_metrics);
 }
 
-sub report_module_metrics {
+sub report_according_to_file {
   my ($self) = @_;
-  return join('', map { Dump($_) } @{$self->module_data()});
+  my ($global_metrics, $module_metrics) = $self->data_file();
+
+	my $file_report = Dump($global_metrics) . $self->report_module_metrics();
+	return $file_report;
+}
+
+sub report_module_metrics {
+  my ($self, @binary_statistics) = @_;
+  return join('', map { Dump($_) } @{$self->module_data(@binary_statistics)});
 }
 
 sub data {
-  my ($self) = @_;
+  my ($self, @binary_statistics) = @_;
   $self->_collect_and_combine_module_metrics;
-  return ($self->global_metrics->report, $self->module_data());
+  return ($self->global_metrics->report(@binary_statistics), $self->module_data());
+}
+
+sub data_file {
+  my ($self ) = @_;
+  
+  $self->_collect_and_combine_module_metrics;
+  return ($self->global_metrics->report_file, $self->module_data());
 }
 
 sub _collect_and_combine_module_metrics {
@@ -63,7 +79,6 @@ sub _collect_and_combine_module_metrics {
   if (defined $self->{_collect_and_combine_module_metrics}) {
     return;
   }
-
   for my $module ($self->model->module_names) {
     my $module_metrics = $self->_collect($module);
     $self->_combine($module_metrics);
@@ -96,4 +111,3 @@ sub metrics_for {
 }
 
 1;
-
