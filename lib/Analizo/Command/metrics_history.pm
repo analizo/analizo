@@ -4,6 +4,8 @@ use base qw(Analizo::Command);
 use strict;
 use warnings;
 use Analizo::Batch::Git;
+use Analizo::Flag::Flags;
+use Analizo::Flag::ExecuteHistory;
 
 #ABSTRACT: processes a Git repository collection metrics
 
@@ -30,6 +32,21 @@ sub opt_spec {
     [ 'parallel|p=i',  'activates support for parallel processing' ],
     [ 'format|f=s',    'specifies the output format', { default => 'csv' } ],
     [ 'progressbar|b', 'displays a progress bar during the execution' ],
+    [ 'all|a', 'displays all metrics'],
+    [ 'mean',  'display only mean statistics'],
+    [ 'mode',  'display only mode statistics'],
+    [ 'standard',  'display only standard deviation statistics'],
+    [ 'sum',  'display only sum statistics'],
+    [ 'variance',  'display only variance statistics'],
+    [ 'min',  'display only quantile min statistics'],
+    [ 'lower',  'display only quantile lower statistics'],
+    [ 'median',  'display only quantile median statistics'],
+    [ 'upper',  'display only quantile upper statistics'],
+    [ 'ninety',  'display only quantile ninety statistics'],
+    [ 'ninety_five',  'display only quantile ninety-five statistics'],
+    [ 'max',  'display only quantile max statistics'],
+    [ 'kurtosis',  'display only kurtosis statistics'],
+    [ 'skewness',  'display only skewness statistics'],
   );
 }
 
@@ -59,44 +76,33 @@ sub load_output_driver {
 sub execute {
   my ($self, $opt, $args) = @_;
   my $batch = new Analizo::Batch::Git(@$args);
-  if ($opt->list) {
-    while (my $job = $batch->next()) {
-      print $job->id, "\n";
-    }
-    exit 0;
+  my $flags = new Analizo::Flag::Flags;
+  my $execute_history = new Analizo::Flag::ExecuteHistory;
+  $flags->statistics_flags($opt);
+  my @binary_statistics = $flags->get_binary;
+  if ($flags->has_list_flag($opt)) {
+    $execute_history->print_metrics_list($batch);
   }
-  if ($opt->language) {
-    require Analizo::LanguageFilter;
-    my $language_filter = Analizo::LanguageFilter->new($opt->language);
-    $batch->filters($language_filter);
+  if ($flags->has_language_flag($opt)) {
+    $execute_history->set_language_filter($opt, $batch);
   }
-  if ($opt->exclude) {
-    my @excluded_directories = split(':', $opt->exclude);
-    $batch->exclude(@excluded_directories);
+  if ($flags->has_exclude_flag($opt)) {
+    $execute_history->exclude_directories_from_report($opt, $batch);
   }
   my $output = $self->load_output_driver($opt->format);
-  if ($opt->output) {
-    $output->file($opt->output);
+  if ($flags->has_output_flag($opt)) {
+    $execute_history->set_output_file($opt, $output);
   }
   my $runner = undef;
-  if ($opt->parallel) {
-    require Analizo::Batch::Runner::Parallel;
-    $runner = new Analizo::Batch::Runner::Parallel($opt->parallel);
+  if ($flags->has_parallel_flag($opt)) {
+    $runner = $execute_history->runner_is_parallel($opt);
   } else {
-    require Analizo::Batch::Runner::Sequential;
-    $runner = new Analizo::Batch::Runner::Sequential;
+    $runner = $execute_history->runner_is_sequential;
   }
-  if ($opt->progressbar) {
-    require Term::ProgressBar;
-    my $progressbar = Term::ProgressBar->new({ count => 100, ETA => 'linear' });
-    $runner->progress(
-      sub {
-        my ($job, $done, $total) = @_;
-        $progressbar->update(100 * $done / $total);
-      }
-    );
+  if ($flags->has_progressbar_flag($opt)) {
+    $execute_history->create_flag_progress_bar($runner);
   }
-  $runner->run($batch, $output);
+  $runner->run($batch, $output, @binary_statistics);
 }
 
 1;

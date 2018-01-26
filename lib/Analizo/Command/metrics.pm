@@ -6,6 +6,8 @@ use warnings;
 use Analizo::Metrics;
 use Analizo::Batch::Job::Directories;
 use File::Basename;
+use Analizo::Flag::Flags;
+use Analizo::Flag::ExecuteMetrics;
 
 # ABSTRACT: analizo's metric reporting tool
 
@@ -25,6 +27,7 @@ sub opt_spec {
   my ($class, $app) = @_;
   return (
     [ 'list|l',       'displays metric list' ],
+    [ 'all|a', 'displays all metrics'],
     [ 'extractor=s',  'wich extractor method use to analise source code' ],
     [ 'globalonly|global-only|g', 'only output global (project-wide) metrics' ],
     [ 'output|o=s',   'output file name' ],
@@ -33,6 +36,21 @@ sub opt_spec {
     [ 'includedirs|I=s',  'include <dirs> (a colon-separated list of directories) with C/C++ header files', { default => '.' } ],
     [ 'libdirs|L=s',  'include <dirs> (a colon-separated list of directories) with C/C++ static and dynamic libraries files', { default => '.' } ],
     [ 'libs=s',  'include <dirs> (a colon-separated list of directories) with C/C++ linked libraries files', { default => '.' } ],
+    [ 'mean',  'display only mean statistics'],
+    [ 'mode',  'display only mode statistics'],
+    [ 'standard',  'display only standard deviation statistics'],
+    [ 'sum',  'display only sum statistics'],
+    [ 'variance',  'display only variance statistics'],
+    [ 'min',  'display only quantile min statistics'],
+    [ 'lower',  'display only quantile lower statistics'],
+    [ 'median',  'display only quantile median statistics'],
+    [ 'upper',  'display only quantile upper statistics'],
+    [ 'ninety',  'display only quantile ninety statistics'],
+    [ 'ninety_five',  'display only quantile ninety-five statistics'],
+    [ 'max',  'display only quantile max statistics'],
+    [ 'kurtosis',  'display only kurtosis statistics'],
+    [ 'skewness',  'display only skewness statistics'],
+    [ 'output_model|om=s', 'output YML file with information of analyzed path'],
   );
 }
 
@@ -54,54 +72,47 @@ sub validate {
 
 sub execute {
   my ($self, $opt, $args) = @_;
-  if($opt->list){
-    my $metrics_handler = new Analizo::Metrics(model => new Analizo::Model);
-    my %metrics = $metrics_handler->list_of_metrics();
-    my %global_metrics = $metrics_handler->list_of_global_metrics();
-    print "Global Metrics:\n";
-    foreach my $key (sort keys %global_metrics){
-      print "$key - $global_metrics{$key}\n";
-    }
-    print "\nModule Metrics:\n";
-    foreach my $key (sort keys %metrics){
-      print "$key - $metrics{$key}\n";
-    }
-    exit 0;
+  my $flags = new Analizo::Flag::Flags;
+  my $execute_metrics = new Analizo::Flag::ExecuteMetrics;
+  $flags->statistics_flags($opt);
+  my @binary_statistics = $flags->get_binary;
+  
+  if ($flags->has_list_flag($opt)) {
+    $execute_metrics->print_metrics_list;
   }
   my $tree = $args->[0] || '.';
   my $job = new Analizo::Batch::Job::Directories($tree);
   $job->extractor($opt->extractor);
-  if ($opt->language) {
-    require Analizo::LanguageFilter;
-    if ($opt->language eq 'list') {
-      my @language_list = Analizo::LanguageFilter->list;
-      print "Languages:\n";
-      $" = "\n";
-      print "@language_list\n";
-      exit 0;
-    }
-    my $language_filter = Analizo::LanguageFilter->new($opt->language);
-    $job->filters($language_filter);
+  if ($flags->has_language_flag($opt)) {
+    $execute_metrics->print_metrics_according_to_language($opt, $job);
   }
-  if ($opt->exclude) {
-    my @excluded_directories = split(':', $opt->exclude);
-    $job->exclude(@excluded_directories);
+  if ($flags->has_exclude_flag($opt)) {
+    $execute_metrics->exlude_dir_from_execution($opt, $job);
   }
   $job->includedirs($opt->includedirs);
   $job->libdirs($opt->libdirs);
   $job->libs($opt->libs);
   $job->execute();
   my $metrics = $job->metrics;
-  if ($opt->output) {
-    open STDOUT, '>', $opt->output or die "$!\n";
+  if ($flags->has_output_flag($opt)) {
+    $execute_metrics->open_output_file($opt);
   }
-  if ($opt->globalonly) {
-    print $metrics->report_global_metrics_only;
+  if ($flags->has_global_only_flag($opt)) {
+    $execute_metrics->print_only_global_metrics($metrics, @binary_statistics);
   }
   else {
-    print $metrics->report;
+    if($execute_metrics->should_report_according_to_file(@binary_statistics)) {
+      $execute_metrics->print_metrics_according_to_file($metrics);
+    }
+		else{
+      $execute_metrics->print_metrics_according_to_statistics($metrics, @binary_statistics);
+		}
+    if($flags->has_model_flag($opt)) {
+      $execute_metrics->print_model_output($opt, $job);
+    }
+
   }
-  close STDOUT;
+  $execute_metrics->close_output_file();
 }
 
 =head1 DESCRIPTION
@@ -146,12 +157,19 @@ Don't output the details about modules: only output global (project-wide) metric
 Process only filenames matching known extensions for the <I<lang>> programming
 language. To see which languages are supported, pass B<--language list>.
 
-=item --exclude <dirs>, -x <dirs>
+=item --exclude <dirs>, -x <dirs> 
 
 Exclude <I<dirs>> (a colon-separated list of directories) from the analysis.
 This is useful, for example, when you want to focus on production code and
 exclude test code from the analysis. You could do that by passing something
 like pass B<--exclude test>.
+
+=item --output_model <dir>, --om <dir>
+
+Create an output file with the .yml extension. That file contains structured
+information about the code on the analyzed directory. The informations analyzed are:
+numbers of abstract_classes, members, inheritance, module_by_file, protection, modules, files, 
+calls, conditional_paths, lines, parameters, module_names and total_eloc.
 
 =back
 
