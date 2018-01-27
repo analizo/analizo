@@ -168,6 +168,9 @@ sub actually_process {
   }
   close $temp_handle;
 
+  eval 'use Alien::Doxyparse';
+  $ENV{PATH} = join(':', $ENV{PATH}, Alien::Doxyparse->bin_dir) unless $@;
+
   eval {
     open DOXYPARSE, "doxyparse - < $temp_filename |" or die $!;
     local $/ = undef;

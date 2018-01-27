@@ -33,6 +33,10 @@ sub actually_process {
   my @files = ();
   my $datadir = File::Spec->catfile(File::Spec->tmpdir(), 'analizo-sloccount-' . $$);
   mkdir($datadir);
+
+  eval 'use Alien::SLOCCount';
+  $ENV{PATH} = join(':', $ENV{PATH}, Alien::SLOCCount->bin_dir) unless $@;
+
   eval {
     open SLOCCOUNT, sprintf("sloccount --datadir $datadir %s |", join(' ', @input_files) ) or die $!;
     while (<SLOCCOUNT>) {
