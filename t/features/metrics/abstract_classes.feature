@@ -5,7 +5,7 @@ Feature: number of abstract classes
 
   Scenario: "Hello, world" project
     Given I am in t/samples/hello_world/<language>
-    When I run "analizo metrics ."
+    When I run "analizo metrics -a ."
     Then analizo must report that the project has total_abstract_classes = 0
     Examples:
       | language |
@@ -16,16 +16,16 @@ Feature: number of abstract classes
   Scenario: "Animals" project
     Given I am in t/samples/animals/<language>
     When I run "analizo metrics ."
-    Then analizo must report that the project has total_abstract_classes = <total_abstract_classes>
+    Then analizo must report that the project has total_abstract_classes = 2
     Examples:
-      | language | total_abstract_classes |
-      | cpp      | 2                      |
-      | java     | 2                      |
-      | csharp   | 1                      |
+      | language |
+      | cpp      |
+      | java     |
+      | csharp   |
 
   Scenario: "Polygons" project
     Given I am in t/samples/polygons/<language>
-    When I run "analizo metrics ."
+    When I run "analizo metrics -a ."
     Then analizo must report that the project has total_abstract_classes = 2
     Examples:
       | language |
@@ -35,7 +35,7 @@ Feature: number of abstract classes
 
   Scenario: "AbstractClass" project
     Given I am in t/samples/abstract_class/<language>
-    When I run "analizo metrics ."
+    When I run "analizo metrics -a ."
     Then analizo must report that the project has total_abstract_classes = 1
     And analizo must report that the project has total_methods_per_abstract_class = <total_mpac>
     Examples:

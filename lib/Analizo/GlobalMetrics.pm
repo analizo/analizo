@@ -101,10 +101,20 @@ sub _add_metric_value_to_values_list {
 
 sub report {
 
+  my ($self, @binary_statistics) = @_;
+
+  $self->_include_metrics_from_calculators;
+  $self->_add_statistics(@binary_statistics);
+  $self->_add_total_coupling_factor;
+
+  return \%{$self->metric_report};
+}
+
+sub report_file {
   my ($self) = @_;
 
   $self->_include_metrics_from_calculators;
-  $self->_add_statistics;
+  $self->_add_statistics_according_to_file;
   $self->_add_total_coupling_factor;
 
   return \%{$self->metric_report};
@@ -118,43 +128,178 @@ sub _include_metrics_from_calculators {
 }
 
 sub _add_statistics {
-  my ($self) = @_;
+  my ($self, @binary_statistics) = @_;
 
   for my $metric (keys %{$self->values_lists}) {
     my $statistics = Statistics::Descriptive::Full->new();
     $statistics->add_data(@{$self->values_lists->{$metric}});
-
-    $self->_add_descriptive_statistics($metric, $statistics);
-    $self->_add_distributions_statistics($metric, $statistics);
+    $self->_add_descriptive_statistics($metric, $statistics, @binary_statistics);
+    $self->_add_distributions_statistics($metric, $statistics, @binary_statistics);
   }
+}
+
+sub create_metrics_default_values {
+  my ($self) = @_;
+
+	my %default_metrics_values;
+
+	my @keys = (	
+			"npm",
+			"npa",
+			"noc",
+			"nom",
+			"rfc",
+			"lcom4",
+			"anpm",
+			"accm",
+			"acc",
+			"dit",
+			"loc",
+			"cbo",
+			"amloc",
+			"mmloc",
+			"noa",
+			"sc"
+	);
+
+	my @values = (
+			"quantile_seventy_five",
+			"quantile_seventy_five",
+			"quantile_ninety",
+			"quantile_seventy_five",
+			"quantile_seventy_five",
+			"quantile_seventy_five",
+			"quantile_seventy_five",
+			"quantile_seventy_five",
+			"quantile_seventy_five",
+			"quantile_ninety",
+			"mean",
+			"quantile_seventy_five",
+			"mean",
+			"mean",
+			"quantile_seventy_five",
+			"quantile_seventy_five"
+	);
+	@default_metrics_values{@keys} = @values;
+
+	return %default_metrics_values;
+}
+
+sub test_configuration_file_existance {
+	if(-e '.analizo'){
+		return 1;
+	}
+	else{
+		return 0;
+	}
+}
+
+sub create_file_from_dictionary {
+	my ($self) = @_;
+
+	my %dictionary = %{$_[0]};
+	my $file_name = $_[1];
+
+	open(my $file, ">$file_name" );
+
+	foreach my $metric ( keys %dictionary ) {
+    print $file "$metric: $dictionary{$metric}\n";
+	} 
+
+	close($file);
+}
+
+sub load_metrics_configurations {
+  my ($self) = @_;
+
+	if(!test_configuration_file_existance()) {
+		my %default_metrics_values = create_metrics_default_values();
+		my $file_name = '.analizo';
+
+		create_file_from_dictionary(\%default_metrics_values, $file_name);	
+	}
+
+	$self->{metrics_configurations} = YAML::LoadFile('.analizo');
+}
+
+sub _add_statistics_according_to_file {
+	my ($self) = @_;
+
+	$self->load_metrics_configurations();
+
+  for my $metric (keys %{$self->values_lists}) {
+		my $statistics = Statistics::Descriptive::Full->new();
+		$statistics->add_data(@{$self->values_lists->{$metric}});
+
+		if($self->{metrics_configurations}{$metric} eq "quantile_ninety"){
+  		$self->metric_report->{$metric . "_quantile_ninety"}  = $statistics->percentile(90); #90th percentile
+		}elsif($self->{metrics_configurations}{$metric} eq "quantile_seventy_five"){
+  		$self->metric_report->{$metric . "_quantile_seventy_five"}  = $statistics->percentile(75); #75th percentile
+		}else{
+			$self->metric_report->{$metric . "_mean"} = $statistics->mean();
+		}
+	}
 }
 
 sub _add_descriptive_statistics {
-  my ($self, $metric, $statistics) = @_;
-  $self->metric_report->{$metric . "_mean"} = $statistics->mean();
-  $self->metric_report->{$metric . "_mode"} = $statistics->mode();
-  $self->metric_report->{$metric . "_standard_deviation"} = $statistics->standard_deviation();
-  $self->metric_report->{$metric . "_sum"} = $statistics->sum();
-  $self->metric_report->{$metric . "_variance"} = $statistics->variance();
+  my ($self, $metric, $statistics, @binary_statistics) = @_;
 
-  $self->metric_report->{$metric . "_quantile_min"}   = $statistics->min(); #minimum
-  $self->metric_report->{$metric . "_quantile_lower"}   = $statistics->quantile(1); #lower quartile
-  $self->metric_report->{$metric . "_quantile_median"}   = $statistics->median(); #median
-  $self->metric_report->{$metric . "_quantile_upper"}   = $statistics->quantile(3); #upper quartile
-  $self->metric_report->{$metric . "_quantile_ninety_five"}  = $statistics->percentile(95); #95th percentile
-  $self->metric_report->{$metric . "_quantile_max"} = $statistics->max(); #maximum
-}
+  if($binary_statistics[0]) {
+    $self->metric_report->{$metric . "_mean"} = $statistics->mean();
+  }
+  if($binary_statistics[1]) {
+    $self->metric_report->{$metric . "_mode"} = $statistics->mode();
+  }
+  if($binary_statistics[2]) {
+    $self->metric_report->{$metric . "_standard_deviation"} = $statistics->standard_deviation();
+  }
+  if($binary_statistics[3]) {
+    $self->metric_report->{$metric . "_sum"} = $statistics->sum();
+  }
+  if($binary_statistics[4]) {
+    $self->metric_report->{$metric . "_variance"} = $statistics->variance();
+  }
+  if($binary_statistics[5]) {
+    $self->metric_report->{$metric . "_quantile_min"}   = $statistics->min(); #minimum
+  }
+  if($binary_statistics[6]) {
+    $self->metric_report->{$metric . "_quantile_lower"}   = $statistics->quantile(1); #lower quartile
+  }
+  if($binary_statistics[7]) {
+    $self->metric_report->{$metric . "_quantile_median"}   = $statistics->median(); #median
+  }
+  if($binary_statistics[8]) {
+    $self->metric_report->{$metric . "_quantile_upper"}   = $statistics->quantile(3); #upper quartile
+  }
+  if($binary_statistics[9]) {
+    $self->metric_report->{$metric . "_quantile_ninety"}  = $statistics->percentile(90); #90th percentile
+  }
+  if($binary_statistics[10]) {
+    $self->metric_report->{$metric . "_quantile_ninety_five"}  = $statistics->percentile(95); #95th percentile
+  }
+  if($binary_statistics[11]) {
+    $self->metric_report->{$metric . "_quantile_max"} = $statistics->max(); #maximum
+  }
+ }
 
 sub _add_distributions_statistics {
-  my ($self, $metric, $statistics) = @_;
+  my ($self, $metric, $statistics, @binary_statistics) = @_;
 
   if (($statistics->count >= 4) && ($statistics->variance() > 0)) {
-    $self->metric_report->{$metric . "_kurtosis"} = $statistics->kurtosis();
-    $self->metric_report->{$metric . "_skewness"} = $statistics->skewness();
+    if($binary_statistics[12]) {
+      $self->metric_report->{$metric . "_kurtosis"} = $statistics->kurtosis();
+    }
+    if($binary_statistics[13]) {
+      $self->metric_report->{$metric . "_skewness"} = $statistics->skewness();
+    }
   }
   else {
-    $self->metric_report->{$metric . "_kurtosis"} = 0;
-    $self->metric_report->{$metric . "_skewness"} = 0;
+    if($binary_statistics[12]) {
+      $self->metric_report->{$metric . "_kurtosis"} = 0;
+    }
+    if($binary_statistics[13]) {
+      $self->metric_report->{$metric . "_skewness"} = 0;
+    }
   }
 }
 
@@ -168,6 +313,7 @@ sub _add_total_coupling_factor {
 
 sub coupling_factor {
   my ($self, $total_acc, $total_modules) = @_;
+  $total_acc ||= 0;
   return ($total_modules > 1) ? $total_acc / _number_of_combinations($total_modules) : 1;
 }
 
@@ -179,4 +325,3 @@ sub _number_of_combinations {
 
 
 1;
-

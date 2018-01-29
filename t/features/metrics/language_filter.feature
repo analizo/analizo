@@ -5,7 +5,7 @@ Feature: language filters
 
   Scenario: filtering for C code
     Given I am in t/samples/mixed
-    When I run "analizo metrics --language c ."
+    When I run "analizo metrics --language c -a ."
     Then the output must match "native_backend"
     And the output must not match "UI"
     And the output must not match "Backend"
@@ -13,7 +13,7 @@ Feature: language filters
 
   Scenario: filtering for Java code
     Given I am in t/samples/mixed
-    When I run "analizo metrics --language java ."
+    When I run "analizo metrics --language java -a ."
     Then the output must match "UI"
     And the output must match "Backend"
     And the output must not match "native_backend"
