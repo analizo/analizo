@@ -7,3 +7,8 @@ Feature: doxyparse extractor external tool
     Given I am in t/samples/android-framework/android-5.1.11-r38
     When I run "analizo metrics ."
     Then the exit status must be 0
+
+  Scenario: don't duplicate YAML keys parsing AudioTrackShared.cpp from android 5.1.11
+    Given I am in t/samples/android-framework/android-5.1.11-r38
+    When I run "analizo metrics ."
+    Then analizo must not emit a warning matching "YAML_LOAD_WARN_DUPLICATE_KEY"

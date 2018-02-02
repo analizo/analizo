@@ -80,6 +80,10 @@ Then qr/^analizo must emit a warning matching "([^\"]*)"$/, func($c) {
   like($stderr, qr/$1|\Q$1\E/);
 };
 
+Then qr/^analizo must not emit a warning matching "([^\"]*)"$/, func($c) {
+  unlike($stderr, qr/$1|\Q$1\E/);
+};
+
 Then qr/^analizo must report that "([^\"]*)" is part of "([^\"]*)"$/, func($c) {
   my ($func, $mod) = ($1, $2);
   like($stdout, qr/subgraph "cluster_$mod" \{[^}]*node[^}]*"\Q$func\E";/);
