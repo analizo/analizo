@@ -1,3 +1,11 @@
+analizo (1.20.4) unstable; urgency=medium
+
+  * Fix YAML duplicate key
+  * Fix bin PATH for doxyparse and sloccount external tools
+  * Fix missing dependencie for App::Cmd
+
+ -- Joenio Costa <joenio@joenio.me>  Fri, 02 Feb 2018 12:36:58 -0200
+
 analizo (1.20.3) unstable; urgency=medium
 
   * Test suite refactored (package namespace t::Analizo renamed to Test::Analizo)
