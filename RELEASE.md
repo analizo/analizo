@@ -4,7 +4,7 @@
 * update VERSION in lib/Analizo.pm, commit
 * write changelog in CHANGELOG.md and debian/changelog
 * build package (see Release task below)
-* upload tar.gz package do GitHub and CPAN
+* upload tar.gz package to GitHub and CPAN
 * build and upload Debian package to repository
 
 ### Release task
