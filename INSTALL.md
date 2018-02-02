@@ -39,9 +39,20 @@ apt-get update
 apt-get install analizo
 ```
 
+## From CPAN
+
+Install [cpanminus](https://metacpan.org/pod/App::cpanminus) and building
+dependencies then run `cpanm Analizo`.
+
+```console
+sudo apt install cpanminus wget cmake bison flex python build-essential libssl-dev git libmagic-dev libzmq3-dev libexpat1-dev sqlite3 man
+cpanm Analizo
+```
+
 ## From sources
 
-Download the analizo tarball linked from <span class='repository'><a href="http://analizo.org/download.html">the download page</a></span>,
+Download the analizo tarball linked from
+<span class='repository'><a href="http://analizo.org/download.html">the download page</a></span>,
 extract it and run the following commands inside the analizo-x.y.z directory:
 
 ```console
