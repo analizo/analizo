@@ -1,16 +1,10 @@
-sudo: required
-
-group: deprecated-2017Q2
-
 language: perl
-
-services: docker
-
-install: true
-
-script:
-- docker pull analizo/test
-- docker create --name travis -v `pwd`:/home/analizo analizo/test
-- docker start travis
-- docker logs -f travis
-- test `docker ps -a --filter exited=1 | wc -l` == "1"
+perl:
+  - 5.24
+  - 5.22
+  - 5.20
+  - 5.18
+  - 5.16
+sudo: required
+before_install: ./development-setup.sh
+script: dzil test --release
