@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [1.20.5] - 2018-02-03
+
+### Changed
+
+- Depends on doxyparse 1.8.14-4 provided by Alien::Doxyparse 0.06
+
+### Fixed
+
+- Fix dependencies to run test suite on cpantesters
+
 ## [1.20.4] - 2018-02-02
 
 ### Fixed
@@ -79,3 +89,4 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 [1.20.2]: https://github.com/analizo/analizo/compare/1.20.1...1.20.2
 [1.20.3]: https://github.com/analizo/analizo/compare/1.20.2...1.20.3
 [1.20.4]: https://github.com/analizo/analizo/compare/1.20.3...1.20.4
+[1.20.5]: https://github.com/analizo/analizo/compare/1.20.4...1.20.5
