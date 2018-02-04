@@ -51,7 +51,7 @@ locate_package() {
   echo $packages
 }
 
-prepare_precise() {
+prepare_ubuntu() {
   if ! grep -q ZeroMQ Makefile.PL; then
     # only needed while we depend on ZeroMQ
     return
@@ -59,12 +59,16 @@ prepare_precise() {
   apt-get install -q -y libzeromq-perl
 }
 
+prepare_precise() {
+  prepare_ubuntu
+}
+
 prepare_quantal() {
-  if ! grep -q ZeroMQ Makefile.PL; then
-    # only needed while we depend on ZeroMQ
-    return
-  fi
-  apt-get install -q -y libzeromq-perl
+  prepare_ubuntu
+}
+
+prepare_trusty() {
+  prepare_ubuntu
 }
 
 # FIXME share data with Makefile.PL/dist.ini
