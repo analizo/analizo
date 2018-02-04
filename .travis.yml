@@ -1,10 +1,7 @@
 language: perl
-perl:
-  - "5.24"
-  - "5.22"
-  - "5.20"
-  - "5.18"
-  - "5.16"
 sudo: required
-before_install: ./development-setup.sh
+services: docker
+before_install:
+  - docker build -t travis .
+  - docker run travis
 script: dzil test --release
