@@ -25,7 +25,9 @@ join(",\n", map { ' ' . $_ } grep { ! /^perl$/ } map { $c->find_perl_module_pack
 my $plugin = $dist->plugin_named('RequiresExternal');
 my @Prereqs = @{ $plugin->_requires };
 join(",\n", map { ' ' . $_ } @Prereqs)
-}}
+}},
+ doxyparse,
+ sloccount
 Recommends: graphviz
 Description: {{ $dist->abstract }}
  Analizo parses source code in multiple languages and report useful information
