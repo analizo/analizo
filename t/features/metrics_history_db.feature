@@ -7,7 +7,7 @@ Feature: storing VCS data in a database
     When I explode t/samples/evolution.tar.gz
     And I run "analizo metrics-history -f db -o data.db"
     Then the exit status must be 0
-    When I run "sqlite3 data.db 'select * from modules'"
+    When I run "select * from modules" on database "data.db"
     Then the output must match "Input"
     And the output must match "Output"
     And the output must match "prog"

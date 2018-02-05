@@ -145,4 +145,4 @@ python, and git (your operating system probably already has packages for these)
 
 3) Install [SLOCCount](http://www.dwheeler.com/sloccount/sloccount.html)
 
-4) Make sure you also have `man` and `sqlite3` installed.
+4) Make sure you also have `man` installed.

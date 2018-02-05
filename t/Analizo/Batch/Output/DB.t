@@ -276,14 +276,4 @@ sub select_one_ok($$) {
   select_ok($db, $query, 1);
 }
 
-use Cwd 'abs_path';
-use File::Copy;
-sub __debug_db($) {
-  my ($origdb) = @_;
-  my $db = '/tmp/debug.sqlite3';
-  system("rm -rf $db");
-  copy($origdb, $db);
-  system("x-terminal-emulator -e sqlite3 $db");
-}
-
 __PACKAGE__->runtests;
