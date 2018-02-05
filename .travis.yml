@@ -4,4 +4,5 @@ services: docker
 before_install:
   - docker build -t travis .
   - docker run travis
+install: true
 script: dzil test --release
