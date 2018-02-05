@@ -1,8 +1,10 @@
-language: perl
 sudo: required
 services: docker
 before_install:
   - docker build -t travis .
   - docker run travis
 install: true
-script: docker run travis dzil test --release
+script:
+  - docker run travis dzil test --release
+after_script:
+  - docker images
