@@ -113,7 +113,7 @@ source tree, only consider directories that contain files that match the
 expected file extensions for LANGUAGE.
 
 LANGUAGE can be one of I<c>, I<cpp> and I<java>. The default behaviour is to
-condider all files in the repository.
+consider all files in the repository.
 
 =back
 
