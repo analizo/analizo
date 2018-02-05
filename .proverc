@@ -1,4 +1,3 @@
 # .proverc file (see: man prove)
 -l # Add 'lib' to the path for your tests (same as -Ilib)
--I.
 -r # Recursively descend into 't/' directories
