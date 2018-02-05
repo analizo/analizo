@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Fixed
 
 - Fix dependencies to run test suite on cpantesters
+- Fix travis-ci build
 
 ## [1.20.4] - 2018-02-02
 

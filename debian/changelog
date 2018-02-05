@@ -2,6 +2,7 @@ analizo (1.20.5) unstable; urgency=medium
 
   * Depends on doxyparse 1.8.14-4 provided by Alien::Doxyparse 0.06
   * Fix dependencies to run test suite on cpantesters
+  * Fix travis-ci build
 
  -- Joenio Costa <joenio@joenio.me>  Sat, 03 Feb 2018 01:16:06 -0200
 
