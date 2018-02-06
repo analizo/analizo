@@ -42,10 +42,10 @@ apt-get install analizo
 ## From CPAN
 
 Install [cpanminus](https://metacpan.org/pod/App::cpanminus) and building
-dependencies then run `cpanm Analizo`.
+dependencies (see "Installing dependencies on non-Debian systems" on
+HACKING.md) then run `cpanm`:
 
 ```console
-sudo apt install cpanminus wget cmake bison flex python build-essential libssl-dev git libmagic-dev libzmq3-dev libexpat1-dev man
 cpanm Analizo
 ```
 
