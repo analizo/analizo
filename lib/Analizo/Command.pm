@@ -3,6 +3,7 @@ use App::Cmd::Setup -command;
 use strict;
 use warnings;
 use Class::Inspector;
+use Env::Path qw( PATH );
 
 =head1 NAME
 
@@ -44,7 +45,18 @@ sub show_manpage {
   my ($self, $package, $command_name) = @_;
   my $version_information = $self->version_information;
   my $file = Class::Inspector->resolved_filename($package);
-  exec("pod2man --name='analizo-$command_name' --release='$version_information' --center='Analizo documentation' '$file' | man -l -");
+  if (scalar PATH->Whence('man')) {
+    exec("pod2man --name='analizo-$command_name' --release='$version_information' --center='Analizo documentation' '$file' | man -l -");
+  }
+  elsif (scalar PATH->Whence('less')) {
+    exec("pod2text '$file' | less");
+  }
+  elsif (scalar PATH->Whence('more')) {
+    exec("pod2text '$file' | more");
+  }
+  else {
+    exec("pod2text '$file'");
+  }
 }
 
 1;

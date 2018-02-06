@@ -5,7 +5,8 @@ Feature: give manpage on --help
 
   Scenario: display manpage for `analizo <tool>`
     When I run "analizo <tool> --help"
-    Then the output must match "analizo-<tool>\(1\)"
+    Then the output must match "NAME\\s+analizo-<tool>"
+    Then the output must match "USAGE\\s+analizo <tool> \\[OPTIONS\\]"
     Examples:
       | tool             |
       | evolution-matrix |
