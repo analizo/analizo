@@ -4,8 +4,9 @@
 * update VERSION in lib/Analizo.pm, commit
 * write changelog in CHANGELOG.md and debian/changelog, commit
 * git push
-* build package (see "Release task" below)
-* build and upload Debian package to repository (see "Debian package" below)
+* release (see "Release task" below)
+* build Debian package (see "Debian package" below)
+* upload package to repository
 * update analizo.org site to point to the newer version
 
 ### Release task
@@ -14,9 +15,7 @@
 dzil release
 ```
 
-`release` task will do:
-
-* run all tests
+* this task will run all tests
 * build a tar.gz package and upload to CPAN
 * create and push git tag to GitHub
 
