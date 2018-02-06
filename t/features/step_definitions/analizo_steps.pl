@@ -1,6 +1,6 @@
 use strict;
 use warnings;
-use Test::More 'no_plan';
+use Test::More;
 use Test::BDD::Cucumber::StepFile;
 use Method::Signatures;
 use File::Slurp;
