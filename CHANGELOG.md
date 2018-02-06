@@ -7,13 +7,21 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [1.20.6] - 2018-02-06
+
+### Changed
+
+- Added doxyparse as Debian dependency (hardcoded)
+- Added sloccount as Debian dependency (hardcoded)
+
 ### Deprecated
 
-- Visualizations is going to be remove from Analizo
-- All tools that output visualization will be refactored to just output raw data (option 1)
-- `analizo dsm` will output a V x V matrix (DOT, YAML or JSON?)
-- `analizo evolution-matrix` will output raw data (DOT, YAML or JSON?)
-- All tools that output visualization will be removed (option 2)
+- Analizo visualization tools `dsm` and `evolution-matrix` are going to be removed from Analizo, the tools will be refactored or just removed.
+
+### Removed
+
+- Removed external dependency for sqlite3
+- Removed external dependency for man
 
 ## [1.20.5] - 2018-02-03
 
@@ -101,3 +109,4 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 [1.20.3]: https://github.com/analizo/analizo/compare/1.20.2...1.20.3
 [1.20.4]: https://github.com/analizo/analizo/compare/1.20.3...1.20.4
 [1.20.5]: https://github.com/analizo/analizo/compare/1.20.4...1.20.5
+[1.20.6]: https://github.com/analizo/analizo/compare/1.20.5...1.20.6

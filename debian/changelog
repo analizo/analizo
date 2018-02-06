@@ -1,3 +1,14 @@
+analizo (1.20.6) unstable; urgency=medium
+
+  * Added doxyparse as Debian dependency (hardcoded)
+  * Added sloccount as Debian dependency (hardcoded)
+  * Analizo visualization tools `dsm` and `evolution-matrix` are going to be
+    removed from Analizo, the tools will be refactored or just removed
+  * Removed external dependency for sqlite3
+  * Removed external dependency for man
+
+ -- Joenio Costa <joenio@joenio.me>  Tue, 06 Feb 2018 01:34:24 -0200
+
 analizo (1.20.5) unstable; urgency=medium
 
   * Depends on doxyparse 1.8.14-4 provided by Alien::Doxyparse 0.06
