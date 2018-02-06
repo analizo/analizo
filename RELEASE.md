@@ -3,6 +3,7 @@
 * make the code ready
 * update VERSION in lib/Analizo.pm, commit
 * write changelog in CHANGELOG.md and debian/changelog, commit
+* git push
 * build package (see "Release task" below)
 * build and upload Debian package to repository (see "Debian package" below)
 * update analizo.org site to point to the newer version
