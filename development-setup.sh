@@ -38,8 +38,7 @@ setup_debian() {
   sudo apt-get -q -y -f install $packages
   dzil listdeps --missing | cpanm --sudo --notest
 
-  packages=$(dzil externaldeps)
-  sudo apt-get -q -y -f install $packages
+  sudo apt-get -q -y -f install doxyparse sloccount
 }
 
 locate_package() {
