@@ -12,7 +12,8 @@ Feature: analizo wrapper script
 
   Scenario: display help
     When I run "analizo --help"
-    Then the output must match "Analizo documentation"
+    Then the output must match "NAME\\s+analizo\\s"
+    And the output must match "USAGE\\s+analizo\\s"
     And the exit status must be 0
 
   Scenario: display version
