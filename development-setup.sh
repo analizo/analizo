@@ -3,8 +3,9 @@
 set -e
 
 setup_debian() {
-  sudo apt-get -q -y install wget gnupg
-  which lsb_release || sudo apt-get -q -y install lsb-release
+  which wget || sudo apt-get -q -y -f install wget
+  which gpg || sudo apt-get -q -y -f install gnupg
+  which lsb_release || sudo apt-get -q -y -f install lsb-release
   codename=$(lsb_release -c | awk '{print($2)}')
   if type prepare_$codename >/dev/null 2>&1; then
     prepare_$codename
@@ -13,30 +14,29 @@ setup_debian() {
   fi
 
   if [ ! -f /etc/apt/sources.list.d/analizo.list ]; then
-    which wget || sudo apt-get -q -y install wget
-    which gpg || sudo apt-get -q -y install gnupg
     echo "deb http://www.analizo.org/download/ ./" | sudo sh -c 'cat > /etc/apt/sources.list.d/analizo.list'
     wget -O - http://www.analizo.org/download/signing-key.asc | sudo apt-key add -
   fi
-  which apt-file || sudo apt-get -q -y install apt-file
+  which apt-file || sudo apt-get -q -y -f install apt-file
   sudo apt-get update
   sudo apt-file update
 
-  sudo apt-get -q -y install dh-make-perl libdist-zilla-perl
+  sudo apt-get -q -y -f install dh-make-perl libdist-zilla-perl
 
   if ! which cpanm; then
     echo "*** cpanm NOT FOUND ***"
     echo "installing cpanm..." 1>&2
-    sudo apt-get -q -y install cpanminus
+    sudo apt-get -q -y -f install cpanminus
+    cpanm --local-lib=~/perl5 local::lib && eval $(perl -I ~/perl5/lib/perl5/ -Mlocal::lib)
   fi
 
   packages=$(locate_package $(dzil authordeps))
   sudo apt-get -q -y -f install $packages
-  dzil authordeps --missing | cpanm --sudo --notest
+  dzil authordeps --missing | cpanm --notest
 
   packages=$(locate_package $(dzil listdeps))
   sudo apt-get -q -y -f install $packages
-  dzil listdeps --missing | cpanm --sudo --notest
+  dzil listdeps --missing | cpanm --notest
 
   sudo apt-get -q -y -f install doxyparse sloccount
 }
