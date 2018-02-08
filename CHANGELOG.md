@@ -105,3 +105,4 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 [1.20.4]: https://github.com/analizo/analizo/compare/1.20.3...1.20.4
 [1.20.5]: https://github.com/analizo/analizo/compare/1.20.4...1.20.5
 [1.20.6]: https://github.com/analizo/analizo/compare/1.20.5...1.20.6
+[1.20.7]: https://github.com/analizo/analizo/compare/1.20.6...1.20.7
