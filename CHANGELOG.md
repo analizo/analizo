@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [1.20.7] - 2018-02-07
+
+### Changed
+- Change development script to install CPAN modules without sudo.
+
+### Fixed
+- Fix tests to run under Perl located in different paths.
+
+### Removed
+- Removed external dependency for `man`.
+
 ## [1.20.6] - 2018-02-06
 
 ### Changed
@@ -17,8 +28,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Analizo visualization tools `dsm` and `evolution-matrix` are going to be removed from Analizo, the tools will be refactored or just removed.
 
 ### Removed
-- Removed external dependency for sqlite3.
-- Removed external dependency for man.
+- Removed external dependency for `sqlite3`.
+- Removed external dependency for `man`.
 
 ## [1.20.5] - 2018-02-03
 
