@@ -16,7 +16,7 @@ our $stdout;
 our $stderr;
 
 use Env qw(@PATH $PWD);
-push @PATH, "$PWD/bin";
+push @PATH, "$PWD/blib/script", "$PWD/bin";
 
 When qr/^I run "([^\"]*)"$/, func($c) {
   my $command = $1;
