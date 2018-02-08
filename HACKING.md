@@ -73,18 +73,18 @@ corresponding instruction (e.g.  if, for etc).
 Good:
 
 ```
-if (...) {
+if (...) \{
   ...
-}
+\}
 ```
 
 Bad:
 
 ```
 if (...)
-{
+\{
   ...
-}
+\}
 ```
 
 Always "use strict" in the top of new modules.
