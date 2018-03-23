@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [1.20.8] - 2018-03-23
+
+### Added
+- Auto generate META.json using dzil plugin MetaJSON
+
+### Fixed
+- Changed markdown syntax to fix pandoc html transforming
+- Tests depends on File::Slurp
+- Env::Path is required at runtime
+
+### Removed
+- Removed dependency for Method::Signatures
+
 ## [1.20.7] - 2018-02-07
 
 ### Changed
@@ -106,3 +119,4 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 [1.20.5]: https://github.com/analizo/analizo/compare/1.20.4...1.20.5
 [1.20.6]: https://github.com/analizo/analizo/compare/1.20.5...1.20.6
 [1.20.7]: https://github.com/analizo/analizo/compare/1.20.6...1.20.7
+[1.20.8]: https://github.com/analizo/analizo/compare/1.20.7...1.20.8

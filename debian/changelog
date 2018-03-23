@@ -1,3 +1,13 @@
+analizo (1.20.8) unstable; urgency=medium
+
+  * removing dependency for Method::Signatures
+  * Env::Path is required at runtime #115 (thanks @rafamanzo @eserte)
+  * auto generate META.json using dzil plugin [MetaJSON]  (thanks @manwar)
+  * tests depends on File::Slurp #114
+  * change markdown syntax to avoid error transforming doc in html
+
+ -- Joenio Costa <joenio@joenio.me>  Fri, 23 Mar 2018 15:49:45 -0300
+
 analizo (1.20.7) unstable; urgency=medium
 
   * Change development script to install CPAN modules without sudo
