@@ -121,9 +121,9 @@ least one source code file. Consequently, it skips all the commits where no
 source code file was changed, such as documentation, translations, build system
 changes, etc.
 
-Currently we support C, C++ and Java projects, and therefore files considered
+Currently we support C, C++, Java and C# projects, and therefore files considered
 source code are the ones terminated in I<.c>, I<.h>, I<.cpp>, I<.cxx>, I<.cc>,
-I<.hpp>, and I<.java>.
+I<.hh>, I<.hpp>, I<.java> and I<.cs>.
 
 =head1 OPTIONS
 

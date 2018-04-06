@@ -29,4 +29,4 @@ Description: {{ $dist->abstract }}
  about it, such as module dependency, source code metrics and more.
  .
  Analizo uses doxyparse to parse the source code, and is currently tested and
- expected to work well with C, C++ and Java source code.
+ expected to work well with C, C++, Java and C# source code.
