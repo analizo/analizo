@@ -31,20 +31,20 @@ sub description : Tests {
 }
 
 sub calculate : Tests {
-  $model->declare_module('A');
+  $model->declare_module('A', 'A.c');
   $model->declare_function('A', 'fA');
   $model->declare_function('A', 'fA2');
 
-  $model->declare_module('B');
+  $model->declare_module('B', 'B.c');
   $model->declare_function('B', 'fB');
   $model->declare_variable('B', 'vB');
 
-  $model->declare_module('C');
+  $model->declare_module('C', 'C.c');
   $model->declare_function('C', 'fC');
   $model->declare_variable('C', 'vC');
 
   is($acc->calculate('A'), 0, 'no acc module A');
-   is($acc->calculate('B'), 0, 'no acc module B');
+  is($acc->calculate('B'), 0, 'no acc module B');
   is($acc->calculate('C'), 0, 'no acc module C');
 
   $model->add_call('fA', 'fB');
@@ -67,11 +67,11 @@ sub calculate : Tests {
 }
 
 sub calculate_with_inheritance : Tests {
-  $model->declare_module('Mother');
-  $model->declare_module('Child1');
-  $model->declare_module('Child2');
-  $model->declare_module('Grandchild1');
-  $model->declare_module('Grandchild2');
+  $model->declare_module('Mother', 'Mother.c');
+  $model->declare_module('Child1', 'Child1.c');
+  $model->declare_module('Child2', 'Child2.c');
+  $model->declare_module('Grandchild1', 'Grandchild1.c');
+  $model->declare_module('Grandchild2', 'Grandchild2.c');
 
   $model->add_inheritance('Child1', 'Mother');
   is($acc->calculate('Mother'), 1, 'inheritance counts as acc to superclass');
