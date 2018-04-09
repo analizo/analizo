@@ -13,7 +13,7 @@ use Analizo::Batch::Git;
 my $TESTDIR = tmpdir() . '/evolution';
 
 sub constructor : Tests {
-  isa_ok(new Analizo::Batch::Git, 'Analizo::Batch::Git');
+  isa_ok(Analizo::Batch::Git->new, 'Analizo::Batch::Git');
 }
 
 sub create_with_and_without_args : Tests {
@@ -33,7 +33,7 @@ sub create_with_and_without_args : Tests {
 
 sub traverse_repository : Tests {
   my $batch = __create($TESTDIR);
-  $batch->filters(new Analizo::LanguageFilter('cpp'));
+  $batch->filters(Analizo::LanguageFilter->new('cpp'));
   my %jobs = ();
   while (my $job = $batch->next()) {
     $jobs{$job->id} = 1;
@@ -70,7 +70,7 @@ sub find_commit : Tests {
 
 sub __create {
   my @args = @_;
-  new Analizo::Batch::Git(@args);
+  Analizo::Batch::Git->new(@args);
 }
 
 unpack_sample_git_repository(

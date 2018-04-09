@@ -10,8 +10,8 @@ use Analizo::Model;
 use vars qw($model $global_metrics);
 
 sub setup : Test(setup) {
-  $model = new Analizo::Model;
-  $global_metrics = new Analizo::GlobalMetrics(model => $model);
+  $model = Analizo::Model->new;
+  $global_metrics = Analizo::GlobalMetrics->new(model => $model);
 }
 
 sub constructor : Tests {

@@ -267,7 +267,7 @@ use Analizo::Model;
 my $__metric_columns = undef;
 sub _metric_columns() {
   if (!$__metric_columns) {
-    my $metrics = new Analizo::Metrics(model => new Analizo::Model);
+    my $metrics = Analizo::Metrics->new(model => Analizo::Model->new);
 
     my %module_metrics = $metrics->list_of_metrics();
     my @module_metrics= keys(%module_metrics);

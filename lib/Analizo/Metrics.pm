@@ -42,8 +42,8 @@ sub new {
   my ($package, %args) = @_;
   my @instance_variables = (
     model => $args{model},
-    global_metrics => new Analizo::GlobalMetrics(model => $args{model}),
-    module_metrics => new Analizo::ModuleMetrics(model => $args{model}),
+    global_metrics => Analizo::GlobalMetrics->new(model => $args{model}),
+    module_metrics => Analizo::ModuleMetrics->new(model => $args{model}),
     module_data => [],
     by_module => {},
   );

@@ -37,7 +37,7 @@ sub initialize {
   unless(defined($self->{index})) {
     # initialize filter: by default look only for files in known languages
     unless ($self->has_filters) {
-      $self->filters(new Analizo::LanguageFilter('all'));
+      $self->filters(Analizo::LanguageFilter->new('all'));
     }
 
     # read in list of commits
@@ -69,7 +69,7 @@ sub initialize {
       }
       $commit_data->{changed_files} = \%changed_files;
 
-      my $job = new Analizo::Batch::Job::Git($self->{directory}, $commit_data->{id}, $commit_data);
+      my $job = Analizo::Batch::Job::Git->new($self->{directory}, $commit_data->{id}, $commit_data);
       $job->batch($self);
       push @jobs, $job;
 

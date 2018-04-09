@@ -54,7 +54,7 @@ sub load {
 sub model {
   my ($self) = @_;
   if (!exists($self->{model})) {
-    $self->{model} = new Analizo::Model;
+    $self->{model} = Analizo::Model->new;
   }
   return $self->{model};
 }

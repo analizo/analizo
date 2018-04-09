@@ -45,7 +45,7 @@ sub apply_filters {
 
   unless ($self->has_filters) {
     # By default, only look at supported languages
-    $self->filters(new Analizo::LanguageFilter('all'));
+    $self->filters(Analizo::LanguageFilter->new('all'));
   }
 
   my @result = ();

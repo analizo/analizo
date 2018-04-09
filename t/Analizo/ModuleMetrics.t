@@ -9,8 +9,8 @@ use Analizo::ModuleMetrics;
 use vars qw($model $module_metrics );
 
 sub setup : Test(setup) {
-  $model = new Analizo::Model;
-  $module_metrics = new Analizo::ModuleMetrics(model => $model);
+  $model = Analizo::Model->new;
+  $module_metrics = Analizo::ModuleMetrics->new(model => $model);
 }
 
 sub constructor : Tests {

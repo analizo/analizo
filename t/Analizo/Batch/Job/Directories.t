@@ -34,7 +34,7 @@ sub prepare_and_cleanup : Tests {
 
 sub __create_job {
   my @args = @_;
-  on_dir('t/samples/hello_world', sub { new Analizo::Batch::Job::Directories(@args) });
+  on_dir('t/samples/hello_world', sub { Analizo::Batch::Job::Directories->new(@args) });
 }
 
 __PACKAGE__->runtests;

@@ -14,8 +14,8 @@ eval('$Analizo::Metric::QUIET = 1;'); # the eval is to avoid Test::* complaining
 use vars qw($model $amloc);
 
 sub setup : Test(setup) {
-  $model = new Analizo::Model;
-  $amloc = new Analizo::Metric::AverageMethodLinesOfCode(model => $model);
+  $model = Analizo::Model->new;
+  $amloc = Analizo::Metric::AverageMethodLinesOfCode->new(model => $model);
 }
 
 sub use_package : Tests {

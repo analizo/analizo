@@ -128,7 +128,7 @@ sub execute {
   my $model_cache_key = "model://$tree_id";
   my $model = $self->cache->get($model_cache_key);
   if (!defined $model) {
-    $model = new Analizo::Model;
+    $model = Analizo::Model->new;
     my %options = (
       model => $model,
       includedirs => $self->includedirs,
@@ -137,7 +137,7 @@ sub execute {
     );
     my @extractors = (
       Analizo::Extractor->load($self->extractor, %options),
-      new Analizo::Extractor::Sloccount(%options),
+      Analizo::Extractor::Sloccount->new(%options),
     );
     for my $extractor (@extractors) {
       $self->share_filters_with($extractor);
@@ -151,7 +151,7 @@ sub execute {
   my $metrics_cache_key = "metrics://$tree_id";
   my $metrics = $self->cache->get($metrics_cache_key);
   if (!defined $metrics) {
-    $metrics = new Analizo::Metrics(model => $self->model);
+    $metrics = Analizo::Metrics->new(model => $self->model);
     $metrics->data();
     $self->cache->set($metrics_cache_key, $metrics);
   }

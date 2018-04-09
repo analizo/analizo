@@ -13,8 +13,8 @@ use Analizo::GlobalMetric::MethodsPerAbstractClass;
 use vars qw($model $mac);
 
 sub setup : Test(setup) {
-  $model = new Analizo::Model;
-  $mac = new Analizo::GlobalMetric::MethodsPerAbstractClass(model => $model);
+  $model = Analizo::Model->new;
+  $mac = Analizo::GlobalMetric::MethodsPerAbstractClass->new(model => $model);
 }
 
 sub use_package : Tests {

@@ -14,8 +14,8 @@ eval('$Analizo::Metric::QUIET = 1;'); # the eval is to avoid Test::* complaining
 use vars qw($model $cbo);
 
 sub setup : Test(setup) {
-  $model = new Analizo::Model;
-  $cbo = new Analizo::Metric::CouplingBetweenObjects(model => $model);
+  $model = Analizo::Model->new;
+  $cbo = Analizo::Metric::CouplingBetweenObjects->new(model => $model);
 }
 
 sub use_package : Tests {

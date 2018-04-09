@@ -6,7 +6,7 @@ use warnings;
 use Analizo::FilenameFilter;
 
 sub constructor : Tests {
-  isa_ok(new Analizo::FilenameFilter, 'Analizo::FilenameFilter');
+  isa_ok(Analizo::FilenameFilter->new, 'Analizo::FilenameFilter');
 }
 
 sub null_object : Tests {

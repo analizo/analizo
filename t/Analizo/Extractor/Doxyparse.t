@@ -287,7 +287,7 @@ sub invalid_doxyparse_input : Tests {
   # e.g. receiving function/variable declarations before a current module is
   # declared. (it happends sometime)
 
-  my $extractor = new Analizo::Extractor::Doxyparse;
+  my $extractor = Analizo::Extractor::Doxyparse->new;
 
   $extractor->feed("---
     wrong:
@@ -309,7 +309,7 @@ sub invalid_doxyparse_input : Tests {
 }
 
 sub current_file : Tests {
-  my $extractor = new Analizo::Extractor::Doxyparse;
+  my $extractor = Analizo::Extractor::Doxyparse->new;
   my $current_file_called_correctly = undef;
   no warnings;
   local *Analizo::Extractor::Doxyparse::current_file = sub {
@@ -330,7 +330,7 @@ sub current_file : Tests {
 sub current_file_strip_pwd : Tests {
   use Cwd;
   my $pwd = getcwd();
-  my $extractor = new Analizo::Extractor::Doxyparse;
+  my $extractor = Analizo::Extractor::Doxyparse->new;
   $extractor->feed("---
     $pwd/src/test.c:
       test.c:
@@ -339,7 +339,7 @@ sub current_file_strip_pwd : Tests {
 }
 
 sub use_full_filename_for_C_modules : Tests {
-  my $extractor = new Analizo::Extractor::Doxyparse;
+  my $extractor = Analizo::Extractor::Doxyparse->new;
   $extractor->process('t/samples/multidir/c');
   my @modules = $extractor->model->module_names();
   ok(grep { /^lib\/main$/ } @modules);
@@ -347,7 +347,7 @@ sub use_full_filename_for_C_modules : Tests {
 }
 
 sub module_name_can_contain_spaces : Tests {
-  my $extractor = new Analizo::Extractor::Doxyparse;
+  my $extractor = Analizo::Extractor::Doxyparse->new;
   $extractor->feed("---
     src/template.cpp:
       TemplatedClass< true >:

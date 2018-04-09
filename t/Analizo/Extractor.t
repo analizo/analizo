@@ -13,13 +13,13 @@ use Analizo::Model;
 # Redefine constructor so that this test class can instantiate
 # Analizo::Extractor directly
 use Test::MockModule;
-my $AnalizoExtractor = new Test::MockModule('Analizo::Extractor');
+my $AnalizoExtractor = Test::MockModule->new('Analizo::Extractor');
 $AnalizoExtractor->mock('new', sub { return bless {}, 'Analizo::Extractor'});
 
 eval('$Analizo::Extractor::QUIET = 1;'); # the eval is to avoid Test::* complaining about possible typo
 
 sub constructor : Tests {
-  isa_ok(new Analizo::Extractor, 'Analizo::Extractor');
+  isa_ok(Analizo::Extractor->new, 'Analizo::Extractor');
 }
 
 sub has_a_current_member : Tests {
@@ -30,7 +30,7 @@ sub has_a_current_member : Tests {
 # BEGIN test of indicating current module
 ##############################################################################
 sub current_module : Tests {
-  my $extractor = new Analizo::Extractor;
+  my $extractor = Analizo::Extractor->new;
   $extractor->current_module('module1.c');
   is($extractor->current_module, 'module1.c', 'must be able to set the current module');
   $extractor->current_module('module2.c');
@@ -38,16 +38,16 @@ sub current_module : Tests {
 }
 
 sub current_file : Tests {
-  my $extractor = new Analizo::Extractor;
+  my $extractor = Analizo::Extractor->new;
   is($extractor->current_file, undef);
   $extractor->current_file('file1.c');
   is($extractor->current_file, 'file1.c');
 }
 
 sub current_file_plus_current_module : Tests {
-  my $extractor = new Analizo::Extractor;
+  my $extractor = Analizo::Extractor->new;
 
-  my $model = new Analizo::Model;
+  my $model = Analizo::Model->new;
   $extractor->{model} = $model;
 
   $extractor->current_file('person.cpp');
@@ -86,7 +86,7 @@ sub dont_allow_code_injection: Tests {
 }
 
 sub has_filters : Tests {
-  my $extractor = new Analizo::Extractor;
+  my $extractor = Analizo::Extractor->new;
   can_ok($extractor, 'filters');
   my $filters = $extractor->filters;
   is_deeply([], $filters);
@@ -97,7 +97,7 @@ sub has_filters : Tests {
 }
 
 sub must_consider_only__supported_languages : Tests {
-  my $extractor = new Analizo::Extractor;
+  my $extractor = Analizo::Extractor->new;
   my @processed = ();
   no warnings;
   local *Analizo::Extractor::actually_process = sub {
@@ -126,8 +126,8 @@ sub must_filter_input_with_language_filter : Tests {
     @processed = @options;
   };
 
-  my $extractor = new Analizo::Extractor;
-  $extractor->filters(new Analizo::LanguageFilter('java'));
+  my $extractor = Analizo::Extractor->new;
+  $extractor->filters(Analizo::LanguageFilter->new('java'));
   $extractor->process('t/samples/mixed');
 
   my @expected = ('t/samples/mixed/Backend.java', 't/samples/mixed/UI.java');
@@ -136,7 +136,7 @@ sub must_filter_input_with_language_filter : Tests {
 }
 
 sub must_create_filters_for_excluded_dirs : Tests {
-  my $extractor = new Analizo::Extractor;
+  my $extractor = Analizo::Extractor->new;
   my $filters = $extractor->filters;
   is(scalar @$filters, 0);
 
@@ -159,7 +159,7 @@ sub must_not_process_files_in_excluded_dirs : Tests {
   };
   use warnings;
 
-  my $extractor = new Analizo::Extractor;
+  my $extractor = Analizo::Extractor->new;
   $extractor->exclude('t/samples/multidir/cpp/test');
   $extractor->process('t/samples/multidir/cpp');
   is_deeply(\@processed, ['t/samples/multidir/cpp/hello.cc', 't/samples/multidir/cpp/src/hello.cc', 't/samples/multidir/cpp/src/hello.h']);
@@ -174,7 +174,7 @@ sub must_not_exclude_everything_in_the_case_of_unexisting_excluded_dir : Tests {
   };
   use warnings;
 
-  my $extractor = new Analizo::Extractor;
+  my $extractor = Analizo::Extractor->new;
 
   ok(! -e 't/samples/animals/cpp/test');
   $extractor->exclude('t/samples/animals/cpp/test');  # does not exist!

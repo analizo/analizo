@@ -14,8 +14,8 @@ eval('$Analizo::Metric::QUIET = 1;'); # the eval is to avoid Test::* complaining
 use vars qw($model $rfc);
 
 sub setup : Test(setup) {
-  $model = new Analizo::Model;
-  $rfc = new Analizo::Metric::ResponseForClass(model => $model);
+  $model = Analizo::Model->new;
+  $rfc = Analizo::Metric::ResponseForClass->new(model => $model);
 }
 
 sub use_package : Tests {

@@ -14,8 +14,8 @@ eval('$Analizo::Metric::QUIET = 1;'); # the eval is to avoid Test::* complaining
 use vars qw($model $dit);
 
 sub setup : Test(setup) {
-  $model = new Analizo::Model;
-  $dit = new Analizo::Metric::DepthOfInheritanceTree(model => $model);
+  $model = Analizo::Model->new;
+  $dit = Analizo::Metric::DepthOfInheritanceTree->new(model => $model);
 }
 
 sub use_package : Tests {

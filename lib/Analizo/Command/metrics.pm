@@ -55,7 +55,7 @@ sub validate {
 sub execute {
   my ($self, $opt, $args) = @_;
   if($opt->list){
-    my $metrics_handler = new Analizo::Metrics(model => new Analizo::Model);
+    my $metrics_handler = Analizo::Metrics->new(model => Analizo::Model->new);
     my %metrics = $metrics_handler->list_of_metrics();
     my %global_metrics = $metrics_handler->list_of_global_metrics();
     print "Global Metrics:\n";
@@ -69,7 +69,7 @@ sub execute {
     exit 0;
   }
   my $tree = $args->[0] || '.';
-  my $job = new Analizo::Batch::Job::Directories($tree);
+  my $job = Analizo::Batch::Job::Directories->new($tree);
   $job->extractor($opt->extractor);
   if ($opt->language) {
     require Analizo::LanguageFilter;

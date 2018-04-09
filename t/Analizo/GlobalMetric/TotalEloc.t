@@ -13,8 +13,8 @@ use Analizo::GlobalMetric::TotalEloc;
 use vars qw($model $eloc);
 
 sub setup : Test(setup) {
-  $model = new Analizo::Model;
-  $eloc = new Analizo::GlobalMetric::TotalEloc(model => $model);
+  $model = Analizo::Model->new;
+  $eloc = Analizo::GlobalMetric::TotalEloc->new(model => $model);
 }
 
 sub use_package : Tests {

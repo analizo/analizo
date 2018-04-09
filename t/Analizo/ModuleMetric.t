@@ -9,9 +9,9 @@ use warnings;
 use Analizo::ModuleMetric;
 
 sub caches_calculate_results : Tests {
-  my $AnalizoMetric = new Test::MockModule('Analizo::ModuleMetric');
+  my $AnalizoMetric = Test::MockModule->new('Analizo::ModuleMetric');
 
-  my $metric = new Analizo::ModuleMetric;
+  my $metric = Analizo::ModuleMetric->new;
 
   $AnalizoMetric->mock('calculate', sub { return 1; });
   is($metric->value('MyModule'), 1);

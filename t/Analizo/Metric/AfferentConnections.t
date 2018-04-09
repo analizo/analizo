@@ -14,8 +14,8 @@ eval('$Analizo::Metric::QUIET = 1;'); # the eval is to avoid Test::* complaining
 use vars qw($model $acc);
 
 sub setup : Test(setup) {
-  $model = new Analizo::Model;
-  $acc = new Analizo::Metric::AfferentConnections(model => $model);
+  $model = Analizo::Model->new;
+  $acc = Analizo::Metric::AfferentConnections->new(model => $model);
 }
 
 sub use_package : Tests {

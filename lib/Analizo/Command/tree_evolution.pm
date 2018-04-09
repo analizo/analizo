@@ -31,7 +31,7 @@ sub validate {}
 
 sub execute {
   my ($self, $opt, $args) = @_;
-  my $filter = new Analizo::LanguageFilter($opt->language);
+  my $filter = Analizo::LanguageFilter->new($opt->language);
   local $ENV{PATH} = '/usr/local/bin:/usr/bin:/bin';
   open COMMITS, "git log --reverse --format=%H|";
   my @commits = <COMMITS>;

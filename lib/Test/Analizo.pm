@@ -32,7 +32,7 @@ sub on_dir {
 
 sub mock {
   my ($object) = @_;
-  new Test::MockObject::Extends($object);
+  Test::MockObject::Extends->new($object);
 }
 
 sub tmpdir {

@@ -16,9 +16,9 @@ sub interface : Tests {
 }
 
 sub interaction_with_output : Tests {
-  my $runner = new Analizo::Batch::Runner;
+  my $runner = Analizo::Batch::Runner->new;
   my $batch = {};
-  my $output = mock(new Analizo::Batch::Output);
+  my $output = mock(Analizo::Batch::Output->new);
 
   my $initialized = 0;
   my $flushed = 0;
@@ -32,7 +32,7 @@ sub interaction_with_output : Tests {
 }
 
 sub progress : Tests {
-  my $runner = new Analizo::Batch::Runner;
+  my $runner = Analizo::Batch::Runner->new;
   my $job = undef;
   my $step = undef;
   my $total = undef;

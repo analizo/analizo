@@ -32,26 +32,26 @@ sub new {
 
 sub _initialize_metric_calculators {
   my ($model) = @_;
-  my $cbo                = new Analizo::Metric::CouplingBetweenObjects(model => $model);
-  my $lcom4              = new Analizo::Metric::LackOfCohesionOfMethods(model => $model);
+  my $cbo                = Analizo::Metric::CouplingBetweenObjects->new(model => $model);
+  my $lcom4              = Analizo::Metric::LackOfCohesionOfMethods->new(model => $model);
 
   my  %calculators = (
-    acc                  => new Analizo::Metric::AfferentConnections(model => $model),
-    accm                 => new Analizo::Metric::AverageCycloComplexity(model => $model),
-    amloc                => new Analizo::Metric::AverageMethodLinesOfCode(model => $model),
-    anpm                 => new Analizo::Metric::AverageNumberOfParameters(model => $model),
+    acc                  => Analizo::Metric::AfferentConnections->new(model => $model),
+    accm                 => Analizo::Metric::AverageCycloComplexity->new(model => $model),
+    amloc                => Analizo::Metric::AverageMethodLinesOfCode->new(model => $model),
+    anpm                 => Analizo::Metric::AverageNumberOfParameters->new(model => $model),
     cbo                  => $cbo,
-    dit                  => new Analizo::Metric::DepthOfInheritanceTree(model => $model),
+    dit                  => Analizo::Metric::DepthOfInheritanceTree->new(model => $model),
     lcom4                => $lcom4,
-    loc                  => new Analizo::Metric::LinesOfCode(model => $model),
-    mmloc                => new Analizo::Metric::MaximumMethodLinesOfCode(model => $model),
-    noa                  => new Analizo::Metric::NumberOfAttributes(model => $model),
-    noc                  => new Analizo::Metric::NumberOfChildren(model => $model),
-    nom                  => new Analizo::Metric::NumberOfMethods(model => $model),
-    npm                  => new Analizo::Metric::NumberOfPublicMethods(model => $model),
-    npa                  => new Analizo::Metric::NumberOfPublicAttributes(model => $model),
-    rfc                  => new Analizo::Metric::ResponseForClass(model => $model),
-    sc                   => new Analizo::Metric::StructuralComplexity(model => $model, cbo => $cbo, lcom4 => $lcom4),
+    loc                  => Analizo::Metric::LinesOfCode->new(model => $model),
+    mmloc                => Analizo::Metric::MaximumMethodLinesOfCode->new(model => $model),
+    noa                  => Analizo::Metric::NumberOfAttributes->new(model => $model),
+    noc                  => Analizo::Metric::NumberOfChildren->new(model => $model),
+    nom                  => Analizo::Metric::NumberOfMethods->new(model => $model),
+    npm                  => Analizo::Metric::NumberOfPublicMethods->new(model => $model),
+    npa                  => Analizo::Metric::NumberOfPublicAttributes->new(model => $model),
+    rfc                  => Analizo::Metric::ResponseForClass->new(model => $model),
+    sc                   => Analizo::Metric::StructuralComplexity->new(model => $model, cbo => $cbo, lcom4 => $lcom4),
 
   );
   return \%calculators;

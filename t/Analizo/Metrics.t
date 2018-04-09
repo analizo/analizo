@@ -8,8 +8,8 @@ use Analizo::Model;
 use vars qw($model $metrics);
 
 sub setup : Test(setup) {
-  $model = new Analizo::Model;
-  $metrics = new Analizo::Metrics(model => $model);
+  $model = Analizo::Model->new;
+  $metrics = Analizo::Metrics->new(model => $model);
 }
 
 sub constructor : Tests {
