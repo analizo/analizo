@@ -5,7 +5,7 @@ use Test::BDD::Cucumber::StepFile;
 use File::Slurp;
 use File::Temp qw( tempdir );
 use File::Copy::Recursive qw( rcopy );
-use YAML;
+use YAML::XS;
 use File::LibMagic;
 use Archive::Extract;
 use DBI;

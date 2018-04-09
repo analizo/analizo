@@ -2,7 +2,7 @@ package Analizo::Batch::Runner::Parallel;
 use strict;
 use warnings;
 use ZMQ::FFI qw(ZMQ_PUSH ZMQ_PULL ZMQ_REQ ZMQ_REP);
-use YAML;
+use YAML::XS;
 
 use base qw( Analizo::Batch::Runner );
 
@@ -107,6 +107,7 @@ sub distributor {
   my $job;
   while(1) {
     my $msg = $queue->recv();
+    $msg =~ s/!!perl\/code//; # https://github.com/ingydotnet/yaml-libyaml-pm/issues/28
     $job = Load($msg);
     last if !exists($job->{id});
     push(@queue, $job);

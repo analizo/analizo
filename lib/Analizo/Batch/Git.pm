@@ -9,7 +9,7 @@ use base qw(
 
 use Analizo::Batch::Job::Git;
 use Cwd 'abs_path';
-use YAML;
+use YAML::XS;
 
 __PACKAGE__->mk_ro_accessors(qw( directory ));
 
@@ -41,7 +41,8 @@ sub initialize {
     }
 
     # read in list of commits
-    my $data = `(cd $self->{directory} && git log  --name-status --format='---%nid: %H%nparents: %P%nauthor_date: %at%nauthor_name: %aN%nauthor_email: %aE%n--- |')`;
+    my $data = `(cd $self->{directory} && git log --name-status --format='---%nid: %H%nparents: %P%nauthor_date: %at%nauthor_name: %aN%nauthor_email: %aE%n--- |')`;
+    $data =~ s/^([[:upper:]])+\t/  $1  /sgm;
     my @data = Load($data);
     my @jobs = ();
     while($#data > 0) {

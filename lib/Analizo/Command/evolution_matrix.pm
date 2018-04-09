@@ -5,7 +5,7 @@ use strict;
 use warnings;
 use Analizo::EvolutionMatrix;
 use Analizo::EvolutionMatrix::Cell;
-use YAML qw(LoadFile);
+use YAML::XS qw(LoadFile);
 use Mojo::Template;
 use File::Basename;
 
