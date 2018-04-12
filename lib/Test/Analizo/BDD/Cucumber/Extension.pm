@@ -2,6 +2,7 @@ package Test::Analizo::BDD::Cucumber::Extension;
 use strict;
 use warnings;
 use File::Temp qw( tempdir );
+use File::Path qw(remove_tree);
 
 use Moo;
 extends 'Test::BDD::Cucumber::Extension';
@@ -21,6 +22,7 @@ sub post_scenario {
   unlink 'tmp.out';
   unlink 'tmp.err';
   unlink glob('*.tmp');
+  remove_tree $ENV{ANALIZO_CACHE};
   chdir $top_dir;
 }
 
