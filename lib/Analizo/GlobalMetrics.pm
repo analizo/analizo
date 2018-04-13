@@ -1,6 +1,6 @@
 package Analizo::GlobalMetrics;
 use strict;
-use base qw(Class::Accessor::Fast);
+use parent qw(Class::Accessor::Fast);
 
 use Analizo::GlobalMetric::TotalAbstractClasses;
 use Analizo::GlobalMetric::MethodsPerAbstractClass;

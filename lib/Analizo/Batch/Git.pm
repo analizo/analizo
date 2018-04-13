@@ -2,7 +2,7 @@ package Analizo::Batch::Git;
 use strict;
 use warnings;
 
-use base qw(
+use parent qw(
   Analizo::Batch
   Class::Accessor::Fast
 );

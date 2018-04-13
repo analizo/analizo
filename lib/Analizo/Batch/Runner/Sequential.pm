@@ -3,7 +3,7 @@ package Analizo::Batch::Runner::Sequential;
 use strict;
 use warnings;
 
-use base qw( Analizo::Batch::Runner );
+use parent qw( Analizo::Batch::Runner );
 
 sub actually_run {
   my ($self, $batch, $output) = @_;

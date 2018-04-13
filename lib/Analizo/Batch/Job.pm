@@ -5,7 +5,7 @@ package Analizo::Batch::Job;
 
 use strict;
 use warnings;
-use base qw(Class::Accessor::Fast Analizo::Filter::Client);
+use parent qw(Class::Accessor::Fast Analizo::Filter::Client);
 use File::Basename;
 use File::Temp qw/ tempfile /;
 use File::HomeDir;

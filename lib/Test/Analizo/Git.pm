@@ -1,6 +1,6 @@
 package Test::Analizo::Git;
 
-use base 'Exporter';
+use parent 'Exporter';
 @EXPORT = qw(
   $MASTER
   $SOME_COMMIT

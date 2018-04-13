@@ -1,6 +1,6 @@
 package Analizo::Metrics;
 use strict;
-use base qw(Class::Accessor::Fast);
+use parent qw(Class::Accessor::Fast);
 use YAML::XS;
 
 use Analizo::ModuleMetrics;

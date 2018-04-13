@@ -39,7 +39,7 @@ __PACKAGE__->runtests;
 
 package t::Analizo::Command::fake;
 use Analizo -command;
-use base qw(Analizo::Command);
+use parent qw(Analizo::Command);
 sub validate {}
 sub execute { "command fake executed" }
 1;

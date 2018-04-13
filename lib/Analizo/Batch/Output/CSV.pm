@@ -1,6 +1,6 @@
 package Analizo::Batch::Output::CSV;
 
-use base qw( Analizo::Batch::Output );
+use parent qw( Analizo::Batch::Output );
 use Analizo::Metrics;
 
 sub push {

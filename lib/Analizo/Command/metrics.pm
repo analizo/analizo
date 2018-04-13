@@ -1,6 +1,6 @@
 package Analizo::Command::metrics;
 use Analizo -command;
-use base qw(Analizo::Command);
+use parent qw(Analizo::Command);
 use strict;
 use warnings;
 use Analizo::Metrics;

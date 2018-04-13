@@ -1,6 +1,6 @@
 package Analizo::Metric::NumberOfPublicMethods;
 use strict;
-use base qw(Class::Accessor::Fast Analizo::ModuleMetric);
+use parent qw(Class::Accessor::Fast Analizo::ModuleMetric);
 
 =head1 NAME
 

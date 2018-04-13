@@ -2,7 +2,7 @@ package t::Analizo::Metric::StructuralComplexity;
 use strict;
 no strict 'subs';
 use warnings;
-use base qw(Test::Analizo::Class);
+use parent qw(Test::Analizo::Class);
 use Test::More;
 use File::Basename;
 

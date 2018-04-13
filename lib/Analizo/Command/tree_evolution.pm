@@ -1,6 +1,6 @@
 package Analizo::Command::tree_evolution;
 use Analizo -command;
-use base qw(Analizo::Command);
+use parent qw(Analizo::Command);
 use strict;
 use warnings;
 use Digest::SHA qw(sha1_hex);

@@ -2,7 +2,7 @@ package Analizo::Batch::Directories;
 use strict;
 use warnings;
 
-use base qw(Analizo::Batch Class::Accessor::Fast);
+use parent qw(Analizo::Batch Class::Accessor::Fast);
 use Analizo::Batch::Job::Directories;
 
 __PACKAGE__->mk_accessors(qw(directories));

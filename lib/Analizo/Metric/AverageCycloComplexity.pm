@@ -1,6 +1,6 @@
 package Analizo::Metric::AverageCycloComplexity;
 use strict;
-use base qw(Class::Accessor::Fast Analizo::ModuleMetric);
+use parent qw(Class::Accessor::Fast Analizo::ModuleMetric);
 use Statistics::Descriptive;
 
 =head1 NAME

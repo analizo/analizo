@@ -3,7 +3,7 @@ package Analizo::Extractor;
 use strict;
 use warnings;
 
-use base qw(Class::Accessor::Fast Analizo::Filter::Client);
+use parent qw(Class::Accessor::Fast Analizo::Filter::Client);
 
 use Analizo::Model;
 use Analizo::FilenameFilter;

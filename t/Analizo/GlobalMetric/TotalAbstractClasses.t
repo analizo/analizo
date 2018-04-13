@@ -1,5 +1,5 @@
 package t::Analizo::GlobalMetric::TotalAbstractClasses;
-use base qw(Test::Class);
+use parent qw(Test::Class);
 use Test::More;
 
 use strict;

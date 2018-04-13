@@ -1,6 +1,6 @@
 package Analizo::ModuleMetrics;
 use strict;
-use base qw(Class::Accessor::Fast);
+use parent qw(Class::Accessor::Fast);
 
 use Analizo::Metric::AfferentConnections;
 use Analizo::Metric::AverageCycloComplexity;

@@ -2,7 +2,7 @@ package Test::Analizo;
 use strict;
 use warnings;
 
-use base qw( Exporter );
+use parent qw( Exporter );
 our @EXPORT = qw(
   on_dir
   on_tmpdir

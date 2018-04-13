@@ -3,7 +3,7 @@ package Analizo::Extractor::Doxyparse;
 use strict;
 use warnings;
 
-use base qw(Analizo::Extractor);
+use parent qw(Analizo::Extractor);
 
 use File::Temp qw/ tempfile /;
 use Cwd;

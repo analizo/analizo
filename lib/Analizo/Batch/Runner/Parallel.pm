@@ -4,7 +4,7 @@ use warnings;
 use ZMQ::FFI qw(ZMQ_PUSH ZMQ_PULL ZMQ_REQ ZMQ_REP);
 use YAML::XS;
 
-use base qw( Analizo::Batch::Runner );
+use parent qw( Analizo::Batch::Runner );
 
 sub new {
   my ($class, $parallelism) = @_;

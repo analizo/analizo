@@ -1,6 +1,6 @@
 package Analizo::GlobalMetric::TotalAbstractClasses;
 use strict;
-use base qw(Class::Accessor::Fast);
+use parent qw(Class::Accessor::Fast);
 
 __PACKAGE__->mk_accessors(qw( model ));
 

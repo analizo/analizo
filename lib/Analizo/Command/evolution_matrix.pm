@@ -1,6 +1,6 @@
 package Analizo::Command::evolution_matrix;
 use Analizo -command;
-use base qw(Analizo::Command);
+use parent qw(Analizo::Command);
 use strict;
 use warnings;
 use Analizo::EvolutionMatrix;

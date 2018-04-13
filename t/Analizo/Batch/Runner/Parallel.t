@@ -1,7 +1,7 @@
 package t::Analizo::Batch::Runner::Parallel;
 use strict;
 use warnings;
-use base qw(Test::Analizo::Class);
+use parent qw(Test::Analizo::Class);
 use Test::More;
 use Test::Analizo;
 
