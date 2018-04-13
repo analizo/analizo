@@ -3,9 +3,7 @@ use strict;
 use warnings;
 use File::Temp qw( tempdir );
 use File::Path qw(remove_tree);
-
-use Moo;
-extends 'Test::BDD::Cucumber::Extension';
+use parent qw(Test::BDD::Cucumber::Extension);
 
 use Cwd;
 our $top_dir = cwd();
