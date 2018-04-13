@@ -1,6 +1,7 @@
 package t::Analizo::Metrics;
 use strict;
-use base qw(Test::Class);
+use warnings;
+use base qw(Test::Analizo::Class);
 use Test::More;
 use Analizo::Metrics;
 use Analizo::Model;

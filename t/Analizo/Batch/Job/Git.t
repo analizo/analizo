@@ -1,8 +1,7 @@
 package t::Analizo::Batch::Job::Git;
 use strict;
 use warnings;
-
-use base 'Test::Class';
+use base qw(Test::Analizo::Class);
 use Test::More;
 use Test::Analizo;
 use Cwd;

@@ -1,10 +1,9 @@
 package t::Analizo::ModuleMetric;
-use base qw(Test::Class);
-use Test::More;
-use Test::MockModule;
-
 use strict;
 use warnings;
+use base qw(Test::Analizo::Class);
+use Test::More;
+use Test::MockModule;
 
 use Analizo::ModuleMetric;
 

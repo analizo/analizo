@@ -1,10 +1,9 @@
 package t::Analizo::Extractor;
-use base qw(Test::Class);
-use Test::More;
-use Test::Exception;
-
 use strict;
 use warnings;
+use base qw(Test::Analizo::Class);
+use Test::More;
+use Test::Exception;
 
 use Analizo::Extractor;
 use Analizo::LanguageFilter;

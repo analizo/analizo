@@ -1,8 +1,8 @@
 package t::Analizo::FilenameFilter;
-use base qw(Test::Class);
-use Test::More;
 use strict;
 use warnings;
+use base qw(Test::Analizo::Class);
+use Test::More;
 use Analizo::FilenameFilter;
 
 sub constructor : Tests {

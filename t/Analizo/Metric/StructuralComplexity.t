@@ -1,10 +1,9 @@
 package t::Analizo::Metric::StructuralComplexity;
-use base qw(Test::Class);
-use Test::More;
-
 use strict;
 no strict 'subs';
 use warnings;
+use base qw(Test::Analizo::Class);
+use Test::More;
 use File::Basename;
 
 use Analizo::Model;

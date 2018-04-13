@@ -1,9 +1,8 @@
 package t::Analizo::Extractor::Sloccount;
-use base qw(Test::Class);
-use Test::More;
-
 use strict;
 use warnings;
+use base qw(Test::Analizo::Class);
+use Test::More;
 use File::Basename;
 
 eval('$Analizo::Extractor::QUIET = 1;'); # the eval is to avoid Test::* complaining about possible typo

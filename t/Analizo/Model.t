@@ -1,7 +1,8 @@
 package t::Analizo::Model;
-use base qw(Test::Class);
-use Test::More;
 use strict;
+use warnings;
+use base qw(Test::Analizo::Class);
+use Test::More;
 
 use Analizo::Model;
 

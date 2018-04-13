@@ -1,14 +1,12 @@
 package t::Analizo::GlobalMetric::MethodsPerAbstractClass;
-use base qw(Test::Class);
-use Test::More;
-
 use strict;
 use warnings;
+use base qw(Test::Analizo::Class);
+use Test::More;
 use File::Basename;
 
 use Analizo::Model;
 use Analizo::GlobalMetric::MethodsPerAbstractClass;
-
 
 use vars qw($model $mac);
 

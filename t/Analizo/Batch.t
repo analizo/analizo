@@ -1,7 +1,7 @@
 package t::Analizo::Batch;
 use strict;
 use warnings;
-use base qw(Test::Class);
+use base qw(Test::Analizo::Class);
 use Test::More;
 use Test::Analizo;
 use Analizo::Batch;

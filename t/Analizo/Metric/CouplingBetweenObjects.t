@@ -1,9 +1,8 @@
 package t::Analizo::Metric::CouplingBetweenObjects;
-use base qw(Test::Class);
-use Test::More;
-
 use strict;
 use warnings;
+use base qw(Test::Analizo::Class);
+use Test::More;
 use File::Basename;
 
 use Analizo::Model;
@@ -60,4 +59,3 @@ sub discard_external_symbols_for_calculate : Tests {
 }
 
 __PACKAGE__->runtests;
-

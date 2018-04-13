@@ -1,7 +1,7 @@
 package t::Analizo::GlobalMetric::ChangeCost;
 use strict;
 use warnings;
-use base qw(Test::Class);
+use base qw(Test::Analizo::Class);
 use Test::More;
 use Analizo::Model;
 use vars qw($model $metric);

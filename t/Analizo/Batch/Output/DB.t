@@ -1,7 +1,7 @@
 package t::Analizo::Batch::Output::DB;
 use strict;
 use warnings;
-use base qw( Test::Class );
+use base qw(Test::Analizo::Class);
 use Test::More;
 use Test::Analizo;
 my $TMPDIR = tmpdir();
