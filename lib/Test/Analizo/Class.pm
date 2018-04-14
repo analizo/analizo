@@ -5,6 +5,7 @@ use warnings;
 use parent qw( Test::Class );
 use File::Path qw(remove_tree);
 use File::Temp qw( tempdir );
+use File::Spec;
 
 sub create_tmpdir : Test(setup) {
   mkdir 't/tmp';
@@ -15,7 +16,7 @@ sub cleanup_tmpdir : Test(teardown) {
 }
 
 sub create_analizo_cache_tmpdir : Test(setup) {
-  $ENV{ANALIZO_CACHE} = tempdir(CLEANUP => 1);
+  $ENV{ANALIZO_CACHE} = tempdir("analizo-XXXXXXXXXX", CLEANUP => 1, DIR => File::Spec->tmpdir);
 }
 
 sub cleanup_analizo_cache_tmpdir : Test(teardown) {
