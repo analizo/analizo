@@ -7,7 +7,7 @@ Build-Depends-Indep: {{
 use Config::INI::Reader;
 use Debian::AptContents;
 our $hash = Config::INI::Reader->read_file('dist.ini');
-our $c = Debian::AptContents->new({homedir => "/tmp/dh-make-perl"});
+our $c = Debian::AptContents->new({homedir => "/tmp/dh-make-perl", verbose => 0});
 my @Prereqs = (keys(%{ $hash->{'Prereqs / BuildRequires'} }), keys(%{ $hash->{'Prereqs / TestRequires'} }), keys(%{ $hash->{'RequiresExternal'} }));
 join(",\n ", grep { $_ } map { $c->find_perl_module_package($_) } @Prereqs)
 }}
