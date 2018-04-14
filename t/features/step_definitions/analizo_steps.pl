@@ -17,12 +17,20 @@ our $stderr;
 use Env qw(@PATH $PWD);
 push @PATH, "$PWD/blib/script", "$PWD/bin";
 
+use IPC::Open3;
+use Symbol 'gensym';
+
 When qr/^I run "([^\"]*)"$/, sub {
   my ($c) = @_;
   my $command = $1;
-  $exit_status = system "($command) >tmp.out 2>tmp.err";
-  $stdout = read_file('tmp.out');
-  $stderr = read_file('tmp.err');
+  my ($IN, $STDOUT, $STDERR);
+  $STDERR = gensym;
+  my $pid = open3($IN, $STDOUT, $STDERR, "$command 2>tmp.err");
+  waitpid $pid, 0;
+  $exit_status = $?;
+  local $/ = undef;
+  $stdout = <$STDOUT>;
+  $stderr = <$STDERR> . read_file('tmp.err');
 };
 
 When qr/^I run "([^\"]*)" on database "([^\"]*)"$/, sub {

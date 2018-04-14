@@ -1,9 +1,10 @@
 Feature: analizo wrapper script
 
   Scenario: invoking a tool
-    When I run "analizo metrics lib t 2>&1"
-    Then the output must match "Usage:"
-    And the output must match "analizo.metrics"
+    When I run "analizo metrics lib t"
+    Then analizo must emit a warning matching "Usage:"
+    And analizo must emit a warning matching "analizo.metrics"
+    And the exit status must not be 0
 
   Scenario: must not pass --version ahead
     When I run "analizo metrics --version"
