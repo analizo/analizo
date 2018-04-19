@@ -1,9 +1,8 @@
 package t::Analizo::Batch::Job::Directories;
 use strict;
 use warnings;
-use base qw(Test::Class);
+use parent qw(Test::Analizo::Class);
 use Test::More;
-
 use Test::Analizo;
 
 use Analizo::Batch::Job::Directories;
@@ -34,7 +33,7 @@ sub prepare_and_cleanup : Tests {
 
 sub __create_job {
   my @args = @_;
-  on_dir('t/samples/hello_world', sub { new Analizo::Batch::Job::Directories(@args) });
+  on_dir('t/samples/hello_world', sub { Analizo::Batch::Job::Directories->new(@args) });
 }
 
 __PACKAGE__->runtests;

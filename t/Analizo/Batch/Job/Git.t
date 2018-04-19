@@ -1,8 +1,7 @@
 package t::Analizo::Batch::Job::Git;
 use strict;
 use warnings;
-
-use base 'Test::Class';
+use parent qw(Test::Analizo::Class);
 use Test::More;
 use Test::Analizo;
 use Cwd;
@@ -17,12 +16,12 @@ my $TESTDIR = 'evolution';
 
 
 sub constructor : Tests {
-  isa_ok(new Analizo::Batch::Job::Git(), 'Analizo::Batch::Job::Git');
+  isa_ok(Analizo::Batch::Job::Git->new, 'Analizo::Batch::Job::Git');
 }
 
 sub constructor_with_arguments : Tests {
   my $id = $MASTER;
-  my $job = new Analizo::Batch::Job::Git($TESTDIR, $id);
+  my $job = Analizo::Batch::Job::Git->new($TESTDIR, $id);
   is($job->directory, $TESTDIR);
   is($job->{actual_directory}, $TESTDIR);
   is($job->id, $id);
@@ -189,7 +188,7 @@ sub __find {
     my $repo = __get_repo();
     return $repo->find($id);
   } else {
-    return new Analizo::Batch::Job::Git;
+    return Analizo::Batch::Job::Git->new;
   }
 }
 
@@ -200,7 +199,7 @@ sub __get_repo {
   if (defined($REPOS{$repoid})) {
     return $REPOS{$repoid};
   }
-  my $repo = new Analizo::Batch::Git($repoid);
+  my $repo = Analizo::Batch::Git->new($repoid);
   $repo->initialize();
   $REPOS{$repoid} = $repo;
   return $repo;

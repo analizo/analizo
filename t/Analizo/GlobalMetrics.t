@@ -1,17 +1,17 @@
 package t::Analizo::GlobalMetrics;
 use strict;
-use base qw(Test::Class);
+use warnings;
+use parent qw(Test::Analizo::Class);
 use Test::More;
 use Statistics::Descriptive;
 use Analizo::GlobalMetrics;
 use Analizo::Model;
 
-
 use vars qw($model $global_metrics);
 
 sub setup : Test(setup) {
-  $model = new Analizo::Model;
-  $global_metrics = new Analizo::GlobalMetrics(model => $model);
+  $model = Analizo::Model->new;
+  $global_metrics = Analizo::GlobalMetrics->new(model => $model);
 }
 
 sub constructor : Tests {
@@ -206,7 +206,7 @@ sub should_add_total_coupling_factor : Tests {
   $global_metrics->add_module_values(\%module_values);
   $global_metrics->add_module_values(\%module_values);
   $global_metrics->add_module_values(\%module_values);
-  my $report = $global_metrics->report;
+  $report = $global_metrics->report;
   is($report->{'total_cof'}, 0.5);
 }
 

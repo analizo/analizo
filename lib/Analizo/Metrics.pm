@@ -1,10 +1,34 @@
 package Analizo::Metrics;
 use strict;
-use base qw(Class::Accessor::Fast);
-use YAML;
+use parent qw(Class::Accessor::Fast);
+use YAML::XS;
 
 use Analizo::ModuleMetrics;
 use Analizo::GlobalMetrics;
+
+=head1 NAME
+
+Analizo::Metrics - reporting project-level and module-level metrics
+
+=head1 DESCRIPTION
+
+Analizo reports both project-level metrics, which are calculated for the entire
+project, and module-level metrics, which are calculated individually for each
+module. On the project-level, Analizo also provides basic descriptive
+statistics for each of the module-level metrics: sum, mean, median, mode,
+standard deviation, variance, skewness and kurtosis of the distribution,
+minimum, and maximum value.
+
+=head2 Null values
+
+As a project decision, Analizo consider metrics with 0 (zero) value as the same
+meaning of "null value", in other words, 0 (zero) has no meaning in the
+context of Analizo metrics calculation, both to project-level metrics as to
+module-level metrics. You can see a discussion on the
+L<issue #60|https://github.com/analizo/analizo/issues/60>
+about this decision.
+
+=cut
 
 __PACKAGE__->mk_accessors(qw(
     model
@@ -18,8 +42,8 @@ sub new {
   my ($package, %args) = @_;
   my @instance_variables = (
     model => $args{model},
-    global_metrics => new Analizo::GlobalMetrics(model => $args{model}),
-    module_metrics => new Analizo::ModuleMetrics(model => $args{model}),
+    global_metrics => Analizo::GlobalMetrics->new(model => $args{model}),
+    module_metrics => Analizo::ModuleMetrics->new(model => $args{model}),
     module_data => [],
     by_module => {},
   );
@@ -96,4 +120,3 @@ sub metrics_for {
 }
 
 1;
-

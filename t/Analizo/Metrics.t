@@ -1,6 +1,7 @@
 package t::Analizo::Metrics;
 use strict;
-use base qw(Test::Class);
+use warnings;
+use parent qw(Test::Analizo::Class);
 use Test::More;
 use Analizo::Metrics;
 use Analizo::Model;
@@ -8,8 +9,8 @@ use Analizo::Model;
 use vars qw($model $metrics);
 
 sub setup : Test(setup) {
-  $model = new Analizo::Model;
-  $metrics = new Analizo::Metrics(model => $model);
+  $model = Analizo::Model->new;
+  $metrics = Analizo::Metrics->new(model => $model);
 }
 
 sub constructor : Tests {

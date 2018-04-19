@@ -1,6 +1,6 @@
 package Analizo::Batch::Output::CSV;
 
-use base qw( Analizo::Batch::Output );
+use parent qw( Analizo::Batch::Output );
 use Analizo::Metrics;
 
 sub push {
@@ -49,7 +49,7 @@ sub _encode_value($) {
 }
 
 sub _extract_short_names_of_metrics {
-  my $metrics_instance = new Analizo::Metrics();
+  my $metrics_instance = Analizo::Metrics->new;
   my @short_names = ();
 
   my %metrics_names = $metrics_instance->list_of_metrics();

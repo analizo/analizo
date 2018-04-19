@@ -1,20 +1,18 @@
 package t::Analizo::GlobalMetric::TotalEloc;
-use base qw(Test::Class);
-use Test::More;
-
 use strict;
 use warnings;
+use parent qw(Test::Analizo::Class);
+use Test::More;
 use File::Basename;
 
 use Analizo::Model;
 use Analizo::GlobalMetric::TotalEloc;
 
-
 use vars qw($model $eloc);
 
 sub setup : Test(setup) {
-  $model = new Analizo::Model;
-  $eloc = new Analizo::GlobalMetric::TotalEloc(model => $model);
+  $model = Analizo::Model->new;
+  $eloc = Analizo::GlobalMetric::TotalEloc->new(model => $model);
 }
 
 sub use_package : Tests {
@@ -37,4 +35,3 @@ sub calculate : Tests {
 }
 
 __PACKAGE__->runtests;
-

@@ -27,7 +27,7 @@ sub global_opt_spec {
 sub config {
   my ($self) = @_;
   $self->{config} ||= (-e '.analizo'
-    ? YAML::LoadFile('.analizo')
+    ? YAML::XS::LoadFile('.analizo')
     : {}
   );
 }

@@ -1,6 +1,6 @@
 package Analizo::Metric::LackOfCohesionOfMethods;
 use strict;
-use base qw(Class::Accessor::Fast Analizo::ModuleMetric);
+use parent qw(Class::Accessor::Fast Analizo::ModuleMetric);
 use Graph;
 
 =head1 NAME
@@ -48,7 +48,7 @@ sub new {
   my ($package, %args) = @_;
    my @instance_variables = (
     model => $args{model},
-    graph => new Graph(),
+    graph => Graph->new,
   );
   return bless { @instance_variables }, $package;
 }
@@ -59,7 +59,7 @@ sub description {
 
 sub calculate {
   my ($self, $module) = @_;
-  my $graph = new Graph;
+  my $graph = Graph->new;
   my @functions = $self->model->functions($module);
   my @variables = $self->model->variables($module);
   for my $function (@functions) {

@@ -40,7 +40,7 @@ sub must_write_to_stdout_when_no_file_is_given : Tests {
 }
 
 sub __create {
-  new Analizo::Batch::Output;
+  Analizo::Batch::Output->new;
 }
 
 __PACKAGE__->runtests;

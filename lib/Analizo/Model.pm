@@ -18,6 +18,7 @@ sub new {
     abstract_classes => [],
     module_names => [],
     total_eloc => 0,
+    graph => undef,
   );
   return bless { @defaults }, __PACKAGE__;
 }
@@ -201,6 +202,7 @@ sub _group_files {
 
 sub graph {
   my ($self) = @_;
+  return $self->{graph} if $self->{graph};
   my $graph = Graph->new;
   $graph->set_graph_attribute('name', 'graph');
   foreach my $module (keys %{ $self->{files}}) {

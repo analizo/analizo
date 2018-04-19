@@ -1,11 +1,11 @@
 package Analizo::Command::evolution_matrix;
 use Analizo -command;
-use base qw(Analizo::Command);
+use parent qw(Analizo::Command);
 use strict;
 use warnings;
 use Analizo::EvolutionMatrix;
 use Analizo::EvolutionMatrix::Cell;
-use YAML qw(LoadFile);
+use YAML::XS qw(LoadFile);
 use Mojo::Template;
 use File::Basename;
 

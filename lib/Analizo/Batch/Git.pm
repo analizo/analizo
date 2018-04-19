@@ -2,14 +2,14 @@ package Analizo::Batch::Git;
 use strict;
 use warnings;
 
-use base qw(
+use parent qw(
   Analizo::Batch
   Class::Accessor::Fast
 );
 
 use Analizo::Batch::Job::Git;
 use Cwd 'abs_path';
-use YAML;
+use YAML::XS;
 
 __PACKAGE__->mk_ro_accessors(qw( directory ));
 
@@ -37,11 +37,12 @@ sub initialize {
   unless(defined($self->{index})) {
     # initialize filter: by default look only for files in known languages
     unless ($self->has_filters) {
-      $self->filters(new Analizo::LanguageFilter('all'));
+      $self->filters(Analizo::LanguageFilter->new('all'));
     }
 
     # read in list of commits
-    my $data = `(cd $self->{directory} && git log  --name-status --format='---%nid: %H%nparents: %P%nauthor_date: %at%nauthor_name: %aN%nauthor_email: %aE%n--- |')`;
+    my $data = `(cd $self->{directory} && git log --name-status --format='---%nid: %H%nparents: %P%nauthor_date: %at%nauthor_name: %aN%nauthor_email: %aE%n--- |')`;
+    $data =~ s/^([[:upper:]])+\t/  $1  /sgm;
     my @data = Load($data);
     my @jobs = ();
     while($#data > 0) {
@@ -68,7 +69,7 @@ sub initialize {
       }
       $commit_data->{changed_files} = \%changed_files;
 
-      my $job = new Analizo::Batch::Job::Git($self->{directory}, $commit_data->{id}, $commit_data);
+      my $job = Analizo::Batch::Job::Git->new($self->{directory}, $commit_data->{id}, $commit_data);
       $job->batch($self);
       push @jobs, $job;
 

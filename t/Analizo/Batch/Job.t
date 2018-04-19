@@ -11,7 +11,7 @@ use Test::Analizo;
 use Analizo::Batch::Job;
 
 sub constructor : Tests {
-  isa_ok(new Analizo::Batch::Job, 'Analizo::Batch::Job');
+  isa_ok(Analizo::Batch::Job->new, 'Analizo::Batch::Job');
 }
 
 my @EXPOSED_INTERFACE = qw(
@@ -35,24 +35,24 @@ sub exposed_interface : Tests {
 }
 
 sub before_execute : Tests {
-  my $job = new Analizo::Batch::Job;
+  my $job = Analizo::Batch::Job->new;
   is($job->model, undef);
   is($job->metrics, undef);
 }
 
 sub execute : Tests {
   # model and metrics must be set
-  my $job = new Test::MockObject::Extends(new Analizo::Batch::Job);
+  my $job = Test::MockObject::Extends->new(Analizo::Batch::Job->new);
 
   my $prepared = 0; $job->mock('prepare', sub { $prepared = 1; });
   my $cleaned  = 0; $job->mock('cleanup', sub { die('cleanup() must be called after prepare()') unless $prepared; $cleaned  = 1; });
 
   my $metrics_data_called = undef;
-  my $MetricsMock = new Test::MockModule('Analizo::Metrics');
+  my $MetricsMock = Test::MockModule->new('Analizo::Metrics');
   $MetricsMock->mock('data', sub { $metrics_data_called = 1; });
 
   my $sloccount_extractor_called = undef;
-  my $SloccountExtractorMock = new Test::MockModule('Analizo::Extractor::Sloccount');
+  my $SloccountExtractorMock = Test::MockModule->new('Analizo::Extractor::Sloccount');
   $SloccountExtractorMock->mock('process', sub { $sloccount_extractor_called = 1 });
 
   on_dir(
@@ -70,12 +70,12 @@ sub execute : Tests {
 }
 
 sub empty_metadata_by_default : Tests {
-  my $job = new Analizo::Batch::Job;
+  my $job = Analizo::Batch::Job->new;
   is_deeply($job->metadata(), []);
 }
 
 sub metadata_as_hash : Tests {
-  my $job = mock(new Analizo::Batch::Job);
+  my $job = mock(Analizo::Batch::Job->new);
   $job->mock('metadata', sub { [['field1', 'value1'],['field2', 'value2']]});
   my $hash = $job->metadata_hashref();
   is($hash->{field1}, 'value1');
@@ -84,7 +84,7 @@ sub metadata_as_hash : Tests {
 }
 
 sub project_name : Tests {
-  my $job = new Analizo::Batch::Job;
+  my $job = Analizo::Batch::Job->new;
 
   $job->directory('myproject');
   is($job->project_name, 'myproject');
@@ -101,14 +101,14 @@ sub pass_filters_to_extractor : Tests {
     sub { my ($self) = @_; push @filters, @{$self->filters}; }
   );
 
-  my $module = new Test::MockModule('Analizo::Extractor');
+  my $module = Test::MockModule->new('Analizo::Extractor');
   $module->mock(
     'load',
     sub { $extractor; }
   );
 
-  my $job = new Analizo::Batch::Job;
-  my $cpp_filter = new Analizo::LanguageFilter('cpp');
+  my $job = Analizo::Batch::Job->new;
+  my $cpp_filter = Analizo::LanguageFilter->new('cpp');
   $job->filters($cpp_filter);
 
   on_dir(
@@ -126,7 +126,7 @@ $ENV{ANALIZO_CACHE} = tempdir(CLEANUP => 1);
 
 sub cache_of_model_and_metrics : Tests {
   # first time
-  my $job1 = new Analizo::Batch::Job;
+  my $job1 = Analizo::Batch::Job->new;
   on_dir(
     't/samples/animals/cpp',
     sub {
@@ -136,13 +136,13 @@ sub cache_of_model_and_metrics : Tests {
   my $metrics1 = $job1->metrics;
 
   my $model_result = 'cache used';
-  my $AnalizoExtractor = new Test::MockModule('Analizo::Extractor');
+  my $AnalizoExtractor = Test::MockModule->new('Analizo::Extractor');
   $AnalizoExtractor->mock('process', sub { $model_result = 'cache not used!' });
   my $metrics_result = 'cache used';
-  my $AnalizoMetrics = new Test::MockModule('Analizo::Metrics');
+  my $AnalizoMetrics = Test::MockModule->new('Analizo::Metrics');
   $AnalizoMetrics->mock('data', sub { $metrics_result = 'cache not used!'});
 
-  my $job2 = new Analizo::Batch::Job;
+  my $job2 = Analizo::Batch::Job->new;
   on_dir(
     't/samples/animals/cpp',
     sub {
@@ -165,7 +165,7 @@ sub cache_of_model_and_metrics : Tests {
 }
 
 sub tree_id : Tests {
-  my $job = new Analizo::Batch::Job;
+  my $job = Analizo::Batch::Job->new;
   my $id;
   on_dir(
     't/samples/tree_id',

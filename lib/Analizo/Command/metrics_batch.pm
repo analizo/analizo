@@ -1,6 +1,6 @@
 package Analizo::Command::metrics_batch;
 use Analizo -command;
-use base qw(Analizo::Command);
+use parent qw(Analizo::Command);
 use strict;
 use warnings;
 use Analizo::Batch::Directories;
@@ -43,10 +43,10 @@ sub execute {
   my $runner = undef;
   if ($opt->parallel) {
     require Analizo::Batch::Runner::Parallel;
-    $runner = new Analizo::Batch::Runner::Parallel($opt->parallel);
+    $runner = Analizo::Batch::Runner::Parallel->new($opt->parallel);
   } else {
     require Analizo::Batch::Runner::Sequential;
-    $runner = new Analizo::Batch::Runner::Sequential;
+    $runner = Analizo::Batch::Runner::Sequential->new;
   }
   unless ($opt->quiet) {
     $runner->progress(
@@ -56,8 +56,8 @@ sub execute {
       }
     );
   }
-  my $batch = new Analizo::Batch::Directories(@$args);
-  my $output = new Analizo::Batch::Output::CSV;
+  my $batch = Analizo::Batch::Directories->new(@$args);
+  my $output = Analizo::Batch::Output::CSV->new;
   $output->file($opt->output);
   $runner->run($batch, $output);
 }

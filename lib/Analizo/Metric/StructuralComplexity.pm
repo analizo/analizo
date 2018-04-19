@@ -1,6 +1,6 @@
 package Analizo::Metric::StructuralComplexity;
 use strict;
-use base qw(Class::Accessor::Fast Analizo::ModuleMetric);
+use parent qw(Class::Accessor::Fast Analizo::ModuleMetric);
 
 use Analizo::Metric::CouplingBetweenObjects;
 use Analizo::Metric::LackOfCohesionOfMethods;

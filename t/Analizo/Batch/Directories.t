@@ -1,7 +1,7 @@
 package t::Analizo::Batch::Directories;
 use strict;
 use warnings;
-use base qw(Test::Class);
+use parent qw(Test::Analizo::Class);
 use Test::More;
 
 use Test::Analizo;
@@ -44,7 +44,7 @@ sub count : Tests {
 
 sub __create_batch {
   my @args = @_;
-  on_dir('t/samples/hello_world', sub { new Analizo::Batch::Directories(@args) });
+  on_dir('t/samples/hello_world', sub { Analizo::Batch::Directories->new(@args) });
 }
 
 __PACKAGE__->runtests;

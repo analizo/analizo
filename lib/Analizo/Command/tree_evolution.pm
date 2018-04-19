@@ -1,6 +1,6 @@
 package Analizo::Command::tree_evolution;
 use Analizo -command;
-use base qw(Analizo::Command);
+use parent qw(Analizo::Command);
 use strict;
 use warnings;
 use Digest::SHA qw(sha1_hex);
@@ -31,7 +31,7 @@ sub validate {}
 
 sub execute {
   my ($self, $opt, $args) = @_;
-  my $filter = new Analizo::LanguageFilter($opt->language);
+  my $filter = Analizo::LanguageFilter->new($opt->language);
   local $ENV{PATH} = '/usr/local/bin:/usr/bin:/bin';
   open COMMITS, "git log --reverse --format=%H|";
   my @commits = <COMMITS>;

@@ -1,9 +1,8 @@
 package t::Analizo::Metric::NumberOfPublicAttributes;
-use base qw(Test::Class);
-use Test::More;
-
 use strict;
 use warnings;
+use parent qw(Test::Analizo::Class);
+use Test::More;
 use File::Basename;
 
 use Analizo::Model;
@@ -14,8 +13,8 @@ eval('$Analizo::Metric::QUIET = 1;'); # the eval is to avoid Test::* complaining
 use vars qw($model $npa);
 
 sub setup : Test(setup) {
-  $model = new Analizo::Model;
-  $npa = new Analizo::Metric::NumberOfPublicAttributes(model => $model);
+  $model = Analizo::Model->new;
+  $npa = Analizo::Metric::NumberOfPublicAttributes->new(model => $model);
 }
 
 sub use_package : Tests {
