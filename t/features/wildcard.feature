@@ -10,3 +10,12 @@ Feature: analizing projects with WildCard
         Examples:
             | language | total_modules |
             | java     | 2             |
+
+    Scenario: "WildCard" project metrics
+        Given I am in t/samples/wildcard/<language>
+        When I run "analizo metrics ."
+        Then analizo must report that file <filename> declares module <wildcard_class>
+        Examples:
+            | language | filename              | wildcard_class |
+            | java     | Wildcard_test.java    | Wildcard_sample |
+            | java     | Wildcard_test.java    | GenericClass |
