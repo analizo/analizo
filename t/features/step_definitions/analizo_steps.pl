@@ -144,6 +144,22 @@ Then qr/^analizo must report that module (.+) has (.+) = (.+)$/, sub {
   }
 };
 
+Then qr/^analizo must report that module (.+) has not (.+) = (.+)$/, sub {
+  my ($c) = @_;
+  my ($module, $metric, $value) = ($1, $2, $3);
+  my @stream = Load($stdout);
+  my ($module_metrics) = grep { $_->{_module} && $_->{_module} eq $module } @stream;
+  if ($module_metrics->{$metric}) {
+    if ($value =~ /^\d+|\d+\.\d+$/) {
+      cmp_ok($module_metrics->{$metric}, '!=', $value);
+    }
+    elsif ($value =~ /^\[(.*)\]$/) {
+      my @values = split(/\s*,\s*/, $1);
+      is_deeply($module_metrics->{$metric}, \@values);
+    }
+  }
+};
+
 Then qr/^analizo must report that file (.+) not declares module (.+)$/, sub {
   my ($c) = @_;
   my ($filename, $module) = ($1, $2);
