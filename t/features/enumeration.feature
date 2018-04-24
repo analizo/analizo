@@ -24,16 +24,11 @@ Feature: analizing projects with enumerations
   Scenario: "Enumeration" module metrics
     Given I am in t/samples/enumeration/<language>
     When I run "analizo metrics ."
-    Then analizo must report that the module <module> has <metric> = <value>
+    Then analizo must report that module <module> has <metric> = <value>
     Examples:
       | language | module              | metric | value |
-      | java     | Main                | accm   | 2     |
-      | java     | Main                | amloc  | 8     |
-      | java     | Main                | anpm   | 1     |
-      | java     | Main                | cbo    | 1     |
-      | java     | Main                | lcom4  | 1     |
       | java     | Main                | loc    | 8     |
-      | java     | Main                | mmloc  | '8'   |
+      | java     | Main                | mmloc  | 8     |
       | java     | Main                | nom    | 1     |
       | java     | Main                | npm    | 1     |
       | java     | Main                | rfc    | 2     |
