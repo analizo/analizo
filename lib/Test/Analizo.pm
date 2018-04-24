@@ -2,7 +2,7 @@ package Test::Analizo;
 use strict;
 use warnings;
 
-use base qw( Exporter );
+use parent qw( Exporter );
 our @EXPORT = qw(
   on_dir
   on_tmpdir
@@ -32,7 +32,7 @@ sub on_dir {
 
 sub mock {
   my ($object) = @_;
-  new Test::MockObject::Extends($object);
+  Test::MockObject::Extends->new($object);
 }
 
 sub tmpdir {

@@ -12,3 +12,9 @@ Feature: doxyparse extractor external tool
     Given I am in t/samples/android-framework/android-5.1.11-r38
     When I run "analizo metrics ."
     Then analizo must not emit a warning matching "YAML_LOAD_WARN_DUPLICATE_KEY"
+
+  Scenario: don't abort parsing mlpack 3.0.0
+    Given I am in t/samples/mlpack-3.0.0
+    When I run "analizo metrics ."
+    Then analizo must not emit a warning matching "Aborted"
+    And the exit status must be 0

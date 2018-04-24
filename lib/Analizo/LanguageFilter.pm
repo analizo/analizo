@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use Carp;
 
-use base qw(Analizo::FilenameFilter);
+use parent qw(Analizo::FilenameFilter);
 
 our $FILTERS = {
   c         => 'c|h',

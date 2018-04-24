@@ -1,6 +1,6 @@
 package Analizo::Batch::Job::Directories;
 
-use base qw( Analizo::Batch::Job Class::Accessor::Fast );
+use parent qw( Analizo::Batch::Job Class::Accessor::Fast );
 use Cwd;
 
 sub new {

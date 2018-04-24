@@ -2,7 +2,7 @@ package Analizo::Batch;
 use strict;
 use warnings;
 
-use base qw( Analizo::Filter::Client );
+use parent qw( Analizo::Filter::Client );
 
 sub new {
   my ($class, @options) = @_;

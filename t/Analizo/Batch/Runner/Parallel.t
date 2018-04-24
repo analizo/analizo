@@ -1,7 +1,7 @@
 package t::Analizo::Batch::Runner::Parallel;
 use strict;
 use warnings;
-use base qw( Test::Class );
+use parent qw(Test::Analizo::Class);
 use Test::More;
 use Test::Analizo;
 
@@ -26,17 +26,17 @@ sub number_of_parallel_processes : Tests {
 }
 
 sub should_be_equivalent_to_sequential_runner : Tests {
-  my $output_sequential = mock(new Analizo::Batch::Output);
-  my $output_parallel = mock(new Analizo::Batch::Output);
+  my $output_sequential = mock(Analizo::Batch::Output->new);
+  my $output_parallel = mock(Analizo::Batch::Output->new);
   my @jobs_sequential = ();
   $output_sequential->mock('push', sub { my ($that, $job) = @_; push @jobs_sequential, $job->id; });
   my @jobs_parallel = ();
   $output_parallel->mock('push', sub { my ($that, $job) = @_; push @jobs_parallel, $job->id; });
 
-  my $batch_sequential = new Analizo::Batch::Directories(glob('t/samples/hello_world/*'));
-  my $batch_parallel = new Analizo::Batch::Directories(glob('t/samples/hello_world/*'));
+  my $batch_sequential = Analizo::Batch::Directories->new(glob('t/samples/hello_world/*'));
+  my $batch_parallel = Analizo::Batch::Directories->new(glob('t/samples/hello_world/*'));
 
-  my $runner_sequential = new Analizo::Batch::Runner::Sequential;
+  my $runner_sequential = Analizo::Batch::Runner::Sequential->new;
   my $runner_parallel = __create();
 
   $runner_sequential->run($batch_sequential, $output_sequential);
@@ -51,7 +51,7 @@ sub should_be_equivalent_to_sequential_runner : Tests {
 
 sub __create {
   my @args = @_;
-  new Analizo::Batch::Runner::Parallel(@args);
+  Analizo::Batch::Runner::Parallel->new(@args);
 }
 
 __PACKAGE__->runtests;

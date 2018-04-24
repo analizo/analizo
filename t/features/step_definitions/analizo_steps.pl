@@ -5,10 +5,11 @@ use Test::BDD::Cucumber::StepFile;
 use File::Slurp;
 use File::Temp qw( tempdir );
 use File::Copy::Recursive qw( rcopy );
-use YAML;
+use YAML::XS;
 use File::LibMagic;
 use Archive::Extract;
 use DBI;
+use File::Spec;
 
 our $exit_status;
 our $stdout;
@@ -17,12 +18,20 @@ our $stderr;
 use Env qw(@PATH $PWD);
 push @PATH, "$PWD/blib/script", "$PWD/bin";
 
+use IPC::Open3;
+use Symbol 'gensym';
+
 When qr/^I run "([^\"]*)"$/, sub {
   my ($c) = @_;
   my $command = $1;
-  $exit_status = system "($command) >tmp.out 2>tmp.err";
-  $stdout = read_file('tmp.out');
-  $stderr = read_file('tmp.err');
+  my ($IN, $STDOUT, $STDERR);
+  $STDERR = gensym;
+  my $pid = open3($IN, $STDOUT, $STDERR, "$command 2>tmp.err");
+  waitpid $pid, 0;
+  $exit_status = $?;
+  local $/ = undef;
+  $stdout = <$STDOUT>;
+  $stderr = <$STDERR> . read_file('tmp.err');
 };
 
 When qr/^I run "([^\"]*)" on database "([^\"]*)"$/, sub {
@@ -55,7 +64,7 @@ Then qr/^the exit status must not be (\d+)$/, sub {
 
 Step qr/^I copy (.*) into a temporary directory$/, sub {
   my ($c) = @_;
-  my $tmpdir = tempdir(CLEANUP => 1);
+  my $tmpdir = tempdir("analizo-XXXXXXXXXX", CLEANUP => 1, DIR => File::Spec->tmpdir);
   rcopy($1, $tmpdir);
   chdir $tmpdir;
 };
@@ -85,7 +94,7 @@ Given qr/^I create a file called (.+) with the following content$/, sub {
 
 Given qr/^I change to an empty temporary directory$/, sub {
   my ($c) = @_;
-  chdir tempdir(CLEANUP => 1);
+  chdir tempdir("analizo-XXXXXXXXXX", CLEANUP => 1, DIR => File::Spec->tmpdir);
 };
 
 Given qr/^I am in (.+)$/, sub {
@@ -211,7 +220,7 @@ When qr/^I explode (.+)$/, sub {
   my ($c) = @_;
   my $tarball = $1;
   my $archive = Archive::Extract->new(archive => $tarball);
-  $archive->extract(to => tempdir(CLEANUP => 1));
+  $archive->extract(to => tempdir("analizo-XXXXXXXXXX", CLEANUP => 1, DIR => File::Spec->tmpdir));
   chdir $archive->extract_path;
 };
 

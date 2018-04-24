@@ -1,6 +1,6 @@
 package Analizo::GlobalMetric::ChangeCost;
 use strict;
-use base qw(Class::Accessor::Fast);
+use parent qw(Class::Accessor::Fast);
 use List::Util qw( sum );
 
 =head1 NAME

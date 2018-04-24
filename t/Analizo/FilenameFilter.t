@@ -1,12 +1,12 @@
 package t::Analizo::FilenameFilter;
-use base qw(Test::Class);
-use Test::More;
 use strict;
 use warnings;
+use parent qw(Test::Analizo::Class);
+use Test::More;
 use Analizo::FilenameFilter;
 
 sub constructor : Tests {
-  isa_ok(new Analizo::FilenameFilter, 'Analizo::FilenameFilter');
+  isa_ok(Analizo::FilenameFilter->new, 'Analizo::FilenameFilter');
 }
 
 sub null_object : Tests {

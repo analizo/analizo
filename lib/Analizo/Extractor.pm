@@ -3,7 +3,7 @@ package Analizo::Extractor;
 use strict;
 use warnings;
 
-use base qw(Class::Accessor::Fast Analizo::Filter::Client);
+use parent qw(Class::Accessor::Fast Analizo::Filter::Client);
 
 use Analizo::Model;
 use Analizo::FilenameFilter;
@@ -54,7 +54,7 @@ sub load {
 sub model {
   my ($self) = @_;
   if (!exists($self->{model})) {
-    $self->{model} = new Analizo::Model;
+    $self->{model} = Analizo::Model->new;
   }
   return $self->{model};
 }

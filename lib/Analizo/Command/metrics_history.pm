@@ -1,6 +1,6 @@
 package Analizo::Command::metrics_history;
 use Analizo -command;
-use base qw(Analizo::Command);
+use parent qw(Analizo::Command);
 use strict;
 use warnings;
 use Analizo::Batch::Git;
@@ -58,7 +58,7 @@ sub load_output_driver {
 
 sub execute {
   my ($self, $opt, $args) = @_;
-  my $batch = new Analizo::Batch::Git(@$args);
+  my $batch = Analizo::Batch::Git->new(@$args);
   if ($opt->list) {
     while (my $job = $batch->next()) {
       print $job->id, "\n";
@@ -81,10 +81,10 @@ sub execute {
   my $runner = undef;
   if ($opt->parallel) {
     require Analizo::Batch::Runner::Parallel;
-    $runner = new Analizo::Batch::Runner::Parallel($opt->parallel);
+    $runner = Analizo::Batch::Runner::Parallel->new($opt->parallel);
   } else {
     require Analizo::Batch::Runner::Sequential;
-    $runner = new Analizo::Batch::Runner::Sequential;
+    $runner = Analizo::Batch::Runner::Sequential->new;
   }
   if ($opt->progressbar) {
     require Term::ProgressBar;
@@ -121,9 +121,9 @@ least one source code file. Consequently, it skips all the commits where no
 source code file was changed, such as documentation, translations, build system
 changes, etc.
 
-Currently we support C, C++ and Java projects, and therefore files considered
+Currently we support C, C++, Java and C# projects, and therefore files considered
 source code are the ones terminated in I<.c>, I<.h>, I<.cpp>, I<.cxx>, I<.cc>,
-I<.hpp>, and I<.java>.
+I<.hh>, I<.hpp>, I<.java> and I<.cs>.
 
 =head1 OPTIONS
 

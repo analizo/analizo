@@ -1,6 +1,6 @@
 package Analizo::GlobalMetrics;
 use strict;
-use base qw(Class::Accessor::Fast);
+use parent qw(Class::Accessor::Fast);
 
 use Analizo::GlobalMetric::TotalAbstractClasses;
 use Analizo::GlobalMetric::MethodsPerAbstractClass;
@@ -32,9 +32,9 @@ sub new {
 sub _initialize_calculators {
   my ($model) = @_;
   my %calculators = (
-    total_abstract_classes            => new Analizo::GlobalMetric::TotalAbstractClasses(model => $model),
-    total_methods_per_abstract_class  => new Analizo::GlobalMetric::MethodsPerAbstractClass(model => $model),
-    total_eloc                        => new Analizo::GlobalMetric::TotalEloc(model => $model),
+    total_abstract_classes            => Analizo::GlobalMetric::TotalAbstractClasses->new(model => $model),
+    total_methods_per_abstract_class  => Analizo::GlobalMetric::MethodsPerAbstractClass->new(model => $model),
+    total_eloc                        => Analizo::GlobalMetric::TotalEloc->new(model => $model),
     change_cost                       => Analizo::GlobalMetric::ChangeCost->new(model => $model),
   );
   return \%calculators;

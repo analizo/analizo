@@ -27,11 +27,11 @@ sub constructor : Tests {
 sub writing_data : Tests {
   my $output = __create();
 
-  my $job1 = new Analizo::Batch::Job::Directories('t/samples/animals/cpp');
+  my $job1 = Analizo::Batch::Job::Directories->new('t/samples/animals/cpp');
   $job1->execute();
   $output->push($job1);
 
-  my $job2 = new Analizo::Batch::Job::Directories('t/samples/animals/java');
+  my $job2 = Analizo::Batch::Job::Directories->new('t/samples/animals/java');
   $job2->execute();
   $output->push($job2);
 
@@ -49,7 +49,7 @@ sub writing_data : Tests {
 }
 
 sub job_metadata : Tests {
-  my $job = mock(new Analizo::Batch::Job::Directories('t/samples/animals/cpp'));
+  my $job = mock(Analizo::Batch::Job::Directories->new('t/samples/animals/cpp'));
   $job->mock('metadata', sub { [ ['data1', 88], [ 'data2', 77 ] ] });
   $job->mock('id', sub { 99 });
   $job->execute();
@@ -66,7 +66,7 @@ sub job_metadata : Tests {
 }
 
 sub must_write_list_data_as_string : Tests {
-  my $job = mock(new Analizo::Batch::Job::Directories('t/samples/animals/cpp'));
+  my $job = mock(Analizo::Batch::Job::Directories->new('t/samples/animals/cpp'));
   $job->execute();
   $job->mock(
     'metadata',
@@ -84,7 +84,7 @@ sub must_write_list_data_as_string : Tests {
 }
 
 sub must_write_hash_data_as_string : Tests {
-  my $job = mock(new Analizo::Batch::Job::Directories('t/samples/animals/cpp'));
+  my $job = mock(Analizo::Batch::Job::Directories->new('t/samples/animals/cpp'));
   $job->execute();
   $job->mock(
     'metadata',
@@ -114,7 +114,7 @@ sub must_return_short_names_of_metrics : Tests {
 
 sub __create {
   my @args = @_;
-  my $output = mock(new Analizo::Batch::Output::CSV(@args));
+  my $output = mock(Analizo::Batch::Output::CSV->new(@args));
   $output->mock('write_details', sub { });
   return $output;
 }

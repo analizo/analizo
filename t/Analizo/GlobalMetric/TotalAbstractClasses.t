@@ -1,5 +1,5 @@
 package t::Analizo::GlobalMetric::TotalAbstractClasses;
-use base qw(Test::Class);
+use parent qw(Test::Class);
 use Test::More;
 
 use strict;
@@ -14,8 +14,8 @@ eval('$Analizo::Metric::QUIET = 1;'); # the eval is to avoid Test::* complaining
 use vars qw($model $tac);
 
 sub setup : Test(setup) {
-  $model = new Analizo::Model;
-  $tac = new Analizo::GlobalMetric::TotalAbstractClasses(model => $model);
+  $model = Analizo::Model->new;
+  $tac = Analizo::GlobalMetric::TotalAbstractClasses->new(model => $model);
 }
 
 sub use_package : Tests {

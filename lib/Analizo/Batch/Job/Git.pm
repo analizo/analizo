@@ -1,6 +1,6 @@
 package Analizo::Batch::Job::Git;
 
-use base 'Analizo::Batch::Job';
+use parent 'Analizo::Batch::Job';
 use Cwd;
 use Cwd 'abs_path';
 use File::Spec;

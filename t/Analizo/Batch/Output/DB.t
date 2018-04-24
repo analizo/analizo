@@ -1,7 +1,7 @@
 package t::Analizo::Batch::Output::DB;
 use strict;
 use warnings;
-use base qw( Test::Class );
+use parent qw(Test::Analizo::Class);
 use Test::More;
 use Test::Analizo;
 my $TMPDIR = tmpdir();
@@ -13,8 +13,8 @@ use Analizo::Batch::Job;
 use Analizo::Batch::Job::Directories;
 
 sub basics : Tests {
-  isa_ok(new Analizo::Batch::Output::DB, 'Analizo::Batch::Output');
-  isa_ok(new Analizo::Batch::Output::DB, 'Analizo::Batch::Output::DB');
+  isa_ok(Analizo::Batch::Output::DB->new, 'Analizo::Batch::Output');
+  isa_ok(Analizo::Batch::Output::DB->new, 'Analizo::Batch::Output::DB');
 }
 
 sub destination_database : Tests {
@@ -51,7 +51,7 @@ sub setting_up_a_database : Tests {
 
 sub add_project_data : Tests {
   my $output = __create($OUTFILE);
-  my $job = new Analizo::Batch::Job;
+  my $job = Analizo::Batch::Job->new;
   $job->directory('/path/to/niceproject');
   $output->push($job);
   select_one_ok($OUTFILE, "select * from projects where name = 'niceproject'", 'must insert project the first time');
@@ -62,7 +62,7 @@ sub add_project_data : Tests {
 
 sub add_commit_and_developer_data : Tests {
   my $output = __create($OUTFILE);
-  my $job = mock(new Analizo::Batch::Job);
+  my $job = mock(Analizo::Batch::Job->new);
   $job->directory('/path/to/niceproject');
   $job->id('XPTO');
   $job->mock(
@@ -90,7 +90,7 @@ my $SAMPLE = ('t/samples/animals/cpp');
 
 sub add_module_data_for_modules_changed_by_commit : Tests {
   my $output = __create($OUTFILE);
-  my $job = mock(new Analizo::Batch::Job::Directories($SAMPLE));
+  my $job = mock(Analizo::Batch::Job::Directories->new($SAMPLE));
   $job->id('foo');
   $job->execute();
   $job->mock(
@@ -132,7 +132,7 @@ sub add_module_data_for_modules_changed_by_commit : Tests {
 
 sub changed_added_module_versions : Tests {
   my $output = __create($OUTFILE);
-  my $job = mock(new Analizo::Batch::Job::Directories($SAMPLE));
+  my $job = mock(Analizo::Batch::Job::Directories->new($SAMPLE));
   $job->id('foo');
   $job->execute();
   $job->mock(
@@ -169,7 +169,7 @@ sub changed_added_module_versions : Tests {
 
 sub module_versions_with_the_same_id : Tests {
   my $output = __create($OUTFILE);
-  my $job = mock(new Analizo::Batch::Job::Directories($SAMPLE));
+  my $job = mock(Analizo::Batch::Job::Directories->new($SAMPLE));
   $job->mock('project_name', sub { 'animals'; });
   $job->id('foo');
   $job->execute();
@@ -194,7 +194,7 @@ sub module_versions_with_the_same_id : Tests {
 
 sub global_metrics : Tests {
   my $output = __create($OUTFILE);
-  my $job = mock(new Analizo::Batch::Job::Directories($SAMPLE));
+  my $job = mock(Analizo::Batch::Job::Directories->new($SAMPLE));
   $job->mock('project_name', sub { 'animals'; });
   $job->id('foo');
   $job->execute();
@@ -205,7 +205,7 @@ sub global_metrics : Tests {
 
 sub files_with_multiple_modules : Tests {
   my $output = __create($OUTFILE);
-  my $job = mock(new Analizo::Batch::Job::Directories('t/samples/file_with_two_modules/cpp'));
+  my $job = mock(Analizo::Batch::Job::Directories->new('t/samples/file_with_two_modules/cpp'));
   $job->mock('project_name', sub { 'multiple' });
   $job->id("foo");
   $job->execute;
@@ -237,7 +237,7 @@ sub numeric_autoincrement_pk : Tests {
 
 sub __create {
   my ($file) = @_;
-  my $output = new Analizo::Batch::Output::DB();
+  my $output = Analizo::Batch::Output::DB->new;
   if ($file) {
     $output->file($file);
     $output->initialize();

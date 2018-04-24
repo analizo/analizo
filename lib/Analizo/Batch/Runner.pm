@@ -1,6 +1,6 @@
 package Analizo::Batch::Runner;
 
-use base qw(Class::Accessor::Fast);
+use parent qw(Class::Accessor::Fast);
 
 sub new {
   my ($class, @args) = @_;

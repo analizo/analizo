@@ -1,7 +1,7 @@
 package Analizo::EvolutionMatrix;
 use strict;
 use List::MoreUtils qw( uniq );
-use base qw(Class::Accessor::Fast);
+use parent qw(Class::Accessor::Fast);
 
 __PACKAGE__->mk_accessors(qw(cells cell_width cell_height max_width max_height name));
 

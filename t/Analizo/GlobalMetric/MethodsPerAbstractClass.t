@@ -1,20 +1,18 @@
 package t::Analizo::GlobalMetric::MethodsPerAbstractClass;
-use base qw(Test::Class);
-use Test::More;
-
 use strict;
 use warnings;
+use parent qw(Test::Analizo::Class);
+use Test::More;
 use File::Basename;
 
 use Analizo::Model;
 use Analizo::GlobalMetric::MethodsPerAbstractClass;
 
-
 use vars qw($model $mac);
 
 sub setup : Test(setup) {
-  $model = new Analizo::Model;
-  $mac = new Analizo::GlobalMetric::MethodsPerAbstractClass(model => $model);
+  $model = Analizo::Model->new;
+  $mac = Analizo::GlobalMetric::MethodsPerAbstractClass->new(model => $model);
 }
 
 sub use_package : Tests {

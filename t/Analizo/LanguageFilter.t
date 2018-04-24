@@ -1,9 +1,8 @@
 package t::Analizo::LanguageFilter;
-use base qw(Test::Class);
-use Test::More;
-
 use strict;
 use warnings;
+use parent qw(Test::Analizo::Class);
+use Test::More;
 
 use Analizo::LanguageFilter;
 
