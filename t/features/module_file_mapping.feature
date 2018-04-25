@@ -46,3 +46,9 @@ Feature: mapping modules to filenames
     When I run "analizo metrics ."
     Then analizo must report that file WildcardClass.java declares module WildcardClass
     And analizo must report that file GenericClass.java declares module GenericClass
+
+  Scenario: Java Enumeration sample
+    Given I am in t/samples/enumeration
+    When I run "analizo metrics ."
+    Then analizo must report that file Main.java declares module Main::MyEnumeration
+    And analizo must report that file Enumeration.java declares module Enumeration
