@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Added
+### Changed
+### Deprecated
+- Global metric `total_eloc` (Total Effective Lines of Code) is going to be removed next release
+
+### Removed
+### Fixed
+### Security
+
 ## [1.20.8] - 2018-03-23
 
 ### Added
