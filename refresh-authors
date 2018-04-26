@@ -1,4 +1,19 @@
 #!/usr/bin/perl
+use strict;
 use Git::Wrapper;
 use List::MoreUtils qw(uniq);
-print join("\n", uniq sort Git::Wrapper->new('./')->RUN('log', {pretty => "format:%aN <%aE>"}));
+
+my $git = Git::Wrapper->new('./');
+my @authors = $git->RUN('log', {pretty => "format:%aN <%aE>"});
+my @co_authors = map { s/^\s*Signed-off-by:\s*//; $_ }
+                 grep { /Signed-off-by:/ }
+                 $git->RUN('log', {grep => 'Signed-off-by:'});
+
+foreach (@co_authors) {
+  eval {
+    my @_co_authors = $git->RUN('check-mailmap', $_);
+    push @authors, @_co_authors;
+  };
+}
+
+print join("\n", uniq sort @authors);
