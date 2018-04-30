@@ -12,33 +12,34 @@ Analizo::Metric::LackOfCohesionOfMethods - Lack of Cohesion of Methods (LCOM4) m
 The metric calculation is based on the following article and calculates the
 cohesion of the class.
 
-Article: I<Comparison of Various Lacks of Cohesion Metrics> by Taranjeet Kaur
-and Rupinder Kaur.
+Article:
 
-See the paragraphs about Lack of Cohesion of Methods LCOM4 in the article:
+   M. Hitz and B. Montazeri, "Measuring coupling and cohesion in
+   object-oriented systems," in Proceedings of the International. Symposium on
+   Applied Corporate Computing, 1995.
+   http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.409.4862
 
-LCOM3 varies in range between C<[0, 1]>. LCOM3 indicates high cohesion and it
-is also a well defined class, it show simplicity of class and high reusability
-of class. A highly cohesive class provides high degree of encapsulation. LCOM3
-formula is
+The LCOM4 value for a module is the number of connected components of an
+undirected graph, where the nodes are the module's subroutines (methods,
+functions etc.), and the edges indicate that two subroutines use at least one
+attribute/variable in common, or that one subroutines calls the other. These
+connected components represent independent parts of a module, and modules
+that have more than one of them have independent, distinct responsibilities.
 
-  M: number of methods in a class
-  A: number of variables in a class
-  m.A: number of methods that access a variable
-  Sum(m.A): number of methods over attributes
-  a: variabes that shared may be or not
+You can see a study using the LCOM4 metric on the following paper:
 
-  LCOM3=(m - Sum(mA) / a) / m - 1
+   Terceiro, Antonio, et al. "Understanding structural complexity evolution: A
+   quantitative analysis." Software Maintenance and Reengineering (CSMR), 2012
+   16th European Conference on. IEEE, 2012. NBR 6023
+   http://ieeexplore.ieee.org/abstract/document/6178856/
 
-In other words also say that consider connected components of graph or also say
-that if we consider undirected graph C<G> where vertices are methods of a class
-and edge between vertices if corresponding methods at least share one instance
-variable.
+For a comparative study on the various LCOM1, LCOM2, LCOM3, LCOM4 and LCOM5
+see:
 
-LCOM4 is like LCOM3 where graph C<G> additionally has an edge between vertices
-representing methods C<Mi> and C<Mj> if C<Mi> invokes C<Mj>. In other words
-also say that, it measure number of components in a class. A connected component
-is a set of related methods.
+   Kaur, Taranjeet, and Rupinder Kaur. "Comparison of various lacks of Cohesion
+   Metrics." International Journal of Computer Trends and Technology (IJCTT)
+   4.5 (2013). NBR 6023
+   http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.686.2543
 
 =cut
 
