@@ -5,18 +5,30 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [1.21.0] - 2018-04-30
 
 ### Added
+- Added documentation about the meaning of 0 (zero) value for metrics
+- Added documentation for C# language support
+- Added tests for Java Enumerations and Java Generics with Wildcards<?>
+- Added tests for Doxyparse bug parsing mlpack source-code
+
 ### Changed
+- authors listed on 'Signed-off-by' added to AUTHORS file
+- Improving performance by using module `YAML::XS` instead of `YAML`
+- Improving performance avoid calculating `Graph` every time
+
 ### Deprecated
 - Global metric `total_eloc` (Total Effective Lines of Code) is going to be removed next release
 
 ### Removed
-### Fixed
-- LCOM4 metric documentation
+- Removed dependency for module `Moo`
+- Removed dependency for pragma `base`
 
-### Security
+### Fixed
+- Fix documentation for LCOM4 metric
+- Fix missing dependency for `Class::Inspector`
+- Removing cache after every test execution
 
 ## [1.20.8] - 2018-03-23
 
@@ -131,3 +143,4 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 [1.20.6]: https://github.com/analizo/analizo/compare/1.20.5...1.20.6
 [1.20.7]: https://github.com/analizo/analizo/compare/1.20.6...1.20.7
 [1.20.8]: https://github.com/analizo/analizo/compare/1.20.7...1.20.8
+[1.21.0]: https://github.com/analizo/analizo/compare/1.20.8...1.21.0
