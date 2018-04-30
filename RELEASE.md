@@ -26,3 +26,9 @@ Please install Dist::Zilla::Deb to build Debian package.
 ```console
 dzil debuild
 ```
+
+To skip tests running during building package run:
+
+```console
+DEB_BUILD_OPTIONS=nocheck dzil debuild
+```
