@@ -14,6 +14,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Removed
 ### Fixed
+- LCOM4 metric documentation
+
 ### Security
 
 ## [1.20.8] - 2018-03-23
