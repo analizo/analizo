@@ -1,5 +1,7 @@
 # Installation
 
+You have more than one choice of install, see below.
+
 ## Debian package
 
 Analizo is readily available as a Debian package. This package migth work with
@@ -61,5 +63,5 @@ make
 sudo make install
 ```
 
-See the HACKING file for instructions on how to install Analizo dependencies.
-You neeed to install the dependencies before installing Analizo.
+See the HACKING.md file for instructions on how to install Analizo dependencies.
+You neeed to install the dependencies before installing Analizo from sources.
