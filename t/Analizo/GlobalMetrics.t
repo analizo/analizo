@@ -26,11 +26,8 @@ sub metric_from_global_metrics_package : Tests{
   $model->add_abstract_class('mod');
   $model->declare_function('mod', 'f1');
 
-  $model->declare_total_eloc(10);
-
   my $report = $global_metrics->report();
 
-  is($report->{'total_eloc'}, 10, '10 eloc declared and reported');
   is($report->{'total_abstract_classes'}, 1, '1 abstract class');
   is($report->{'total_methods_per_abstract_class'}, 1, '1 method per abstract class');
 }

@@ -200,7 +200,6 @@ sub global_metrics : Tests {
   $job->execute();
   $output->push($job);
   select_one_ok($OUTFILE, "SELECT * FROM commits where total_abstract_classes > 0");
-  select_one_ok($OUTFILE, "SELECT * FROM commits where total_eloc > 0");
 }
 
 sub files_with_multiple_modules : Tests {

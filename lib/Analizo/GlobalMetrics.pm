@@ -4,7 +4,6 @@ use parent qw(Class::Accessor::Fast);
 
 use Analizo::GlobalMetric::TotalAbstractClasses;
 use Analizo::GlobalMetric::MethodsPerAbstractClass;
-use Analizo::GlobalMetric::TotalEloc;
 use Analizo::GlobalMetric::ChangeCost;
 
 use Statistics::Descriptive;
@@ -34,7 +33,6 @@ sub _initialize_calculators {
   my %calculators = (
     total_abstract_classes            => Analizo::GlobalMetric::TotalAbstractClasses->new(model => $model),
     total_methods_per_abstract_class  => Analizo::GlobalMetric::MethodsPerAbstractClass->new(model => $model),
-    total_eloc                        => Analizo::GlobalMetric::TotalEloc->new(model => $model),
     change_cost                       => Analizo::GlobalMetric::ChangeCost->new(model => $model),
   );
   return \%calculators;

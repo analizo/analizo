@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Removed
+- Removed global metric `total_eloc`
+- Removed dependency for `sloccount` external tool
+
 ## [1.21.0] - 2018-04-30
 
 ### Added
@@ -134,13 +140,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Script development-setup.sh fixed.
 - Running of a single acceptance Cucumber test fixed.
 
-[1.20.0]: https://github.com/analizo/analizo/compare/1.19.1...1.20.0
-[1.20.1]: https://github.com/analizo/analizo/compare/1.20.0...1.20.1
-[1.20.2]: https://github.com/analizo/analizo/compare/1.20.1...1.20.2
-[1.20.3]: https://github.com/analizo/analizo/compare/1.20.2...1.20.3
-[1.20.4]: https://github.com/analizo/analizo/compare/1.20.3...1.20.4
-[1.20.5]: https://github.com/analizo/analizo/compare/1.20.4...1.20.5
-[1.20.6]: https://github.com/analizo/analizo/compare/1.20.5...1.20.6
-[1.20.7]: https://github.com/analizo/analizo/compare/1.20.6...1.20.7
-[1.20.8]: https://github.com/analizo/analizo/compare/1.20.7...1.20.8
+[Unreleased]: https://github.com/analizo/analizo/compare/1.21.0...HEAD
 [1.21.0]: https://github.com/analizo/analizo/compare/1.20.8...1.21.0
+[1.20.8]: https://github.com/analizo/analizo/compare/1.20.7...1.20.8
+[1.20.7]: https://github.com/analizo/analizo/compare/1.20.6...1.20.7
+[1.20.6]: https://github.com/analizo/analizo/compare/1.20.5...1.20.6
+[1.20.5]: https://github.com/analizo/analizo/compare/1.20.4...1.20.5
+[1.20.4]: https://github.com/analizo/analizo/compare/1.20.3...1.20.4
+[1.20.3]: https://github.com/analizo/analizo/compare/1.20.2...1.20.3
+[1.20.2]: https://github.com/analizo/analizo/compare/1.20.1...1.20.2
+[1.20.1]: https://github.com/analizo/analizo/compare/1.20.0...1.20.1
+[1.20.0]: https://github.com/analizo/analizo/compare/1.19.1...1.20.0

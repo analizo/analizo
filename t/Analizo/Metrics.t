@@ -39,7 +39,6 @@ sub sample_modules_for_report {
 
 sub report : Tests {
   sample_modules_for_report();
-  $model->declare_total_eloc(38);
 
   my $output = $metrics->report;
 
@@ -48,7 +47,6 @@ sub report : Tests {
   is($modules, 2, 'reporting number of classes in YAML stream');
   ok($output =~ /_module: mod1/, 'reporting module 1');
   ok($output =~ /_module: mod2/, 'reporting module 2');
-  ok($output =~ /total_eloc: 38/, 'reporting total eloc');
 }
 
 sub report_global_only : Tests {

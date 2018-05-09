@@ -16,7 +16,6 @@ use CHI;
 
 use Analizo::Model;
 use Analizo::Extractor;
-use Analizo::Extractor::Sloccount;
 use Analizo::Metrics;
 
 __PACKAGE__->mk_accessors(qw(model metrics id directory extractor));
@@ -137,7 +136,6 @@ sub execute {
     );
     my @extractors = (
       Analizo::Extractor->load($self->extractor, %options),
-      Analizo::Extractor::Sloccount->new(%options),
     );
     for my $extractor (@extractors) {
       $self->share_filters_with($extractor);
