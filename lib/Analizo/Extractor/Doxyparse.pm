@@ -42,7 +42,11 @@ sub _cpp_hack {
 
 sub feed {
   my ($self, $doxyparse_output, $line) = @_;
-  my $yaml = Load($doxyparse_output);
+  my $yaml = undef;
+  eval { $yaml = Load($doxyparse_output) };
+  if ($@) {
+    die $!;
+  }
   foreach my $full_filename (sort keys %$yaml) {
 
     # current file declaration
