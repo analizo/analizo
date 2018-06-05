@@ -18,3 +18,9 @@ Feature: doxyparse extractor external tool
     When I run "analizo metrics ."
     Then analizo must not emit a warning matching "Aborted"
     And the exit status must be 0
+
+  Scenario: don't die parsing kdelibs warning about unknown escape character
+    Given I am in t/samples/kdelibs
+    When I run "analizo metrics ."
+    Then analizo must not emit a warning matching "Error"
+    And the exit status must be 0
