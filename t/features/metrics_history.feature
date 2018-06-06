@@ -45,6 +45,12 @@ Feature: analizo metrics-history
     Then the output must not match "---"
     And the exit status must be 0
 
+  Scenario: parsing git log format containing renamed files among status of changed files
+    Given I copy t/samples/evolution.tar.gz into a temporary directory
+    When I run "tar xzf evolution.tar.gz"
+    And I run "cd evolution && git checkout doc && analizo metrics-history ."
+    Then the exit status must be 0
+
   Scenario: language filters
     Given I copy t/samples/mixed into a temporary directory
     When I run "(cd mixed && git init && git add * && git commit -m 'initial commit')"
