@@ -42,7 +42,7 @@ sub initialize {
 
     # read in list of commits
     my $data = `(cd $self->{directory} && git log --name-status --format='---%nid: %H%nparents: %P%nauthor_date: %at%nauthor_name: %aN%nauthor_email: %aE%n--- |')`;
-    $data =~ s/^([[:upper:]])+\t/  $1  /sgm;
+    $data =~ s/^([[:upper:]])+\d*\t/  $1  /sgm;
     my @data = ();
     eval { @data = Load($data) };
     if ($@) {
