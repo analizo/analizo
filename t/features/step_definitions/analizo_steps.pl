@@ -124,6 +124,12 @@ Then qr/^analizo must report that "([^\"]*)" depends on "([^\"]*)"$/, sub {
   like($stdout, qr/"\Q$dependent\E" -> "\Q$depended\E"/);
 };
 
+Then qr/^analizo must not report that "([^\"]*)" depends on "([^\"]*)"$/, sub {
+  my ($c) = @_;
+  my ($dependent, $depended) = ($1, $2);
+  unlike($stdout, qr/"\Q$dependent\E" -> "\Q$depended\E"/);
+};
+
 Then qr/^the contents of "(.+)" must match "([^\"]*)"$/, sub {
   my ($c) = @_;
   my ($file, $pattern) = ($1, $2);
