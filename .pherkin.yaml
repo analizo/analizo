@@ -3,3 +3,5 @@ default:
     - lib
   extensions:
     Test::Analizo::BDD::Cucumber::Extension:
+  steps:
+    - t/features/step_definitions/
