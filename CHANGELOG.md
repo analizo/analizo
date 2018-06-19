@@ -11,6 +11,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Removed global metric `total_eloc`
 - Removed dependency for `sloccount` external tool
 
+### Changed
+- Development setup install Doxyarse from source master branch
+
 ## [1.21.0] - 2018-04-30
 
 ### Added

@@ -142,5 +142,3 @@ See commit `005c3bff4e0809eae0340e7629678186d1621930` for an example.
 python, and git (your operating system probably already has packages for these)
 
 2) Install Doxyparse (see [Doxyparse](https://github.com/analizo/doxyparse/wiki))
-
-3) Install [SLOCCount](http://www.dwheeler.com/sloccount/sloccount.html)

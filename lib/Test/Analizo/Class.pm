@@ -1,6 +1,7 @@
 package Test::Analizo::Class;
 use strict;
 use warnings;
+use local::lib;
 
 use parent qw( Test::Class );
 use File::Path qw(remove_tree);

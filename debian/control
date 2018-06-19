@@ -21,8 +21,7 @@ Depends: ${misc:Depends}, ${perl:Depends}, libapp-cmd-perl,
 my @Prereqs = keys(%{ $hash->{'Prereqs / RuntimeRequires'} });
 join(",\n", map { ' ' . $_ } grep { ! /^perl$/ } map { $c->find_perl_module_package($_) } @Prereqs)
 }},
- doxyparse,
- sloccount
+ doxyparse
 Recommends: graphviz, man
 Description: {{ $dist->abstract }}
  Analizo parses source code in multiple languages and report useful information

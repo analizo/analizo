@@ -21,14 +21,11 @@ setup_debian() {
   sudo apt-get update
   sudo apt-file update
 
-  sudo apt-get -q -y -f install dh-make-perl libdist-zilla-perl
+  sudo apt-get -q -y -f install dh-make-perl libdist-zilla-perl liblocal-lib-perl cpanminus
 
-  if ! which cpanm; then
-    echo "*** cpanm NOT FOUND ***"
-    echo "installing cpanm..." 1>&2
-    sudo apt-get -q -y -f install cpanminus
-    cpanm --local-lib=~/perl5 local::lib && eval $(perl -I ~/perl5/lib/perl5/ -Mlocal::lib)
-  fi
+  # install Doxyparse build dependencies and define "master" as Doxyparse version to install
+  sudo apt-get -q -f -y install flex bison cmake build-essential python
+  export ALIEN_DOXYPARSE_VERSION=master
 
   packages=$(locate_package $(dzil authordeps))
   sudo apt-get -q -y -f install $packages
@@ -37,8 +34,6 @@ setup_debian() {
   packages=$(locate_package $(dzil listdeps))
   sudo apt-get -q -y -f install $packages
   dzil listdeps --missing | cpanm --notest
-
-  sudo apt-get -q -y -f install doxyparse sloccount
 }
 
 locate_package() {
