@@ -206,8 +206,8 @@ sub graph {
     foreach my $callee (keys %{$self->calls->{$caller}}) {
       my $called_file = $self->_function_to_file($callee);
       next unless ($calling_file && $called_file);
-      next if ($calling_file eq $called_file);
       $called_file = _group_files(@{$called_file});
+      next if ($calling_file eq $called_file);
       $graph->add_edge($calling_file, $called_file);
     }
   }
@@ -217,13 +217,24 @@ sub graph {
     $subclass_file = _group_files(@{$subclass_file});
     $graph->add_vertex($subclass_file);
     foreach my $superclass ($self->inheritance($subclass)) {
-      my $superclass_file = $self->files($superclass);
-      next unless $superclass_file;
-      $superclass_file = _group_files(@{$superclass_file});
-      $graph->add_edge($subclass_file, $superclass_file);
+      $self->_recursive_children($subclass_file, $superclass, $graph);
     }
   }
   $graph;
+}
+
+sub _recursive_children {
+  my ($self, $subclass_file, $superclass, $graph) = @_;
+
+  my $superclass_file = $self->files($superclass);
+  return unless $superclass_file;
+  $superclass_file = _group_files(@{$superclass_file});
+
+  $graph->add_edge($subclass_file, $superclass_file);
+
+  foreach my $super_uper_class ($self->inheritance($superclass)) {
+    $self->_recursive_children($subclass_file, $super_uper_class, $graph);
+  }
 }
 
 sub _function_to_file {
