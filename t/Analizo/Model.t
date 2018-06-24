@@ -177,10 +177,12 @@ sub build_graph_from_inheritance : Tests {
   $model->declare_module('a', 'src/a.c');
   $model->declare_module('b', 'src/b.c');
   $model->declare_module('c', 'src/c.c');
+  $model->declare_module('d', 'src/d.c');
   $model->add_inheritance('a', 'b');
   $model->add_inheritance('a', 'c');
+  $model->add_inheritance('c', 'd');
   my $g = $model->graph;
-  is("$g", 'a-b,a-c');
+  is("$g", 'a-b,a-c,a-d,c-d');
 }
 
 sub build_graph_from_funcion_calls_and_inheritance : Tests {
@@ -189,14 +191,16 @@ sub build_graph_from_funcion_calls_and_inheritance : Tests {
   $model->declare_module('b', 'src/b.c');
   $model->declare_module('c', 'src/c.c');
   $model->declare_module('d', 'src/d.c');
+  $model->declare_module('e', 'src/e.c');
   $model->add_inheritance('b', 'd');
+  $model->add_inheritance('d', 'e');
   $model->declare_function('a', 'a::name()');
   $model->declare_function('b', 'b::name()');
   $model->declare_function('c', 'c::name()');
   $model->add_call('a::name()', 'b::name()');
   $model->add_call('a::name()', 'c::name()');
   my $g = $model->graph;
-  is("$g", 'a-b,a-c,b-d');
+  is("$g", 'a-b,a-c,b-d,b-e,d-e');
 }
 
 sub use_file_as_vertices_in_graph : Tests {
