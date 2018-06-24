@@ -169,7 +169,7 @@ sub build_graph_from_function_calls : Tests {
   $model->add_call('a::name()', 'b::name()');
   $model->add_call('a::name()', 'c::name()');
   my $g = $model->graph;
-  is("$g", 'src/a-src/b,src/a-src/c');
+  is("$g", 'a-b,a-c');
 }
 
 sub build_graph_from_inheritance : Tests {
@@ -180,7 +180,7 @@ sub build_graph_from_inheritance : Tests {
   $model->add_inheritance('a', 'b');
   $model->add_inheritance('a', 'c');
   my $g = $model->graph;
-  is("$g", 'src/a-src/b,src/a-src/c');
+  is("$g", 'a-b,a-c');
 }
 
 sub build_graph_from_funcion_calls_and_inheritance : Tests {
@@ -196,7 +196,7 @@ sub build_graph_from_funcion_calls_and_inheritance : Tests {
   $model->add_call('a::name()', 'b::name()');
   $model->add_call('a::name()', 'c::name()');
   my $g = $model->graph;
-  is("$g", 'src/a-src/b,src/a-src/c,src/b-src/d');
+  is("$g", 'a-b,a-c,b-d');
 }
 
 sub use_file_as_vertices_in_graph : Tests {
@@ -205,7 +205,7 @@ sub use_file_as_vertices_in_graph : Tests {
   $model->declare_module('b', 'src/b.c');
   $model->declare_module('c', 'src/c.c');
   my @vertices = sort $model->graph->vertices;
-  is_deeply(\@vertices, ['src/a', 'src/b', 'src/c']);
+  is_deeply(\@vertices, ['a', 'b', 'c']);
 }
 
 sub group_files_when_build_graph : Tests {
@@ -217,7 +217,7 @@ sub group_files_when_build_graph : Tests {
   $model->declare_module('c', 'src/c.c');
   $model->declare_module('c', 'src/c.h');
   my @vertices = sort $model->graph->vertices;
-  is_deeply(\@vertices, ['src/a', 'src/b', 'src/c']);
+  is_deeply(\@vertices, ['a', 'b', 'c']);
 }
 
 sub empty_call_graph : Tests {
