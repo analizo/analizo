@@ -198,12 +198,12 @@ sub graph {
     $graph->add_vertex($module);
   }
   foreach my $caller (keys %{$self->calls}) {
-    my $calling_module = $self->_function_to_module($caller);
-    next unless (defined($calling_module));
+    next unless exists $self->members->{$caller};
+    my $calling_module = $self->members->{$caller};
     $graph->add_vertex($calling_module);
     foreach my $callee (keys %{$self->calls->{$caller}}) {
-      my $called_module = $self->_function_to_module($callee);
-      next unless (defined($called_module));
+      next unless exists $self->members->{$callee};
+      my $called_module = $self->members->{$callee};
       $graph->add_vertex($called_module);
       next if ($calling_module eq $called_module);
       $graph->add_edge($calling_module, $called_module);
@@ -215,12 +215,12 @@ sub graph {
       $self->_recursive_children($subclass, $superclass, $graph);
     }
   }
+  $self->{graph} = $graph;
   $graph;
 }
 
 sub _recursive_children {
   my ($self, $subclass, $superclass, $graph) = @_;
-
   $graph->add_edge($subclass, $superclass);
 
   foreach my $super_uper_class ($self->inheritance($superclass)) {
