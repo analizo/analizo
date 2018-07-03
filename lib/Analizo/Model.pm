@@ -17,7 +17,8 @@ sub new {
     conditional_paths => {},
     abstract_classes => [],
     module_names => [],
-    graph => undef,
+    modules_graph => undef,
+    files_graph => undef,
   );
   return bless { @defaults }, __PACKAGE__;
 }
@@ -189,42 +190,126 @@ sub _group_files {
   $file;
 }
 
-sub graph {
+sub get_modules_graph {
   my ($self) = @_;
-  return $self->{graph} if $self->{graph};
-  my $graph = Graph->new;
-  $graph->set_graph_attribute('name', 'graph');
-  foreach my $module (keys %{$self->{files}}) {
-    $graph->add_vertex($module);
-  }
-  foreach my $caller (keys %{$self->calls}) {
-    next unless exists $self->members->{$caller};
-    my $calling_module = $self->members->{$caller};
-    $graph->add_vertex($calling_module);
-    foreach my $callee (keys %{$self->calls->{$caller}}) {
-      next unless exists $self->members->{$callee};
-      my $called_module = $self->members->{$callee};
-      $graph->add_vertex($called_module);
-      next if ($calling_module eq $called_module);
-      $graph->add_edge($calling_module, $called_module);
-    }
-  }
-  foreach my $subclass (keys(%{$self->{inheritance}})) {
-    $graph->add_vertex($subclass);
-    foreach my $superclass ($self->inheritance($subclass)) {
-      $self->_recursive_children($subclass, $superclass, $graph);
-    }
-  }
-  $self->{graph} = $graph;
-  $graph;
+  return $self->{modules_graph} if $self->{modules_graph};
+  $self->build_references_graphs;
+  return $self->{modules_graph};
 }
 
-sub _recursive_children {
-  my ($self, $subclass, $superclass, $graph) = @_;
-  $graph->add_edge($subclass, $superclass);
+sub get_files_graph {
+  my ($self) = @_;
+  return $self->{files_graph} if $self->{files_graph};
+  $self->build_references_graphs;
+  return $self->{files_graph};
+}
+
+sub build_references_graphs{
+  my ($self) = @_;
+
+  $self->{modules_graph} = Graph->new;
+  $self->{files_graph} = Graph->new;
+
+  $self->{modules_graph}->set_graph_attribute('name', 'graph');
+  $self->{files_graph}->set_graph_attribute('name', 'graph');
+
+  $self->_add_all_vertex_on_each_graph;
+  $self->_add_all_references_between_files_and_modules_as_edges_on_each_graph;
+  $self->_add_all_references_from_inheritance_as_edges_on_each_graph;
+}
+
+sub _add_all_vertex_on_each_graph{
+  my ($self) = @_;
+
+  foreach my $module (keys %{ $self->{files}}) {
+    # Modules Graph
+    $self->{modules_graph}->add_vertex($module);
+
+    # Files Graph
+    my $file = $self->files($module);
+    my $file_without_extension = _group_files(@{ $file });
+    $self->{files_graph}->add_vertex($file_without_extension);
+  }
+}
+
+sub _add_all_references_between_files_and_modules_as_edges_on_each_graph{
+  my ($self) = @_;
+
+  foreach my $current_function_call (keys %{$self->calls}) {
+    # Modules Graph
+    my $calling_module = $self->_function_to_module($current_function_call);
+    # Files Graph
+    my $calling_file = $self->_function_to_file($current_function_call);
+
+    next unless $calling_file || $calling_module;
+
+    if ($calling_module){
+      $self->{modules_graph}->add_vertex($calling_module);
+    }
+    if ($calling_file){
+      $calling_file = _group_files(@{$calling_file});
+      $self->{files_graph}->add_vertex($calling_file);
+    }
+
+    foreach my $call_inside_current_function (keys %{$self->calls->{$current_function_call}}) {
+      # Modules Graph
+      my $called_module = $self->_function_to_module($call_inside_current_function);
+      # Files Graph
+      my $called_file = $self->_function_to_file($call_inside_current_function);
+
+      next unless $called_module || $called_file;
+
+      # Modules Graph
+      if ($called_module){
+        $self->{modules_graph}->add_vertex($called_module);
+        unless ($calling_module eq $called_module){
+          $self->{modules_graph}->add_edge($calling_module, $called_module);
+        }
+      }
+
+      # Files Graph
+      if ($called_file){
+        $called_file = _group_files(@{$called_file});
+        $self->{files_graph}->add_vertex($called_file);
+        unless ($calling_file eq $called_file){
+          $self->{files_graph}->add_edge($calling_file, $called_file);
+        }
+      }
+    }
+  }
+}
+
+sub _add_all_references_from_inheritance_as_edges_on_each_graph{
+  my ($self) = @_;
+  foreach my $subclass (keys(%{$self->{inheritance}})) {
+    # Modules Graph
+    $self->{modules_graph}->add_vertex($subclass);
+    # Files Graph
+    my $subclass_file = $self->files($subclass);
+    if($subclass_file){
+      $subclass_file = _group_files(@{$subclass_file});
+      $self->{files_graph}->add_vertex($subclass_file);
+    }
+    foreach my $superclass ($self->inheritance($subclass)) {
+      $self->_find_recursively_references_from_deep_inheritance($subclass, $subclass_file, $superclass);
+    }
+  }
+}
+
+sub _find_recursively_references_from_deep_inheritance {
+  my ($self, $subclass, $subclass_file, $superclass) = @_;
+
+  # Modules Graph
+  $self->{modules_graph}->add_edge($subclass, $superclass);
+  # Files Graph
+  my $superclass_file = $self->files($superclass);
+  if ($superclass_file && $subclass_file){
+    $superclass_file = _group_files(@{$superclass_file});
+    $self->{files_graph}->add_edge($subclass_file, $superclass_file);
+  }
 
   foreach my $super_uper_class ($self->inheritance($superclass)) {
-    $self->_recursive_children($subclass, $super_uper_class, $graph);
+    $self->_find_recursively_references_from_deep_inheritance($subclass, $subclass_file, $super_uper_class);
   }
 }
 

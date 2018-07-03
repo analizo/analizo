@@ -50,7 +50,7 @@ sub calculate {
 
   $self->analized_module($module);
 
-  my $acc_result = $self->model->graph->in_degree($module);
+  my $acc_result = $self->model->get_modules_graph->in_degree($module);
 
   return $acc_result ? $acc_result : 0;
 }
