@@ -1,4 +1,4 @@
-package t::Analizo::Metric::AfferentConnections;
+package t::Analizo::Metric::AfferentConnections::AfferentConnectionsByInheritance;
 use strict;
 use warnings;
 use parent qw(Test::Analizo::Class);

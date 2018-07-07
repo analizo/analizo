@@ -1,4 +1,4 @@
-package t::Analizo::Metric::AfferentConnections;
+package t::Analizo::Metric::AfferentConnections::AfferentConnectionsByReference;
 use strict;
 use warnings;
 use parent qw(Test::Analizo::Class);
@@ -81,4 +81,3 @@ sub calculate_empty_acc : Tests {
 }
 
 __PACKAGE__->runtests;
-

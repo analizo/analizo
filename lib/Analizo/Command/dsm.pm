@@ -58,7 +58,7 @@ sub execute {
   }
   my $model = $extractor->model;
   $extractor->process(@$args);
-  my $graph = $model->graph();
+  my $graph = $model->files_graph();
   my $graph_writer = undef;
   if ($opt->format eq 'png') {
     $graph_writer = Graph::Writer::DSM->new();

@@ -190,21 +190,19 @@ sub _group_files {
   $file;
 }
 
-sub get_modules_graph {
+sub modules_graph {
   my ($self) = @_;
-  return $self->{modules_graph} if $self->{modules_graph};
-  $self->build_references_graphs;
+  $self->build_graphs unless $self->{modules_graph};
   return $self->{modules_graph};
 }
 
-sub get_files_graph {
+sub files_graph {
   my ($self) = @_;
-  return $self->{files_graph} if $self->{files_graph};
-  $self->build_references_graphs;
+  $self->build_graphs unless $self->{files_graph};
   return $self->{files_graph};
 }
 
-sub build_references_graphs{
+sub build_graphs {
   my ($self) = @_;
 
   $self->{modules_graph} = Graph->new;
@@ -243,10 +241,10 @@ sub _add_all_references_between_files_and_modules_as_edges_on_each_graph{
 
     next unless $calling_file || $calling_module;
 
-    if ($calling_module){
+    if ($calling_module) {
       $self->{modules_graph}->add_vertex($calling_module);
     }
-    if ($calling_file){
+    if ($calling_file) {
       $calling_file = _group_files(@{$calling_file});
       $self->{files_graph}->add_vertex($calling_file);
     }
@@ -260,18 +258,18 @@ sub _add_all_references_between_files_and_modules_as_edges_on_each_graph{
       next unless $called_module || $called_file;
 
       # Modules Graph
-      if ($called_module){
+      if ($called_module) {
         $self->{modules_graph}->add_vertex($called_module);
-        unless ($calling_module eq $called_module){
+        unless ($calling_module eq $called_module) {
           $self->{modules_graph}->add_edge($calling_module, $called_module);
         }
       }
 
       # Files Graph
-      if ($called_file){
+      if ($called_file) {
         $called_file = _group_files(@{$called_file});
         $self->{files_graph}->add_vertex($called_file);
-        unless ($calling_file eq $called_file){
+        unless ($calling_file eq $called_file) {
           $self->{files_graph}->add_edge($calling_file, $called_file);
         }
       }
@@ -279,14 +277,14 @@ sub _add_all_references_between_files_and_modules_as_edges_on_each_graph{
   }
 }
 
-sub _add_all_references_from_inheritance_as_edges_on_each_graph{
+sub _add_all_references_from_inheritance_as_edges_on_each_graph {
   my ($self) = @_;
   foreach my $subclass (keys(%{$self->{inheritance}})) {
     # Modules Graph
     $self->{modules_graph}->add_vertex($subclass);
     # Files Graph
     my $subclass_file = $self->files($subclass);
-    if($subclass_file){
+    if ($subclass_file) {
       $subclass_file = _group_files(@{$subclass_file});
       $self->{files_graph}->add_vertex($subclass_file);
     }
@@ -303,7 +301,7 @@ sub _find_recursively_references_from_deep_inheritance {
   $self->{modules_graph}->add_edge($subclass, $superclass);
   # Files Graph
   my $superclass_file = $self->files($superclass);
-  if ($superclass_file && $subclass_file){
+  if ($superclass_file && $subclass_file) {
     $superclass_file = _group_files(@{$superclass_file});
     $self->{files_graph}->add_edge($subclass_file, $superclass_file);
   }

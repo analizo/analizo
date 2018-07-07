@@ -46,7 +46,7 @@ sub description {
 
 sub calculate {
   my ($self) = @_;
-  my $reachability_matrix = $self->model->get_files_graph->transitive_closure_matrix;
+  my $reachability_matrix = $self->model->files_graph->transitive_closure_matrix;
   my @vertices = sort $reachability_matrix->vertices;
   my $rows = scalar @vertices;
   return unless $rows;

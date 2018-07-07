@@ -168,8 +168,8 @@ sub build_graphs_from_function_calls : Tests {
   $model->declare_function('c', 'c::name()');
   $model->add_call('a::name()', 'b::name()');
   $model->add_call('a::name()', 'c::name()');
-  my $graph_modules = $model->get_modules_graph;
-  my $graph_files = $model->get_files_graph;
+  my $graph_modules = $model->modules_graph;
+  my $graph_files = $model->files_graph;
   is("$graph_modules", 'a-b,a-c');
   is("$graph_files", 'src/a-src/b,src/a-src/c');
 }
@@ -183,8 +183,8 @@ sub build_graphs_from_inheritance : Tests {
   $model->add_inheritance('a', 'b');
   $model->add_inheritance('a', 'c');
   $model->add_inheritance('c', 'd');
-  my $graph_modules = $model->get_modules_graph;
-  my $graph_files = $model->get_files_graph;
+  my $graph_modules = $model->modules_graph;
+  my $graph_files = $model->files_graph;
   is("$graph_modules", 'a-b,a-c,a-d,c-d');
   is("$graph_files", 'src/a-src/b,src/a-src/c,src/a-src/d,src/c-src/d');
 }
@@ -203,8 +203,8 @@ sub build_graphs_from_funcion_calls_and_inheritance : Tests {
   $model->declare_function('c', 'c::name()');
   $model->add_call('a::name()', 'b::name()');
   $model->add_call('a::name()', 'c::name()');
-  my $graph_modules = $model->get_modules_graph;
-  my $graph_files = $model->get_files_graph;
+  my $graph_modules = $model->modules_graph;
+  my $graph_files = $model->files_graph;
   is("$graph_modules", 'a-b,a-c,b-d,b-e,d-e');
   is("$graph_files", 'src/a-src/b,src/a-src/c,src/b-src/d,src/b-src/e,src/d-src/e');
 }
@@ -214,8 +214,8 @@ sub use_file_as_vertices_in_graphs : Tests {
   $model->declare_module('a', 'src/a.c');
   $model->declare_module('b', 'src/b.c');
   $model->declare_module('c', 'src/c.c');
-  my @modules_vertices = sort $model->get_modules_graph->vertices;
-  my @files_vertices = sort $model->get_files_graph->vertices;
+  my @modules_vertices = sort $model->modules_graph->vertices;
+  my @files_vertices = sort $model->files_graph->vertices;
   is_deeply(\@modules_vertices, ['a', 'b', 'c']);
   is_deeply(\@files_vertices, ['src/a', 'src/b', 'src/c']);
 }
@@ -228,8 +228,8 @@ sub group_files_when_build_graphs : Tests {
   $model->declare_module('b', 'src/b.c');
   $model->declare_module('c', 'src/c.c');
   $model->declare_module('c', 'src/c.h');
-  my @modules_vertices = sort $model->get_modules_graph->vertices;
-  my @files_vertices = sort $model->get_files_graph->vertices;
+  my @modules_vertices = sort $model->modules_graph->vertices;
+  my @files_vertices = sort $model->files_graph->vertices;
   is_deeply(\@modules_vertices, ['a', 'b', 'c']);
   is_deeply(\@files_vertices, ['src/a', 'src/b', 'src/c']);
 }
