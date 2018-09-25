@@ -8,7 +8,7 @@ analizo (1.22.0) unstable; urgency=medium
   * Invalid references to function
   * Limit Doxyparse YAML output identifiers to 1024 chars
 
- -- joenio <joenio@joenio.me>  Tue, 25 Sep 2018 14:27:17 -0300
+ -- Joenio Costa <joenio@joenio.me>  Tue, 25 Sep 2018 14:27:17 -0300
 
 analizo (1.21.0) unstable; urgency=medium
 
