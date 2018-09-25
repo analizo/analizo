@@ -6,7 +6,7 @@
 * git push
 * release (see "Release task" below)
 * build Debian package (see "Debian package" below)
-* upload package to repository
+* upload package to repository (see analizo.github.io/README.md for instructions)
 * update analizo.org site to point to the newer version
 
 ### Release task
