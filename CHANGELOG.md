@@ -7,12 +7,20 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [1.22.0] - 2018-09-25
+
 ### Removed
 - Removed global metric `total_eloc`
 - Removed dependency for `sloccount` external tool
 
 ### Changed
-- Development setup install Doxyarse from source master branch
+- Development setup installs Doxyarse from latest source master branch
+- Improved the performance for ACC metric calculation
+
+### Fixed
+- Update to the newer Doxyparse 1.8.14-7 (fix invalid YAML with "\" char)
+- Invalid references to function
+- Limit Doxyparse YAML output identifiers to 1024 chars
 
 ## [1.21.0] - 2018-04-30
 
@@ -143,7 +151,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Script development-setup.sh fixed.
 - Running of a single acceptance Cucumber test fixed.
 
-[Unreleased]: https://github.com/analizo/analizo/compare/1.21.0...HEAD
+[Unreleased]: https://github.com/analizo/analizo/compare/1.22.0...HEAD
+[1.22.0]: https://github.com/analizo/analizo/compare/1.21.0...1.22.0
 [1.21.0]: https://github.com/analizo/analizo/compare/1.20.8...1.21.0
 [1.20.8]: https://github.com/analizo/analizo/compare/1.20.7...1.20.8
 [1.20.7]: https://github.com/analizo/analizo/compare/1.20.6...1.20.7
