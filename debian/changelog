@@ -1,3 +1,15 @@
+analizo (1.22.0) unstable; urgency=medium
+
+  * Removed global metric `total_eloc`
+  * Removed dependency for `sloccount` external tool
+  * Development setup installs Doxyarse from latest source master branch
+  * Improved the performance for ACC metric calculation
+  * Update to the newer Doxyparse 1.8.14-7 (fix invalid YAML with "\" char)
+  * Invalid references to function
+  * Limit Doxyparse YAML output identifiers to 1024 chars
+
+ -- joenio <joenio@joenio.me>  Tue, 25 Sep 2018 14:27:17 -0300
+
 analizo (1.21.0) unstable; urgency=medium
 
   * Added documentation about the meaning of 0 (zero) value for metrics
