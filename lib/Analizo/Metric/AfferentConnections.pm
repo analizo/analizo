@@ -17,14 +17,14 @@ Roberto Miranda Meirelles.
 See the adaptation of the paragraph about Afferente Connections per Class in
 the article:
 
-Measures the connectivity of a class. If a class C<Cc> access a method or
-attribute of a class C<Cs>, consider C<Cc> a client of the supplier class
-C<Cs>, denoting C<< Cc => Cs >>.  Consider the follow function:
+Measures the connectivity of a class. If a class C<Ci> access a method or
+attribute of a class C<Cj>, consider C<Ci> a client of the supplier class
+C<Cj>, denoting C<< Ci => Cj >>.  Consider the follow function:
 
   client(Ci, Cj) = 1, if (Ci => Cj) and (Ci != Cj)
   client(Ci, Cj) = 0, otherwise.
 
-So C<ACC(C) = (sum(client(Ci, Cj)), i = 1 to N)>, where C<N> is the total
+So C<ACC(Cj) = (sum(client(Ci, Cj)), i = 1 to N)>, where C<N> is the total
 number of system classes. If the value of this metric is large, a change in the
 class has substantially more side effects, making maintenance more difficult.
 
