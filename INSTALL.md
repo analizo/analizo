@@ -100,5 +100,5 @@ danalizo metrics goodcode.c
 
 danalizo graph --modules ./myproject/
 ```
-**Warning** : We are using __$PWD__ to copy the files to be analyzed to the container, so you can only analyze files and folders inside your current folder.
+**Warning** : We are using __$PWD__ to copy the files to be analyzed to the container, so you can only analyze files and folders inside your current folder, do NOT use absolute paths or like: "danalizo metrics ../../file.c" or "danalizo graph /home/user/file.java".
 
