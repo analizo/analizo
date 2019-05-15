@@ -186,33 +186,46 @@ sub macros {
 
 sub functions {
   my ($self, $module) = @_;
-  my $list = $self->{modules}->{$module}->{functions};
-  my $macro_list = $self->{modules}->{$module}->{macros};
-  my @new_func_list = [];
-  
-  # filter which functions are macros instead
-  foreach ( @{$list} ) {
-    my $e1 = $_;
 
-    # remove brackets for comparison
-    $e1 =~ s/\(//;
-    $e1 =~ s/\)//;
+  my $function_list = $self->{modules}->{$module}->{functions};
+  my @macro_list = ();
+  my @new_func_list = ();
 
-    my $contains = 0;
-    
-    foreach ( @{$macro_list} ) {
-        if($e1 eq $_){
-            $contains = 1;
-            last;
-        }
-    }
-
-    if($contains == 0){
-        push(@new_func_list, $e1);
+  foreach my $key (keys %{$self->{modules}}){
+    foreach(@{$self->{modules}->{$key}->{macros}}){
+      push(@macro_list, $_);
     }
   }
 
-  return @new_func_list
+  # filter which functions are macros instead
+  foreach ( @{$function_list} ) {
+    my $function = $_;
+
+    # remove brackets for comparison
+    $function =~ s/\(//;
+    $function =~ s/\)//;
+
+    #remove module reference
+    my (undef, $func_name) = split('::\s*', $function);
+
+    my $contains = 0;
+    
+    foreach ( @macro_list ) {
+      #remove module reference
+      my (undef, $macro_name) = split('::\s*', $_);
+      
+      if($func_name eq $macro_name){
+          $contains = 1;
+          last;
+      }
+    }
+
+    if($contains == 0){
+      push(@new_func_list, $function);
+    }
+  }
+
+  return @new_func_list;
 }
 
 sub variables {
