@@ -185,6 +185,7 @@ sub macros {
 }
 
 sub functions {
+  #        FIX MACRO WITH PARAMETER
   my ($self, $module) = @_;
 
   my $function_list = $self->{modules}->{$module}->{functions};
@@ -202,11 +203,11 @@ sub functions {
     my $function = $_;
 
     # remove brackets for comparison
-    $function =~ s/\(//;
-    $function =~ s/\)//;
+    my ($function, undef) = split('\(', $function);
 
     #remove module reference
     my (undef, $func_name) = split('::\s*', $function);
+    print "function $func_name\n";
 
     my $contains = 0;
     
