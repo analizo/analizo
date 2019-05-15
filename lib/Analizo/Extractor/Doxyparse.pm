@@ -87,7 +87,7 @@ sub feed {
         my $type = $definition->{$name}->{type};
         my $qualified_name = _qualified_name($self->current_module, $name);
         $self->{current_member} = $qualified_name;
-
+        
         # function declarations
         if ($type eq 'function') {
           $self->model->declare_function($self->current_module, $qualified_name);
@@ -96,10 +96,9 @@ sub feed {
         elsif ($type eq 'variable') {
           $self->model->declare_variable($self->current_module, $qualified_name);
         }
-        #FIXME: Implement define treatment (no novo doxyparse identifica como type = "macro definition")
-        # define declarations
+
         elsif ($type eq 'macro definition') {
-          #$self->{current_member} = $qualified_name;
+          $self->model->declare_macro($self->current_module, $qualified_name);
         }
 
         # public members

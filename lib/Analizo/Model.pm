@@ -91,6 +91,19 @@ sub type {
   return $self->{types}->{$member};
 }
 
+sub declare_macro {
+  my ($self, $module, $macro) = @_;
+  $self->declare_member($module, $macro, 'macro');
+
+  if (!exists($self->{modules}->{$module})){
+    $self->{modules}->{$module} = {};
+    $self->{modules}->{$module}->{macros} = [];
+  }
+  if(! grep { $_ eq $macro } @{$self->{modules}->{$module}->{macros}}){
+    push @{$self->{modules}->{$module}->{macros}}, $macro;
+  }
+}
+
 sub declare_function {
   my ($self, $module, $function) = @_;
   return unless $module;
@@ -165,10 +178,41 @@ sub add_parameters {
   $self->{parameters}->{$function} = $parameters;
 }
 
+sub macros {
+  my ($self, $module) = @_;
+  my $list = $self->{modules}->{$module}->{macros};
+  return $list ? @$list : ();
+}
+
 sub functions {
   my ($self, $module) = @_;
   my $list = $self->{modules}->{$module}->{functions};
-  return $list ? @$list : ();
+  my $macro_list = $self->{modules}->{$module}->{macros};
+  my @new_func_list = [];
+  
+  # filter which functions are macros instead
+  foreach ( @{$list} ) {
+    my $e1 = $_;
+
+    # remove brackets for comparison
+    $e1 =~ s/\(//;
+    $e1 =~ s/\)//;
+
+    my $contains = 0;
+    
+    foreach ( @{$macro_list} ) {
+        if($e1 eq $_){
+            $contains = 1;
+            last;
+        }
+    }
+
+    if($contains == 0){
+        push(@new_func_list, $e1);
+    }
+  }
+
+  return @new_func_list
 }
 
 sub variables {
