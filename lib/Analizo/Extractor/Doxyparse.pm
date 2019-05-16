@@ -96,7 +96,7 @@ sub feed {
         elsif ($type eq 'variable') {
           $self->model->declare_variable($self->current_module, $qualified_name);
         }
-
+        # macro declarations
         elsif ($type eq 'macro definition') {
           $self->model->declare_macro($self->current_module, $qualified_name);
         }
