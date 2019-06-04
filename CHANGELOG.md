@@ -14,7 +14,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Removed dependency for `sloccount` external tool
 
 ### Changed
-- Development setup installs Doxyarse from latest source master branch
+- Development setup installs Doxyparse from latest source master branch
 - Improved the performance for ACC metric calculation
 
 ### Fixed
