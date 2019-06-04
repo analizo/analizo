@@ -339,6 +339,25 @@ sub _reftype_to_style {
   return $styles{$reftype} || 'solid';
 }
 
+sub _filter_inner_class_name {
+  my ($self, $module_name) = @_;
+  
+  my $first_class = 0;
+  my $new_module_name = "";
+  foreach my $name (split(/::/, $module_name)){
+    if($name =~ /\b([A-Z][a-z]*){1,}\b/){
+      if($first_class == 1){
+        # Remove the extra's :: at the end of the string;
+        return substr $new_module_name, 0, length($new_module_name)-2;
+      }
+      $first_class = 1;
+    }
+    $new_module_name = $new_module_name . $name . "::";
+  }
+  return $module_name;
+}
+
+
 sub callgraph {
   my ($self, %args) = @_;
   my $graph = Graph->new;
