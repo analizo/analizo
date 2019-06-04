@@ -33,6 +33,7 @@ sub opt_spec {
     [ 'includedirs|I=s',  'include <dirs> (a colon-separated list of directories) with C/C++ header files', { default => '.' } ],
     [ 'libdirs|L=s',  'include <dirs> (a colon-separated list of directories) with C/C++ static and dynamic libraries files', { default => '.' } ],
     [ 'libs=s',  'include <dirs> (a colon-separated list of directories) with C/C++ linked libraries files', { default => '.' } ],
+    [ 'nocache|noc', 'run metrics without use the cache' ],
   );
 }
 
@@ -90,7 +91,13 @@ sub execute {
   $job->includedirs($opt->includedirs);
   $job->libdirs($opt->libdirs);
   $job->libs($opt->libs);
-  $job->execute();
+  
+  if ($opt->nocache) {
+    $job->execute(1);
+  }else {
+    $job->execute();
+  }
+
   my $metrics = $job->metrics;
   if ($opt->output) {
     open STDOUT, '>', $opt->output or die "$!\n";
@@ -152,6 +159,12 @@ Exclude <I<dirs>> (a colon-separated list of directories) from the analysis.
 This is useful, for example, when you want to focus on production code and
 exclude test code from the analysis. You could do that by passing something
 like pass B<--exclude test>.
+
+=back
+
+=item --nocache, -noc
+
+Run metrics without use cache.
 
 =back
 
