@@ -381,8 +381,10 @@ sub callgraph {
     }
 
     foreach my $calling_module (sort(keys %{$modules_dependencies})) {
+      $calling_module = $self->_filter_inner_class_name($calling_module);
       foreach my $called_module (sort(keys %{$modules_dependencies->{$calling_module}})) {
         my $strength = $modules_dependencies->{$calling_module}->{$called_module};
+        $called_module = $self->_filter_inner_class_name($called_module);
         $graph->add_edge($calling_module, $called_module);
         $graph->set_edge_attribute($calling_module, $called_module, 'style', 'solid');
         $graph->set_edge_attribute($calling_module, $called_module, 'label', $strength);
