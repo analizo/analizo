@@ -24,3 +24,9 @@ Feature: doxyparse extractor external tool
     When I run "analizo metrics ."
     Then analizo must not emit a warning matching "Error"
     And the exit status must be 0
+
+  Scenario: don't die parsing mod_suexec.h from http 2.4.38
+    Given I am in t/samples/httpd-2.4.38
+    When I run "analizo metrics ."
+    Then analizo must not emit a warning matching "Not a HASH reference"
+    And the exit status must be 0
