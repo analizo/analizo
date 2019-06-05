@@ -14,6 +14,7 @@ use File::Temp qw/ tempdir /;
 
 use CHI;
 
+use Analizo;
 use Analizo::Model;
 use Analizo::Extractor;
 use Analizo::Metrics;
@@ -183,7 +184,7 @@ sub _get_cache_dir {
     return tempdir(CLEANUP => 1);
   }
 
-  return File::Spec->catfile(File::HomeDir->my_home, '.cache', 'analizo')
+  return File::Spec->catfile(File::HomeDir->my_home, '.cache', 'analizo', $Analizo::VERSION)
 }
 
 
