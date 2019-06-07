@@ -4,7 +4,7 @@ You have more than one choice of install, see below.
 
 ## Debian package
 
-Analizo is readily available as a Debian package. This package might work with Ubuntu 18.04 or upper versions as well. For 16.04 version see this [section]().
+Analizo is readily available as a Debian package. This package might work with Ubuntu 18.04 or upper versions as well. For 16.04 version see this [section](https://github.com/black-neck/analizo/blob/ubuntu_xenial_install/INSTALL.md#running-on-ubuntu-1604).
 Installing the Debian package has the follwing advantages:
 
   1. you do not have to compile anything
