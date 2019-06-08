@@ -70,7 +70,7 @@ You neeed to install the dependencies before installing Analizo from sources.
 ## Running on Ubuntu 16.04
 
 As reported in this [issue](https://github.com/analizo/analizo/issues/149) Analizo __.deb__
-package had some problems during installation on Ubuntu xenial versions. This problem is caused by an incompatible version of perl, which on xenial release is 5.22 and analizo runs just over 5.24 versions. So, to workaround this follow those steps.
+package had some problems during installation on Ubuntu xenial versions. This problem is caused by an incompatible version of perl. So, to workaround this follow those steps.
 
 1) Install [perlbrew](https://perlbrew.pl/). Perlbrew is a management tool to install diferent versions of perl without mixing out with your local enviroment. Install and check if the instalation was sucessufull:
 ```console
