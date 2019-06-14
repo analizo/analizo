@@ -4,7 +4,7 @@ You have more than one choice of install, see below.
 
 ## Debian package
 
-Analizo is readily available as a Debian package. This package might work with Ubuntu 18.04 or upper versions as well. For 16.04 version see this [section](https://github.com/black-neck/analizo/blob/ubuntu_xenial_install/INSTALL.md#running-on-ubuntu-1604).
+Analizo is readily available as a Debian package. This package might work with Ubuntu 18.04 or upper versions as well. For Ubuntu 16.04 version see this [section](#running-on-ubuntu-1604).
 Installing the Debian package has the follwing advantages:
 
   1. you do not have to compile anything
@@ -66,26 +66,25 @@ sudo make install
 See the HACKING.md file for instructions on how to install Analizo dependencies.
 You neeed to install the dependencies before installing Analizo from sources.
 
-
 ## Running on Ubuntu 16.04
 
 As reported in this [issue](https://github.com/analizo/analizo/issues/149) Analizo __.deb__
-package had some problems during installation on Ubuntu xenial versions. This problem is caused by an incompatible version of perl. So, to workaround this follow those steps.
+package had some problems during installation on Ubuntu Xenial versions. This problem is caused by an incompatible version of Perl. So, to workaround this follow those steps.
 
-1) Install [perlbrew](https://perlbrew.pl/). Perlbrew is a management tool to install diferent versions of perl without mixing out with your local enviroment. Install and check if the instalation was sucessufull:
+1) Install [perlbrew](https://perlbrew.pl/). Perlbrew is a management tool to install diferent versions of Perl without mixing out with your local enviroment. Install and check if the instalation was sucessufull:
 ```console
 sudo apt install perlbrew
 perlbrew --version
 ```
 
-2) Install a newest version of perl:
+2) Install a newest version of Perl:
 ```console
 perlbrew init
 perlbrew install perl-5.26.1
 perlbrew switch perl-5.26.1
 ```
 
-3) This step will change you to an enviroment with the perl you just installed. Install [cpanminus](https://metacpan.org/pod/App::cpanminus):
+3) This step will change you to an enviroment with the Perl you just installed. Install [cpanminus](https://metacpan.org/pod/App::cpanminus):
 ```console
 cpan App::cpanminus
 ```
