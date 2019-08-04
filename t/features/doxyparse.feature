@@ -30,3 +30,8 @@ Feature: doxyparse extractor external tool
     When I run "analizo metrics ."
     Then analizo must not emit a warning matching "Not a HASH reference"
     And the exit status must be 0
+
+  Scenario: allow dot on module filename
+    Given I am in t/samples/sample_basic/c
+    When I run "analizo metrics ."
+    Then analizo must report that file module1.c declares module module1
