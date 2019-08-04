@@ -1,7 +1,7 @@
 Feature: plain analizo graph run
 
   Scenario: simply running analizo
-    Given I am in t/samples/sample_basic/
+    Given I am in t/samples/sample_basic/c/
     When I run "analizo graph ."
     Then analizo must report that "module1::main()" depends on "module3::variable"
     Then analizo must report that "module1::main()" depends on "module3::callback()"
