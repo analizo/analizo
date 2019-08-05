@@ -12,17 +12,6 @@ _analizo_doc() {
 	return 0
 }
 
-_analizo_evolution-matrix() {
-	local options
-	options="-h -x -y -n -o --help --width --height --name --output"
-	if [[ ${cur} == -* ]] ; then
-		COMPREPLY=( $(compgen -W "${options}" -- ${cur}))
-	else
-		COMPREPLY=( $(compgen -f ${cur}) )
-	fi
-	return 0
-}
-
 _analizo_graph() {
 	local options
 	options="-t -m -c -e -o -h --omit --cluster --modules --extractor --output --help"
@@ -83,7 +72,7 @@ _analizo() {
 	COMPREPLY=()
 	_get_comp_words_by_ref cur prev
 	opts="-v -h --version --help"
-	tools="doc evolution-matrix graph metrics metrics-batch metrics-history tree-evolution"
+	tools="doc graph metrics metrics-batch metrics-history tree-evolution"
 
 	case "${prev}" in
 		analizo)

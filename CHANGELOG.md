@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Removed
+- The evolution-matrix visualization tool removed
+
 ## [1.22.0] - 2018-09-25
 
 ### Removed
