@@ -1,6 +1,6 @@
 usr/share/perl5/auto/share/dist/Analizo/bash-completion/analizo usr/share/bash-completion/completions/analizo
 usr/share/man/man3/Analizo.3pm.gz                               usr/share/man/man1/analizo.1p.gz
-usr/share/man/man3/Analizo::Command::dsm.3pm.gz                 usr/share/man/man1/analizo-dsm.1p.gz
+usr/share/man/man3/Analizo::Command::files_graph.3pm.gz         usr/share/man/man1/analizo-files-graph.1p.gz
 usr/share/man/man3/Analizo::Command::graph.3pm.gz               usr/share/man/man1/analizo-graph.1p.gz
 usr/share/man/man3/Analizo::Command::help.3pm.gz                usr/share/man/man1/analizo-help.1p.gz
 usr/share/man/man3/Analizo::Command::metrics.3pm.gz             usr/share/man/man1/analizo-metrics.1p.gz

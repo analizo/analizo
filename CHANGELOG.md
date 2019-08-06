@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Added
+- Added new tool files-graph to output graph among files in DOT format
+
 ### Removed
 - The evolution-matrix visualization tool removed
 
