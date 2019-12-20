@@ -1,3 +1,5 @@
+[![ko-fi](https://www.ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/H2H41AOOZ)
+
 # About Analizo
 
 Analizo is a suite of source code analysis tools, aimed at being
