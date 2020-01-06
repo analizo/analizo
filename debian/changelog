@@ -1,3 +1,20 @@
+analizo (1.23.0) unstable; urgency=medium
+
+  * Added new tool files-graph to output graph among files in DOT format
+  * Add Ubuntu 16 install instructions on documentation
+  * Depends on doxyparse 1.8.15 provided by Alien::Doxyparse 0.13
+  * Stores cache on distinct dirs for each Analizo version
+  * Improve ACC metric description on documentation
+  * Added test for void arguments on C code
+  * Fix tests to run on right place `t/samples/sample_basic/c/`
+  * Added missing prereq Graph::Writer::Dot as suggested by CPANTS
+  * Added atomated tests for httpd-2.4.38 errors
+  * Added samples for bug parsing kdelibs project
+  * Removed the evolution-matrix visualization tool
+  * Removed the dsm visualization tool
+
+ -- Joenio Costa <joenio@joenio.me>  Mon, 06 Jan 2020 00:40:42 -0300
+
 analizo (1.22.0) unstable; urgency=medium
 
   * Removed global metric `total_eloc`
