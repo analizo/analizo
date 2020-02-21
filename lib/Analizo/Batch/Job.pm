@@ -11,7 +11,7 @@ use File::Temp qw/ tempfile /;
 use File::HomeDir;
 use File::Spec;
 use File::Temp qw/ tempdir /;
-
+use Digest::SHA;
 use CHI;
 
 use Analizo;
@@ -187,27 +187,14 @@ sub _get_cache_dir {
   return File::Spec->catfile(File::HomeDir->my_home, '.cache', 'analizo', $Analizo::VERSION)
 }
 
-
 sub tree_id($) {
-
   my ($self) = @_;
   my @input = sort($self->apply_filters('.'));
-
-  my ($temp_handle, $temp_filename) = tempfile();
+  my $sha1 = Digest::SHA->new;
   foreach my $input_file (@input) {
-    print $temp_handle "$input_file\n"
+    $sha1->addfile($input_file);
   }
-  close $temp_handle;
-
-  open(SHA1SUM, "cat $temp_filename | xargs sha1sum | sha1sum - |");
-  my $id = <SHA1SUM>;
-  chomp($id);
-  $id =~ s/\s.*//;
-
-  close SHA1SUM;
-  unlink $temp_filename;
-
-  return $id;
+  return $sha1->hexdigest;
 }
 
 1;

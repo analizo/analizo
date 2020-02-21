@@ -207,7 +207,8 @@ sub tree_id : Tests {
       $id = $job->tree_id('.');
     }
   );
-  is($id, '82df8dce26abfcf4e489a6d0201d2ef481591831'); # calculated by hand
+  is($id, '83f5a5c359f3dc8317519240e32f1f51f68bc051'); # calculated by hand
+  # calculated by Perl oneliner using Digest::SHA module
 }
 
 __PACKAGE__->runtests;
