@@ -69,6 +69,8 @@ is going to be removed from analizo suite. The dependency graph includes
 relationships among files including funcion calls, inheritances and attribute
 use.
 
+analizo files-graph is part of the analizo suite.
+
 =head1 REQUIRED ARGUMENTS
 
 =over

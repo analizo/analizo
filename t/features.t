@@ -8,7 +8,7 @@ use Test::BDD::Cucumber;
 use Test::BDD::Cucumber::Loader;
 
 # This harness prints out nice TAP
-use Test::BDD::Cucumber::Harness::TestBuilder;
+use Test::BDD::Cucumber::Harness::TAP;
 
 # Load a directory with Cucumber files in it. It will recursively execute any
 # file matching .*_steps.pl as a Step file, and .*\.feature as a feature file.
@@ -17,7 +17,7 @@ use Test::BDD::Cucumber::Harness::TestBuilder;
 my ($executor, @features) = Test::BDD::Cucumber::Loader->load('t/features/');
 
 # Create a Harness to execute against. TestBuilder harness prints TAP
-my $harness = Test::BDD::Cucumber::Harness::TestBuilder->new({});
+my $harness = Test::BDD::Cucumber::Harness::TAP->new({});
 
 use Test::Analizo::BDD::Cucumber::Extension;
 $executor->add_extensions('Test::Analizo::BDD::Cucumber::Extension');

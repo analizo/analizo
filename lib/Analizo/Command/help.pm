@@ -21,6 +21,8 @@ to displays the version, help and usage of the `analizo` script. For example:
 As documented in L<App::Cmd#default_command> the `help` is the default command,
 it is called when the script `analizo` is executed without inform any command.
 
+analizo help is part of the analizo suite.
+
 =cut
 
 sub execute {
