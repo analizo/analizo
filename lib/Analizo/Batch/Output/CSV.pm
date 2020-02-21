@@ -28,7 +28,7 @@ sub write_data {
     }
 
     my @metadata = map{ _encode_value($_->[1])} @$metadata;
-    my @values = map { _encode_value($summary->{$_}) } @fields;
+    my @values = map { _encode_value($summary->{$_}) || '' } @fields;
     my $line = join(',', $job->id, @metadata, @values) . "\n";
     print $fh $line;
 
