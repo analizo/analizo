@@ -11,6 +11,10 @@ http://analizo.org
 
 See INSTALL.md.
 
+# Development
+
+See HACKING.md.
+
 # Copyright
 
 Copyright © The Analizo developers.
