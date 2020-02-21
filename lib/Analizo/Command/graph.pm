@@ -104,7 +104,7 @@ and called functions.
 
 =item --modules
 
-Group the functions by modules(files), and only represent calls between
+Group the functions by modules (files or OO classes), and only represent calls between
 modules. This is useful to see the dependencies between the modules of the
 program, intead of focusing on specific functions. The arrows between the
 modules will be labelled with a number that represents the number of different
