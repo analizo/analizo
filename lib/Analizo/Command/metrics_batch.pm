@@ -128,7 +128,7 @@ then be opened in data analysis programs.
 
 =item --quiet, -q
 
-Supresses messages to standard output.
+Suppresses messages to standard output.
 
 =back
 

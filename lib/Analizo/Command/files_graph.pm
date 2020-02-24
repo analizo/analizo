@@ -66,7 +66,7 @@ dependencies between the files of the software in the graphviz(1) format.
 analizo files-graph is part of the analizo suite and was implemented to
 represent the old analizo dsm output tool in a textual format, as the dsm tool
 is going to be removed from analizo suite. The dependency graph includes
-relationships among files including funcion calls, inheritances and attribute
+relationships among files including function calls, inheritances and attribute
 use.
 
 analizo files-graph is part of the analizo suite.

@@ -9,7 +9,7 @@ Analizo::Metric::AfferentConnections - Afferent Connections per Class (ACC) metr
 =head1 DESCRIPTION
 
 The metric calculation is based on the following article and calculates the
-class conectivity.
+class connectivity.
 
 Article: I<Monitoring of source code metrics in open source projects> by Paulo
 Roberto Miranda Meirelles.
