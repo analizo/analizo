@@ -23,3 +23,8 @@ Feature: number of methods
       | animals  | csharp   |  Animal    | 1    |
       | animals  | csharp   |  Cat       | 2    |
       | animals  | csharp   |  Dog       | 2    |
+
+  Scenario: not computes macro on C code as method definition
+    Given I am in t/samples/macro
+    When I run "analizo metrics ."
+    Then analizo must report that module using_macro has nom = 1
