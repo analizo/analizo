@@ -23,7 +23,7 @@ Feature: multi-language support
       | language | main_function         | hello_say                                   | hello_destroy                                   |
       | c        | main::main()          | hello_world::hello_world_say(hello_world *) | hello_world::hello_world_destroy(hello_world *) |
       | cpp      | main::main()          | HelloWorld::say()                           | HelloWorld::destroy()                           |
-      | java     | Main::main(String []) | HelloWorld::say()                           | HelloWorld::destroy()                           |
+      | java     | Main::main(String[])  | HelloWorld::say()                           | HelloWorld::destroy()                           |
       | csharp   | main::Main()          | HelloWorld::say()                           | HelloWorld::destroy()                           |
 
   Scenario: intra-module dependencies
