@@ -2,11 +2,10 @@
 
 * make the code ready
 * update VERSION in lib/Analizo.pm, commit
-* write changelog in CHANGELOG.md and debian/changelog, commit
+* write changelog in CHANGELOG.md, commit
 * git push
 * release (see "Release task" below)
-* build Debian package (see "Debian package" below)
-* upload package to repository (see analizo.github.io/README.md for instructions)
+* update Debian package (see "Debian package" below)
 * update analizo.org site to point to the newer version
 
 ### Release task
@@ -21,14 +20,9 @@ dzil release
 
 ### Debian package
 
-Please install Dist::Zilla::Deb to build Debian package.
+Analizo has oficial Debian package and it's managed at Debian Perl Group
+umbrella:
 
-```console
-dzil debuild
-```
+* https://salsa.debian.org/perl-team/modules/packages/analizo/
 
-To skip tests running during building package run:
-
-```console
-DEB_BUILD_OPTIONS=nocheck dzil debuild
-```
+Please update Debian package on every Analizo release.

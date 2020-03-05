@@ -4,6 +4,17 @@ You have more than one choice of install, see below.
 
 ## Debian package
 
+### Newer versions
+
+Analizo 1.24.0 and later versions are oficially on Debian then all you need to
+install is (as root):
+
+```console
+apt install analizo
+```
+
+### Versions before 1.24.0
+
 Analizo is readily available as a Debian package. This package might work with Ubuntu 18.04 or upper versions as well. For Ubuntu 16.04 version see this [section](#running-on-ubuntu-1604).
 Installing the Debian package has the follwing advantages:
 

@@ -19,6 +19,13 @@ If you are using Debian, the script will do everything you need.
 If you are using another system, you will have to install some dependencies
 first. Check the "Installing dependencies on non-Debian systems" below.
 
+### Installing dependencies on non-Debian systems
+
+1) Install Doxyparse build dependencies: flex, bison, libqt4-dev, gcc, gcc-c++,
+python, and git (your operating system probably already has packages for these)
+
+2) Install Doxyparse (see [Doxyparse README](https://github.com/doxygen/doxygen/tree/master/addon/doxyparse))
+
 ## Running the test suite
 
 Just run `dzil test` in the root of the sources:
@@ -135,10 +142,3 @@ message, using a `Signed-off-by` tag, one author per line. Example:
 ```
 
 See commit `005c3bff4e0809eae0340e7629678186d1621930` for an example.
-
-# Installing dependencies on non-Debian systems
-
-1) Install Doxyparse build dependencies: flex, bison, libqt4-dev, gcc, gcc-c++,
-python, and git (your operating system probably already has packages for these)
-
-2) Install Doxyparse (see [Doxyparse](https://github.com/analizo/doxyparse/wiki))
