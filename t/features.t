@@ -1,6 +1,7 @@
 #!perl
 use strict;
 use warnings;
+use local::lib;
 use Test::BDD::Cucumber;
 
 # This will find step definitions and feature files in the directory you point
