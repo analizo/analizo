@@ -2,7 +2,7 @@
 
 * make the code ready
 * make sure VERSION in lib/Analizo.pm is correct
-* write changelog in CHANGELOG.md, commit
+* update CHANGELOG.md, commit
 * git push
 * run `dzil release` (see "Release task" below for details)
 * update Debian package (see "Debian package" below)

@@ -25,6 +25,28 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Security
 - (in case of vulnerabilities)
 
+## [1.24.0] - 2020-04-15
+
+### Changed
+- Use local::lib on t/festures.t
+- Depends on doxyparse 1.8.18 (provided by Alien::Doxyparse 0.16)
+- Update copyright year 2014-2019
+- Improve ACCM metric documentation
+- Update bash completion script
+- Use Digest::SHA instead of `sha1sum`
+
+### Removed
+- Removed Debian package source files
+
+### Fixed
+- Fix warnings about uninitialized value on tests
+- Removed failing Parallelel unit testcase
+- Fixed some spelling errors
+- Fixed documentation about `--modules` param on `analizo graph`
+- Fixed parsing method signature on newer doxyparse YAML output
+- Fixed warning about Cucumber TestBuilder deprecation
+- Declared requirement for Test::BDD::Cucumber::Harness::TAP
+
 ## [1.23.0] - 2019-08-10
 
 ### Added
@@ -191,8 +213,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Script development-setup.sh fixed.
 - Running of a single acceptance Cucumber test fixed.
 
-[Unreleased]: https://github.com/analizo/analizo/compare/1.23.0...HEAD
-[1.23.0]: https://github.com/analizo/analizo/compare/1.22.0...HEAD
+[Unreleased]: https://github.com/analizo/analizo/compare/1.24.0...HEAD
+[1.24.0]: https://github.com/analizo/analizo/compare/1.23.0...1.24.0
+[1.23.0]: https://github.com/analizo/analizo/compare/1.22.0...1.23.0
 [1.22.0]: https://github.com/analizo/analizo/compare/1.21.0...1.22.0
 [1.21.0]: https://github.com/analizo/analizo/compare/1.20.8...1.21.0
 [1.20.8]: https://github.com/analizo/analizo/compare/1.20.7...1.20.8
