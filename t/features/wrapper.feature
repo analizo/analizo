@@ -13,8 +13,8 @@ Feature: analizo wrapper script
 
   Scenario: display help
     When I run "analizo --help"
-    Then the output must match "NAME\\s+analizo\\s"
-    And the output must match "USAGE\\s+analizo\\s"
+    Then the output must match "[NAME|N^HNA^HAM^HME^HE]\\s+analizo\\s"
+    And the output must match "[USAGE|U^HUS^HSA^HAG^HGE^HE]\\s+analizo\\s"
     And the exit status must be 0
 
   Scenario: display version

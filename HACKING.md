@@ -49,6 +49,35 @@ pherkin t/features/metrics-batch.feature
 See "Installing Dependencies" above for a guide to install all the software
 that's needed to run Analizo tests.
 
+## Running the test suite on FreeBSD
+
+It uses Vagrant FreeBSD VM running on top of libvirt. Steps:
+
+```console
+vagrant up --provider=libvirt
+vagrant ssh
+sudo pkg install p5-App-cpanminus p5-Dist-Zilla p5-local-lib p5-ZMQ-FFI p5-Import-Into flex bison cmake python git
+dzil -I ~/perl5/lib/perl5 authordeps --missing | cpanm --notest
+dzil -I ~/perl5/lib/perl5 listdeps --missing | cpanm --notest
+dzil -I ~/perl5/lib/perl5 test
+```
+
+To keep Analizo's source sync with VM:
+
+    vagrant rsync-auto
+
+To update Vagrant image:
+
+    vagrant box update --provider=libvirt
+
+Stop VM:
+
+    vagrant halt
+
+Remove VM:
+
+    vagrant destroy
+
 ## Building
 
 ```console
