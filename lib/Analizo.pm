@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use local::lib;
 
-our $VERSION = '1.24.0';
+our $VERSION = '1.25.0';
 
 =head1 NAME
 
