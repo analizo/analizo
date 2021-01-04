@@ -1,13 +1,14 @@
 # Rough instructions for releasing packages
 
 * make the code ready
+  * all tests are passing on linux, freebsd and any other supported platform
 * make sure VERSION in lib/Analizo.pm is correct
 * update CHANGELOG.md, commit
 * git push
 * run `dzil release` (see "Release task" below for details)
 * update Debian package (see "Debian package" below)
 * update analizo.org site to point to the newer version
-* update VERSION in lib/Analizo.pm, commit
+* update VERSION in lib/Analizo.pm to the next version, commit
 
 ### Release task
 

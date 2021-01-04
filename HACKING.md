@@ -57,6 +57,7 @@ It uses Vagrant FreeBSD VM running on top of libvirt. Steps:
 vagrant up --provider=libvirt
 vagrant ssh
 sudo pkg install p5-App-cpanminus p5-Dist-Zilla p5-local-lib p5-ZMQ-FFI p5-Import-Into flex bison cmake python git
+cd analizo
 dzil -I ~/perl5/lib/perl5 authordeps --missing | cpanm --notest
 dzil -I ~/perl5/lib/perl5 listdeps --missing | cpanm --notest
 dzil -I ~/perl5/lib/perl5 test
