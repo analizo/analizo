@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use local::lib;
 
-our $VERSION = '1.23.0';
+our $VERSION = '1.25.0';
 
 =head1 NAME
 
@@ -19,9 +19,9 @@ analizo - multi-language source code analysis toolkit
 
 sub global_opt_spec {
   return (
-    [ 'help',    'displays the help (full manpage)' ],
-    [ 'usage',   'displays the usage of the command' ],
-    [ 'version', 'displays version information' ],
+    [ 'help|h',    'displays the help (full manpage)' ],
+    [ 'usage',     'displays the usage of the command' ],
+    [ 'version|v', 'displays version information' ],
   );
 }
 
@@ -87,11 +87,11 @@ each tools are documented in the respective tool's manual page.
 
 =over
 
-=item --version
+=item --version, -v
 
 Displays version information and exits.
 
-=item --help
+=item --help, -h
 
 Displays the manpage for the 'analizo' script or any analizo 'tool'.
 
@@ -146,7 +146,7 @@ itself" mean either Artistic License or GPL version 1 or later.
 
 =item Copyright (c) 2008-2010 Antonio Terceiro
 
-=item Copyright (c) 2014-2019 Joenio Costa
+=item Copyright (c) 2014-2021 Joenio Marques da Costa
 
 =back
 

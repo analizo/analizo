@@ -25,7 +25,7 @@ sub opt_spec {
   my ($class, $app) = @_;
   return (
     [ 'list|l',       'displays metric list' ],
-    [ 'extractor=s',  'wich extractor method use to analise source code' ],
+    [ 'extractor=s',  'which extractor method use to analise source code' ],
     [ 'globalonly|global-only|g', 'only output global (project-wide) metrics' ],
     [ 'output|o=s',   'output file name' ],
     [ 'language=s',   'process only filenames matching known extensions for the <lang>> programming' ],
@@ -107,7 +107,7 @@ sub execute {
 =head1 DESCRIPTION
 
 analizo metrics analyzes source code in I<input> and produces a metrics
-report. If I<input> is ommitted, the current directory (I<.>) is assumed.
+report. If I<input> is omitted, the current directory (I<.>) is assumed.
 
 The produced report is written to the standard output, or to a file using the
 I<--output> option, using the YAML format (see I<http://www.yaml.org/>)
@@ -124,7 +124,7 @@ Tells analizo which source code directory you want to parse.
 
 =item --extractor <extractor>
 
-Define wich extractor method use to analise source code. Default is Doxyparse.
+Define which extractor method use to analise source code. Default is Doxyparse.
 
 When using the Doxyparse extractor (default), all files matching the languages
 supported by doxyparse are processed, unless I<--language> is used.

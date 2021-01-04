@@ -29,20 +29,18 @@ sub description : Tests {
   is($accm->description, "Average Cyclomatic Complexity per Method");
 }
 
-use Data::Dumper;
 sub calculate : Tests {
   $model->declare_module('module');
-  print(Dumper($accm));
   is($accm->calculate('module'), 0, 'no function');
 
   $model->declare_function('module', 'module::function');
-  $model->add_conditional_paths('module::function', 3);
-  is($accm->calculate('module'), 3, 'one function with three conditional paths');
+  $model->add_conditional_paths('module::function', 2);
+  is($accm->calculate('module'), 3, 'one function with two conditional paths');
 
   $model->declare_function('module', 'module::function1');
-  $model->add_conditional_paths('module::function1', 2);
+  $model->add_conditional_paths('module::function1', 1);
   $model->declare_function('module', 'module::function2');
-  $model->add_conditional_paths('module::function2', 4);
+  $model->add_conditional_paths('module::function2', 3);
   is($accm->calculate('module'), 3, 'two function with three average cyclomatic complexity per method');
 }
 

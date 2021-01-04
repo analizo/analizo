@@ -1,9 +1,8 @@
 package t::Analizo::GlobalMetric::TotalAbstractClasses;
-use parent qw(Test::Class);
-use Test::More;
-
 use strict;
 use warnings;
+use parent qw(Test::Analizo::Class);
+use Test::More;
 use File::Basename;
 
 use Analizo::Model;

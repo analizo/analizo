@@ -109,7 +109,7 @@ B<analizo metrics-history> will process I<input>, a Git repository with a
 working copy of the source code (i.e. not a bare git repository), checkout
 every relevant commit and run B<analizo metrics> on it. The metrics for all of
 the revisions will be accumulated in a file called I<metrics.csv> inside
-I<input>. If I<input> is ommitted, the current directory (.) s
+I<input>. If I<input> is omitted, the current directory (.) s
 assumed.
 
 analizo metrics-history is part of the analizo suite.
@@ -161,7 +161,7 @@ commits that would be processed.
 
 =item --progressbar, -b
 
-Displays a progress bar during the execution, so that you know aproximately how
+Displays a progress bar during the execution, so that you know approximately how
 long analizo is going to take to finish.
 
 =back

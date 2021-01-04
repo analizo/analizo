@@ -4,6 +4,7 @@ use strict;
 use warnings;
 use Class::Inspector;
 use Env::Path qw( PATH );
+use File::Temp qw( tmpnam );
 
 =head1 NAME
 
@@ -46,7 +47,14 @@ sub show_manpage {
   my $version_information = $self->version_information;
   my $file = Class::Inspector->resolved_filename($package);
   if (scalar PATH->Whence('man')) {
-    exec("pod2man --name='analizo-$command_name' --release='$version_information' --center='Analizo documentation' '$file' | man -l -");
+    my $pod2man = "pod2man --name='analizo-$command_name' --release='$version_information' --center='Analizo documentation'";
+    if ($^O eq 'freebsd') {
+      my $tmpfile = tmpnam();
+      exec("$pod2man '$file' > $tmpfile && man $tmpfile && rm -f $tmpfile");
+    }
+    else {
+      exec("$pod2man '$file' | man -l -");
+    }
   }
   elsif (scalar PATH->Whence('less')) {
     exec("pod2text '$file' | less");

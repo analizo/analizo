@@ -23,7 +23,7 @@ sub usage_desc { "%c graph %o <input> [<input> [<input> ...]]" }
 
 sub opt_spec {
   return (
-    [ 'extractor=s', 'wich extractor method use to analise source code' ],
+    [ 'extractor=s', 'which extractor method use to analise source code' ],
     [ 'output|o=s',  'output file name' ],
     [ 'omit=s',      'omit the given functions from the call graph', { default => '' } ],
     [ 'cluster',     'cluster the functions into files' ],
@@ -106,7 +106,7 @@ and called functions.
 
 Group the functions by modules (files or OO classes), and only represent calls between
 modules. This is useful to see the dependencies between the modules of the
-program, intead of focusing on specific functions. The arrows between the
+program, instead of focusing on specific functions. The arrows between the
 modules will be labelled with a number that represents the number of different
 places in which the calling module calls functions in the called module (i.e.
 how many times module A calls module B).
@@ -115,7 +115,7 @@ It doesn't make much sense to use --modules together with --cluster.
 
 =item --extractor <extractor>
 
-Define wich extractor method use to analise source code. Currenly "Doxyparse"
+Define which extractor method use to analise source code. Currenly "Doxyparse"
 is the only extractor available.  Default is Doxyparse.
 
 =item --output <file>, -o <file>
