@@ -25,6 +25,22 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Security
 - (in case of vulnerabilities)
 
+## [1.25.0] - 2021-01-04
+
+### Changed
+- Depends on doxyparse 1.9.0 (provided by Alien::Doxyparse 0.17)
+- Depends on DBI 1.635+
+
+### Removed
+- Drop YAML dependency, using YAML::XS instead
+
+### Fixed
+- Add samples to improve testcases for errors on YAML syntax
+- Add freebsd support
+  * using shebang `/usr/bin/env perl` instead of `/usr/bin/perl`
+  * fixed args for manpage command line tool on freebsd
+  * documented steps on how to run testcases on freebsd
+
 ## [1.24.0] - 2020-04-15
 
 ### Changed
@@ -214,6 +230,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Running of a single acceptance Cucumber test fixed.
 
 [Unreleased]: https://github.com/analizo/analizo/compare/1.24.0...HEAD
+[1.25.0]: https://github.com/analizo/analizo/compare/1.24.0...1.25.0
 [1.24.0]: https://github.com/analizo/analizo/compare/1.23.0...1.24.0
 [1.23.0]: https://github.com/analizo/analizo/compare/1.22.0...1.23.0
 [1.22.0]: https://github.com/analizo/analizo/compare/1.21.0...1.22.0
