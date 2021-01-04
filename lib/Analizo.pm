@@ -146,7 +146,7 @@ itself" mean either Artistic License or GPL version 1 or later.
 
 =item Copyright (c) 2008-2010 Antonio Terceiro
 
-=item Copyright (c) 2014-2019 Joenio Costa
+=item Copyright (c) 2014-2021 Joenio Costa
 
 =back
 
