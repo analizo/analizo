@@ -84,6 +84,7 @@ sub feed {
 
       foreach my $definition (@{$yaml->{$full_filename}->{$module}->{defines}}) {
         my ($name) = keys %$definition;
+        next if $definition->{$name}->{prototype} and $definition->{$name}->{prototype} eq 'yes';
         my $type = $definition->{$name}->{type};
         my $qualified_name = _qualified_name($self->current_module, $name);
         $self->{current_member} = $qualified_name;
