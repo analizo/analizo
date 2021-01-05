@@ -25,6 +25,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Security
 - (in case of vulnerabilities)
 
+## [1.25.1] - 2021-01-05
+
+### Fixed
+- error cpantester "can't locate local::lib"
+- ignore prototype functions to fix NOM metric
+
 ## [1.25.0] - 2021-01-04
 
 ### Changed
@@ -229,7 +235,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Script development-setup.sh fixed.
 - Running of a single acceptance Cucumber test fixed.
 
-[Unreleased]: https://github.com/analizo/analizo/compare/1.24.0...HEAD
+[Unreleased]: https://github.com/analizo/analizo/compare/1.25.1...HEAD
+[1.25.1]: https://github.com/analizo/analizo/compare/1.25.0...1.25.1
 [1.25.0]: https://github.com/analizo/analizo/compare/1.24.0...1.25.0
 [1.24.0]: https://github.com/analizo/analizo/compare/1.23.0...1.24.0
 [1.23.0]: https://github.com/analizo/analizo/compare/1.22.0...1.23.0
