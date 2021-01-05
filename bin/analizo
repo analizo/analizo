@@ -1,5 +1,4 @@
 #!/usr/bin/env perl
-use local::lib;
 use FindBin::libs;
 use Analizo;
 use strict;
