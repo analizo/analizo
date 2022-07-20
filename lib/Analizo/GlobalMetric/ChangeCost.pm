@@ -2,6 +2,7 @@ package Analizo::GlobalMetric::ChangeCost;
 use strict;
 use parent qw(Class::Accessor::Fast);
 use List::Util qw( sum );
+use Graph::TransitiveClosure::Matrix;
 
 =head1 NAME
 
