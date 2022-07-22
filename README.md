@@ -1,5 +1,5 @@
 [![ko-fi](https://www.ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/H2H41AOOZ)
-[![Build Status](https://travis-ci.org/analizo/analizo.svg?branch=master)](https://travis-ci.org/analizo/analizo)
+[![Build Status](https://travis-ci.com/analizo/analizo.svg?branch=master)](https://travis-ci.com/analizo/analizo)
 
 # About Analizo
 
