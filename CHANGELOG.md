@@ -25,6 +25,17 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Security
 - (in case of vulnerabilities)
 
+## [1.25.2] - 2022-07-22
+
+### Changed
+- change debian stretch to buster on dockerfile
+
+### Removed
+- get rid of travis-ci (preparing to migrate to gitlab)
+
+### Fixed
+- make sure Graph::TransitiveClosure::Matrix is loaded
+
 ## [1.25.1] - 2021-01-05
 
 ### Fixed
@@ -236,6 +247,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Running of a single acceptance Cucumber test fixed.
 
 [Unreleased]: https://github.com/analizo/analizo/compare/1.25.1...HEAD
+[1.25.2]: https://github.com/analizo/analizo/compare/1.25.1...1.25.2
 [1.25.1]: https://github.com/analizo/analizo/compare/1.25.0...1.25.1
 [1.25.0]: https://github.com/analizo/analizo/compare/1.24.0...1.25.0
 [1.24.0]: https://github.com/analizo/analizo/compare/1.23.0...1.24.0
