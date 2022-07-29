@@ -15,10 +15,10 @@ average number of lines of code per method.
 Article: I<Monitoring of source code metrics in open source projects> by Paulo
 Roberto Miranda Meirelles.
 
-See the adptation of the paragraph about Average Method Lines of Code metric:
+See the adaptation of the paragraph about Average Method Lines of Code metric:
 
 This metric indicates if the code is well distributed between the methods. How
-bigger, "heavier" are the methods. It's preferible to have a lot of small and
+bigger, "heavier" are the methods. It's preferable to have a lot of small and
 of easy understanding operations than few large and complex operations.
 
 =cut

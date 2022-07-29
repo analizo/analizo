@@ -25,7 +25,7 @@ sub opt_spec {
   my ($class, $app) = @_;
   return (
     [ 'list|l',       'displays metric list' ],
-    [ 'extractor=s',  'which extractor method use to analise source code' ],
+    [ 'extractor=s',  'which extractor method use to parse the source code' ],
     [ 'globalonly|global-only|g', 'only output global (project-wide) metrics' ],
     [ 'output|o=s',   'output file name' ],
     [ 'language=s',   'process only filenames matching known extensions for the <lang>> programming' ],
@@ -124,7 +124,7 @@ Tells analizo which source code directory you want to parse.
 
 =item --extractor <extractor>
 
-Define which extractor method use to analise source code. Default is Doxyparse.
+Define which extractor method use to parse the source code. Default is Doxyparse.
 
 When using the Doxyparse extractor (default), all files matching the languages
 supported by doxyparse are processed, unless I<--language> is used.

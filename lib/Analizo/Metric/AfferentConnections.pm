@@ -14,7 +14,7 @@ class connectivity.
 Article: I<Monitoring of source code metrics in open source projects> by Paulo
 Roberto Miranda Meirelles.
 
-See the adaptation of the paragraph about Afferente Connections per Class in
+See the adaptation of the paragraph about Afferent Connections per Class in
 the article:
 
 Measures the connectivity of a class. If a class C<Ci> access a method or

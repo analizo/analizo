@@ -136,7 +136,7 @@ processes. Usually you will want N to be less than or equal to the number of
 CPUs in your machine.
 
 Note that analizo metrics extraction is a CPU-intensive process, so setting N
-as the exacty number of CPUs you have may bring your machine to an unusable
+as the exactly number of CPUs you have may bring your machine to an unusable
 state.
 
 =item --language LANGUAGE, --exclude DIRECTORY
@@ -189,7 +189,7 @@ other database by using I<--output DSN>, where I<DSN> is a DBI Data Source
 Name.
 
 You can check B<DBI>(3pm) for details. Note that if you a database other than
-SQLite, you must make sure that you have the correponsing DBI driver installed.
+SQLite, you must make sure that you have the corresponding DBI driver installed.
 
 Examples:
 

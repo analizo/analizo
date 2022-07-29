@@ -16,7 +16,7 @@ and Chris F. Kemerer.
 
 See the paragraph about Coupling Between Objects in the article:
 
-Theoretica Basis: CBO relates to the notion that an object is coupled to
+Theoretical Basis: CBO relates to the notion that an object is coupled to
 another object if one of them acts on the other, i.e., methods of one use
 method or instance variables of another. As stated earlier, since objects of
 the same class have the same properties, two classes are coupled when methods
