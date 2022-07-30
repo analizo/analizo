@@ -8,13 +8,17 @@ git clone https://github.com/analizo/analizo.git
 
 ## Installing Dependencies
 
+Note that this option of installing dependencies is recommended just to create
+a development environment to hack analizo.
+
 Run this command:
 
 ```console
 ./development-setup.sh
 ```
 
-If you are using Debian, the script will do everything you need.
+If you are using Debian, the script will do everything you need, but it
+requires Debian 11 or superior.
 
 If you are using another system, you will have to install some dependencies
 first. Check the "Installing dependencies on non-Debian systems" below.
