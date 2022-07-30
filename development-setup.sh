@@ -13,26 +13,21 @@ setup_debian() {
     echo "WARNING: no specific preparation steps for $codename"
   fi
 
-  if [ ! -f /etc/apt/sources.list.d/analizo.list ]; then
-    echo "deb http://www.analizo.org/download/ ./" | sudo sh -c 'cat > /etc/apt/sources.list.d/analizo.list'
-    wget -O - http://www.analizo.org/download/signing-key.asc | sudo apt-key add -
-  fi
   which apt-file || sudo apt-get -q -y -f install apt-file
   sudo apt-get update
   sudo apt-file update
-
-  sudo apt-get -q -y -f install dh-make-perl libdist-zilla-perl liblocal-lib-perl cpanminus
-
-  # install Doxyparse build dependencies and define "master" as Doxyparse version to install
-  sudo apt-get -q -f -y install flex bison cmake build-essential python
-  export ALIEN_DOXYPARSE_VERSION=master
+  sudo apt-get -q -y -f install dh-make-perl libdist-zilla-perl liblocal-lib-perl cpanminus doxygen-doxyparse
 
   packages=$(locate_package $(dzil authordeps))
-  sudo apt-get -q -y -f install $packages
+  if [ -n "$packages" ]; then
+    sudo apt-get -q -y -f install $packages
+  fi
   dzil authordeps --missing | cpanm --notest
 
   packages=$(locate_package $(dzil listdeps))
-  sudo apt-get -q -y -f install $packages
+  if [ -n "$packages" ]; then
+    sudo apt-get -q -y -f install $packages
+  fi
   dzil listdeps --missing | cpanm --notest
 }
 
@@ -43,26 +38,6 @@ locate_package() {
     packages="$packages $package"
   done
   echo $packages
-}
-
-prepare_ubuntu() {
-  if ! grep -q ZeroMQ Makefile.PL; then
-    # only needed while we depend on ZeroMQ
-    return
-  fi
-  apt-get install -q -y libzeromq-perl
-}
-
-prepare_precise() {
-  prepare_ubuntu
-}
-
-prepare_quantal() {
-  prepare_ubuntu
-}
-
-prepare_trusty() {
-  prepare_ubuntu
 }
 
 # FIXME share data with Makefile.PL/dist.ini
