@@ -1,3 +1,31 @@
+/*
+
+**ANALIZO NOTE**
+
+This file was copied here from mlpack project as is just to be used as input on
+analizo testsuite in order to fix the issue #120.
+
+- https://github.com/analizo/analizo/issues/120
+
+mlpack repository:
+
+- https://github.com/mlpack/mlpack
+
+Original file was copied from the tag mlpack-3.0.0 from mlpack git repository
+and it is located on the path below.
+
+- src/mlpack/bindings/cli/parse_command_line.hpp
+
+Link to the original file on GitHub:
+
+- https://github.com/mlpack/mlpack/blob/mlpack-3.0.0/src/mlpack/bindings/cli/parse_command_line.hpp
+
+See full copyrigth info at:
+
+- https://github.com/mlpack/mlpack/blob/mlpack-3.0.0/COPYRIGHT.txt
+
+*/
+
 /**
  * @file parse_command_line.hpp
  * @author Ryan Curtin
