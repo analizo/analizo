@@ -1,4 +1,31 @@
 /*
+
+**ANALIZO NOTE**
+
+This file was copied from The Android Open Source Project for testing analizo
+features.
+
+The original file was copied as-is to create automated tests on analizo side
+fixing the bug below.
+
+- https://github.com/analizo/analizo/issues/112
+
+Android source code repositories:
+
+- https://android.googlesource.com/
+
+Original file was copied from the tag android-5.1.1_r38 from Android git repository
+and it is located on the path below.
+
+- media/libmedia/AudioTrackShared.cpp
+
+Link to the original file on git repository:
+
+- https://android.googlesource.com/platform/frameworks/av/+/refs/tags/android-5.1.1_r38/media/libmedia/AudioTrackShared.cpp
+
+*/
+
+/*
  * Copyright (C) 2007 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");

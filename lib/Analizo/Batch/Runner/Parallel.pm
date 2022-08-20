@@ -6,6 +6,10 @@ use YAML::XS;
 
 use parent qw( Analizo::Batch::Runner );
 
+$YAML::XS::LoadBlessed = 1;
+$YAML::XS::LoadCode = 1;
+$YAML::XS::DumpCode = 1;
+
 sub new {
   my ($class, $parallelism) = @_;
   $parallelism ||= 2;
@@ -107,7 +111,6 @@ sub distributor {
   my $job;
   while(1) {
     my $msg = $queue->recv();
-    $msg =~ s/!!perl\/code//; # https://github.com/ingydotnet/yaml-libyaml-pm/issues/28
     $job = Load($msg);
     last if !exists($job->{id});
     push(@queue, $job);

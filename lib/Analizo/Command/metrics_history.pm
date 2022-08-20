@@ -109,7 +109,7 @@ B<analizo metrics-history> will process I<input>, a Git repository with a
 working copy of the source code (i.e. not a bare git repository), checkout
 every relevant commit and run B<analizo metrics> on it. The metrics for all of
 the revisions will be accumulated in a file called I<metrics.csv> inside
-I<input>. If I<input> is ommitted, the current directory (.) s
+I<input>. If I<input> is omitted, the current directory (.) s
 assumed.
 
 analizo metrics-history is part of the analizo suite.
@@ -136,7 +136,7 @@ processes. Usually you will want N to be less than or equal to the number of
 CPUs in your machine.
 
 Note that analizo metrics extraction is a CPU-intensive process, so setting N
-as the exacty number of CPUs you have may bring your machine to an unusable
+as the exactly number of CPUs you have may bring your machine to an unusable
 state.
 
 =item --language LANGUAGE, --exclude DIRECTORY
@@ -161,7 +161,7 @@ commits that would be processed.
 
 =item --progressbar, -b
 
-Displays a progress bar during the execution, so that you know aproximately how
+Displays a progress bar during the execution, so that you know approximately how
 long analizo is going to take to finish.
 
 =back
@@ -189,7 +189,7 @@ other database by using I<--output DSN>, where I<DSN> is a DBI Data Source
 Name.
 
 You can check B<DBI>(3pm) for details. Note that if you a database other than
-SQLite, you must make sure that you have the correponsing DBI driver installed.
+SQLite, you must make sure that you have the corresponding DBI driver installed.
 
 Examples:
 

@@ -23,7 +23,7 @@ COMMAND=metrics SOURCE=t/samples/hello_world/cpp/ perl profile.pl
 ```
 
 Process the profiler output (this has to be run from the same directory where
-you run the profiler) in html format:
+you run the profiler) in HTML format:
 
 ```console
 nytprofhtml --open

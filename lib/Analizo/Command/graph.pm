@@ -23,7 +23,7 @@ sub usage_desc { "%c graph %o <input> [<input> [<input> ...]]" }
 
 sub opt_spec {
   return (
-    [ 'extractor=s', 'wich extractor method use to analise source code' ],
+    [ 'extractor=s', 'which extractor method use to parse the source code' ],
     [ 'output|o=s',  'output file name' ],
     [ 'omit=s',      'omit the given functions from the call graph', { default => '' } ],
     [ 'cluster',     'cluster the functions into files' ],
@@ -104,9 +104,9 @@ and called functions.
 
 =item --modules
 
-Group the functions by modules(files), and only represent calls between
+Group the functions by modules (files or OO classes), and only represent calls between
 modules. This is useful to see the dependencies between the modules of the
-program, intead of focusing on specific functions. The arrows between the
+program, instead of focusing on specific functions. The arrows between the
 modules will be labelled with a number that represents the number of different
 places in which the calling module calls functions in the called module (i.e.
 how many times module A calls module B).
@@ -115,7 +115,7 @@ It doesn't make much sense to use --modules together with --cluster.
 
 =item --extractor <extractor>
 
-Define wich extractor method use to analise source code. Currenly "Doxyparse"
+Define which extractor method use to parse the source code. Currently "Doxyparse"
 is the only extractor available.  Default is Doxyparse.
 
 =item --output <file>, -o <file>
@@ -127,7 +127,7 @@ Use a file as output
 =head1 VIEWING THE GRAPH
 
 To view the generated graph, pipe analizo's output to one of the
-Graphiz tools. You can use B<dotty(1)> to display the graph in a
+Graphviz tools. You can use B<dotty(1)> to display the graph in a
 X11 window:
 
   $ analizo graph src/ | dotty -
@@ -158,7 +158,7 @@ to comfortably read.  If that happens, try N-up printing:
 
 You can also try playing with other B<dot> options such as B<-Gratio>,
 or for a different style of graph, try using B<neato> instead of
-B<dot>. See the Graphwiz documentation for more information about the
+B<dot>. See the Graphviz documentation for more information about the
 various options available for customizing the style of the graph.
 
 =head1 READING THE GRAPH

@@ -5,6 +5,7 @@ use parent qw(Test::Analizo::Class);
 use Test::More;
 use Test::MockObject::Extends;
 use Test::MockModule;
+use File::Path qw(remove_tree);
 
 use Test::Analizo;
 
@@ -135,8 +136,9 @@ sub cache_of_model_and_metrics : Tests {
   $AnalizoExtractor->mock('process', sub { $model_result = 'cache not used!' });
   my $metrics_result = 'cache used';
   my $AnalizoMetrics = Test::MockModule->new('Analizo::Metrics');
-  $AnalizoMetrics->mock('data', sub { $metrics_result = 'cache not used!'});
+  $AnalizoMetrics->mock('data', sub { $metrics_result = 'cache not used!' });
 
+  # second time
   my $job2 = Analizo::Batch::Job->new;
   on_dir(
     't/samples/animals/cpp',
@@ -159,6 +161,43 @@ sub cache_of_model_and_metrics : Tests {
   is_deeply($metrics2, $metrics1, 'cached metrics is the same ');
 }
 
+sub stores_cache_on_distinct_dirs_for_each_version : Tests {
+  my $FileSpec = Test::MockModule->new('File::Spec');
+  $FileSpec->mock('splitdir', sub { '/bypass_the_tempdir_creation_on_development_environment' });
+  local $ENV{ANALIZO_CACHE} = undef;
+
+  my $job = Analizo::Batch::Job->new;
+
+  local $Analizo::VERSION = "1.1.1";
+  like ($job->_get_cache_dir, qr/1\.1\.1$/);
+
+  local $Analizo::VERSION = "2.2.2";
+  like ($job->_get_cache_dir, qr/2\.2\.2$/);
+}
+
+sub invalidates_cache_after_upgrade_version : Tests {
+  my $FileSpec = Test::MockModule->new('File::Spec');
+  $FileSpec->mock('splitdir', sub { '/bypass_the_tempdir_creation_on_development_environment' });
+  local $ENV{ANALIZO_CACHE} = undef;
+
+  local $Analizo::VERSION = "1.1.1";
+  my $job_a = Analizo::Batch::Job->new;
+  $job_a->cache->set('metrics', 'metrics values');
+  ok ($job_a->cache->get('metrics'), 'metrics values sucessfully retrievied from the cache');
+
+  my $job_b = Analizo::Batch::Job->new;
+  ok ($job_b->cache->get('metrics'), 'values for metrics found on cache for same analizo version');
+
+  local $Analizo::VERSION = "2.2.2";
+  my $job_c = Analizo::Batch::Job->new;
+  ok (!$job_c->cache->get('metrics'), 'values for metrics should not found for other analizo version');
+
+  # remove all cache directories created in this testcase
+  foreach ($job_a->_get_cache_dir, $job_b->_get_cache_dir, $job_c->_get_cache_dir) {
+    remove_tree $_ if -e $_;
+  }
+}
+
 sub tree_id : Tests {
   my $job = Analizo::Batch::Job->new;
   my $id;
@@ -168,7 +207,8 @@ sub tree_id : Tests {
       $id = $job->tree_id('.');
     }
   );
-  is($id, '82df8dce26abfcf4e489a6d0201d2ef481591831'); # calculated by hand
+  is($id, '83f5a5c359f3dc8317519240e32f1f51f68bc051'); # calculated by hand
+  # calculated by Perl oneliner using Digest::SHA module
 }
 
 __PACKAGE__->runtests;

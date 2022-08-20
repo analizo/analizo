@@ -28,7 +28,7 @@ sub create_with_and_without_args : Tests {
   my $job1 = $batch1->next();
   my $job2 = $batch2->next();
   is($job1->id, $job2->id);
-  is($job1->id, $MASTER);
+  is($job1->id, $MAIN);
 }
 
 sub traverse_repository : Tests {
@@ -38,7 +38,7 @@ sub traverse_repository : Tests {
   while (my $job = $batch->next()) {
     $jobs{$job->id} = 1;
   }
-  ok($jobs{$MASTER}, 'master commit must be listed');
+  ok($jobs{$MAIN}, 'main commit must be listed');
   ok($jobs{$SOME_COMMIT}, 'intermediate relevant commit must be listed');
   ok(!$jobs{$IRRELEVANT_COMMIT}, 'intermediate IRRELEVANT commit must not be listed');
 }
@@ -63,9 +63,9 @@ sub find_commit : Tests {
 
   is($batch->find('abczyx1234'), undef);
 
-  my $master = $batch->find($MASTER);
-  isa_ok($master, 'Analizo::Batch::Job::Git');
-  is($master->id, $MASTER);
+  my $main = $batch->find($MAIN);
+  isa_ok($main, 'Analizo::Batch::Job::Git');
+  is($main->id, $MAIN);
 }
 
 sub __create {

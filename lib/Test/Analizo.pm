@@ -65,7 +65,7 @@ sub unpack_sample_git_repository {
   my $tmpdir = tmpdir_for($filename);
   system("mkdir -p $tmpdir");
   for my $repo (@repos) {
-    system("tar xzf t/samples/$repo.tar.gz -C $tmpdir");
+    system("tar xzf t/samples/$repo.tar.gz -C $tmpdir --no-same-owner");
   }
   &$code();
   system("rm -rf $tmpdir");

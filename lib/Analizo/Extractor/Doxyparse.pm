@@ -8,6 +8,7 @@ use parent qw(Analizo::Extractor);
 use File::Temp qw/ tempfile /;
 use Cwd;
 use YAML::XS;
+use File::Spec::Functions qw/ tmpdir /;
 
 sub new {
   my ($package, @options) = @_;
@@ -84,6 +85,7 @@ sub feed {
 
       foreach my $definition (@{$yaml->{$full_filename}->{$module}->{defines}}) {
         my ($name) = keys %$definition;
+        next if $definition->{$name}->{prototype} and $definition->{$name}->{prototype} eq 'yes';
         my $type = $definition->{$name}->{type};
         my $qualified_name = _qualified_name($self->current_module, $name);
         $self->{current_member} = $qualified_name;
@@ -176,6 +178,7 @@ sub actually_process {
   $ENV{PATH} = join(':', $ENV{PATH}, Alien::Doxyparse->bin_dir) unless $@;
 
   eval {
+    local $ENV{TEMP} = tmpdir();
     open DOXYPARSE, "doxyparse - < $temp_filename |" or die "can't run doxyparse: $!";
     local $/ = undef;
     my $doxyparse_output = <DOXYPARSE>;

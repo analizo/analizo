@@ -5,14 +5,13 @@ Feature: give manpage on --help
 
   Scenario: display manpage for `analizo <tool>`
     When I run "analizo <tool> --help"
-    Then the output must match "NAME\\s+analizo-<tool>"
-    Then the output must match "USAGE\\s+analizo <tool> \\[OPTIONS\\]"
+    Then the output must match "[NAME|N^HNA^HAM^HME^HE]\\s+analizo-<tool>"
+    Then the output must match "[USAGE|U^HUS^HSA^HAG^HGE^HE]\\s+analizo <tool> \\[OPTIONS\\]"
     Examples:
       | tool             |
-      | evolution-matrix |
       | graph            |
       | metrics          |
       | metrics-batch    |
       | metrics-history  |
       | tree-evolution   |
-      | dsm              |
+      | files-graph      |

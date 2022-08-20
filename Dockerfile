@@ -1,4 +1,4 @@
-FROM debian:stretch
+FROM debian:buster
 
 # Creates analizo user and group inside container
 RUN useradd -ms /bin/bash analizo

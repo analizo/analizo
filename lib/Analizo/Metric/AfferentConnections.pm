@@ -9,12 +9,12 @@ Analizo::Metric::AfferentConnections - Afferent Connections per Class (ACC) metr
 =head1 DESCRIPTION
 
 The metric calculation is based on the following article and calculates the
-class conectivity.
+class connectivity.
 
-Article: I<Monitoring of source code metrics in open source projects> by Paulo
-Roberto Miranda Meirelles.
+PhD Thesis: I<Monitoramento de métricas de código-fonte em projetos de software livre>
+by Paulo Roberto Miranda Meirelles.
 
-See the adaptation of the paragraph about Afferente Connections per Class in
+See the adaptation of the paragraph about Afferent Connections per Class in
 the article:
 
 Measures the connectivity of a class. If a class C<Ci> access a method or
@@ -27,6 +27,16 @@ C<Cj>, denoting C<< Ci => Cj >>.  Consider the follow function:
 So C<ACC(Cj) = (sum(client(Ci, Cj)), i = 1 to N)>, where C<N> is the total
 number of system classes. If the value of this metric is large, a change in the
 class has substantially more side effects, making maintenance more difficult.
+
+=head1 REFERENCES
+
+=over
+
+=item *
+
+L<Monitoramento de métricas de código-fonte em projetos de software livre|https://www.teses.usp.br/teses/disponiveis/45/45134/tde-27082013-090242>
+
+=back
 
 =cut
 

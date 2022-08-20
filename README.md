@@ -1,3 +1,5 @@
+[![ko-fi](https://www.ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/H2H41AOOZ)
+
 # About Analizo
 
 Analizo is a suite of source code analysis tools, aimed at being
@@ -6,13 +8,18 @@ http://analizo.org
 
 # Installation
 
-See INSTALL.md.
+See [INSTALL.md](INSTALL.md).
+
+# Development
+
+See [HACKING.md](HACKING.md).
 
 # Copyright
 
 Copyright © The Analizo developers.
 
-Please see the AUTHORS file for a full list of the copyright holders.
+Please see the [AUTHORS](https://metacpan.org/release/Analizo/source/AUTHORS)
+file for a full list of the copyright holders.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by

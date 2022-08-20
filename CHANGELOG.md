@@ -7,6 +7,101 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Added
+- (for new features)
+
+### Changed
+- (for changes in existing functionality)
+
+### Deprecated
+- (for soon-to-be removed features)
+
+### Removed
+- (for now removed features)
+
+### Fixed
+- (for any bug fixes)
+
+### Security
+- (in case of vulnerabilities)
+
+## [1.25.2] - 2022-07-22
+
+### Changed
+- change debian stretch to buster on dockerfile
+
+### Removed
+- get rid of travis-ci (preparing to migrate to gitlab)
+
+### Fixed
+- make sure Graph::TransitiveClosure::Matrix is loaded
+
+## [1.25.1] - 2021-01-05
+
+### Fixed
+- error cpantester "can't locate local::lib"
+- ignore prototype functions to fix NOM metric
+
+## [1.25.0] - 2021-01-04
+
+### Changed
+- Depends on doxyparse 1.9.0 (provided by Alien::Doxyparse 0.17)
+- Depends on DBI 1.635+
+
+### Removed
+- Drop YAML dependency, using YAML::XS instead
+
+### Fixed
+- Add samples to improve testcases for errors on YAML syntax
+- Add freebsd support
+  * using shebang `/usr/bin/env perl` instead of `/usr/bin/perl`
+  * fixed args for manpage command line tool on freebsd
+  * documented steps on how to run testcases on freebsd
+
+## [1.24.0] - 2020-04-15
+
+### Changed
+- Use local::lib on t/festures.t
+- Depends on doxyparse 1.8.18 (provided by Alien::Doxyparse 0.16)
+- Update copyright year 2014-2019
+- Improve ACCM metric documentation
+- Update bash completion script
+- Use Digest::SHA instead of `sha1sum`
+
+### Removed
+- Removed Debian package source files
+
+### Fixed
+- Fix warnings about uninitialized value on tests
+- Removed failing Parallelel unit testcase
+- Fixed some spelling errors
+- Fixed documentation about `--modules` param on `analizo graph`
+- Fixed parsing method signature on newer doxyparse YAML output
+- Fixed warning about Cucumber TestBuilder deprecation
+- Declared requirement for Test::BDD::Cucumber::Harness::TAP
+
+## [1.23.0] - 2019-08-10
+
+### Added
+- Added new tool files-graph to output graph among files in DOT format
+- Add Ubuntu 16 install instructions on documentation
+
+### Changed
+- Depends on doxyparse 1.8.15 provided by Alien::Doxyparse 0.13
+- Stores cache on distinct dirs for each Analizo version
+- Improve ACC metric description on documentation
+
+### Fixed
+- Added test for void arguments on C code
+- Fix tests to run on right place `t/samples/sample_basic/c/`
+- Added missing prereq Graph::Writer::Dot as suggested by CPANTS
+- Added atomated tests for httpd-2.4.38 errors
+- Added samples for bug parsing kdelibs project
+
+### Removed
+- Removed the evolution-matrix visualization tool
+- Removed the dsm visualization tool
+
 ## [1.22.0] - 2018-09-25
 
 ### Removed
@@ -14,7 +109,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Removed dependency for `sloccount` external tool
 
 ### Changed
-- Development setup installs Doxyarse from latest source master branch
+- Development setup installs Doxyparse from latest source master branch
 - Improved the performance for ACC metric calculation
 
 ### Fixed
@@ -151,7 +246,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Script development-setup.sh fixed.
 - Running of a single acceptance Cucumber test fixed.
 
-[Unreleased]: https://github.com/analizo/analizo/compare/1.22.0...HEAD
+[Unreleased]: https://github.com/analizo/analizo/compare/1.25.1...HEAD
+[1.25.2]: https://github.com/analizo/analizo/compare/1.25.1...1.25.2
+[1.25.1]: https://github.com/analizo/analizo/compare/1.25.0...1.25.1
+[1.25.0]: https://github.com/analizo/analizo/compare/1.24.0...1.25.0
+[1.24.0]: https://github.com/analizo/analizo/compare/1.23.0...1.24.0
+[1.23.0]: https://github.com/analizo/analizo/compare/1.22.0...1.23.0
 [1.22.0]: https://github.com/analizo/analizo/compare/1.21.0...1.22.0
 [1.21.0]: https://github.com/analizo/analizo/compare/1.20.8...1.21.0
 [1.20.8]: https://github.com/analizo/analizo/compare/1.20.7...1.20.8
