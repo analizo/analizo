@@ -20,7 +20,7 @@ sub constructor : Tests {
 }
 
 sub constructor_with_arguments : Tests {
-  my $id = $MASTER;
+  my $id = $MAIN;
   my $job = Analizo::Batch::Job::Git->new($TESTDIR, $id);
   is($job->directory, $TESTDIR);
   is($job->{actual_directory}, $TESTDIR);
@@ -28,7 +28,7 @@ sub constructor_with_arguments : Tests {
 }
 
 sub parallelism_support : Tests {
-  my $job = __find($MASTER);
+  my $job = __find($MAIN);
   $job->parallel_prepare();
 
   isnt($job->{actual_directory}, $TESTDIR);
@@ -53,7 +53,7 @@ sub prepare_and_cleanup : Tests {
 
   ok($newcwd ne $oldcwd, 'prepare must change dir');
   ok(getcwd eq $oldcwd, 'cleanup must change cwd back');
-  is_deeply(\@checkouts, [$SOME_COMMIT, 'master'], 'cleanup must checkout given commit and go back to previous one');
+  is_deeply(\@checkouts, [$SOME_COMMIT, 'main'], 'cleanup must checkout given commit and go back to previous one');
 }
 
 sub git_checkout_should_actually_checkout : Tests {
@@ -62,17 +62,17 @@ sub git_checkout_should_actually_checkout : Tests {
     my $commit = `git log --format=%H | head -n 1`; chomp($commit);
     return $commit;
   };
-  my $master1 = on_dir($TESTDIR, $getHEAD);
+  my $main1 = on_dir($TESTDIR, $getHEAD);
   $job->prepare();
   my $commit = on_dir($TESTDIR, $getHEAD);
   $job->cleanup();
-  my $master2 = on_dir($TESTDIR, $getHEAD);
+  my $main2 = on_dir($TESTDIR, $getHEAD);
   my $branch = on_dir($TESTDIR, sub { $job->git_current_branch() });
 
   is($commit, $SOME_COMMIT);
-  is($master1, $master2);
-  is($master2, $MASTER);
-  is($branch, 'master');
+  is($main1, $main2);
+  is($main2, $MAIN);
+  is($branch, 'main');
 }
 
 sub must_NOT_keep_a_reference_to_batch : Tests {
@@ -85,8 +85,8 @@ sub must_NOT_keep_a_reference_to_batch : Tests {
 sub changed_files : Tests {
   my $repo = __get_repo();
 
-  my $master = $repo->find($MASTER);
-  is_deeply($master->changed_files, {'input.cc' => 'M'});
+  my $main = $repo->find($MAIN);
+  is_deeply($main->changed_files, {'input.cc' => 'M'});
 
   my $some_commit = $repo->find($SOME_COMMIT);
   is_deeply($some_commit->changed_files, {'prog.cc' => 'M'});
@@ -104,8 +104,8 @@ sub previous_relevant : Tests {
   my $first = $batch->find($FIRST_COMMIT);
   is($first->previous_relevant, undef);
 
-  my $master = $batch->find($MASTER);
-  is($master->previous_relevant, '0a06a6fcc2e7b4fe56d134e89d74ad028bb122ed');
+  my $main = $batch->find($MAIN);
+  is($main->previous_relevant, '0a06a6fcc2e7b4fe56d134e89d74ad028bb122ed');
 
   my $commit = $batch->find('0a06a6fcc2e7b4fe56d134e89d74ad028bb122ed');
   is($commit->previous_relevant, 'eb67c27055293e835049b58d7d73ce3664d3f90e');
@@ -126,8 +126,8 @@ sub relevant_merge : Tests {
 sub previous_wanted : Tests {
   my $batch = __get_repo();
 
-  my $master = $batch->find($MASTER);
-  is($master->previous_wanted, $master->previous_relevant);
+  my $main = $batch->find($MAIN);
+  is($main->previous_wanted, $main->previous_relevant);
 
   my $merge = $batch->find($MERGE_COMMIT);
   is($merge->previous_wanted, undef);
@@ -135,9 +135,9 @@ sub previous_wanted : Tests {
 
 sub metadata : Tests {
   my $repo = __get_repo();
-  my $master = $repo->find($MASTER);
+  my $main = $repo->find($MAIN);
 
-  my $metadata = $master->metadata();
+  my $metadata = $main->metadata();
   metadata_ok($metadata, 'author_name', 'Antonio Terceiro', 'author name');
   metadata_ok($metadata, 'author_email', 'terceiro@softwarelivre.org', 'author email');
   metadata_ok($metadata, 'author_date', 1297788040, 'author date'); # UNIX timestamp for [Tue Feb 15 13:40:40 2011 -0300]
@@ -160,9 +160,9 @@ sub metadata : Tests {
 
 sub merge_and_first_commit_detection : Tests {
   my $repo = __get_repo();
-  my $master = $repo->find($MASTER);
-  ok(!$master->is_merge);
-  ok(!$master->is_first_commit);
+  my $main = $repo->find($MAIN);
+  ok(!$main->is_merge);
+  ok(!$main->is_first_commit);
 
   my $first = $repo->find($FIRST_COMMIT);
   ok($first->is_first_commit);
