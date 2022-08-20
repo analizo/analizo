@@ -75,7 +75,8 @@ sudo make install
 ```
 
 See the HACKING.md file for instructions on how to install Analizo dependencies.
-You neeed to install the dependencies before installing Analizo from sources.
+
+You need to install the dependencies before installing Analizo from sources.
 
 ## Running on Ubuntu 16.04
 
@@ -109,3 +110,39 @@ sudo apt install libssl-dev libmagic-dev libzmq-dev libexpat1-dev gnuplot git
 ```console
 cpanm Analizo
 ```
+
+## Using Docker
+
+You can run your development environment without installing any dependency, using only the last docker image released.
+
+```bash
+
+docker run --rm \
+       -v $LOCAL_REPO_PATH:/home/analizo/ \
+       -v $FOLDER_TO_ANALIZE:/src/ \
+       analizo/stable:1.22.0 \
+       bash -c "cd /src && analizo $1  $2  $3  $4"
+
+```
+
+This first volume will map the your local development Analizo to the path of Analizo inside the container. Making it run your local version instead of the original 1.22.0 code.  
+The second volume will map your folder to be analized and put it inside the /src of the container to be analized by the new analizo receiving the $n parameters. If you need more than 4 parameters, some $5 or more should be added.  
+
+To make it easier to use, you can create a bash function configured for your local pc, inside your __~/.bashrc__, as such:
+
+```bash
+
+danalizo(){
+path_to_local_repo=/absolute/path/to/dev_analizo/
+docker run --rm -v $path_to_local_repo:/home/analizo/ -v $PWD:/src/ analizo/stable:1.22.0 bash -c "cd /src && analizo $1  $2  $3  $4"
+}
+```
+Now you can use your local analizo as:
+```bash
+danalizo <command> <file or folder>
+
+danalizo metrics goodcode.c
+
+danalizo graph --modules ./myproject/
+```
+**Warning** : We are using __$PWD__ to copy the files to be analyzed to the container, so you can only analyze files and folders inside your current folder, do NOT use absolute paths or like: "danalizo metrics ../../file.c" or "danalizo graph /home/user/file.java".
