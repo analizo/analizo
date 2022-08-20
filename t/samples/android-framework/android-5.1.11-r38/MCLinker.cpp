@@ -1,3 +1,34 @@
+/*
+
+**ANALIZO NOTE**
+
+This file was copied from The Android Open Source Project for testing analizo
+features.
+
+The original file was copied as-is to create automated tests on analizo side
+fixing the bug below.
+
+- https://github.com/analizo/analizo/issues/110
+
+Android source code repositories:
+
+- https://android.googlesource.com/
+
+Original file was copied from the tag android-5.1.1_r38 from Android git repository
+and it is located on the path below.
+
+- lib/CodeGen/MCLinker.cpp
+
+Link to the original file on git repository:
+
+- https://android.googlesource.com/platform/frameworks/compile/mclinker/+/refs/tags/android-5.1.1_r38/lib/CodeGen/MCLinker.cpp
+
+LICENSE:
+
+- https://android.googlesource.com/platform/frameworks/compile/mclinker/+/refs/tags/android-5.1.1_r38/LICENSE.TXT
+
+*/
+
 //===- MCLinker.cpp -------------------------------------------------------===//
 //
 //                     The MCLinker Project
