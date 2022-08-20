@@ -3,13 +3,13 @@ Feature: doxyparse extractor external tool
   I want to guarantee that doxyparse deal with any source code
   To provide reliability for Analizo users
 
-  Scenario: don't die parsing MCLinker.cpp from android 5.1.11
-    Given I am in t/samples/android-framework/android-5.1.11-r38
+  Scenario: don't die parsing MCLinker.cpp from android 5.1.1
+    Given I am in t/samples/android-framework/android-5.1.1_r38
     When I run "analizo metrics ."
     Then the exit status must be 0
 
-  Scenario: don't duplicate YAML keys parsing AudioTrackShared.cpp from android 5.1.11
-    Given I am in t/samples/android-framework/android-5.1.11-r38
+  Scenario: don't duplicate YAML keys parsing AudioTrackShared.cpp from android 5.1.1
+    Given I am in t/samples/android-framework/android-5.1.1_r38
     When I run "analizo metrics ."
     Then analizo must not emit a warning matching "YAML_LOAD_WARN_DUPLICATE_KEY"
 
