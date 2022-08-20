@@ -1,8 +1,24 @@
 /*
-ANALIZO ALERT: this file was copied here from httpd-2.4.38 as is just
-               to be used as input on analizo testsuite in order to
-               fix the issue #155
-               https://github.com/analizo/analizo/issues/155
+
+**ANALIZO NOTE**
+
+This file was copied here from httpd-2.4.38 as is just to be used as input on
+analizo testsuite in order to fix the issue #155.
+
+- https://github.com/analizo/analizo/issues/155
+
+httpd repository:
+
+- https://github.com/apache/httpd/tree/2.4.38
+
+Original file was copied from the tag 2.4.38 from httpd git repository and it
+is located on the path below.
+
+- include/http_config.h
+
+Link to the original file on GitHub:
+
+- https://github.com/apache/httpd/blob/2.4.38/include/http_config.h
 
 */
 
