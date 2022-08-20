@@ -25,6 +25,25 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Security
 - (in case of vulnerabilities)
 
+## [1.25.3] - 2022-08-20
+
+### Added
+- add document on how to run Analizo with Docker
+
+### Changed
+- create variable $TEMP before run Doxyparse
+- change copyright holder name to use fullname
+- enrich samples copyright and licensing notices
+- rename master branch to main
+- add `tar` flag to avoid changing files ownership when run as root
+
+### Fixed
+- fix install documentation
+- fix reference paper for ACC metric
+- remove duplicity of authors names in .mailmap file
+- fix misspelling and spelling test
+- rm shebang from bash-completion
+
 ## [1.25.2] - 2022-07-22
 
 ### Changed
@@ -246,7 +265,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Script development-setup.sh fixed.
 - Running of a single acceptance Cucumber test fixed.
 
-[Unreleased]: https://github.com/analizo/analizo/compare/1.25.1...HEAD
+[Unreleased]: https://github.com/analizo/analizo/compare/1.25.3...HEAD
+[1.25.3]: https://github.com/analizo/analizo/compare/1.25.2...1.25.3
 [1.25.2]: https://github.com/analizo/analizo/compare/1.25.1...1.25.2
 [1.25.1]: https://github.com/analizo/analizo/compare/1.25.0...1.25.1
 [1.25.0]: https://github.com/analizo/analizo/compare/1.24.0...1.25.0
