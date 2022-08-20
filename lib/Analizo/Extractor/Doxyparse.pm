@@ -8,6 +8,7 @@ use parent qw(Analizo::Extractor);
 use File::Temp qw/ tempfile /;
 use Cwd;
 use YAML::XS;
+use File::Spec::Functions qw/ tmpdir /;
 
 sub new {
   my ($package, @options) = @_;
@@ -177,6 +178,7 @@ sub actually_process {
   $ENV{PATH} = join(':', $ENV{PATH}, Alien::Doxyparse->bin_dir) unless $@;
 
   eval {
+    local $ENV{TEMP} = tmpdir();
     open DOXYPARSE, "doxyparse - < $temp_filename |" or die "can't run doxyparse: $!";
     local $/ = undef;
     my $doxyparse_output = <DOXYPARSE>;
