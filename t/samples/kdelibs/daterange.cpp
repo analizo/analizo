@@ -1,11 +1,27 @@
 /*
-file copied from kdelibs source-code from nepomuk/utils/ in order to add
-automated tests for bug: https://github.com/analizo/analizo/issues/148
 
-this file daterange.cpp and daterange.h was copied from commit 7f7af640fb (from
-kdelibs git repository)
+**ANALIZO NOTE**
 
-kdelibs git: https://github.com/KDE/kdelibs.git
+This file was copied from kdelibs project for testing analizo features.
+
+The original file was copied as-is to create automated tests on analizo side
+fixing the bug below.
+
+- https://github.com/analizo/analizo/issues/148
+
+GitHub kdelibs repository:
+
+- https://github.com/KDE/kdelibs.git
+
+Original file was copied from the commit 668ef94b2b from kdelibs git repository
+and it is located inside kdelibs repository on the path below.
+
+- nepomuk/utils/daterange.cpp
+
+Link to the original file on GitHub:
+
+- https://github.com/KDE/kdelibs/blob/668ef94b2b861f7ec4aa20941bcb6493bc4367be/nepomuk/utils/daterange.cpp
+
 */
 
 /*

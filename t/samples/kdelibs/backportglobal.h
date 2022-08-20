@@ -1,12 +1,27 @@
 /*
-file copied from kdelibs source-code from nepomuk/utils/ in order to add
-automated tests for bug: https://github.com/analizo/analizo/issues/173
 
-this file was copied from commit 0f4cf41b22 (from kdelibs git repository)
-and modified just to keep interested parts to implement automated tests
-for bug #173
+**ANALIZO NOTE**
 
-kdelibs git: https://github.com/KDE/kdelibs.git
+This file was copied from kdelibs project for testing analizo features.
+
+The original file was modified and some code was deleted to keep only what is
+needed to create automated tests on analizo side fixing the bug below.
+
+- https://github.com/analizo/analizo/issues/173
+
+GitHub kdelibs repository:
+
+- https://github.com/KDE/kdelibs.git
+
+Original file was copied from the commit 0f4cf41b22 from kdelibs git repository
+and it is located inside kdelibs repository on the path below.
+
+- experimental/libkdeclarative/bindings/backportglobal.h
+
+Link to the original file on GitHub:
+
+- https://github.com/KDE/kdelibs/blob/9941ebff54bd9d4349c0384dfa0cca2ace9549c4/experimental/libkdeclarative/bindings/backportglobal.h
+
 */
 
 /****************************************************************************
