@@ -25,6 +25,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Security
 - (in case of vulnerabilities)
 
+## [1.25.4] - 2022-08-21
+
+### Fixed
+- fix Analizo::Metric::AfferentConnections POD syntax error
+- add new recommended test dependency Test::Pod
+
 ## [1.25.3] - 2022-08-20
 
 ### Added
@@ -266,6 +272,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Running of a single acceptance Cucumber test fixed.
 
 [Unreleased]: https://github.com/analizo/analizo/compare/1.25.3...HEAD
+[1.25.4]: https://github.com/analizo/analizo/compare/1.25.3...1.25.4
 [1.25.3]: https://github.com/analizo/analizo/compare/1.25.2...1.25.3
 [1.25.2]: https://github.com/analizo/analizo/compare/1.25.1...1.25.2
 [1.25.1]: https://github.com/analizo/analizo/compare/1.25.0...1.25.1
