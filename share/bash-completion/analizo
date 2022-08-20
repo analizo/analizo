@@ -1,5 +1,3 @@
-#!/bin/bash
-
 _analizo_help() {
 	local options
 	options="-h -v --usage --help --version"
