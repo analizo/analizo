@@ -24,6 +24,7 @@ cardinality
 Carliss
 CBO
 Chidamber
+codigo
 Costa
 CPUs
 csv
@@ -62,6 +63,7 @@ LOC
 MacCormack
 McCabe
 Meirelles
+metricas
 Moreira
 Munson
 myproject
