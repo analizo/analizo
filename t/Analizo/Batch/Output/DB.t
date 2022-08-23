@@ -245,11 +245,11 @@ sub __create {
 }
 
 sub setup : Test(setup) {
-  system("mkdir -p $TMPDIR");
+  system("mkdir", "-p", $TMPDIR);
 }
 
 sub teardown : Test(teardown) {
-  system("rm -rf $TMPDIR");
+  system("rm", "-rf", $TMPDIR);
 }
 
 sub table_created_ok($$) {

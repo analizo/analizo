@@ -12,11 +12,11 @@ my $TMPDIR = tmpdir();
 my $TMPFILE = "$TMPDIR/output.csv";
 
 sub setup : Tests(setup) {
-  system("mkdir -p $TMPDIR");
+  system("mkdir", "-p", $TMPDIR);
 }
 
 sub teardown : Tests(teardown) {
-  system("rm -rf $TMPDIR");
+  system("rm", "-rf", $TMPDIR);
 }
 
 sub constructor : Tests {
