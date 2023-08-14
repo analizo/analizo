@@ -63,12 +63,13 @@ sub unpack_sample_git_repository {
   }
   my ($package, $filename, $line) = caller;
   my $tmpdir = tmpdir_for($filename);
-  system("mkdir -p $tmpdir");
+  system('mkdir', '-p', $tmpdir);
   for my $repo (@repos) {
-    system("tar xzf t/samples/$repo.tar.gz -C $tmpdir --no-same-owner");
+    system('tar', 'xzf', "t/samples/$repo.tar.gz", '-C', $tmpdir,
+        '--no-same-owner');
   }
   &$code();
-  system("rm -rf $tmpdir");
+  system('rm', '-rf', $tmpdir);
 }
 
 sub readfile {
