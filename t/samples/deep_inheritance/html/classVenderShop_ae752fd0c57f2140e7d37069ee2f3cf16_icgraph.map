@@ -1,5 +1,0 @@
-<map id="VenderShop.sellDogTo" name="VenderShop.sellDogTo">
-<area shape="rect" id="Node000001" title=" " alt="" coords="208,5,375,31"/>
-<area shape="rect" id="Node000002" href="$classShopController.html#af6c55ee9603bfcb7de3801e8d6d00877" title=" " alt="" coords="5,5,160,31"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="195,21,160,21,160,15,195,15"/>
-</map>

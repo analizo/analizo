@@ -1,6 +1,0 @@
-<map id="Human" name="Human">
-<area shape="rect" id="Node000001" title=" " alt="" coords="14,5,83,31"/>
-<area shape="rect" id="Node000002" href="$classDog.html" title=" " alt="" coords="25,93,73,119"/>
-<area shape="poly" id="edge2_Node000002_Node000001" title=" " alt="" coords="21,41,10,56,9,65,13,74,30,91,27,95,8,78,3,66,5,54,16,38"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="54,80,55,55,50,32,55,30,61,54,59,80"/>
-</map>
