@@ -25,6 +25,7 @@ sub command_names { qw/metrics-batch/ }
 
 sub opt_spec {
   return (
+    [ 'extractor=s', 'which extractor method use to parse the source code' ],
     [ 'output|o=s',   'output file name', { default => 'metrics.csv' } ],
     [ 'quiet|q',      'supresses messages to standard output' ],
     [ 'parallel|p=i', 'activates support for parallel processing' ],

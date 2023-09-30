@@ -64,19 +64,33 @@ sub process_must_delegate_to_actually_process : Tests {
   ok($called);
 }
 
-sub load_doxyparse_extractor : Tests {
-  lives_ok { Analizo::Extractor->load('Doxyparse') };
+sub loads_mock_extractor : Tests {
+  lives_ok { Analizo::Extractor->load('MockExtractor') };
+}
+
+
+sub load_mock_extractor_by_alias : Tests {
+  lives_ok {
+    isa_ok(Analizo::Extractor->load('mock'), 'Analizo::Extractor::MockExtractor');
+  }
 }
 
 sub fail_when_load_invalid_extractor : Tests {
   dies_ok { Analizo::Extractor->load('ThisNotExists') };
 }
 
+
+sub loads_doxyparse_extractor : Tests {
+  lives_ok { Analizo::Extractor->load('Doxyparse') };
+}
+
+
 sub load_doxyparse_extractor_by_alias : Tests {
   lives_ok {
     isa_ok(Analizo::Extractor->load('doxy'), 'Analizo::Extractor::Doxyparse');
   }
 }
+
 
 sub dont_allow_code_injection: Tests {
   lives_ok {

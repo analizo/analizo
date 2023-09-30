@@ -23,6 +23,9 @@ sub alias {
   my ($alias) = @_;
   my %aliases = (
     doxy => 'Doxyparse',
+    ## for testing purposes
+    mock => 'MockExtractor', 
+    ##
     excluding_dirs => 0,
   );
   exists $aliases{$alias} ? $aliases{$alias} : $alias;

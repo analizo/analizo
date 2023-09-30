@@ -1,0 +1,8 @@
+<map id="DogSecondPuppy" name="DogSecondPuppy">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,93,140,119"/>
+<area shape="rect" id="Node000002" href="$classDog.html" title=" " alt="" coords="119,5,167,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="127,43,85,94,80,91,123,39"/>
+<area shape="rect" id="Node000003" href="$classHuman.html" title=" " alt="" coords="165,93,234,119"/>
+<area shape="poly" id="edge3_Node000003_Node000002" title=" " alt="" coords="139,44,138,57,142,68,153,81,168,91,166,96,150,85,137,71,133,57,133,44"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="184,83,168,56,150,32,155,29,172,53,189,80"/>
+</map>

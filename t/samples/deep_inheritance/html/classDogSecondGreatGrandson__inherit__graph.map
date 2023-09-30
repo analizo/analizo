@@ -1,0 +1,9 @@
+<map id="DogSecondGreatGrandson" name="DogSecondGreatGrandson">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,225,199,251"/>
+<area shape="rect" id="Node000002" href="$classDogGrandson.html" title=" " alt="" coords="47,152,157,177"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="105,191,105,225,99,225,99,191"/>
+<area shape="rect" id="Node000003" href="$classDogFirstPuppy.html" title=" " alt="" coords="44,79,160,104"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="105,118,105,152,99,152,99,118"/>
+<area shape="rect" id="Node000004" href="$classDog.html" title=" " alt="" coords="78,5,126,31"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="105,44,105,79,99,79,99,44"/>
+</map>

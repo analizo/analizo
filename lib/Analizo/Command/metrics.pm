@@ -71,6 +71,7 @@ sub execute {
   my $tree = $args->[0] || '.';
   my $job = Analizo::Batch::Job::Directories->new($tree);
   $job->extractor($opt->extractor);
+  print $job->extractor;
   if ($opt->language) {
     require Analizo::LanguageFilter;
     if ($opt->language eq 'list') {
