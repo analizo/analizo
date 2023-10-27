@@ -26,3 +26,12 @@ Feature: coupling between objects
       | java     | Mammal | 0     |
       | csharp   | main   | 1     |
       | csharp   | Mammal | 0     |
+
+  Scenario: "Animals" project
+    Given I am in t/samples/animals/<language>
+    When I run "analizo metrics --extractor Pyan."
+    Then analizo must report that module <module> has cbo = <value>
+    Examples:
+      | language | module | value |
+      | python   | main   | 1     |
+      | python   | Mammal | 0     |

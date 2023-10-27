@@ -14,6 +14,12 @@ Feature: multi-language support
       | java     | Main        | HelloWorld         |
       | csharp   | main        | HelloWorld         |
 
+  Scenario: dependency between modules in Python
+    Given I am in t/samples/hello_world/python
+    When I run "analizo graph --extractor Pyan --modules ."
+    Then analizo must report that "main" depends on "hello_world::HelloWorld"
+ 
+
   Scenario: dependency between specific functions
     Given I am in t/samples/hello_world/<language>
     When I run "analizo graph ."
@@ -26,6 +32,14 @@ Feature: multi-language support
       | java     | Main::main(String[])  | HelloWorld::say()                           | HelloWorld::destroy()                           |
       | csharp   | main::Main()          | HelloWorld::say()                           | HelloWorld::destroy()                           |
 
+
+  Scenario: dependency between specific functions in Python
+    Given I am in t/samples/hello_world/python
+    When I run "analizo graph --extractor Pyan ."
+    Then analizo must report that "main::main" depends on "hello_world::HelloWorld::say"
+    And analizo must report that "main::main" depends on "hello_world::HelloWorld::destroy"
+    
+
   Scenario: intra-module dependencies
     Given I am in t/samples/hello_world/<language>
     When I run "analizo graph ."
@@ -37,6 +51,12 @@ Feature: multi-language support
       | cpp      | HelloWorld::say()                           | HelloWorld::destroy()                           | HelloWorld::_id               |
       | java     | HelloWorld::say()                           | HelloWorld::destroy()                           | HelloWorld::_id               |
       | csharp   | HelloWorld::say()                           | HelloWorld::destroy()                           | HelloWorld::_id               |
+
+  Scenario: intra-module dependencies in Python
+  Given I am in t/samples/hello_world/python
+  When I run "analizo graph --extractor Pyan ."
+  Then analizo must report that "hello_world::HelloWorld::say" depends on "hello_world::HelloWorld::__id"
+  And analizo must report that "hello_world::HelloWorld::destroy" depends on "hello_world::HelloWorld::__id"
 
   Scenario: some metrics
     Given I am in t/samples/hello_world/<language>
@@ -53,6 +73,16 @@ Feature: multi-language support
       | java     | Main        | HelloWorld         | 4               | 1                 |
       | csharp   | main        | HelloWorld         | 4               | 1                 |
 
+
+  Scenario: some metrics in Python
+    Given I am in t/samples/hello_world/python
+    When I run "analizo metrics --extractor Pyan ."
+    Then analizo must report that the project has total_modules = 3
+    And analizo must report that module main has nom = 1
+    And analizo must report that module hello_world::HelloWorld has npm = 3
+    And analizo must report that module hello_world::HelloWorld has nom = 4
+    And analizo must report that module hello_world::HelloWorld has npa = 1
+
   Scenario: inheritance data
     Given I am in t/samples/animals/<language>
     When I run "analizo graph --modules ."
@@ -68,6 +98,18 @@ Feature: multi-language support
       | language |
       | cpp      |
       | java     |
+  
+  Scenario: inheritance data in Python
+    Given I am in t/samples/animals/python
+    When I run "analizo graph --extractor Pyan --modules ."
+    Then analizo must report that "cat::Cat" depends on "mammal::Mammal"
+    And analizo must report that "dog::Dog" depends on "mammal::Mammal"
+    And analizo must report that "mammal::Mammal" depends on "animal::Animal"
+    When I run "analizo metrics --extractor Pyan ."
+    Then analizo must report that module cat::Cat has dit = 2
+    And analizo must report that module dog::Dog has dit = 2
+    And analizo must report that module mammal::Mammal has dit = 1
+    And analizo must report that module animal::Animal has dit = 0
 
   # not sure what to expect in this case
   Scenario: mixed Java and C

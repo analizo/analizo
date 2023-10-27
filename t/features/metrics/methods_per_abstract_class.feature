@@ -23,6 +23,14 @@ Feature: total number of methods per abstract class
       | java     | 1     |
       | csharp   | 1     |
 
+  Scenario: "Animals" project
+    Given I am in t/samples/animals/<language>
+    When I run "analizo metrics --extractor Pyan ."
+    Then analizo must report that the project has total_methods_per_abstract_class = <value>
+    Examples:
+      | language | value |
+      | python   | 1     |
+
   Scenario: "Polygons" project
     Given I am in t/samples/polygons/<language>
     When I run "analizo metrics ."
@@ -32,3 +40,11 @@ Feature: total number of methods per abstract class
       | cpp      | 2.5   |
       | java     | 2     |
       | csharp   | 2     |
+
+  Scenario: "Polygons" project
+    Given I am in t/samples/polygons/<language>
+    When I run "analizo metrics --extractor Pyan ."
+    Then analizo must report that the project has total_methods_per_abstract_class = <value>
+    Examples:
+      | language | value |
+      | python   | 1.5   |

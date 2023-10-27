@@ -24,6 +24,19 @@ Feature: number of methods
       | animals  | csharp   |  Cat       | 2    |
       | animals  | csharp   |  Dog       | 2    |
 
+  Scenario: number of methods in Python samples
+    Given I am in t/samples/<sample>/python
+    When I run "analizo metrics --extractor Pyan ."
+    Then analizo must report that module <module> has nom = <nom>
+    Examples:
+      | sample   |  module             | nom  |
+      | polygons |  polygon::Polygon   | 2    |
+      | polygons |  tetragon::Tetragon | 1    |
+      | animals  |  animal::Animal     | 1    |
+      | animals  |  cat::Cat           | 2    |
+      | animals  |  dog::Dog           | 2    |
+      
+    
   Scenario: not computes macro on C code as method definition
     Given I am in t/samples/macro
     When I run "analizo metrics ."
