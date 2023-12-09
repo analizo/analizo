@@ -13,6 +13,15 @@ Feature: dependency graph among files
       | java     | Main     | Animal     |
       | csharp   | Main     | Animal     |
 
+  Scenario: relation between function call
+    Given I am in t/samples/animals/<language>
+    When I run "analizo files-graph --extractor Pyan ."
+    Then analizo must report that "<referent>" depends on "<referenced>"
+    Examples:
+      | language | referent | referenced |
+      | python   | main     | cat     |
+      | python   | main     | dog     |
+
   Scenario: relation between inheritance
     Given I am in t/samples/animals/<language>
     When I run "analizo files-graph ."
@@ -25,3 +34,12 @@ Feature: dependency graph among files
       | cpp      | mammal   | animal     |
       | java     | Mammal   | Animal     |
       | csharp   | Mammal   | Animal     |
+
+  Scenario: relation between inheritance
+    Given I am in t/samples/animals/<language>
+    When I run "analizo files-graph --extractor Pyan ."
+    Then analizo must report that "<referent>" depends on "<referenced>"
+    Examples:
+      | language | referent | referenced |
+      | python   | dog      | mammal     |
+      | python   | mammal   | animal     |

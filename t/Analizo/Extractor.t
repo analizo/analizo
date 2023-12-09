@@ -1,4 +1,4 @@
-package t::Analizo::Extractor;
+  package t::Analizo::Extractor;
 use strict;
 use warnings;
 use parent qw(Test::Analizo::Class);
@@ -112,7 +112,9 @@ sub must_consider_only__supported_languages : Tests {
     t/samples/mixed/Backend.java
     t/samples/mixed/CSharp_Backend.cs
     t/samples/mixed/UI.java
+    t/samples/mixed/hello_world.py
     t/samples/mixed/native_backend.c
+    t/samples/mixed/polygons.py
   );
   is_deeply(\@processed, \@expected);
 }

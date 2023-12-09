@@ -26,6 +26,14 @@ Feature: language filters
     And the output must not match "UI"
     And the output must not match "native_backend"
 
+  Scenario: filtering for Python code
+    Given I am in t/samples/mixed
+    When I run "analizo metrics --language python ."
+    Then the output must match "hello_world"
+    And the output must match "polygons"
+    And the output must not match "UI"
+    And the output must not match "CSharp_Backend"
+
   Scenario: listing languages
     When I run "analizo metrics --language list"
     Then analizo must present a list of languages

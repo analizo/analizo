@@ -208,8 +208,8 @@ sub build_graphs {
   $self->{modules_graph} = Graph->new;
   $self->{files_graph} = Graph->new;
 
-  $self->{modules_graph}->set_graph_attribute('name', 'graph');
-  $self->{files_graph}->set_graph_attribute('name', 'graph');
+  $self->{modules_graph}->set_graph_attribute('name', 'modules_graph');
+  $self->{files_graph}->set_graph_attribute('name', 'files_graph');
 
   $self->_add_all_vertex_on_each_graph;
   $self->_add_all_references_between_files_and_modules_as_edges_on_each_graph;

@@ -22,3 +22,15 @@ Feature: number of abstract classes
       | cpp      |
       | java     |
       | csharp   |
+
+  Scenario: "Hello, world" project in Python 
+    Given I am in t/samples/hello_world/python
+    When I run "analizo metrics --extractor Pyan ."
+    Then analizo must report that the project has total_modules_with_defined_methods = 2
+    
+
+  Scenario: "Animals" project in Python 
+    Given I am in t/samples/animals/python
+    When I run "analizo metrics --extractor Pyan ."
+    Then analizo must report that the project has total_modules_with_defined_methods = 5
+    

@@ -25,6 +25,7 @@ sub command_names { qw/files-graph/ }
 
 sub opt_spec {
   return (
+    [ 'extractor=s', 'which extractor method use to parse the source code' ],
     [ 'output|o=s',  'output file name' ],
   );
 }
@@ -45,7 +46,7 @@ sub validate {
 
 sub execute {
   my ($self, $opt, $args) = @_;
-  my $extractor = Analizo::Extractor->load('Doxyparse');
+  my $extractor = Analizo::Extractor->load($opt->extractor);
   $extractor->process(@$args);
   my $graph = $extractor->model->files_graph;
   if ($opt->output) {

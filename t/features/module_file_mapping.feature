@@ -48,7 +48,7 @@ Feature: mapping modules to filenames
     And analizo must report that file GenericClass.java declares module GenericClass
 
   Scenario: Java Enumeration sample
-    Given I am in t/samples/enumeration
+    Given I am in t/samples/enumeration/java
     When I run "analizo metrics ."
     Then analizo must report that file Main.java declares module Main::MyEnumeration
     And analizo must report that file Enumeration.java declares module Enumeration
