@@ -15,7 +15,7 @@ sub expose_list_of_dirs : Tests {
 sub create_with_no_arguments : Tests {
   my $batch = __create_batch();
   my @actual = sort(@{$batch->directories});
-  is_deeply(\@actual, ['c', 'cpp', 'csharp', 'java', 'python']);
+  is_deeply(\@actual, ['c', 'cpp', 'csharp', 'java']);
 }
 
 sub create_with_arguments : Tests {
