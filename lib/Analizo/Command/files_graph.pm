@@ -4,7 +4,7 @@ use parent qw(Analizo::Command);
 use strict;
 use warnings;
 use Analizo::Extractor;
-use Graph::Writer::Dot '2.09';
+use Graph::Writer::Dot;
 use File::Basename;
 
 # ABSTRACT: dependency graph generator among files
