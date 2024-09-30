@@ -25,6 +25,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Security
 - (in case of vulnerabilities)
 
+## [1.25.5] - 2024-09-30
+
+### Changed
+- declare Graph::Writer::Dot 2.09 requirement on Dist::Zilla dist.ini file
+
+### Security
+- replace `system("command $arg")` by `system("command", $arg)` to avoids invoking potentially dangerous shell commands
+
 ## [1.25.4] - 2022-08-21
 
 ### Fixed
@@ -271,7 +279,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Script development-setup.sh fixed.
 - Running of a single acceptance Cucumber test fixed.
 
-[Unreleased]: https://github.com/analizo/analizo/compare/1.25.3...HEAD
+[Unreleased]: https://github.com/analizo/analizo/compare/1.25.5...HEAD
+[1.25.5]: https://github.com/analizo/analizo/compare/1.25.4...1.25.5
 [1.25.4]: https://github.com/analizo/analizo/compare/1.25.3...1.25.4
 [1.25.3]: https://github.com/analizo/analizo/compare/1.25.2...1.25.3
 [1.25.2]: https://github.com/analizo/analizo/compare/1.25.1...1.25.2
