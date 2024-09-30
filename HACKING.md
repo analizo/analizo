@@ -133,6 +133,11 @@ Always "use strict" in the top of new modules.
 Don't bother changing the AUTHORS file. It's automatically generated as part of
 the release process. See the dist.ini for more information.
 
+# Repository branches
+
+- `main` - is the stable branch with the latest released version
+- `dev` - is the development branch not yet released, unstable
+
 # Sending patches
 
 Send the patches to the Analizo mailing list: analizo@googlegroups.com (see
