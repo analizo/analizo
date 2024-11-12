@@ -12,3 +12,5 @@ $analizo->execute_command(
     $ENV{SOURCE} // $ARGV[0] // 't/samples/hello_world/cpp/'
   )
 );
+
+print "[profile.pl] run `nytprofhtml --open` to visualize the profiler report\n";
