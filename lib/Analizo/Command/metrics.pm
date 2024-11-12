@@ -92,6 +92,7 @@ sub execute {
   $job->libs($opt->libs);
   $job->execute();
   my $metrics = $job->metrics;
+  open (my $STDOUT_OLD, '>&', STDOUT);
   if ($opt->output) {
     open STDOUT, '>', $opt->output or die "$!\n";
   }
@@ -102,6 +103,7 @@ sub execute {
     print $metrics->report;
   }
   close STDOUT;
+  open (STDOUT, '>&', $STDOUT_OLD);
 }
 
 =head1 DESCRIPTION

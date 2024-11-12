@@ -54,6 +54,7 @@ sub execute {
     group_by_module => $opt->modules,
     omit => \@omitted,
   );
+  open (my $STDOUT_OLD, '>&', STDOUT);
   if ($opt->output) {
     open STDOUT, '>', $opt->output or die "$!";
   }
@@ -63,6 +64,7 @@ sub execute {
   );
   $graph_writer->write_graph($graph, $stdout);
   close STDOUT;
+  open (STDOUT, '>&', $STDOUT_OLD);
 }
 
 =head1 DESCRIPTION

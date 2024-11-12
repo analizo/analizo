@@ -49,6 +49,7 @@ sub execute {
   my $extractor = Analizo::Extractor->load($opt->extractor);
   $extractor->process(@$args);
   my $graph = $extractor->model->files_graph;
+  open (my $STDOUT_OLD, '>&', STDOUT);
   if ($opt->output) {
     open STDOUT, '>', $opt->output or die "$!";
   }
@@ -56,6 +57,7 @@ sub execute {
   my $graph_writer = Graph::Writer::Dot->new;
   $graph_writer->write_graph($graph, $stdout);
   close STDOUT;
+  open (STDOUT, '>&', $STDOUT_OLD);
 }
 
 =head1 DESCRIPTION
